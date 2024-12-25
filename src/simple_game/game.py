@@ -1,33 +1,47 @@
 from abc import ABC, abstractmethod
 
+import simple_game.timings as timings
+
 import pygame
 
 
 class Game(ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, **kwds) -> None:
 
         pygame.init()
 
         self.is_running = True
         self.window: pygame.Surface
         self.clock = pygame.time.Clock()
+        timing_data: timings.Timings | None = kwds.get("framerate_data", None)
+        if timing_data is None:
+            # Creates a new framerate data if one hasn't been passed.
+            timing_data = timings.Timings()
+            if (fps_cap := kwds.get("fps_cap", None)) is not None:
+                timing_data.fps_cap = fps_cap
+            if (tick_rate := kwds.get("tick_rate", None)) is not None:
+                timing_data.tick_rate = tick_rate
+            if (timestep := kwds.get("fixed_timestep", None)) is not None:
+                timing_data.fixed_timestep = timestep
+        self.timings: timings.Timings = timing_data
 
     def main(self) -> None:
 
         accumulated_time: float = 0.0
-        fixed_timestep_milliseconds: float = 999999.0
 
         while self.is_running:
 
-            delta_time = self.clock.tick() / 1000
+            delta_time = self.clock.tick(self.timings.fps_cap) / 1000
             accumulated_time += delta_time
 
             self.handle_events(pygame.event.get())
 
-            while accumulated_time > fixed_timestep_milliseconds:
-                self.const_update(fixed_timestep_milliseconds)
-                accumulated_time -= fixed_timestep_milliseconds
+            timestep = self.timings.fixed_timestep
+
+            while accumulated_time > timestep and self.timings.tick_rate > 0:
+                self.const_update(timestep)
+                accumulated_time -= timestep
 
             self.pre_update(delta_time)
             self.update(delta_time)
