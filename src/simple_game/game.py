@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-import simple_game.rate_data as rate_data
+import simple_game.timings as timings
 
 import pygame
 
@@ -14,17 +14,17 @@ class Game(ABC):
         self.is_running = True
         self.window: pygame.Surface
         self.clock = pygame.time.Clock()
-        framerate_data: rate_data.FramerateData | None
-        if (framerate_data := kwds.get("framerate_data", None)) is None:
+        timing_data: timings.Timings | None = kwds.get("framerate_data", None)
+        if timing_data is None:
             # Creates a new framerate data if one hasn't been passed.
-            framerate_data = rate_data.FramerateData()
+            timing_data = timings.Timings()
             if (fps_cap := kwds.get("fps_cap", None)) is not None:
-                framerate_data.fps_cap = fps_cap
+                timing_data.fps_cap = fps_cap
             if (tick_rate := kwds.get("tick_rate", None)) is not None:
-                framerate_data.tick_rate = tick_rate
+                timing_data.tick_rate = tick_rate
             if (timestep := kwds.get("fixed_timestep", None)) is not None:
-                framerate_data.fixed_timestep = timestep
-        self.framerate_data = framerate_data
+                timing_data.fixed_timestep = timestep
+        self.timings: timings.Timings = timing_data
 
     def main(self) -> None:
 
@@ -32,14 +32,14 @@ class Game(ABC):
 
         while self.is_running:
 
-            delta_time = self.clock.tick(self.framerate_data.fps_cap) / 1000
+            delta_time = self.clock.tick(self.timings.fps_cap) / 1000
             accumulated_time += delta_time
 
             self.handle_events(pygame.event.get())
 
-            timestep = self.framerate_data.fixed_timestep
+            timestep = self.timings.fixed_timestep
 
-            while accumulated_time > timestep and self.framerate_data.tick_rate > 0:
+            while accumulated_time > timestep and self.timings.tick_rate > 0:
                 self.const_update(timestep)
                 accumulated_time -= timestep
 

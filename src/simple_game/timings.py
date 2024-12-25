@@ -4,10 +4,10 @@ logger = logging.getLogger(__name__)
 MAX_TICK_RATE = 120
 
 
-class FramerateData:
+class Timings:
     def __init__(self, fps_cap: int = 0, tick_rate: float = 20) -> None:
         """
-        Creates a new FramerateData object, which hold framerate data for a Game object.
+        Creates a new Timings object, which hold framerate data for a Game object.
 
         :param fps_cap: Maximum frame rate, in frames per second, defaults to 0.
         0 uncaps framerate.
