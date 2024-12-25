@@ -24,6 +24,11 @@ class FramerateData:
 
     @property
     def fps_cap(self) -> int:
+        """
+        Maximum frame rate, in frames per second. Must be positive.
+
+        Setting to 0 will uncap the framerate.
+        """
         return self._fps_cap
 
     @fps_cap.setter
