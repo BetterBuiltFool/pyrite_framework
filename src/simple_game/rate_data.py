@@ -6,6 +6,14 @@ MAX_TICK_RATE = 120
 
 class FramerateData:
     def __init__(self, fps_cap: int = 0, tick_rate: float = 20) -> None:
+        """
+        Creates a new FramerateData object, which hold framerate data for a Game object.
+
+        :param fps_cap: Maximum frame rate, in frames per second, defaults to 0.
+        0 uncaps framerate.
+        :param tick_rate: Number of times per second that const_update runs,
+        defaults to 20. Setting to 0 disables const_update.
+        """
         if fps_cap < 0:
             fps_cap = 0
         self._fps_cap = fps_cap
@@ -16,6 +24,14 @@ class FramerateData:
 
     @property
     def tick_rate(self) -> float:
+        """
+        Number of times per second that the constant update phase runs, default 20.
+        Timestep length is calculated from this number.
+
+        Must be a positive value.
+
+        Setting to 0 disables const_update
+        """
         return self._tick_rate
 
     @tick_rate.setter
@@ -34,6 +50,12 @@ class FramerateData:
 
     @property
     def fixed_timestep(self) -> float:
+        """
+        Length of the timestep between constant updates. Setting this value
+        recalculates tick_rate.
+
+        Must be greater than 0.
+        """
         return self._fixed_timestep
 
     @fixed_timestep.setter
