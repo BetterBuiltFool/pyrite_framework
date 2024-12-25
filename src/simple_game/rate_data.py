@@ -23,6 +23,16 @@ class FramerateData:
         self._fixed_timestep: float = tick_rate / 1000 if tick_rate > 0 else 1000
 
     @property
+    def fps_cap(self) -> int:
+        return self._fps_cap
+
+    @fps_cap.setter
+    def fps_cap(self, target: int) -> None:
+        if target < 0:
+            raise ValueError("FPS must be positive.")
+        self._fps_cap = target
+
+    @property
     def tick_rate(self) -> float:
         """
         Number of times per second that the constant update phase runs, default 20.
