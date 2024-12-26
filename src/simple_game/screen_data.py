@@ -20,7 +20,6 @@ class ResolutionData:
         self.is_fullscreen = (self.flags & pygame.FULLSCREEN) or kwds.get(
             "fullscreen", False
         )
-        pygame.display.set_mode()
 
     def rescale_window(self) -> pygame.Surface:
         return pygame.display.set_mode(
