@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import cast
 
-import simple_game.timings as timings
-import simple_game.screen_data as screen_data
+import src.simple_game.timings as timings
+import src.simple_game.screen_data as screen_data
 
 import pygame
 
@@ -18,10 +18,10 @@ class Game(ABC):
             pygame.init()
 
         self.is_running = True
-        self.window: pygame.Surface
         self.clock = pygame.time.Clock()
         self.timings = self._get_timings(**kwds)
-        self.resolution_data = self._get_resolution_data(**kwds)
+        self.window = self._get_resolution_data(**kwds)
+        self.display = self.window.rescale_window()
 
     def main(self) -> None:
 
@@ -44,8 +44,8 @@ class Game(ABC):
             self.update(delta_time)
             self.post_update(delta_time)
 
-            self.render(self.window, delta_time)
-            self.render_ui(self.window, delta_time)
+            self.render(self.display, delta_time)
+            self.render_ui(self.display, delta_time)
 
             pygame.display.flip()
 
