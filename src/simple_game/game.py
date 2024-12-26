@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import cast
 
 import simple_game.timings as timings
 
@@ -14,17 +15,7 @@ class Game(ABC):
         self.is_running = True
         self.window: pygame.Surface
         self.clock = pygame.time.Clock()
-        timing_data: timings.Timings | None = kwds.get("framerate_data", None)
-        if timing_data is None:
-            # Creates a new framerate data if one hasn't been passed.
-            timing_data = timings.Timings()
-            if (fps_cap := kwds.get("fps_cap", None)) is not None:
-                timing_data.fps_cap = fps_cap
-            if (tick_rate := kwds.get("tick_rate", None)) is not None:
-                timing_data.tick_rate = tick_rate
-            if (timestep := kwds.get("fixed_timestep", None)) is not None:
-                timing_data.fixed_timestep = timestep
-        self.timings: timings.Timings = timing_data
+        self.timings = self._get_timings(**kwds)
 
     def main(self) -> None:
 
@@ -88,3 +79,16 @@ class Game(ABC):
     @abstractmethod
     def handle_event(self, event: pygame.Event) -> None:
         pass
+
+    def _get_timings(self, **kwds) -> timings.Timings:
+        timing_data: timings.Timings | None = kwds.get("framerate_data", None)
+        if timing_data is None:
+            # Creates a new framerate data if one hasn't been passed.
+            timing_data = timings.Timings()
+            if (fps_cap := kwds.get("fps_cap", None)) is not None:
+                timing_data.fps_cap = fps_cap
+            if (tick_rate := kwds.get("tick_rate", None)) is not None:
+                timing_data.tick_rate = tick_rate
+            if (timestep := kwds.get("fixed_timestep", None)) is not None:
+                timing_data.fixed_timestep = timestep
+        return cast(timings.Timings, timing_data)
