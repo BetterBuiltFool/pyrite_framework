@@ -22,6 +22,13 @@ class ResolutionData:
         )
 
     def rescale_window(self) -> pygame.Surface:
-        return pygame.display.set_mode(
-            self.resolution, self.flags, 0, self.display, self.vsync
-        )
+        try:
+            window_surface = pygame.display.set_mode(
+                self.resolution, self.flags, 0, self.display, self.vsync
+            )
+        except pygame.error:
+            window_surface = pygame.display.set_mode(
+                self.resolution, self.flags, 0, self.display
+            )
+            self.vsync = False
+        return window_surface
