@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import cast
 
 import simple_game.timings as timings
+import simple_game.screen_data as screen_data
 
 import pygame
 
@@ -20,6 +21,7 @@ class Game(ABC):
         self.window: pygame.Surface
         self.clock = pygame.time.Clock()
         self.timings = self._get_timings(**kwds)
+        self.resolution_data = self._get_resolution_data(**kwds)
 
     def main(self) -> None:
 
@@ -96,3 +98,24 @@ class Game(ABC):
             if (timestep := kwds.get("fixed_timestep", None)) is not None:
                 timing_data.fixed_timestep = timestep
         return cast(timings.Timings, timing_data)
+
+    def _get_resolution_data(self, **kwds) -> screen_data.ResolutionData:
+        resolution_data: screen_data.ResolutionData | None = kwds.get(
+            "resolution_data", None
+        )
+        if resolution_data is None:
+            # Create a new resolution data object, and check for and input settings.
+            resolution_data = screen_data.ResolutionData()
+            if (resolution := kwds.get("resolution", None)) is not None:
+                resolution_data.resolution = resolution
+            if (flags := kwds.get("flags", None)) is not None:
+                resolution_data.flags = flags
+            if (display := kwds.get("display", None)) is not None:
+                resolution_data.display = display
+            if (vsync := kwds.get("vsync", None)) is not None:
+                resolution_data.vsync = vsync
+
+            resolution_data.is_fullscreen = (
+                resolution_data.flags & pygame.FULLSCREEN
+            ) or kwds.get("fullscreen", False)
+        return cast(screen_data.ResolutionData, resolution_data)
