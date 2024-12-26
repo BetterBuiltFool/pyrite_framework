@@ -10,7 +10,11 @@ class Game(ABC):
 
     def __init__(self, **kwds) -> None:
 
-        pygame.init()
+        suppress_init = kwds.get("suppress_init", False)
+        self.debug_mode = kwds.get("debug_mode", False)
+
+        if not suppress_init:
+            pygame.init()
 
         self.is_running = True
         self.window: pygame.Surface
