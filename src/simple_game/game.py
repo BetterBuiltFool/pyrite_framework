@@ -20,8 +20,8 @@ class Game(ABC):
         self.is_running = True
         self.clock = pygame.time.Clock()
         self.timings = self._get_timings(**kwds)
-        self.window = self._get_resolution_data(**kwds)
-        self.display = self.window.rescale_window()
+        self.display_settings = self._get_display_settings(**kwds)
+        self.window = self.display_settings.create_window()
 
     def main(self) -> None:
 
@@ -44,8 +44,8 @@ class Game(ABC):
             self.update(delta_time)
             self.post_update(delta_time)
 
-            self.render(self.display, delta_time)
-            self.render_ui(self.display, delta_time)
+            self.render(self.window, delta_time)
+            self.render_ui(self.window, delta_time)
 
             pygame.display.flip()
 
@@ -99,13 +99,13 @@ class Game(ABC):
                 timing_data.fixed_timestep = timestep
         return cast(timings.Timings, timing_data)
 
-    def _get_resolution_data(self, **kwds) -> screen_data.ResolutionData:
-        resolution_data: screen_data.ResolutionData | None = kwds.get(
+    def _get_display_settings(self, **kwds) -> screen_data.DisplaySettings:
+        resolution_data: screen_data.DisplaySettings | None = kwds.get(
             "resolution_data", None
         )
         if resolution_data is None:
             # Create a new resolution data object, and check for and input settings.
-            resolution_data = screen_data.ResolutionData()
+            resolution_data = screen_data.DisplaySettings()
             if (resolution := kwds.get("resolution", None)) is not None:
                 resolution_data.resolution = resolution
             if (flags := kwds.get("flags", None)) is not None:
@@ -118,4 +118,4 @@ class Game(ABC):
             resolution_data.is_fullscreen = (
                 resolution_data.flags & pygame.FULLSCREEN
             ) or kwds.get("fullscreen", False)
-        return cast(screen_data.ResolutionData, resolution_data)
+        return cast(screen_data.DisplaySettings, resolution_data)

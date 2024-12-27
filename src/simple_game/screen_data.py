@@ -3,7 +3,7 @@ import pygame
 import pygame.typing
 
 
-class ResolutionData:
+class DisplaySettings:
 
     def __init__(
         self,
@@ -14,7 +14,7 @@ class ResolutionData:
         **kwds
     ) -> None:
         """
-        Creates a ResolutionData object.
+        Creates a DisplaySettings object.
 
         :param size: A Point-like object representing the width and height of the
         window, defaults to (800, 600)
@@ -56,7 +56,7 @@ class ResolutionData:
         -1 = Adaptive vsync (requires OpenGL flag)
         """
 
-    def rescale_window(self) -> pygame.Surface:
+    def create_window(self) -> pygame.Surface:
         """
         Updates the window based on the stored state.
 
