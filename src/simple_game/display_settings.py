@@ -1,63 +1,49 @@
+from dataclasses import dataclass
+
 import pygame
 
 import pygame.typing
 
 
+@dataclass(frozen=True)
 class DisplaySettings:
     """
     Object that contains data for generating a window for a game.
+
+    :param resolution: A Point-like object representing the width and height of the
+    window, defaults to (800, 600)
+    :param flags: Bitmask of pygame display flags, defaults to 0 (default pygame
+    flags)
+    :param display: Index of display used for set_mode
+    :param vsync: Flag for enabling vsync, defaults to 0 (off)
     """
 
-    def __init__(
-        self,
-        size: pygame.typing.Point = (800, 600),
-        flags: int = 0,
-        display: int = 0,
-        vsync: int = 0,
-        **kwds
-    ) -> None:
-        """
-        Creates a DisplaySettings object.
+    resolution: pygame.typing.Point = (800, 600)
+    """
+    A Point-like object representing the width and height of the window.
+    """
+    flags: int = 0
+    """
+    Bitmask of pygame display flags
+    """
+    display: int = 0
+    """
+    Index of display used for set_mode
+    """
+    vsync: int = 0
+    """
+    Flag for enabling vsync.
 
-        :param size: A Point-like object representing the width and height of the
-        window, defaults to (800, 600)
-        :param flags: Bitmask of pygame display flags, defaults to 0 (default pygame
-        flags)
-        :param display: Index of display used for set_mode
-        :param vsync: Flag for enabling vsync, defaults to 0 (off)
-        :param fullscreen: Boolean to force fullscreen mode (keyword-only)
-        """
-        self.is_fullscreen = (flags & pygame.FULLSCREEN) or kwds.get(
-            "fullscreen", False
-        )
-        """
-        Flag indicating that the game is operating in fullscreen mode.
-        """
-        if self.is_fullscreen:
-            # Ensure the fullscreen flag is included if the fullscreen parameter is.
-            flags = flags | pygame.FULLSCREEN
-        self.resolution = size
-        """
-        A Point-like object representing the width and height of the window.
-        """
-        self.flags = flags
-        """
-        Bitmask of pygame display flags
-        """
-        self.display = display
-        """
-        Index of display used for set_mode
-        """
-        self.vsync = vsync
-        """
-        Flag for enabling vsync.
+    0 = Off
 
-        0 = Off
+    1 = On
 
-        1 = On
+    -1 = Adaptive vsync (requires OpenGL flag)
+    """
 
-        -1 = Adaptive vsync (requires OpenGL flag)
-        """
+    @property
+    def is_fullscreen(self):
+        return self.flags & pygame.FULLSCREEN
 
     def create_window(self) -> pygame.Surface:
         """
