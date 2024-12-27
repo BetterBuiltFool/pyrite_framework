@@ -4,6 +4,9 @@ import pygame.typing
 
 
 class DisplaySettings:
+    """
+    Object that contains data for generating a window for a game.
+    """
 
     def __init__(
         self,
@@ -59,6 +62,8 @@ class DisplaySettings:
     def create_window(self) -> pygame.Surface:
         """
         Updates the window based on the stored state.
+
+        If vsync is enabled but not available, will default to disabled vsync.
 
         :return: A new surface representing the display.
         """
