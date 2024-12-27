@@ -45,7 +45,10 @@ class DisplaySettings:
     """
 
     @property
-    def is_fullscreen(self):
+    def is_fullscreen(self) -> bool:
+        """
+        Boolean indicating fullscreen status of the display.
+        """
         return self.flags & pygame.FULLSCREEN
 
     @staticmethod
@@ -53,9 +56,8 @@ class DisplaySettings:
         display_settings: DisplaySettings,
     ) -> tuple[pygame.Surface, DisplaySettings]:
         """
-        Updates the window based on the stored state.
-
-        If vsync is enabled but not available, will default to disabled vsync.
+        Creates a window based on the given display settings. If vsync is enabled but
+        not available, a new display settings is generated without vsync.
 
         :return: A new surface representing the display, and the display settings used
         by that surface.
@@ -88,6 +90,9 @@ class DisplaySettings:
 
     @staticmethod
     def get_display_settings(**kwds) -> DisplaySettings:
+        """
+        Creates a DisplaySettings object from external arguments.
+        """
         display_settings: DisplaySettings | None = kwds.get("display_settings", None)
         if display_settings is None:
             # Create a new resolution data object, and check for and input settings.
