@@ -63,20 +63,8 @@ class DisplaySettings:
         by that surface.
         """
         try:
-            window_surface = pygame.display.set_mode(
-                display_settings.resolution,
-                display_settings.flags,
-                0,
-                display_settings.display,
-                display_settings.vsync,
-            )
+            window_surface = DisplaySettings._create_window(display_settings)
         except pygame.error:
-            window_surface = pygame.display.set_mode(
-                display_settings.resolution,
-                display_settings.flags,
-                0,
-                display_settings.display,
-            )
             # Generate a new DisplaySettings without vsync enabled.
             new_settings = DisplaySettings(
                 display_settings.resolution,
@@ -85,8 +73,21 @@ class DisplaySettings:
                 vsync=False,
             )
             display_settings = new_settings
+            window_surface = DisplaySettings._create_window(display_settings)
 
         return window_surface, display_settings
+
+    @staticmethod
+    def _create_window(
+        display_settings: DisplaySettings,
+    ) -> pygame.Surface:
+        return pygame.display.set_mode(
+            display_settings.resolution,
+            display_settings.flags,
+            0,
+            display_settings.display,
+            display_settings.vsync,
+        )
 
     @staticmethod
     def get_display_settings(**kwds) -> DisplaySettings:
