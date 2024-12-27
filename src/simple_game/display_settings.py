@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 import pygame
@@ -45,21 +47,40 @@ class DisplaySettings:
     def is_fullscreen(self):
         return self.flags & pygame.FULLSCREEN
 
-    def create_window(self) -> pygame.Surface:
+    @staticmethod
+    def create_window(
+        display_settings: DisplaySettings,
+    ) -> tuple[pygame.Surface, DisplaySettings]:
         """
         Updates the window based on the stored state.
 
         If vsync is enabled but not available, will default to disabled vsync.
 
-        :return: A new surface representing the display.
+        :return: A new surface representing the display, and the display settings used
+        by that surface.
         """
         try:
             window_surface = pygame.display.set_mode(
-                self.resolution, self.flags, 0, self.display, self.vsync
+                display_settings.resolution,
+                display_settings.flags,
+                0,
+                display_settings.display,
+                display_settings.vsync,
             )
         except pygame.error:
             window_surface = pygame.display.set_mode(
-                self.resolution, self.flags, 0, self.display
+                display_settings.resolution,
+                display_settings.flags,
+                0,
+                display_settings.display,
             )
-            self.vsync = False
-        return window_surface
+            # Generate a new DisplaySettings without vsync enabled.
+            new_settings = DisplaySettings(
+                display_settings.resolution,
+                display_settings.flags,
+                display_settings.display,
+                vsync=False,
+            )
+            display_settings = new_settings
+
+        return window_surface, display_settings
