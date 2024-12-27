@@ -20,7 +20,7 @@ class Game(ABC):
         self.is_running = True
         self.clock = pygame.time.Clock()
         self.timings = self._get_timings(**kwds)
-        display_settings = self._get_display_settings(**kwds)
+        display_settings = DisplaySettings.get_display_settings(**kwds)
         self.window, self.display_settings = DisplaySettings.create_window(
             display_settings
         )
@@ -100,22 +100,3 @@ class Game(ABC):
             if (timestep := kwds.get("fixed_timestep", None)) is not None:
                 timing_data.fixed_timestep = timestep
         return cast(timings.Timings, timing_data)
-
-    def _get_display_settings(self, **kwds) -> DisplaySettings:
-        resolution_data: DisplaySettings | None = kwds.get("resolution_data", None)
-        if resolution_data is None:
-            # Create a new resolution data object, and check for and input settings.
-            resolution_data = DisplaySettings()
-            if (resolution := kwds.get("resolution", None)) is not None:
-                resolution_data.resolution = resolution
-            if (flags := kwds.get("flags", None)) is not None:
-                resolution_data.flags = flags
-            if (display := kwds.get("display", None)) is not None:
-                resolution_data.display = display
-            if (vsync := kwds.get("vsync", None)) is not None:
-                resolution_data.vsync = vsync
-
-            resolution_data.is_fullscreen = (
-                resolution_data.flags & pygame.FULLSCREEN
-            ) or kwds.get("fullscreen", False)
-        return cast(DisplaySettings, resolution_data)
