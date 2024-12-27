@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import typing
 
 import pygame
 
@@ -84,3 +85,13 @@ class DisplaySettings:
             display_settings = new_settings
 
         return window_surface, display_settings
+
+    @staticmethod
+    def get_display_settings(**kwds) -> DisplaySettings:
+        display_settings: DisplaySettings | None = kwds.get("display_settings", None)
+        if display_settings is None:
+            # Create a new resolution data object, and check for and input settings.
+            keys = {"resolution", "flags", "display", "vsync"}
+            params: dict = {key: kwds[key] for key in keys if key in kwds}
+            display_settings = DisplaySettings(**params)
+        return typing.cast(DisplaySettings, display_settings)
