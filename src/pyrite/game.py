@@ -41,9 +41,7 @@ class Game(ABC):
                 self.const_update(timestep)
                 accumulated_time -= timestep
 
-            self.pre_update(delta_time)
-            self.update(delta_time)
-            self.post_update(delta_time)
+            self._update_block(delta_time)
 
             self.render(self.window, delta_time)
             self.render_ui(self.window, delta_time)
@@ -61,6 +59,11 @@ class Game(ABC):
 
     def post_update(self, delta_time: float) -> None:
         pass
+
+    def _update_block(self, delta_time: float) -> None:
+        self.pre_update(delta_time)
+        self.update(delta_time)
+        self.post_update(delta_time)
 
     def const_update(self, delta_time: float) -> None:
         pass
