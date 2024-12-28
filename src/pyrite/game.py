@@ -8,6 +8,12 @@ import pygame
 
 
 class Game(ABC):
+    """
+    Base Game object to serve as a parent for your game.
+    Holds onto data required for generating the window and performing the main loop.
+
+    :param ABC: _description_
+    """
 
     def __init__(self, **kwds) -> None:
 
@@ -114,11 +120,16 @@ class Game(ABC):
 
 
 class AsyncGame(Game):
+    """
+    Variant of Game that runs in async mode.
+    Supports pygbag.
+    """
 
     async def start_game(self):
 
         accumulated_time: float = 0.0
 
+        # Minimum duplication to get desired results.
         while self.is_running:
             accumulated_time = self._main_loop_body(accumulated_time)
             await asyncio.sleep(0)
