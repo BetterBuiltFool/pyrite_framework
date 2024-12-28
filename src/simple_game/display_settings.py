@@ -93,6 +93,7 @@ class DisplaySettings:
     def get_display_settings(**kwds) -> DisplaySettings:
         """
         Creates a DisplaySettings object from external arguments.
+        Used for generating display setting from arguments passed into Game init.
         """
         display_settings: DisplaySettings | None = kwds.get("display_settings", None)
         if display_settings is None:
