@@ -135,4 +135,4 @@ class AsyncGame(Game):
             await asyncio.sleep(0)
 
     def main(self):
-        asyncio.run(self.start_game)
+        asyncio.run(self.start_game())
