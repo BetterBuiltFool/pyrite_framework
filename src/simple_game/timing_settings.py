@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 MAX_TICK_RATE = 120
 
 
-class Timings:
+class TimingSettings:
     def __init__(self, fps_cap: int = 0, tick_rate: float = 20) -> None:
         """
         Creates a new Timings object, which hold framerate data for a Game object.
