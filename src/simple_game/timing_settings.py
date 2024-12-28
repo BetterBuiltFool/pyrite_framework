@@ -44,7 +44,7 @@ class TimingSettings:
         self._tick_rate: float = tick_rate
         # Setting fixed timestep to 1000 if timestep is 0 in case it gets referenced
         # without checking tickrate.
-        self._fixed_timestep: float = tick_rate / 1000 if tick_rate > 0 else 1000
+        self._fixed_timestep: float = 1 / tick_rate if tick_rate > 0 else 1000
 
     @property
     def fps_cap(self) -> int:
@@ -87,7 +87,7 @@ class TimingSettings:
             logger.info(f"Tick rate set to '{target}'. 'const_update' is enabled.")
         self._tick_rate = target
         if target != 0:
-            self._fixed_timestep = target / 1000
+            self._fixed_timestep = 1 / target
         else:
             logger.info("Tick rate set to '0'. 'const_update' is disabled.")
 
@@ -106,7 +106,7 @@ class TimingSettings:
         if target <= 0:
             raise ValueError("Timestep must be greater than zero.")
         self._fixed_timestep = target
-        self._tick_rate = target * 1000
+        self._tick_rate = 1 / target
 
     @staticmethod
     def get_timing_settings(**kwds) -> TimingSettings:
