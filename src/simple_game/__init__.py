@@ -1,6 +1,6 @@
 import pygame
 
-from display_settings import DisplaySettings  # noqa:F401
+from .display_settings import DisplaySettings  # noqa:F401
 
 DEFAULT_WINDOWED: DisplaySettings = DisplaySettings()
 """
