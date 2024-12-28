@@ -42,9 +42,9 @@ class TimingSettings:
         if tick_rate < 0:
             tick_rate = 0
         self._tick_rate: float = tick_rate
-        # Setting fixed timestep to 1000 if timestep is 0 in case it gets referenced
+        # Setting fixed timestep to -1 if timestep is 0 in case it gets referenced
         # without checking tickrate.
-        self._fixed_timestep: float = 1 / tick_rate if tick_rate > 0 else 1000
+        self._fixed_timestep: float = 1 / tick_rate if tick_rate > 0 else -1
 
     @property
     def fps_cap(self) -> int:
@@ -89,6 +89,7 @@ class TimingSettings:
         if target != 0:
             self._fixed_timestep = 1 / target
         else:
+            self._fixed_timestep = -1
             logger.info("Tick rate set to '0'. 'const_update' is disabled.")
 
     @property
@@ -96,6 +97,8 @@ class TimingSettings:
         """
         Length of the timestep between constant updates. Setting this value
         recalculates tick_rate.
+
+        A returned value of -1 indicates tick_rate is '0' and const_update is disabled.
 
         Must be greater than 0.
         """
