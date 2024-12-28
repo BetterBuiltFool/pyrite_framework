@@ -4,7 +4,26 @@ import logging
 import typing
 
 logger = logging.getLogger(__name__)
-MAX_TICK_RATE = 120
+
+MAX_TICK_RATE_WARNING = 120.0
+"""
+Maximum tick rate. Setting tick rate above this value will cause a warning to be logged.
+"""
+
+
+def set_max_tickrate(value: float):
+    """
+    Adjusts the value
+
+    :param value: _description_
+    """
+    if value <= 0:
+        logger.warning(
+            "Setting MAX_TICK_RATE_WARNING below 1 will cause the warning to apply to "
+            "all valid tickrates."
+        )
+    global MAX_TICK_RATE_WARNING
+    MAX_TICK_RATE_WARNING = value
 
 
 class TimingSettings:
@@ -60,11 +79,15 @@ class TimingSettings:
                 "const_update)"
             )
             target = 0
-        if target > MAX_TICK_RATE:
+        if target > MAX_TICK_RATE_WARNING:
             logger.warning("High tick rates may cause instability. Use with caution.")
+        if self._tick_rate == 0 and target != 0:
+            logger.info(f"Tick rate set to '{target}'. 'const_update' is enabled.")
         self._tick_rate = target
         if target != 0:
             self._fixed_timestep = target / 1000
+        else:
+            logger.info("Tick rate set to '0'. 'const_update' is disabled.")
 
     @property
     def fixed_timestep(self) -> float:
