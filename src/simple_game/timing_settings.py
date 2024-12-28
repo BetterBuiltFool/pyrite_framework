@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+import typing
 
 logger = logging.getLogger(__name__)
 MAX_TICK_RATE = 120
@@ -79,3 +82,17 @@ class TimingSettings:
             raise ValueError("Timestep must be greater than zero.")
         self._fixed_timestep = target
         self._tick_rate = target * 1000
+
+    @staticmethod
+    def get_timing_settings(**kwds) -> TimingSettings:
+        """
+        Creates a TimingSettings object from external arguments.
+        Used for generating timing settings from arguments passed into Game init.
+        """
+        timing_data: TimingSettings | None = kwds.get("timing_data", None)
+        if timing_data is None:
+            # Creates a new TimingSettings if one hasn't been passed.
+            keys: set = {"fps_cap", "tick_rate", "fixed_timestep"}
+            params: dict = {key: kwds[key] for key in keys if key in kwds}
+            timing_data = TimingSettings(**params)
+        return typing.cast(TimingSettings, timing_data)
