@@ -29,21 +29,26 @@ class Game(ABC):
         accumulated_time: float = 0.0
 
         while self.is_running:
+            accumulated_time = self._main_loop_body(accumulated_time)
 
-            delta_time, accumulated_time = self._get_frame_time(
-                self.timings.fps_cap, accumulated_time
+    def _main_loop_body(self, accumulated_time: float) -> float:
+
+        delta_time, accumulated_time = self._get_frame_time(
+            self.timings.fps_cap, accumulated_time
+        )
+
+        self.handle_events(pygame.event.get())
+
+        if self.timings.tick_rate > 0:
+            accumulated_time = self._fixed_update_block(
+                self.timings.fixed_timestep, accumulated_time
             )
 
-            self.handle_events(pygame.event.get())
+        self._update_block(delta_time)
 
-            if self.timings.tick_rate > 0:
-                accumulated_time = self._fixed_update_block(
-                    self.timings.fixed_timestep, accumulated_time
-                )
+        self._render_block(self.window, delta_time)
 
-            self._update_block(delta_time)
-
-            self._render_block(self.window, delta_time)
+        return accumulated_time
 
     def start_game(self):
         self.main()
