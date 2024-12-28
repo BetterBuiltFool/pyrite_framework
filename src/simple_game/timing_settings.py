@@ -100,7 +100,8 @@ class TimingSettings:
 
         A returned value of -1 indicates tick_rate is '0' and const_update is disabled.
 
-        Must be greater than 0.
+        :raises ValueError: Errors when set to zero or less. Tick rate must be disabled
+        by setting tick_rate to 0.
         """
         return self._fixed_timestep
 
