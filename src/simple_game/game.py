@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import cast
 
-import simple_game.timings as timings
+import src.simple_game.timings as timings
+from src.simple_game.display_settings import DisplaySettings
 
 import pygame
 
@@ -17,9 +18,12 @@ class Game(ABC):
             pygame.init()
 
         self.is_running = True
-        self.window: pygame.Surface
         self.clock = pygame.time.Clock()
         self.timings = self._get_timings(**kwds)
+        display_settings = DisplaySettings.get_display_settings(**kwds)
+        self.window, self.display_settings = DisplaySettings.create_window(
+            display_settings
+        )
 
     def main(self) -> None:
 
