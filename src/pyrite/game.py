@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import asyncio
 
 from src.pyrite.timing_settings import TimingSettings
 from src.pyrite.display_settings import DisplaySettings
@@ -110,3 +111,17 @@ class Game(ABC):
     @abstractmethod
     def handle_event(self, event: pygame.Event) -> None:
         pass
+
+
+class AsyncGame(Game):
+
+    async def main(self):
+
+        accumulated_time: float = 0.0
+
+        while self.is_running:
+            accumulated_time = self._main_loop_body(accumulated_time)
+            await asyncio.sleep(0)
+
+    def start_game(self):
+        asyncio.run(self.main)
