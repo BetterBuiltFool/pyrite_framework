@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import pathlib
 import sys
+from typing import Self
 import unittest
 
 import pygame
@@ -9,7 +12,76 @@ sys.path.append(str(pathlib.Path.cwd()))
 from src.simple_game.display_settings import DisplaySettings  # noqa:E402
 
 
+class MockSurface:
+    """
+    A simple singleton object to fill in for a surface.
+    """
+
+    _instance: MockSurface = None
+
+    def __new__(cls, *args, **kwds) -> Self:
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwds)
+        return cls._instance
+
+
 class TestDisplay(unittest.TestCase):
+
+    def test_create_window(self):
+
+        vsync_allowed: bool = True
+
+        def mock_create_window(
+            display_settings: DisplaySettings,
+        ) -> pygame.Surface:
+            if not display_settings.vsync == 1 or (
+                vsync_allowed and display_settings.vsync == 1
+            ):
+                # Cast our mock as a surface to satisfy Mypy
+                surf: pygame.Surface = MockSurface()
+                return surf
+            raise pygame.error()
+
+        DisplaySettings._create_window = mock_create_window
+
+        # default settings, vsync allowed (moot)
+
+        test_settings = DisplaySettings()
+
+        mocked_surf, result_settings = DisplaySettings.create_window(test_settings)
+
+        self.assertEqual(mocked_surf, MockSurface())
+        self.assertIs(test_settings, result_settings)
+
+        # default settings, vsync disallowed
+
+        test_settings = DisplaySettings()
+        vsync_allowed = False
+
+        mocked_surf, result_settings = DisplaySettings.create_window(test_settings)
+
+        self.assertEqual(mocked_surf, MockSurface())
+        self.assertIs(test_settings, result_settings)
+
+        # vsync enabled, vsync allowed
+
+        test_settings = DisplaySettings(vsync=1)
+        vsync_allowed = True
+
+        mocked_surf, result_settings = DisplaySettings.create_window(test_settings)
+
+        self.assertEqual(mocked_surf, MockSurface())
+        self.assertIs(test_settings, result_settings)
+
+        # vsync enabled, vsync disallowed
+
+        test_settings = DisplaySettings(vsync=1)
+        vsync_allowed = False
+
+        mocked_surf, result_settings = DisplaySettings.create_window(test_settings)
+
+        self.assertEqual(mocked_surf, MockSurface())
+        self.assertIsNot(test_settings, result_settings)
 
     def test_get_display_settings(self):
         # Ideal case (All settings, no extras)
