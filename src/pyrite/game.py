@@ -43,10 +43,7 @@ class Game(ABC):
 
             self._update_block(delta_time)
 
-            self.render(self.window, delta_time)
-            self.render_ui(self.window, delta_time)
-
-            pygame.display.flip()
+            self._render_block(self.window, delta_time)
 
     def start_game(self):
         self.main()
@@ -86,6 +83,12 @@ class Game(ABC):
 
     def render_ui(self, window: pygame.Surface, delta_time: float) -> None:
         pass
+
+    def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
+        self.render(window, delta_time)
+        self.render_ui(window, delta_time)
+
+        pygame.display.flip()
 
     def quit(self) -> None:
         self.is_running = False
