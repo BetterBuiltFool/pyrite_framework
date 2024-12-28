@@ -1,6 +1,6 @@
 import unittest
 
-from src.simple_game.game import Game
+from src.pyrite.game import Game
 
 
 class Test(Game):

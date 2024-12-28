@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from src.simple_game.timing_settings import TimingSettings
-from src.simple_game.display_settings import DisplaySettings
+from src.pyrite.timing_settings import TimingSettings
+from src.pyrite.display_settings import DisplaySettings
 
 import pygame
 

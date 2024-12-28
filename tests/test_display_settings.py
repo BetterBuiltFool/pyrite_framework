@@ -9,7 +9,7 @@ import pygame
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.simple_game.display_settings import DisplaySettings  # noqa:E402
+from src.pyrite.display_settings import DisplaySettings  # noqa:E402
 
 
 class MockSurface:
