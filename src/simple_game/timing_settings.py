@@ -38,10 +38,12 @@ class TimingSettings:
         """
         if fps_cap < 0:
             fps_cap = 0
-        self._fps_cap = fps_cap
+        self._fps_cap: int = fps_cap
         if tick_rate < 0:
             tick_rate = 0
-        self._tick_rate = tick_rate
+        self._tick_rate: float = tick_rate
+        # Setting fixed timestep to 1000 if timestep is 0 in case it gets referenced
+        # without checking tickrate.
         self._fixed_timestep: float = tick_rate / 1000 if tick_rate > 0 else 1000
 
     @property
