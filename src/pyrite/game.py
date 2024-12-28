@@ -25,7 +25,10 @@ class Game(ABC):
             display_settings
         )
 
-    def main(self) -> None:
+    def main(self):
+        self.start_game()
+
+    def start_game(self) -> None:
 
         accumulated_time: float = 0.0
 
@@ -50,9 +53,6 @@ class Game(ABC):
         self._render_block(self.window, delta_time)
 
         return accumulated_time
-
-    def start_game(self):
-        self.main()
 
     def _get_frame_time(
         self, fps_cap: int, accumulated_time: float = 0
@@ -115,7 +115,7 @@ class Game(ABC):
 
 class AsyncGame(Game):
 
-    async def main(self):
+    async def start_game(self):
 
         accumulated_time: float = 0.0
 
@@ -123,5 +123,5 @@ class AsyncGame(Game):
             accumulated_time = self._main_loop_body(accumulated_time)
             await asyncio.sleep(0)
 
-    def start_game(self):
-        asyncio.run(self.main)
+    def main(self):
+        asyncio.run(self.start_game)
