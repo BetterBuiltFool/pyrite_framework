@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
 import asyncio
+from types import TracebackType
+from typing import Self
 
 from src.pyrite.timing_settings import TimingSettings
 from src.pyrite.display_settings import DisplaySettings
@@ -7,7 +8,7 @@ from src.pyrite.display_settings import DisplaySettings
 import pygame
 
 
-class Game(ABC):
+class Game:
     """
     Base Game object to serve as a parent for your game.
     Holds onto data required for generating the window and performing the main loop.
@@ -15,8 +16,12 @@ class Game(ABC):
 
     def __init__(self, **kwds) -> None:
 
-        suppress_init = kwds.get("suppress_init", False)
-        self.debug_mode = kwds.get("debug_mode", False)
+        suppress_init: bool = kwds.get("suppress_init", False)
+        self.debug_mode: bool = kwds.get("debug_mode", False)
+        self.suppress_context_errors: bool = kwds.get("suppress_context_errors", False)
+        """
+        Whether errors generated during context manager function should be suppressed.
+        """
 
         if not suppress_init:
             pygame.init()
@@ -28,6 +33,24 @@ class Game(ABC):
         self.window, self.display_settings = DisplaySettings.create_window(
             display_settings
         )
+
+    def __enter__(self) -> Self:
+        """
+        Basicmost __enter__ implementation.
+        """
+        return self
+
+    def __exit__(
+        self,
+        exception_type: type[Exception] | None,
+        exception_value: Exception | None,
+        traceback: TracebackType | None,
+    ):
+        if exception_value is None or self.suppress_context_errors:
+            # suppress_context_errors allows us to start regardless of any errors,
+            # and hides them from the output.
+            self.main()
+        return self.suppress_context_errors
 
     def main(self):
         """
@@ -217,7 +240,6 @@ class Game(ABC):
                 self.quit_called()
             self.handle_event(event)
 
-    @abstractmethod
     def handle_event(self, event: pygame.Event) -> None:
         """
         Method hook for event behavior.
