@@ -29,10 +29,10 @@ class Game:
         self.is_running = True
         self.clock = pygame.time.Clock()
         self.timing_settings = TimingSettings.get_timing_settings(**kwds)
-        display_settings = DisplaySettings.get_display_settings(**kwds)
-        self.window, self.display_settings = DisplaySettings.create_window(
-            display_settings
-        )
+        self.display_settings = DisplaySettings.get_display_settings(**kwds)
+        # Get a surface the size of the requested resolution.
+        # This way, a surface exists even if the a window hasn't been created.
+        self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
     def __enter__(self) -> Self:
         """
@@ -52,6 +52,15 @@ class Game:
             self.main()
         return self.suppress_context_errors
 
+    def create_window(self):
+        """
+        Generates a window from current display settings.
+        The game's window and display settings are updated to reflect the new window.
+        """
+        self.window, self.display_settings = DisplaySettings.create_window(
+            self.display_settings
+        )
+
     def main(self):
         """
         The main entry point for the game. By default, calls start_game(), but can be
@@ -60,6 +69,7 @@ class Game:
         For example, a function could be called to create a special early loop for
         loading in resources before calling the main game loop.
         """
+        self.create_window()
         self.start_game()
 
     def start_game(self) -> None:
@@ -276,4 +286,5 @@ class AsyncGame(Game):
         """
         Main entry point for the game. By default, starts a thread from start_game().
         """
+        self.create_window()
         asyncio.run(self.start_game())
