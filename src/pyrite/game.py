@@ -2,8 +2,9 @@ import asyncio
 from types import TracebackType
 from typing import Self
 
-from src.pyrite.timing_settings import TimingSettings
 from src.pyrite.display_settings import DisplaySettings
+from src.pyrite.metadata import Metadata
+from src.pyrite.timing_settings import TimingSettings
 
 import pygame
 
@@ -28,8 +29,13 @@ class Game:
 
         self.is_running = True
         self.clock = pygame.time.Clock()
-        self.timing_settings = TimingSettings.get_timing_settings(**kwds)
+
+        # Extract various settings and metadata from keyword arguments.
+        # Creates defaults if none are provided.
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
+        self.metadata = Metadata.get_metadata(**kwds)
+        self.timing_settings = TimingSettings.get_timing_settings(**kwds)
+
         # Get a surface the size of the requested resolution.
         # This way, a surface exists even if the a window hasn't been created.
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
@@ -55,8 +61,11 @@ class Game:
     def create_window(self):
         """
         Generates a window from current display settings.
+        Updates the icon, if possible.
         The game's window and display settings are updated to reflect the new window.
         """
+        if self.metadata.icon is not None:
+            pygame.display.set_icon(self.metadata.icon)
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
@@ -103,6 +112,7 @@ class Game:
 
         self._update_block(delta_time)
 
+        pygame.display.set_caption(self.metadata.caption)
         self._render_block(self.window, delta_time)
 
         return accumulated_time
