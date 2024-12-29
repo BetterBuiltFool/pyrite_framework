@@ -51,6 +51,10 @@ class Game:
         return self.suppress_context_errors
 
     def create_window(self):
+        """
+        Generates a window from current display settings.
+        The game's window and display settings are updated to reflect the new window.
+        """
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
