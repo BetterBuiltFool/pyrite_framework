@@ -30,7 +30,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.timing_settings = TimingSettings.get_timing_settings(**kwds)
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
-        self.windows: pygame.Surface = pygame.Surface((0, 0))
+        # Get a surface the size of the requested resolution.
+        # This way, a surface exists even if the a window hasn't been created.
+        self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
     def __enter__(self) -> Self:
         """
