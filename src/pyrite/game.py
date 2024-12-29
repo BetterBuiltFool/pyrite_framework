@@ -61,7 +61,7 @@ class Game(ABC):
             self.timing_settings.fps_cap, accumulated_time
         )
 
-        self.handle_events(pygame.event.get())
+        self.process_events(pygame.event.get())
 
         if self.timing_settings.tick_rate > 0:
             accumulated_time = self._fixed_update_block(
@@ -204,7 +204,7 @@ class Game(ABC):
         """
         self.quit()
 
-    def handle_events(self, events: list[pygame.Event]) -> None:
+    def process_events(self, events: list[pygame.Event]) -> None:
         """
         Takes the list of events generated, and processes them.
         by default, the events are passed on to handle_event.
