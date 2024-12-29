@@ -15,7 +15,7 @@ class Metadata:
     """
     The name of the game.
     """
-    caption: str = name
+    caption: str = None
     """
     Text displayed by the title bar. Defaults to the game's name.
     """
@@ -24,6 +24,10 @@ class Metadata:
     Icon displayed in the title bar. 'None' uses the default pygame icon. Changes will
     only go into effect when the window is recreated.
     """
+
+    def __post_init__(self):
+        if self.caption is None:
+            self.caption = self.name
 
     @staticmethod
     def get_metadata(**kwds) -> Metadata:
