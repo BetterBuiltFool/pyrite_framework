@@ -25,7 +25,7 @@ class Game(ABC):
 
         self.is_running = True
         self.clock = pygame.time.Clock()
-        self.timings = TimingSettings.get_timing_settings(**kwds)
+        self.timing_settings = TimingSettings.get_timing_settings(**kwds)
         display_settings = DisplaySettings.get_display_settings(**kwds)
         self.window, self.display_settings = DisplaySettings.create_window(
             display_settings
@@ -44,14 +44,14 @@ class Game(ABC):
     def _main_loop_body(self, accumulated_time: float) -> float:
 
         delta_time, accumulated_time = self._get_frame_time(
-            self.timings.fps_cap, accumulated_time
+            self.timing_settings.fps_cap, accumulated_time
         )
 
         self.handle_events(pygame.event.get())
 
-        if self.timings.tick_rate > 0:
+        if self.timing_settings.tick_rate > 0:
             accumulated_time = self._fixed_update_block(
-                self.timings.fixed_timestep, accumulated_time
+                self.timing_settings.fixed_timestep, accumulated_time
             )
 
         self._update_block(delta_time)
