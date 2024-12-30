@@ -133,6 +133,9 @@ class Game:
         accumulated_time += delta_time
         return (delta_time, accumulated_time)
 
+    def _monkeypatch_method(self, method: Callable, new_method: Callable):
+        self.__dict__[method.__name__] = MethodType(new_method, self)
+
     def pre_update(self, delta_time: float) -> None:
         """
         Early update function. Used for game logic that needs to run _before_ the main
@@ -176,16 +179,16 @@ class Game:
         pass
 
     def change_pre_update(self, new_pre_update: Callable):
-        self.pre_update = MethodType(new_pre_update, self)
+        self._monkeypatch_method(self.pre_update, new_pre_update)
 
     def change_update(self, new_update: Callable):
-        self.update = MethodType(new_update, self)
+        self._monkeypatch_method(self.update, new_update)
 
     def change_post_update(self, new_post_update: Callable):
-        self.post_update = MethodType(new_post_update, self)
+        self._monkeypatch_method(self.post_update, new_post_update)
 
     def change_const_update(self, new_const_update: Callable):
-        self.const_update = MethodType(new_const_update, self)
+        self._monkeypatch_method(self.const_update, new_const_update)
 
     def _update_block(self, delta_time: float) -> None:
         """
@@ -236,10 +239,10 @@ class Game:
         pass
 
     def change_render(self, new_render: Callable):
-        self.render = MethodType(new_render, self)
+        self._monkeypatch_method(self.render, new_render)
 
     def change_render_ui(self, new_render_ui: Callable):
-        self.render_ui = MethodType(new_render_ui, self)
+        self._monkeypatch_method(self.render_ui, new_render_ui)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
