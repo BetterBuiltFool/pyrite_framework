@@ -1,5 +1,6 @@
 import asyncio
-from types import TracebackType
+from collections.abc import Callable
+from types import MethodType, TracebackType
 from typing import Self
 
 from src.pyrite.display_settings import DisplaySettings
@@ -132,6 +133,16 @@ class Game:
         accumulated_time += delta_time
         return (delta_time, accumulated_time)
 
+    def _monkeypatch_method(self, method: Callable, new_method: Callable) -> None:
+        """
+        Internal method. Used to replace 'method' with 'new_method'.
+        Update methods and render methods each have their own patching method.
+
+        :param method: Method being replaced
+        :param new_method: Replacement method
+        """
+        self.__dict__[method.__name__] = MethodType(new_method, self)
+
     def pre_update(self, delta_time: float) -> None:
         """
         Early update function. Used for game logic that needs to run _before_ the main
@@ -158,6 +169,72 @@ class Game:
         """
         pass
 
+    def const_update(self, delta_time: float) -> None:
+        """
+        Update function that runs at a constant rate. Useful for anything that is
+        sensitive to variations in frame time, such as physics.
+
+        This is a basic, naïve implementation of a fixed timestep, and can be a bit
+        jittery, especially when the tick rate and frame rate are not multiples of
+        eachother.
+
+        For more info, see Glenn Fiedler's "Fix Your Timestep!"
+
+        :param delta_time: Simulated time passed since last update. Passed in from the
+        game's timing_settings.
+        """
+        pass
+
+    def patch_pre_update(self, new_pre_update: Callable) -> None:
+        """
+        Override the default pre_update method with the supplied function.
+        Supplied function must match default pre_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_pre_update: Callable matching pre_update signature.
+        """
+        self._monkeypatch_method(self.pre_update, new_pre_update)
+
+    def patch_update(self, new_update: Callable) -> None:
+        """
+        Override the default update method with the supplied function.
+        Supplied function must match default update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_update: Callable matching update signature.
+        """
+        self._monkeypatch_method(self.update, new_update)
+
+    def patch_post_update(self, new_post_update: Callable) -> None:
+        """
+        Override the default post_update method with the supplied function.
+        Supplied function must match default post_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_post_update: Callable matching post_update signature.
+        """
+        self._monkeypatch_method(self.post_update, new_post_update)
+
+    def patch_const_update(self, new_const_update: Callable) -> None:
+        """
+        Override the default const_update method with the supplied function.
+        Supplied function must match default const_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_const_update: Callable matching const_update signature.
+        """
+        self._monkeypatch_method(self.const_update, new_const_update)
+
+    def _update_block(self, delta_time: float) -> None:
+        """
+        Calls all of the update phases, in order.
+
+        :param delta_time: Actual time passed since last frame, in seconds.
+        """
+        self.pre_update(delta_time)
+        self.update(delta_time)
+        self.post_update(delta_time)
+
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
         Runs const_update so long as accumulated time is greater than the timestep.
@@ -177,32 +254,6 @@ class Game:
             accumulated_time -= timestep
         return accumulated_time
 
-    def _update_block(self, delta_time: float) -> None:
-        """
-        Calls all of the update phases, in order.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
-        """
-        self.pre_update(delta_time)
-        self.update(delta_time)
-        self.post_update(delta_time)
-
-    def const_update(self, delta_time: float) -> None:
-        """
-        Update function that runs at a constant rate. Useful for anything that is
-        sensitive to variations in frame time, such as physics.
-
-        This is a basic, naïve implementation of a fixed timestep, and can be a bit
-        jittery, especially when the tick rate and frame rate are not multiples of
-        eachother.
-
-        For more info, see Glenn Fiedler's "Fix Your Timestep!"
-
-        :param delta_time: Simulated time passed since last update. Passed in from the
-        game's timing_settings.
-        """
-        pass
-
     def render(self, window: pygame.Surface, delta_time: float) -> None:
         """
         Main drawing phase. Used for rendering active game objects to the screen.
@@ -221,6 +272,26 @@ class Game:
         :param delta_time: Time passed since last frame, in seconds.
         """
         pass
+
+    def patch_render(self, new_render: Callable) -> None:
+        """
+        Override the default render method with the supplied function.
+        Supplied function must match default render signature.
+        Signature is: (self: Game, window: Surface, delta_time: float)
+
+        :param new_render: Callable matching render signature.
+        """
+        self._monkeypatch_method(self.render, new_render)
+
+    def patch_render_ui(self, new_render_ui: Callable) -> None:
+        """
+        Override the default render_ui method with the supplied function.
+        Supplied function must match default render_ui signature.
+        Signature is: (self: Game, window: Surface, delta_time: float)
+
+        :param new_render_ui: Callable matching render_ui signature.
+        """
+        self._monkeypatch_method(self.render_ui, new_render_ui)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
