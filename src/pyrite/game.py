@@ -171,6 +171,32 @@ class Game:
     def change_const_update(self, new_const_update: Callable):
         pass
 
+    def const_update(self, delta_time: float) -> None:
+        """
+        Update function that runs at a constant rate. Useful for anything that is
+        sensitive to variations in frame time, such as physics.
+
+        This is a basic, naïve implementation of a fixed timestep, and can be a bit
+        jittery, especially when the tick rate and frame rate are not multiples of
+        eachother.
+
+        For more info, see Glenn Fiedler's "Fix Your Timestep!"
+
+        :param delta_time: Simulated time passed since last update. Passed in from the
+        game's timing_settings.
+        """
+        pass
+
+    def _update_block(self, delta_time: float) -> None:
+        """
+        Calls all of the update phases, in order.
+
+        :param delta_time: Actual time passed since last frame, in seconds.
+        """
+        self.pre_update(delta_time)
+        self.update(delta_time)
+        self.post_update(delta_time)
+
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
         Runs const_update so long as accumulated time is greater than the timestep.
@@ -189,32 +215,6 @@ class Game:
             self.const_update(timestep)
             accumulated_time -= timestep
         return accumulated_time
-
-    def _update_block(self, delta_time: float) -> None:
-        """
-        Calls all of the update phases, in order.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
-        """
-        self.pre_update(delta_time)
-        self.update(delta_time)
-        self.post_update(delta_time)
-
-    def const_update(self, delta_time: float) -> None:
-        """
-        Update function that runs at a constant rate. Useful for anything that is
-        sensitive to variations in frame time, such as physics.
-
-        This is a basic, naïve implementation of a fixed timestep, and can be a bit
-        jittery, especially when the tick rate and frame rate are not multiples of
-        eachother.
-
-        For more info, see Glenn Fiedler's "Fix Your Timestep!"
-
-        :param delta_time: Simulated time passed since last update. Passed in from the
-        game's timing_settings.
-        """
-        pass
 
     def render(self, window: pygame.Surface, delta_time: float) -> None:
         """
