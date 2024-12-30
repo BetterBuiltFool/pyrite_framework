@@ -133,7 +133,14 @@ class Game:
         accumulated_time += delta_time
         return (delta_time, accumulated_time)
 
-    def _monkeypatch_method(self, method: Callable, new_method: Callable):
+    def _monkeypatch_method(self, method: Callable, new_method: Callable) -> None:
+        """
+        Internal method. Used to replace 'method' with 'new_method'.
+        Update methods and render methods each have their own patching method.
+
+        :param method: Method being replaced
+        :param new_method: Replacement method
+        """
         self.__dict__[method.__name__] = MethodType(new_method, self)
 
     def pre_update(self, delta_time: float) -> None:
@@ -178,16 +185,44 @@ class Game:
         """
         pass
 
-    def change_pre_update(self, new_pre_update: Callable):
+    def change_pre_update(self, new_pre_update: Callable) -> None:
+        """
+        Override the default pre_update method with the supplied function.
+        Supplied function must match default pre_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_pre_update: Callable matching pre_update signature.
+        """
         self._monkeypatch_method(self.pre_update, new_pre_update)
 
-    def change_update(self, new_update: Callable):
+    def change_update(self, new_update: Callable) -> None:
+        """
+        Override the default update method with the supplied function.
+        Supplied function must match default update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_update: Callable matching update signature.
+        """
         self._monkeypatch_method(self.update, new_update)
 
-    def change_post_update(self, new_post_update: Callable):
+    def change_post_update(self, new_post_update: Callable) -> None:
+        """
+        Override the default post_update method with the supplied function.
+        Supplied function must match default post_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_post_update: Callable matching post_update signature.
+        """
         self._monkeypatch_method(self.post_update, new_post_update)
 
-    def change_const_update(self, new_const_update: Callable):
+    def change_const_update(self, new_const_update: Callable) -> None:
+        """
+        Override the default const_update method with the supplied function.
+        Supplied function must match default const_update signature.
+        Signature is: (self: Game, delta_time: float)
+
+        :param new_const_update: Callable matching const_update signature.
+        """
         self._monkeypatch_method(self.const_update, new_const_update)
 
     def _update_block(self, delta_time: float) -> None:
@@ -238,10 +273,24 @@ class Game:
         """
         pass
 
-    def change_render(self, new_render: Callable):
+    def change_render(self, new_render: Callable) -> None:
+        """
+        Override the default render method with the supplied function.
+        Supplied function must match default render signature.
+        Signature is: (self: Game, window: Surface, delta_time: float)
+
+        :param new_render: Callable matching render signature.
+        """
         self._monkeypatch_method(self.render, new_render)
 
-    def change_render_ui(self, new_render_ui: Callable):
+    def change_render_ui(self, new_render_ui: Callable) -> None:
+        """
+        Override the default render_ui method with the supplied function.
+        Supplied function must match default render_ui signature.
+        Signature is: (self: Game, window: Surface, delta_time: float)
+
+        :param new_render_ui: Callable matching render_ui signature.
+        """
         self._monkeypatch_method(self.render_ui, new_render_ui)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
