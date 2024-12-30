@@ -185,7 +185,7 @@ class Game:
         """
         pass
 
-    def change_pre_update(self, new_pre_update: Callable) -> None:
+    def patch_pre_update(self, new_pre_update: Callable) -> None:
         """
         Override the default pre_update method with the supplied function.
         Supplied function must match default pre_update signature.
@@ -195,7 +195,7 @@ class Game:
         """
         self._monkeypatch_method(self.pre_update, new_pre_update)
 
-    def change_update(self, new_update: Callable) -> None:
+    def patch_update(self, new_update: Callable) -> None:
         """
         Override the default update method with the supplied function.
         Supplied function must match default update signature.
@@ -205,7 +205,7 @@ class Game:
         """
         self._monkeypatch_method(self.update, new_update)
 
-    def change_post_update(self, new_post_update: Callable) -> None:
+    def patch_post_update(self, new_post_update: Callable) -> None:
         """
         Override the default post_update method with the supplied function.
         Supplied function must match default post_update signature.
@@ -215,7 +215,7 @@ class Game:
         """
         self._monkeypatch_method(self.post_update, new_post_update)
 
-    def change_const_update(self, new_const_update: Callable) -> None:
+    def patch_const_update(self, new_const_update: Callable) -> None:
         """
         Override the default const_update method with the supplied function.
         Supplied function must match default const_update signature.
@@ -273,7 +273,7 @@ class Game:
         """
         pass
 
-    def change_render(self, new_render: Callable) -> None:
+    def patch_render(self, new_render: Callable) -> None:
         """
         Override the default render method with the supplied function.
         Supplied function must match default render signature.
@@ -283,7 +283,7 @@ class Game:
         """
         self._monkeypatch_method(self.render, new_render)
 
-    def change_render_ui(self, new_render_ui: Callable) -> None:
+    def patch_render_ui(self, new_render_ui: Callable) -> None:
         """
         Override the default render_ui method with the supplied function.
         Supplied function must match default render_ui signature.
