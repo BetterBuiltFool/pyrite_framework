@@ -1,5 +1,6 @@
 import asyncio
-from types import TracebackType
+from collections.abc import Callable
+from types import MethodType, TracebackType
 from typing import Self
 
 from src.pyrite.display_settings import DisplaySettings
@@ -158,6 +159,18 @@ class Game:
         """
         pass
 
+    def change_pre_update(self, new_pre_update: Callable):
+        pass
+
+    def change_update(self, new_update: Callable):
+        pass
+
+    def change_post_update(self, new_post_update: Callable):
+        pass
+
+    def change_const_update(self, new_const_update: Callable):
+        pass
+
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
         Runs const_update so long as accumulated time is greater than the timestep.
@@ -220,6 +233,12 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
+        pass
+
+    def change_render(self, new_render: Callable):
+        pass
+
+    def change_render_ui(self, new_render_ui: Callable):
         pass
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
