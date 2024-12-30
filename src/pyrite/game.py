@@ -159,18 +159,6 @@ class Game:
         """
         pass
 
-    def change_pre_update(self, new_pre_update: Callable):
-        pass
-
-    def change_update(self, new_update: Callable):
-        pass
-
-    def change_post_update(self, new_post_update: Callable):
-        pass
-
-    def change_const_update(self, new_const_update: Callable):
-        pass
-
     def const_update(self, delta_time: float) -> None:
         """
         Update function that runs at a constant rate. Useful for anything that is
@@ -185,6 +173,18 @@ class Game:
         :param delta_time: Simulated time passed since last update. Passed in from the
         game's timing_settings.
         """
+        pass
+
+    def change_pre_update(self, new_pre_update: Callable):
+        pass
+
+    def change_update(self, new_update: Callable):
+        pass
+
+    def change_post_update(self, new_post_update: Callable):
+        pass
+
+    def change_const_update(self, new_const_update: Callable):
         pass
 
     def _update_block(self, delta_time: float) -> None:
