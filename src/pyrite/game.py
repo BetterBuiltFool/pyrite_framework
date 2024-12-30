@@ -176,16 +176,16 @@ class Game:
         pass
 
     def change_pre_update(self, new_pre_update: Callable):
-        pass
+        self.pre_update = MethodType(new_pre_update, self)
 
     def change_update(self, new_update: Callable):
-        pass
+        self.update = MethodType(new_update, self)
 
     def change_post_update(self, new_post_update: Callable):
-        pass
+        self.post_update = MethodType(new_post_update, self)
 
     def change_const_update(self, new_const_update: Callable):
-        pass
+        self.const_update = MethodType(new_const_update, self)
 
     def _update_block(self, delta_time: float) -> None:
         """
@@ -236,10 +236,10 @@ class Game:
         pass
 
     def change_render(self, new_render: Callable):
-        pass
+        self.render = MethodType(new_render, self)
 
     def change_render_ui(self, new_render_ui: Callable):
-        pass
+        self.render_ui = MethodType(new_render_ui, self)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
