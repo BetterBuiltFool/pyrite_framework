@@ -2,8 +2,10 @@ import asyncio
 from collections.abc import Callable
 from types import MethodType, TracebackType
 from typing import Self
+from weakref import WeakSet
 
 from src.pyrite.display_settings import DisplaySettings
+from src.pyrite.updateable import Updateable, Renderable
 from src.pyrite.metadata import Metadata
 from src.pyrite.timing_settings import TimingSettings
 
@@ -41,6 +43,10 @@ class Game:
         # This way, a surface exists even if the a window hasn't been created.
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
+        # Make a WeakSet each for containing active updateables and renderables.
+        self.updateables: WeakSet[Updateable] = WeakSet()
+        self.renderables: WeakSet[Renderable] = WeakSet()
+
     def __enter__(self) -> Self:
         """
         Basicmost __enter__ implementation.
@@ -58,6 +64,27 @@ class Game:
             # and hides them from the output.
             self.main()
         return self.suppress_context_errors
+
+    def spawn(
+        self, cls: type[Updateable | Renderable], *args, **kwds
+    ) -> Updateable | Renderable:
+        item = cls(*args, **kwds)
+
+        if not kwds.get("enabled", True):
+            # Only add to the list if enabled.
+            self.enable(item)
+
+        return item
+
+    def enable(self, item: Updateable | Renderable) -> None:
+        if isinstance(item, Updateable):
+            self.updateables.add(item)
+        if isinstance(item, Renderable):
+            self.renderables.add(item)
+
+    def disable(self, item: Updateable | Renderable) -> None:
+        self.updateables.discard(item)
+        self.renderables.discard(item)
 
     def create_window(self):
         """
