@@ -33,7 +33,7 @@ class Entity(_BaseType):
         """
         pass
 
-    def const_update(self, delta_time: float) -> None:
+    def const_update(self, timestep: float) -> None:
         """
         A method that is called during the const_update phase.
         Useful for behavior that is sensitive to time fluctuations,
@@ -44,6 +44,6 @@ class Entity(_BaseType):
         const_update may be called any number of times per frame,
         depending on timestep length.
 
-        :param delta_time: Length of the timestep being simulated.
+        :param timestep: Length of the timestep being simulated.
         """
         pass

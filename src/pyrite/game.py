@@ -218,7 +218,7 @@ class Game:
         for entity in self.entity_manager.entities:
             entity.post_update(delta_time)
 
-    def const_update(self, delta_time: float) -> None:
+    def const_update(self, timestep: float) -> None:
         """
         Update function that runs at a constant rate. Useful for anything that is
         sensitive to variations in frame time, such as physics.
@@ -229,11 +229,11 @@ class Game:
 
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
 
-        :param delta_time: Simulated time passed since last update. Passed in from the
+        :param timestep: Simulated time passed since last update. Passed in from the
         game's timing_settings.
         """
         for entity in self.entity_manager.entities:
-            entity.const_update(delta_time)
+            entity.const_update(timestep)
 
     def patch_pre_update(self, new_pre_update: Callable) -> None:
         """

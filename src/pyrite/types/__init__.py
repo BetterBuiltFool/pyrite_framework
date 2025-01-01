@@ -20,7 +20,7 @@ class CanPostUpdate(Protocol):
 
 class CanConstUpdate(Protocol):
 
-    def const_update(self, delta_time: float) -> None: ...
+    def const_update(self, timestep: float) -> None: ...
 
 
 class CanRender(Protocol):
