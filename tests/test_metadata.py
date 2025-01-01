@@ -4,7 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.metadata import Metadata  # noqa:E402
+from src.pyrite._data_classes.metadata import Metadata  # noqa:E402
 
 
 class Test_Metadata(unittest.TestCase):

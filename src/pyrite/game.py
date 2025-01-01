@@ -6,11 +6,11 @@ from types import MethodType, TracebackType
 from typing import Self
 from weakref import WeakSet
 
-from src.pyrite.display_settings import DisplaySettings
+from src.pyrite._data_classes.display_settings import DisplaySettings
 from src.pyrite.types.entity import Entity
 from src.pyrite.types.renderable import Renderable
-from src.pyrite.metadata import Metadata
-from src.pyrite.timing_settings import TimingSettings
+from src.pyrite._data_classes.metadata import Metadata
+from src.pyrite._data_classes.timing_settings import TimingSettings
 
 import pygame
 
