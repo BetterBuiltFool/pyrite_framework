@@ -5,7 +5,7 @@ from typing import Self
 from weakref import WeakSet
 
 from src.pyrite.display_settings import DisplaySettings
-from src.pyrite.updateable import Updateable, Renderable
+from src.pyrite.updateable import Entity, Renderable
 from src.pyrite.metadata import Metadata
 from src.pyrite.timing_settings import TimingSettings
 
@@ -44,7 +44,7 @@ class Game:
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
         # Make a WeakSet each for containing active updateables and renderables.
-        self.updateables: WeakSet[Updateable] = WeakSet()
+        self.updateables: WeakSet[Entity] = WeakSet()
         self.renderables: WeakSet[Renderable] = WeakSet()
 
     def __enter__(self) -> Self:
@@ -66,8 +66,8 @@ class Game:
         return self.suppress_context_errors
 
     def spawn(
-        self, cls: type[Updateable | Renderable], *args, **kwds
-    ) -> Updateable | Renderable:
+        self, cls: type[Entity | Renderable], *args, **kwds
+    ) -> Entity | Renderable:
         """
         Creates an item, registering the spawning game
 
@@ -83,13 +83,13 @@ class Game:
 
         return item
 
-    def enable(self, item: Updateable | Renderable) -> None:
-        if isinstance(item, Updateable):
+    def enable(self, item: Entity | Renderable) -> None:
+        if isinstance(item, Entity):
             self.updateables.add(item)
         if isinstance(item, Renderable):
             self.renderables.add(item)
 
-    def disable(self, item: Updateable | Renderable) -> None:
+    def disable(self, item: Entity | Renderable) -> None:
         self.updateables.discard(item)
         self.renderables.discard(item)
 
