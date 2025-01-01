@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
+import logging
 from types import MethodType, TracebackType
 from typing import Self, TYPE_CHECKING
 
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
 
 import pygame
 
+logger = logging.getLogger(__name__)
 
 _active_instance: Game = None
 
@@ -29,12 +31,19 @@ class Game:
     """
     Base Game object to serve as a parent for your game.
     Holds onto data required for generating the window and performing the main loop.
+    Only one game instance may be running at a time. Attempting to start a new instance
+    will stop the previous instance.
     """
 
     def __new__(cls, *args, **kwds) -> Self:
         global _active_instance
-        if not _active_instance:
-            _active_instance = super().__new__(cls)
+        if _active_instance is not None:
+            _active_instance.is_running = False
+            logger.info(
+                f"Stopping {_active_instance}, only one game may be running at a time."
+            )
+        logger.info("Starting new game instance.")
+        _active_instance = super().__new__(cls)
         return _active_instance
 
     def __init__(self, **kwds) -> None:
