@@ -81,24 +81,6 @@ class Game:
             self.main()
         return self.suppress_context_errors
 
-    def spawn(
-        self, cls: type[Entity | Renderable], *args, **kwds
-    ) -> Entity | Renderable:
-        """
-        Creates an item, registering the spawning game
-
-        :param cls: _description_
-        :return: _description_
-        """
-        item = cls(*args, **kwds)
-        item.game = self
-
-        if not kwds.get("enabled", True):
-            # Only add to the list if enabled.
-            self.enable(item)
-
-        return item
-
     def enable(self, item: Entity | Renderable) -> None:
         if isinstance(item, Entity):
             self.updateables.add(item)
