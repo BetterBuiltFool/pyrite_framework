@@ -62,7 +62,10 @@ class Game:
         # This way, a surface exists even if the a window hasn't been created.
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
-        # Make a WeakSet each for containing active entities and renderables.
+        # Entity manager will handle holding onto all enabled entities, renderables,
+        # and ui elements.
+        # Note these are held in weaksets, and thus allow GC. Entities, etc., need
+        # additional references to stay alive.
         self.entity_manager = EntityManager()
 
     def __enter__(self) -> Self:
@@ -77,6 +80,9 @@ class Game:
         exception_value: Exception | None,
         traceback: TracebackType | None,
     ):
+        """
+        Context manager exit. Starts the game when closing, unless an error occurs.
+        """
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
