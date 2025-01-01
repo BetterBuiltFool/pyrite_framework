@@ -1,4 +1,4 @@
-from .types._base_type import _BaseType
+from ._base_type import _BaseType
 
 import pygame
 
