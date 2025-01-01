@@ -1,17 +1,23 @@
 from abc import ABC
-from typing import TYPE_CHECKING
 
 import pygame
 
-if TYPE_CHECKING:
-    from .game import Game
 
-
-class Updateable(ABC):
+class _BaseType(ABC):
 
     def __init__(self) -> None:
-        self.game: Game = None
-        super().__init__()
+        self._enabled: bool = True
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        self._enabled = value
+
+
+class Updateable(_BaseType):
 
     def pre_update(self, delta_time: float) -> None:
         pass
@@ -26,7 +32,7 @@ class Updateable(ABC):
         pass
 
 
-class Renderable(ABC):
+class Renderable(_BaseType):
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]:
         pass
