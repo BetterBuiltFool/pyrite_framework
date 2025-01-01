@@ -68,7 +68,14 @@ class Game:
     def spawn(
         self, cls: type[Updateable | Renderable], *args, **kwds
     ) -> Updateable | Renderable:
+        """
+        Creates an item, registering the spawning game
+
+        :param cls: _description_
+        :return: _description_
+        """
         item = cls(*args, **kwds)
+        item.game = self
 
         if not kwds.get("enabled", True):
             # Only add to the list if enabled.
