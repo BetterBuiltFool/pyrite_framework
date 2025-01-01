@@ -1,20 +1,50 @@
+from __future__ import annotations
+
 import asyncio
 from collections.abc import Callable
+import logging
 from types import MethodType, TracebackType
-from typing import Self
+from typing import Self, TYPE_CHECKING
 
-from src.pyrite.display_settings import DisplaySettings
-from src.pyrite.metadata import Metadata
-from src.pyrite.timing_settings import TimingSettings
+from src.pyrite._data_classes.display_settings import DisplaySettings
+from src.pyrite._data_classes.entity_manager import EntityManager
+from src.pyrite._data_classes.metadata import Metadata
+from src.pyrite._data_classes.timing_settings import TimingSettings
+
+if TYPE_CHECKING:
+    from src.pyrite.types.entity import Entity
+    from src.pyrite.types.renderable import Renderable, UIElement
+
 
 import pygame
+
+logger = logging.getLogger(__name__)
+
+_active_instance: Game = None
+
+
+def get_game_instance() -> Game:
+    return _active_instance
 
 
 class Game:
     """
     Base Game object to serve as a parent for your game.
     Holds onto data required for generating the window and performing the main loop.
+    Only one game instance may be running at a time. Attempting to start a new instance
+    will stop the previous instance.
     """
+
+    def __new__(cls, *args, **kwds) -> Self:
+        global _active_instance
+        if _active_instance is not None:
+            _active_instance.is_running = False
+            logger.info(
+                f"Stopping {_active_instance}, only one game may be running at a time."
+            )
+        logger.info("Starting new game instance.")
+        _active_instance = super().__new__(cls)
+        return _active_instance
 
     def __init__(self, **kwds) -> None:
 
@@ -41,6 +71,12 @@ class Game:
         # This way, a surface exists even if the a window hasn't been created.
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
+        # Entity manager will handle holding onto all enabled entities, renderables,
+        # and ui elements.
+        # Note these are held in weaksets, and thus allow GC. Entities, etc., need
+        # additional references to stay alive.
+        self.entity_manager = EntityManager()
+
     def __enter__(self) -> Self:
         """
         Basicmost __enter__ implementation.
@@ -53,11 +89,20 @@ class Game:
         exception_value: Exception | None,
         traceback: TracebackType | None,
     ):
+        """
+        Context manager exit. Starts the game when closing, unless an error occurs.
+        """
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
             self.main()
         return self.suppress_context_errors
+
+    def enable(self, item: Entity | Renderable | UIElement) -> None:
+        self.entity_manager.enable(item)
+
+    def disable(self, item: Entity | Renderable | UIElement) -> None:
+        self.entity_manager.disable(item)
 
     def create_window(self):
         """
@@ -150,6 +195,8 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
+        for entity in self.entity_manager.entities:
+            entity.pre_update(delta_time)
 
     def update(self, delta_time: float) -> None:
         """
@@ -158,7 +205,8 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
-        pass
+        for entity in self.entity_manager.entities:
+            entity.update(delta_time)
 
     def post_update(self, delta_time: float) -> None:
         """
@@ -167,9 +215,10 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
-        pass
+        for entity in self.entity_manager.entities:
+            entity.post_update(delta_time)
 
-    def const_update(self, delta_time: float) -> None:
+    def const_update(self, timestep: float) -> None:
         """
         Update function that runs at a constant rate. Useful for anything that is
         sensitive to variations in frame time, such as physics.
@@ -180,10 +229,11 @@ class Game:
 
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
 
-        :param delta_time: Simulated time passed since last update. Passed in from the
+        :param timestep: Simulated time passed since last update. Passed in from the
         game's timing_settings.
         """
-        pass
+        for entity in self.entity_manager.entities:
+            entity.const_update(timestep)
 
     def patch_pre_update(self, new_pre_update: Callable) -> None:
         """
@@ -261,7 +311,9 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
-        pass
+        for entity in self.entity_manager.renderables:
+            surface, location = entity.render(delta_time)
+            window.blit(surface, location)
 
     def render_ui(self, window: pygame.Surface, delta_time: float) -> None:
         """
@@ -271,7 +323,9 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
-        pass
+        for entity in self.entity_manager.ui_elements:
+            surface, location = entity.render_ui(delta_time)
+            window.blit(surface, location)
 
     def patch_render(self, new_render: Callable) -> None:
         """
