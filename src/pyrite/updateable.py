@@ -1,27 +1,6 @@
-from abc import ABC
-
-from .game import get_game_instance
+from .types._base_type import _BaseType
 
 import pygame
-
-
-class _BaseType(ABC):
-
-    def __init__(self) -> None:
-        self._enabled: bool = True
-
-    @property
-    def enabled(self) -> bool:
-        return self._enabled
-
-    @enabled.setter
-    def enabled(self, value: bool) -> None:
-        self._enabled = value
-        game_instance = get_game_instance()
-        if value:
-            game_instance.enable(self)
-        else:
-            game_instance.disable(self)
 
 
 class Entity(_BaseType):
