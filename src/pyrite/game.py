@@ -312,8 +312,8 @@ class Game:
         :param delta_time: Time passed since last frame, in seconds.
         """
         for entity in self.entity_manager.renderables:
-            surface, rect = entity.render(delta_time)
-            window.blit(surface, rect)
+            surface, location = entity.render(delta_time)
+            window.blit(surface, location)
 
     def render_ui(self, window: pygame.Surface, delta_time: float) -> None:
         """
@@ -324,8 +324,8 @@ class Game:
         :param delta_time: Time passed since last frame, in seconds.
         """
         for entity in self.entity_manager.ui_elements:
-            surface, rect = entity.render_ui(delta_time)
-            window.blit(surface, rect)
+            surface, location = entity.render_ui(delta_time)
+            window.blit(surface, location)
 
     def patch_render(self, new_render: Callable) -> None:
         """
