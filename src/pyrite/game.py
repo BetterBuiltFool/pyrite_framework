@@ -7,7 +7,7 @@ from typing import Self
 from weakref import WeakSet
 
 from src.pyrite.display_settings import DisplaySettings
-from src.pyrite.updateable import Entity, Renderable
+from src.pyrite.entity import Entity, Renderable
 from src.pyrite.metadata import Metadata
 from src.pyrite.timing_settings import TimingSettings
 
