@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Callable
 import logging
-from types import MethodType, TracebackType
+from types import TracebackType
 from typing import Self, TYPE_CHECKING
 
 from src.pyrite._data_classes.display_settings import DisplaySettings
@@ -178,16 +177,6 @@ class Game:
         accumulated_time += delta_time
         return (delta_time, accumulated_time)
 
-    def _monkeypatch_method(self, method: Callable, new_method: Callable) -> None:
-        """
-        Internal method. Used to replace 'method' with 'new_method'.
-        Update methods and render methods each have their own patching method.
-
-        :param method: Method being replaced
-        :param new_method: Replacement method
-        """
-        self.__dict__[method.__name__] = MethodType(new_method, self)
-
     def pre_update(self, delta_time: float) -> None:
         """
         Early update function. Used for game logic that needs to run _before_ the main
@@ -234,46 +223,6 @@ class Game:
         """
         for entity in self.entity_manager.entities:
             entity.const_update(timestep)
-
-    def patch_pre_update(self, new_pre_update: Callable) -> None:
-        """
-        Override the default pre_update method with the supplied function.
-        Supplied function must match default pre_update signature.
-        Signature is: (self: Game, delta_time: float)
-
-        :param new_pre_update: Callable matching pre_update signature.
-        """
-        self._monkeypatch_method(self.pre_update, new_pre_update)
-
-    def patch_update(self, new_update: Callable) -> None:
-        """
-        Override the default update method with the supplied function.
-        Supplied function must match default update signature.
-        Signature is: (self: Game, delta_time: float)
-
-        :param new_update: Callable matching update signature.
-        """
-        self._monkeypatch_method(self.update, new_update)
-
-    def patch_post_update(self, new_post_update: Callable) -> None:
-        """
-        Override the default post_update method with the supplied function.
-        Supplied function must match default post_update signature.
-        Signature is: (self: Game, delta_time: float)
-
-        :param new_post_update: Callable matching post_update signature.
-        """
-        self._monkeypatch_method(self.post_update, new_post_update)
-
-    def patch_const_update(self, new_const_update: Callable) -> None:
-        """
-        Override the default const_update method with the supplied function.
-        Supplied function must match default const_update signature.
-        Signature is: (self: Game, delta_time: float)
-
-        :param new_const_update: Callable matching const_update signature.
-        """
-        self._monkeypatch_method(self.const_update, new_const_update)
 
     def _update_block(self, delta_time: float) -> None:
         """
@@ -326,26 +275,6 @@ class Game:
         for entity in self.entity_manager.ui_elements:
             surface, location = entity.render_ui(delta_time)
             window.blit(surface, location)
-
-    def patch_render(self, new_render: Callable) -> None:
-        """
-        Override the default render method with the supplied function.
-        Supplied function must match default render signature.
-        Signature is: (self: Game, window: Surface, delta_time: float)
-
-        :param new_render: Callable matching render signature.
-        """
-        self._monkeypatch_method(self.render, new_render)
-
-    def patch_render_ui(self, new_render_ui: Callable) -> None:
-        """
-        Override the default render_ui method with the supplied function.
-        Supplied function must match default render_ui signature.
-        Signature is: (self: Game, window: Surface, delta_time: float)
-
-        :param new_render_ui: Callable matching render_ui signature.
-        """
-        self._monkeypatch_method(self.render_ui, new_render_ui)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
