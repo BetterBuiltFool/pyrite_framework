@@ -34,7 +34,7 @@ class Game:
     def __new__(cls, *args, **kwds) -> Self:
         global _active_instance
         if not _active_instance:
-            _active_instance = super().__new__(cls, *args, **kwds)
+            _active_instance = super().__new__(cls)
         return _active_instance
 
     def __init__(self, **kwds) -> None:
