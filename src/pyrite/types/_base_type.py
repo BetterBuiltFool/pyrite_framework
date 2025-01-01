@@ -10,10 +10,9 @@ logger = logging.getLogger(__name__)
 
 class _BaseType(ABC):
 
-    def __init__(self) -> None:
-        self.game_instance: game.Game = None
-        self._enabled: bool = True
-        self.enabled = True
+    def __init__(self, game_instance=None, enabled=True) -> None:
+        self.game_instance: game.Game = game_instance
+        self.enabled = enabled
 
     @property
     def enabled(self) -> bool:
