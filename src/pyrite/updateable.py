@@ -17,7 +17,7 @@ class _BaseType(ABC):
         self._enabled = value
 
 
-class Updateable(_BaseType):
+class Entity(_BaseType):
 
     def pre_update(self, delta_time: float) -> None:
         pass
