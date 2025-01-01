@@ -1,4 +1,3 @@
-from abc import ABC
 import logging
 
 # from ..game import get_game_instance
@@ -8,7 +7,7 @@ import src.pyrite.game as game
 logger = logging.getLogger(__name__)
 
 
-class _BaseType(ABC):
+class _BaseType:
 
     def __init__(self, game_instance=None, enabled=True) -> None:
         self.game_instance: game.Game = game_instance
