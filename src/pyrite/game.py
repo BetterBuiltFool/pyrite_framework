@@ -13,7 +13,7 @@ from src.pyrite._data_classes.timing_settings import TimingSettings
 
 if TYPE_CHECKING:
     from src.pyrite.types.entity import Entity
-    from src.pyrite.types.renderable import Renderable
+    from src.pyrite.types.renderable import Renderable, UIElement
 
 
 import pygame
@@ -98,10 +98,10 @@ class Game:
             self.main()
         return self.suppress_context_errors
 
-    def enable(self, item: Entity | Renderable) -> None:
+    def enable(self, item: Entity | Renderable | UIElement) -> None:
         self.entity_manager.enable(item)
 
-    def disable(self, item: Entity | Renderable) -> None:
+    def disable(self, item: Entity | Renderable | UIElement) -> None:
         self.entity_manager.disable(item)
 
     def create_window(self):

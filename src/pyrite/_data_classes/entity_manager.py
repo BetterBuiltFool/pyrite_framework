@@ -11,7 +11,7 @@ class EntityManager:
         self.renderables: WeakSet[Renderable] = WeakSet()
         self.ui_elements: WeakSet[UIElement] = WeakSet()
 
-    def enable(self, item: Entity | Renderable) -> None:
+    def enable(self, item: Entity | Renderable | UIElement) -> None:
         if isinstance(item, Entity):
             self.entities.add(item)
         if isinstance(item, Renderable):
@@ -19,7 +19,7 @@ class EntityManager:
         if isinstance(item, UIElement):
             self.ui_elements.add(item)
 
-    def disable(self, item: Entity | Renderable) -> None:
+    def disable(self, item: Entity | Renderable | UIElement) -> None:
         self.entities.discard(item)
         self.renderables.discard(item)
         self.ui_elements.discard(item)
