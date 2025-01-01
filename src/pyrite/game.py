@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 from collections.abc import Callable
 from types import MethodType, TracebackType
@@ -12,11 +14,24 @@ from src.pyrite.timing_settings import TimingSettings
 import pygame
 
 
+_active_instance: Game = None
+
+
+def get_game_instance() -> Game:
+    return _active_instance
+
+
 class Game:
     """
     Base Game object to serve as a parent for your game.
     Holds onto data required for generating the window and performing the main loop.
     """
+
+    def __new__(cls, *args, **kwds) -> Self:
+        global _active_instance
+        if not _active_instance:
+            _active_instance = super().__new__(cls, *args, **kwds)
+        return _active_instance
 
     def __init__(self, **kwds) -> None:
 
