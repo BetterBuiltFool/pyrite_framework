@@ -1,6 +1,7 @@
 from abc import ABC
 
-from ..game import get_game_instance
+# from ..game import get_game_instance
+import src.pyrite.game as game
 
 
 class _BaseType(ABC):
@@ -15,7 +16,7 @@ class _BaseType(ABC):
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
-        game_instance = get_game_instance()
+        game_instance = game.get_game_instance()
         if value:
             game_instance.enable(self)
         else:
