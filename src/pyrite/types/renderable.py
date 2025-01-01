@@ -11,7 +11,9 @@ class Renderable(_BaseType, ABC):
     """
 
     @abstractmethod
-    def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
+    def render(
+        self, delta_time: float
+    ) -> tuple[pygame.Surface, pygame.typing.Point | pygame.Rect]:
         """
         Supplies a surface ready to be blitted to another surface.
 
@@ -28,7 +30,7 @@ class UIElement(_BaseType, ABC):
     @abstractmethod
     def render_ui(
         self, delta_time: float
-    ) -> tuple[pygame.Surface, pygame.typing.Point]:
+    ) -> tuple[pygame.Surface, pygame.typing.Point | pygame.Rect]:
         """
         Supplies a surface ready to be blitted to another surface. Drawn late during
         the render_ui phase, so it will always be drawn over any other renderings.
