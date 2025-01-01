@@ -8,6 +8,7 @@ class _BaseType(ABC):
 
     def __init__(self) -> None:
         self._enabled: bool = True
+        self.enabled = True
 
     @property
     def enabled(self) -> bool:
