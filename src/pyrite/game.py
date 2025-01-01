@@ -3,14 +3,17 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable
 from types import MethodType, TracebackType
-from typing import Self
-from weakref import WeakSet
+from typing import Self, TYPE_CHECKING
 
 from src.pyrite._data_classes.display_settings import DisplaySettings
-from src.pyrite.types.entity import Entity
-from src.pyrite.types.renderable import Renderable
+from src.pyrite._data_classes.entity_manager import EntityManager
 from src.pyrite._data_classes.metadata import Metadata
 from src.pyrite._data_classes.timing_settings import TimingSettings
+
+if TYPE_CHECKING:
+    from src.pyrite.types.entity import Entity
+    from src.pyrite.types.renderable import Renderable
+
 
 import pygame
 
@@ -60,8 +63,7 @@ class Game:
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
         # Make a WeakSet each for containing active updateables and renderables.
-        self.updateables: WeakSet[Entity] = WeakSet()
-        self.renderables: WeakSet[Renderable] = WeakSet()
+        self.entity_manager = EntityManager()
 
     def __enter__(self) -> Self:
         """
@@ -82,14 +84,10 @@ class Game:
         return self.suppress_context_errors
 
     def enable(self, item: Entity | Renderable) -> None:
-        if isinstance(item, Entity):
-            self.updateables.add(item)
-        if isinstance(item, Renderable):
-            self.renderables.add(item)
+        self.entity_manager.enable(item)
 
     def disable(self, item: Entity | Renderable) -> None:
-        self.updateables.discard(item)
-        self.renderables.discard(item)
+        self.entity_manager.disable(item)
 
     def create_window(self):
         """
