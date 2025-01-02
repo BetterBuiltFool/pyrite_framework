@@ -8,7 +8,7 @@ import pygame
 import pygame.typing
 
 
-@dataclass(frozen=True)
+@dataclass
 class DisplaySettings:
     """
     Object that contains data for generating a window for a game.
