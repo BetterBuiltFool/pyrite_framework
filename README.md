@@ -127,6 +127,157 @@ Pyrite additionally is built for pygame-ce, which must also be installed.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+Pyrite is built around a single main class: the Game class.
+Game is useable as-is in its default state, or it can be subclassed to allow for more specific behaviors.
+
+### Using Game
+
+A game can be started in multiple ways.
+
+1. Traditional way
+
+```python
+import pyrite
+
+my_game = pyrite.Game()  # Creating with default settings
+# ----------------------
+#
+# Game setup stuff here
+#
+# ----------------------
+my_game.main()
+```
+
+This will create a window with a black background, at the default size (800x600), with a caption of "Game"
+
+Keep in mind, anything after calling main() will be on hold until after the game stops running.
+
+2. Context Manager
+
+Alternatively, we can use python's ```with``` syntax to create a game.
+
+```python
+import pyrite
+
+with pyrite.Game() as my_game:
+    # ----------------------
+    #
+    # Game setup stuff here
+    #
+    # ----------------------
+```
+
+As with the above example, this will start a game with default settings. As a context manager, Game will start itself once the context ends.
+
+Using context manager syntax offers a couple benefits.
+1. Avoids needing to manually call main().
+
+    This is minor, but it's an additional step that needs to be minded otherwise.
+
+2. Indentation helps make it clear what code is being used to set up the game.
+
+3. Errors are captured.
+
+    Any error that occurs during the set up will be captured by the context manager, and Game has a setting to suppress these errors.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Game Settings
+
+Game has several data classes that hold information for it. You can construct the yourself and pass them to the game instance, or you can pass their parameters as keywords into the Game constructor.
+
+```python
+# This:
+display_settings = DisplaySettings((400, 300))
+with Game(display_settings=display_settings) as my_game:
+    ...
+
+# Is the same as this
+with Game(resolution=(400, 300)) as my_game:
+    ...
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Loop Phases
+
+A game is built around a loop, and that loop has certain phases. The pyrite game loop offers these phases:
+
+1. Events: The pygame event queue is processed
+
+2. Const_update: Runs at a fixed rate, regardless of frame rate. Useful for time-invariant things, like physics.
+
+3. Pre_update: Runs earlier than the main update phase.
+
+4. Update: Main update phase. Most logic is run here.
+
+5. Post-update: Runs after the main update phase.
+
+6. Render: For drawing to the screen.
+
+7. UI Render: For rendering UI objects over top any game objects.
+
+By default, each phase calls on active entities and renderables, and calls their own appropriate methods. If you subclass Game and overwrite any of those methods, ensure that they still call them on entities and renderables.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Entities, Renderables, and UI Elements
+##### Oh, my!
+
+These are the core feature of Pyrite. All game objects should inherit from at least one of these. They allow you to define behaviors, and render out images onto the screen.
+
+#### Entity
+
+An entity is any object that has behavior. They can be typical objects, like an enemy, or obstacle, or they can be systems and services, like a physics service. To use, simply subclass Entity, and overwrite one of the four update-phase methods. Then, when the entity is created, it will automatically have those methods called each frame.
+
+```python
+
+class MyEntity(Entity):
+
+    def __init__(self, game_instance=None, enabled=True):
+        super().__init__(game_instance, enabled)
+        self.position: tuple[int, int] = (0, 0)
+
+
+    def update(self, delta_time: float):
+        keys = pygame.key.get_pressed()
+        x = y = 0
+        if keys[pygame.K_w]:
+            y -= 1
+        if keys[pygame.K_s]:
+            y += 1
+        if keys[pygame.K_a]:
+            x -= 1
+        if keys[pygame.K_d]:
+            x += 1
+        self.move((x, y))
+
+    
+    def move(self, direction: tuple[int, int]):
+        self.position = (
+            self.position[0] + direction[0], self.position[1] + direction[1]
+        )
+```
+
+This will create a simple entity that will move with the WASD keys. Note, however, that it does not show anything on screen.
+
+
+#### Renderables
+
+Renderables are anything that needs to be drawn to the screen. They must implement the render method, and must return a surface and a point/rect.
+Classes can inherit from both Entity and Renderable, to allow them to both be drawn and have behavior.
+
+```python
+class MyRenderable(Renderable):
+
+    def render(self, delta_time: float):
+        surface = Surface((10, 10))
+        surface.fill(Color("fuchsia"))
+        position = (100, 50)
+        return (surface, position)
+```
+
+This will draw a small fuchsia square at a relative position of 100, 50.
 
 
 
