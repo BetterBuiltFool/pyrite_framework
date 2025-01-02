@@ -25,9 +25,9 @@ class Metadata:
     only go into effect when the window is recreated.
     """
 
-    def __post_init__(self):
-        if self.caption is None:
-            self.caption = self.name
+    # def __post_init__(self):
+    #     if self.caption is None:
+    #         self.caption = self.name
 
     @staticmethod
     def get_metadata(**kwds) -> Metadata:
