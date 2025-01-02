@@ -70,7 +70,7 @@ class DisplaySettings:
                 display_settings.resolution,
                 display_settings.flags,
                 display_settings.display,
-                vsync=False,
+                vsync=0,
             )
             display_settings = new_settings
             window_surface = DisplaySettings._create_window(display_settings)
