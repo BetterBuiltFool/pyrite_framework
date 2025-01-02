@@ -157,7 +157,9 @@ class Game:
 
         self._update_block(delta_time)
 
-        pygame.display.set_caption(self.metadata.caption)
+        if not (caption := self.metadata.caption):
+            caption = self.metadata.name
+        pygame.display.set_caption(caption)
         self._render_block(self.window, delta_time)
 
         return accumulated_time
