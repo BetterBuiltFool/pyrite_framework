@@ -14,7 +14,7 @@ class Layer:
 
     @render_index.setter
     def render_index(self, index: int):
-        pass
+        self._render_index = index
 
 
 class RenderLayers:
@@ -33,7 +33,7 @@ class RenderLayers:
             layer._render_index = len(cls._layers) - 1
         cls._layers.insert(layer._render_index, layer)
         # Update indexes to preserve seperation.
-        cls._reorder_layers
+        cls._reorder_layers()
 
     @classmethod
     def _reorder_layers(cls):
