@@ -37,6 +37,11 @@ class RenderLayers:
 
     @classmethod
     def _reorder_layers(cls):
+        """
+        Redoes the render indexes of the layers to ensure they are contiguous.
+        Gaps in the render indices could cause issues for a renderer if it assumes
+        contiguity.
+        """
         for index, render_layer in enumerate(cls._layers):
             render_layer._render_index = index
 
