@@ -57,6 +57,8 @@ class RenderLayers:
                 name = "Foreground"
             case cls.UI_LAYER:
                 name = "UI Layer"
+            case _:
+                pass
         return name
 
     @singledispatchmethod
