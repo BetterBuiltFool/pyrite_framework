@@ -2,16 +2,25 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from src.pyrite.types.renderable import Renderable
+
+import pygame
+
 
 class Renderer(ABC):
-
-    def __init__(self) -> None:
-        super().__init__()
 
     @abstractmethod
     def generate_render_queue(self):
         pass
 
     @abstractmethod
-    def render(self, surface):
+    def render(self, surface: pygame.Surface):
+        pass
+
+    @abstractmethod
+    def enable(self, item: Renderable):
+        pass
+
+    @abstractmethod
+    def disable(self, item: Renderable):
         pass
