@@ -28,6 +28,13 @@ class RenderLayers:
 
     @classmethod
     def add_layer(cls, layer: Layer):
+        """
+        Inserts the new layer into the enum. The layer is assigned based on its
+        render_index. If the render index is None, the layer is placed second to last,
+        just before the UI layer (To ensure UI is always drawn last.)
+
+        :param layer: Layer object being inserted.
+        """
         if layer._render_index is None:
             # No index? Put it just behind UI layer
             layer._render_index = len(cls._layers) - 1
