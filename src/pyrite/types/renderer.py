@@ -25,10 +25,22 @@ class Renderer(ABC):
 
     @abstractmethod
     def enable(self, item: _BaseType):
+        """
+        Adds a Renderable to the collection of renderables.
+
+        Does nothing if the item is not a renderable.
+
+        :param item: Object being enabled. Must be a renderable to properly register.
+        """
         pass
 
     @abstractmethod
     def disable(self, item: _BaseType):
+        """
+        Removes the item from the collection of renderables.
+
+        :param item: Renderable being removed.
+        """
         pass
 
 
