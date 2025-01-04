@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+import bisect
 from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
@@ -126,7 +127,6 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
-
         cameras: tuple[CameraBase] = ()
         if not (cameras := render_queue.get(RenderLayers.CAMERA, [])):
             # Treat the screen as a camera for the sake of rendering if there are no
@@ -138,7 +138,8 @@ class DefaultRenderer(Renderer):
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
                 camera.surface.blits(camera.cull(delta_time, layer_queue))
-        # Render and cameras to the screen.
+
+        # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, []):
             surface.blit(*camera.render(delta_time))
 
@@ -150,14 +151,11 @@ class DefaultRenderer(Renderer):
         :param renderables: list of renderables to sort
         :return: Sorted list
         """
-        positives = [
-            renderable for renderable in renderables if renderable.draw_index >= 0
-        ]
-        negatives = [
-            renderable for renderable in renderables if renderable.draw_index < 0
-        ]
+        renderables = sorted(renderables, key=_get_draw_index)
+        pivot = bisect.bisect_left(renderables, 0, key=_get_draw_index)
+        negatives = renderables[:pivot]
+        del renderables[:pivot]
 
-        positives.sort(key=_get_draw_index)
-        negatives.sort(key=_get_draw_index, reverse=True)
+        negatives.reverse()
 
-        return positives + negatives
+        return renderables + negatives
