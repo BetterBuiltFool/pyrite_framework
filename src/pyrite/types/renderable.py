@@ -16,6 +16,13 @@ class Renderable(_BaseType, ABC):
     ) -> None:
         self.layer: Layer = layer
         self.draw_index = draw_index
+        """
+        (The following is only true for default renderer; Others may vary)
+
+        Indexer for draw order within a layer.
+        Negative indexes are relative to the end.
+        Renderables in the same layer with the same index may be drawn in any order.
+        """
         super().__init__(game_instance, enabled)
 
     @abstractmethod
