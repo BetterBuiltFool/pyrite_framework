@@ -12,7 +12,7 @@ class Renderable(_BaseType, ABC):
     """
 
     def __init__(
-        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
+        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=0
     ) -> None:
         self.layer: Layer = layer
         self.draw_index = draw_index
