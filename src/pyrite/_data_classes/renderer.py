@@ -5,6 +5,7 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
+from src.pyrite.types.camera import CameraBase
 from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.enums import Layer, RenderLayers
 
@@ -125,10 +126,24 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
+
+        cameras: tuple[CameraBase] = ()
+        if not (cameras := render_queue.get(RenderLayers.CAMERA, [])):
+            # Treat the screen as a camera for the sake of rendering if there are no
+            # camera objects.
+            cameras = (CameraBase(surface),)  # Needs to be in a sequence
+
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
-            surface.blits([renderable.render(delta_time) for renderable in layer_queue])
+            for camera in cameras:
+                # Add in culling logic here
+                camera.surface.blits(
+                    [renderable.render(delta_time) for renderable in layer_queue]
+                )
+        # Render and cameras to the screen.
+        for camera in render_queue.get(RenderLayers.CAMERA, []):
+            surface.blit(*camera.render(delta_time))
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """
