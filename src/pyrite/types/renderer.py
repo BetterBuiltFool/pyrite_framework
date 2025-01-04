@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from collections.abc import Sequence
+from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
 from src.pyrite.types.renderable import Renderable
@@ -16,19 +17,22 @@ import pygame
 class Renderer(ABC):
 
     @abstractmethod
-    def generate_render_queue(self) -> list[Renderable]:
+    def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
         """
-        Generates a list of renderables, in draw order.
+        Generates a dict of renderables, in draw order.
+
+        The keys are metadata used by the renderer to determine factors like layer
+        culling and, partially, draw order. They can be of any type, but must be a type
+        the render method knows how to handle.
         """
         pass
 
     @abstractmethod
-    def render(self, surface: pygame.Surface, renderables: list[Renderable]):
+    def render(
+        self, surface: pygame.Surface, renderables: dict[Any, Sequence[Renderable]]
+    ):
         """
-        TODO Allow different types of iterables? For example a dict with layer keys to
-        allow ignoring layers. Would be good for cameras
-
-        Draws the items from the renderable list onto the passed surface.
+        Draws the items from the renderable dictionary onto the passed surface.
 
         :param surface: The surface receiving the final draws, typically the window
         :param renderables: A list of items that need to be rendered to the surface.
