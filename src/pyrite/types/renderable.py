@@ -36,3 +36,13 @@ class Renderable(_BaseType, ABC):
         position and size of the drawn area
         """
         pass
+
+    @abstractmethod
+    def get_rect(self) -> pygame.Rect:
+        """
+        Return a rectangle representing the area the rendered surface is expected to
+        take up.
+
+        :return: _description_
+        """
+        pass
