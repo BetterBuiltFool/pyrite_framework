@@ -87,7 +87,8 @@ class DefaultRenderer(Renderer):
             # No layer set, force it to midground
             layer = RenderLayers.MIDGROUND
             item.layer = layer
-        self.renderables.update({layer: item})
+        render_layer = self.renderables.setdefault(layer, WeakSet())
+        render_layer.add(item)
 
     def disable(self, item: _BaseType):
         if not isinstance(item, Renderable):
