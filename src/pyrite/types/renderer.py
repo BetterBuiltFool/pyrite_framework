@@ -60,6 +60,10 @@ class Renderer(ABC):
         pass
 
 
+def get_draw_index(renderable: Renderable) -> int:
+    return renderable.draw_index
+
+
 class DefaultRenderer(Renderer):
     """
     TODO Add cameras. Give a special layer that's always last.
@@ -87,3 +91,14 @@ class DefaultRenderer(Renderer):
             return
         layer = item.layer
         self.renderables.get(layer, set()).discard(item)
+
+    def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
+        render_queue = {layer: [] for layer in RenderLayers._layers}
+        for layer in RenderLayers._layers:
+            render_queue.update(
+                # This looks nasty, but comps are fast.
+                # Basically, create a list from the set of renderables in a layer, and
+                # then sorts it by draw_index
+                {layer, list(self.renderables.get(layer, {})).sort(key=get_draw_index)}
+            )
+        return render_queue
