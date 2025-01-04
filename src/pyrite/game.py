@@ -76,7 +76,7 @@ class Game:
         # Note these are held in weaksets, and thus allow GC. Entities, etc., need
         # additional references to stay alive.
         self.entity_manager = EntityManager()
-        self.renderer = Renderer.get_renderer(**kwds)
+        self.renderer = Renderer.get_renderer(self, **kwds)
 
     def __enter__(self) -> Self:
         """

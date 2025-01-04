@@ -10,11 +10,15 @@ from src.pyrite.types.enums import Layer, RenderLayers
 
 if TYPE_CHECKING:
     from src.pyrite.types._base_type import _BaseType
+    from src.pyrite.game import Game
 
 import pygame
 
 
 class Renderer(ABC):
+
+    def __init__(self, game_instance: Game) -> None:
+        self.game_instance = game_instance
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -63,13 +67,13 @@ class Renderer(ABC):
         pass
 
     @staticmethod
-    def get_renderer(**kwds) -> Renderer:
+    def get_renderer(game_instance: Game, **kwds) -> Renderer:
         """
         Extracts a renderer from keyword arguments.
         Used for creating a renderer for a new Game instance
         """
         if (renderer := kwds.get("renderer", None)) is None:
-            renderer = DefaultRenderer()
+            renderer = DefaultRenderer(game_instance)
         return renderer
 
 
@@ -86,7 +90,8 @@ class DefaultRenderer(Renderer):
     :param Renderer: _description_
     """
 
-    def __init__(self) -> None:
+    def __init__(self, game_instance: Game) -> None:
+        super().__init__(game_instance)
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
 
     def enable(self, item: _BaseType):
