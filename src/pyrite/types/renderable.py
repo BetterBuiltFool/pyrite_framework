@@ -26,15 +26,13 @@ class Renderable(_BaseType, ABC):
         super().__init__(game_instance, enabled)
 
     @abstractmethod
-    def render(
-        self, delta_time: float
-    ) -> tuple[pygame.Surface, pygame.typing.Point | pygame.Rect]:
+    def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]:
         """
         Supplies a surface ready to be blitted to another surface.
 
         :param delta_time: Time passed since last frame. Can be ignored by the concrete
         method but must be accepted.
-        :return: A tuple containing a ready-to-draw surface and a point with relative
-        location
+        :return: A tuple containing a ready-to-draw surface and a rect with the
+        position and size of the drawn area
         """
         pass
