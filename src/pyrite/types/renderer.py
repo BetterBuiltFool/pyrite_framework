@@ -63,7 +63,7 @@ class Renderer(ABC):
         pass
 
 
-def get_draw_index(renderable: Renderable) -> int:
+def _get_draw_index(renderable: Renderable) -> int:
     return renderable.draw_index
 
 
@@ -93,16 +93,13 @@ class DefaultRenderer(Renderer):
         if not isinstance(item, Renderable):
             return
         layer = item.layer
-        self.renderables.get(layer, set()).discard(item)
+        self.renderables.get(layer, WeakSet()).discard(item)
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue = {layer: [] for layer in RenderLayers._layers}
         for layer in RenderLayers._layers:
             render_queue.update(
-                # This looks nasty, but comps are fast.
-                # Basically, create a list from the set of renderables in a layer, and
-                # then sorts it by draw_index
-                {layer, list(self.renderables.get(layer, {})).sort(key=get_draw_index)}
+                {layer, self.sort_layer(self.renderables.get(layer, {}))}
             )
         return render_queue
 
@@ -115,5 +112,22 @@ class DefaultRenderer(Renderer):
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
             layer_queue = renderables.get(layer, [])
-            # TODO fix delta time issue here
             surface.blits([renderable.render(delta_time) for renderable in layer_queue])
+
+    def sort_layer(renderables: Sequence[Renderable]) -> list[Renderable]:
+        """
+        Sorts a sequence of renderables by draw_index, such that they are ordered
+        0 -> Infinity | -Infinity -> -1
+
+        :param renderables: list of renderables to sort
+        :return: Sorted list
+        """
+        positives = [
+            renderable for renderable in renderables if renderable.draw_index >= 0
+        ]
+        negatives = [
+            renderable for renderable in renderables if renderable.draw_index < 0
+        ]
+
+        positives.sort(key=_get_draw_index)
+        negatives.sort(key=_get_draw_index, reverse=True)
