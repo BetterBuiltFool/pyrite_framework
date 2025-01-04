@@ -102,3 +102,12 @@ class DefaultRenderer(Renderer):
                 {layer, list(self.renderables.get(layer, {})).sort(key=get_draw_index)}
             )
         return render_queue
+
+    def render(
+        self, surface: pygame.Surface, renderables: dict[Layer, Sequence[Renderable]]
+    ):
+        for layer in RenderLayers._layers:
+            # _layers is sorted by desired draw order.
+            layer_queue = renderables.get(layer, [])
+            # TODO fix delta time issue here
+            surface.blits([renderable.render() for renderable in layer_queue])
