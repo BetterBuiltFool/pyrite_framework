@@ -22,6 +22,9 @@ class RenderLayers:
     MIDGROUND = Layer(1)
     FOREGROUND = Layer(2)
     UI_LAYER = Layer(3)
+    CAMERA = Layer(-1)
+    """Special layer for camera objects. Not in the layer list. Always draw last.
+    """
 
     # Ordered set of layers
     _layers = [BACKGROUND, MIDGROUND, FOREGROUND, UI_LAYER]
