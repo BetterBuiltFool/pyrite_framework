@@ -29,7 +29,10 @@ class Renderer(ABC):
 
     @abstractmethod
     def render(
-        self, surface: pygame.Surface, renderables: dict[Any, Sequence[Renderable]]
+        self,
+        surface: pygame.Surface,
+        delta_time: float,
+        renderables: dict[Any, Sequence[Renderable]],
     ):
         """
         Draws the items from the renderable dictionary onto the passed surface.
@@ -104,10 +107,13 @@ class DefaultRenderer(Renderer):
         return render_queue
 
     def render(
-        self, surface: pygame.Surface, renderables: dict[Layer, Sequence[Renderable]]
+        self,
+        surface: pygame.Surface,
+        delta_time: float,
+        renderables: dict[Layer, Sequence[Renderable]],
     ):
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
             layer_queue = renderables.get(layer, [])
             # TODO fix delta time issue here
-            surface.blits([renderable.render() for renderable in layer_queue])
+            surface.blits([renderable.render(delta_time) for renderable in layer_queue])
