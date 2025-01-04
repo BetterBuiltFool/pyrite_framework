@@ -32,7 +32,7 @@ class Renderer(ABC):
         self,
         surface: pygame.Surface,
         delta_time: float,
-        renderables: dict[Any, Sequence[Renderable]],
+        render_queue: dict[Any, Sequence[Renderable]],
     ):
         """
         Draws the items from the renderable dictionary onto the passed surface.
@@ -107,11 +107,11 @@ class DefaultRenderer(Renderer):
         self,
         surface: pygame.Surface,
         delta_time: float,
-        renderables: dict[Layer, Sequence[Renderable]],
+        render_queue: dict[Layer, Sequence[Renderable]],
     ):
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
-            layer_queue = renderables.get(layer, [])
+            layer_queue = render_queue.get(layer, [])
             surface.blits([renderable.render(delta_time) for renderable in layer_queue])
 
     def sort_layer(renderables: Sequence[Renderable]) -> list[Renderable]:
