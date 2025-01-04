@@ -16,11 +16,11 @@ import pygame
 class Renderer(ABC):
 
     @abstractmethod
-    def generate_render_queue(self):
+    def generate_render_queue(self) -> list[Renderable]:
         pass
 
     @abstractmethod
-    def render(self, surface: pygame.Surface):
+    def render(self, surface: pygame.Surface, renderables: list[Renderable]):
         pass
 
     @abstractmethod
