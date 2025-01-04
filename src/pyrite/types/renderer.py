@@ -17,10 +17,22 @@ class Renderer(ABC):
 
     @abstractmethod
     def generate_render_queue(self) -> list[Renderable]:
+        """
+        Generates a list of renderables, in draw order.
+        """
         pass
 
     @abstractmethod
     def render(self, surface: pygame.Surface, renderables: list[Renderable]):
+        """
+        TODO Allow different types of iterables? For example a dict with layer keys to
+        allow ignoring layers. Would be good for cameras
+
+        Draws the items from the renderable list onto the passed surface.
+
+        :param surface: The surface receiving the final draws, typically the window
+        :param renderables: A list of items that need to be rendered to the surface.
+        """
         pass
 
     @abstractmethod
