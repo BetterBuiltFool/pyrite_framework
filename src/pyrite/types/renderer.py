@@ -62,6 +62,12 @@ class Renderer(ABC):
         """
         pass
 
+    @staticmethod
+    def get_renderer(**kwds) -> Renderer:
+        if (renderer := kwds.get("renderer", None)) is None:
+            renderer = DefaultRenderer()
+        return renderer
+
 
 def _get_draw_index(renderable: Renderable) -> int:
     return renderable.draw_index
