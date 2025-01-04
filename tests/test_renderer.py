@@ -14,7 +14,10 @@ from pygame.typing import Point
 sys.path.append(str(pathlib.Path.cwd()))
 
 from src.pyrite.types.enums import Layer, RenderLayers  # noqa:E402
-from src.pyrite.types.renderer import DefaultRenderer, _get_draw_index  # noqa:E402
+from src.pyrite._data_classes.renderer import (  # noqa:E402
+    DefaultRenderer,
+    _get_draw_index,
+)
 from src.pyrite.types.renderable import Renderable  # noqa:E402
 from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
