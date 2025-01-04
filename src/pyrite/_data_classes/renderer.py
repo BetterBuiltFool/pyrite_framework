@@ -113,7 +113,7 @@ class DefaultRenderer(Renderer):
         self.renderables.get(layer, WeakSet()).discard(item)
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
-        render_queue = {layer: [] for layer in RenderLayers._layers}
+        render_queue: dict[Layer, Sequence[Renderable]] = {}
         for layer in RenderLayers._layers:
             render_queue.update(
                 {layer: self.sort_layer(self.renderables.get(layer, {}))}
@@ -137,10 +137,7 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
-                # Add in culling logic here
-                camera.surface.blits(
-                    [renderable.render(delta_time) for renderable in layer_queue]
-                )
+                camera.surface.blits(camera.cull(delta_time, layer_queue))
         # Render and cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, []):
             surface.blit(*camera.render(delta_time))
