@@ -10,6 +10,13 @@ class Renderable(_BaseType, ABC):
     Base class for any renderable object in pyrite.
     """
 
+    def __init__(
+        self, game_instance=None, enabled=True, layer=None, draw_index=None
+    ) -> None:
+        super().__init__(game_instance, enabled)
+        self.layer = layer
+        self.draw_index = draw_index
+
     @abstractmethod
     def render(
         self, delta_time: float
