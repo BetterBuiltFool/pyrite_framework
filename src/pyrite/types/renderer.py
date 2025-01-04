@@ -100,7 +100,7 @@ class DefaultRenderer(Renderer):
         render_queue = {layer: [] for layer in RenderLayers._layers}
         for layer in RenderLayers._layers:
             render_queue.update(
-                {layer, self.sort_layer(self.renderables.get(layer, {}))}
+                {layer: self.sort_layer(self.renderables.get(layer, {}))}
             )
         return render_queue
 
@@ -115,7 +115,7 @@ class DefaultRenderer(Renderer):
             layer_queue = render_queue.get(layer, [])
             surface.blits([renderable.render(delta_time) for renderable in layer_queue])
 
-    def sort_layer(renderables: Sequence[Renderable]) -> list[Renderable]:
+    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """
         Sorts a sequence of renderables by draw_index, such that they are ordered
         0 -> Infinity | -Infinity -> -1
@@ -132,3 +132,5 @@ class DefaultRenderer(Renderer):
 
         positives.sort(key=_get_draw_index)
         negatives.sort(key=_get_draw_index, reverse=True)
+
+        return positives + negatives
