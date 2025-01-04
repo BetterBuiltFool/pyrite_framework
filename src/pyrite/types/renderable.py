@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
 
 from ._base_type import _BaseType
+from src.pyrite.types.enums import Layer
 
 import pygame
 
@@ -11,11 +12,11 @@ class Renderable(_BaseType, ABC):
     """
 
     def __init__(
-        self, game_instance=None, enabled=True, layer=None, draw_index=None
+        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
     ) -> None:
-        super().__init__(game_instance, enabled)
-        self.layer = layer
+        self.layer: Layer = layer
         self.draw_index = draw_index
+        super().__init__(game_instance, enabled)
 
     @abstractmethod
     def render(
