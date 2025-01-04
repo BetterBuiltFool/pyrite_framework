@@ -64,6 +64,10 @@ class Renderer(ABC):
 
     @staticmethod
     def get_renderer(**kwds) -> Renderer:
+        """
+        Extracts a renderer from keyword arguments.
+        Used for creating a renderer for a new Game instance
+        """
         if (renderer := kwds.get("renderer", None)) is None:
             renderer = DefaultRenderer()
         return renderer
