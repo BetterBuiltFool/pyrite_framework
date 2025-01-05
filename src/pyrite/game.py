@@ -276,6 +276,7 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
+        # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))
 
         self.render(window, delta_time)
