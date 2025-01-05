@@ -60,6 +60,12 @@ class Camera(CameraBase, Renderable):
     def clear(self):
         self.surface.fill((0, 0, 0, 255))
 
+    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+        return (item for item in items if self._in_view(item.get_rect()))
+
+    def _in_view(self, rect: pygame.Rect) -> bool:
+        return self.viewport.move(self.position).colliderect(rect)
+
     def get_rect(self) -> pygame.Rect:
         return self.viewport.move(self.position)
 
