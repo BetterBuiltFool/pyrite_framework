@@ -5,8 +5,9 @@ from functools import singledispatchmethod
 
 class Layer:
 
-    def __init__(self, render_index: int = None) -> None:
+    def __init__(self, render_index: int = None, name: str = "") -> None:
         self._render_index = render_index
+        self._name = name
 
     @property
     def render_index(self) -> int:
@@ -16,13 +17,19 @@ class Layer:
     def render_index(self, index: int):
         self._render_index = index
 
+    @property
+    def name(self) -> str:
+        if not self._name:
+            return self._render_index
+        return self._name
+
 
 class RenderLayers:
-    BACKGROUND = Layer(0)
-    MIDGROUND = Layer(1)
-    FOREGROUND = Layer(2)
-    UI_LAYER = Layer(3)
-    CAMERA = Layer(-1)
+    BACKGROUND = Layer(0, "Background")
+    MIDGROUND = Layer(1, "Midground")
+    FOREGROUND = Layer(2, "Foreground")
+    UI_LAYER = Layer(3, "UI Layer")
+    CAMERA = Layer(-1, "Camera")
     """Special layer for camera objects. Not in the layer sequence. Always draw last.
     """
 
@@ -62,22 +69,6 @@ class RenderLayers:
         for index, render_layer in enumerate(cls._layers):
             render_layer._render_index = index
 
-    @classmethod
-    def _get_layer_name(cls, layer: Layer) -> str:
-        name = layer.__repr__
-        match layer:
-            case cls.BACKGROUND:
-                name = "Background"
-            case cls.MIDGROUND:
-                name = "Midground"
-            case cls.FOREGROUND:
-                name = "Foreground"
-            case cls.UI_LAYER:
-                name = "UI Layer"
-            case _:
-                pass
-        return name
-
     @singledispatchmethod
     @classmethod
     def remove_layer(cls, item: Layer | int) -> Layer:
@@ -90,9 +81,10 @@ class RenderLayers:
             item == cls.MIDGROUND,
             item == cls.FOREGROUND,
             item == cls.UI_LAYER,
+            item == cls.CAMERA,
         ):
             raise ValueError(
-                f"Attempted to remove layer '{cls._get_layer_name(item)}'; Cannot "
+                f"Attempted to remove layer '{item.name}'; Cannot "
                 "remove built-in layers"
             )
         layers = list(cls._layers)
