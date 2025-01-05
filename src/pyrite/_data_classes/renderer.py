@@ -88,8 +88,6 @@ class DefaultRenderer(Renderer):
     TODO Add cameras. Give a special layer that's always last.
     In the render phase, extract any cameras, draw to them, and then draw them to the
     screen (That's why they're last.)
-
-    :param Renderer: _description_
     """
 
     def __init__(self, game_instance: Game) -> None:
@@ -120,7 +118,11 @@ class DefaultRenderer(Renderer):
                 {layer: self.sort_layer(self.renderables.get(layer, {}))}
             )
         render_queue.update(
-            {layer: self.sort_layer(self.renderables.get(RenderLayers.CAMERA, {}))}
+            {
+                RenderLayers.CAMERA: self.sort_layer(
+                    self.renderables.get(RenderLayers.CAMERA, {})
+                )
+            }
         )
 
         return render_queue
@@ -144,11 +146,15 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
-                print(f"Drawing {layer} to {camera}")
-                camera.surface.blits(camera.cull(delta_time, layer_queue))
+                camera.surface.blits(
+                    (
+                        renderable.render(delta_time)
+                        for renderable in camera.cull(layer_queue)
+                    )
+                )
 
         # Render any cameras to the screen.
-        for camera in render_queue.get(RenderLayers.CAMERA, []):
+        for camera in render_queue.get(RenderLayers.CAMERA, ()):
             camera_surface, camera_location = camera.render(delta_time)
             window.blit(camera_surface, camera_location)
 
