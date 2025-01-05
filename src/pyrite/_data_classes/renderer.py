@@ -36,14 +36,14 @@ class Renderer(ABC):
     @abstractmethod
     def render(
         self,
-        surface: pygame.Surface,
+        window: pygame.Surface,
         delta_time: float,
         render_queue: dict[Any, Sequence[Renderable]],
     ):
         """
         Draws the items from the renderable dictionary onto the passed surface.
 
-        :param surface: The surface receiving the final draws, typically the window
+        :param window: The game window, receiving final draws
         :param renderables: A list of items that need to be rendered to the surface.
         """
         pass
@@ -119,29 +119,38 @@ class DefaultRenderer(Renderer):
             render_queue.update(
                 {layer: self.sort_layer(self.renderables.get(layer, {}))}
             )
+        render_queue.update(
+            {layer: self.sort_layer(self.renderables.get(RenderLayers.CAMERA, {}))}
+        )
+
         return render_queue
 
     def render(
         self,
-        surface: pygame.Surface,
+        window: pygame.Surface,
         delta_time: float,
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
-        cameras: tuple[CameraBase] = ()
-        if not (cameras := render_queue.get(RenderLayers.CAMERA, [])):
+        cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
+        if not cameras:
             # Treat the screen as a camera for the sake of rendering if there are no
             # camera objects.
-            cameras = (CameraBase(surface),)  # Needs to be in a sequence
+            cameras = (CameraBase(window),)  # Needs to be in a sequence
+
+        for camera in cameras:
+            camera.clear()
 
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
+                print(f"Drawing {layer} to {camera}")
                 camera.surface.blits(camera.cull(delta_time, layer_queue))
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, []):
-            surface.blit(*camera.render(delta_time))
+            camera_surface, camera_location = camera.render(delta_time)
+            window.blit(camera_surface, camera_location)
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """
