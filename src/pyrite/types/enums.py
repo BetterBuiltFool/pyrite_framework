@@ -23,11 +23,11 @@ class RenderLayers:
     FOREGROUND = Layer(2)
     UI_LAYER = Layer(3)
     CAMERA = Layer(-1)
-    """Special layer for camera objects. Not in the layer list. Always draw last.
+    """Special layer for camera objects. Not in the layer sequence. Always draw last.
     """
 
     # Ordered set of layers
-    _layers = [BACKGROUND, MIDGROUND, FOREGROUND, UI_LAYER]
+    _layers = (BACKGROUND, MIDGROUND, FOREGROUND, UI_LAYER)
 
     @classmethod
     def add_layer(cls, layer: Layer):
@@ -38,17 +38,24 @@ class RenderLayers:
 
         :param layer: Layer object being inserted.
         """
+        # Convert to list for easy modification
+        layers = list(cls._layers)
         if layer._render_index is None:
             # No index? Put it just behind UI layer
-            layer._render_index = len(cls._layers) - 1
-        cls._layers.insert(layer._render_index, layer)
+            layer._render_index = len(layers) - 1
+        layers.insert(layer._render_index, layer)
+        # Convert back to tuple and update the class attribute
+        # Tuples may be more efficient in some use cases.
+        cls._layers = tuple(layers)
         # Update indexes to preserve seperation.
         cls._reorder_layers()
 
     @classmethod
     def _reorder_layers(cls):
         """
-        Redoes the render indexes of the layers to ensure they are contiguous.
+        Updates indexes of the layers to match their index in the sequence to ensure
+        they are contiguous.
+
         Gaps in the render indices could cause issues for a renderer if it assumes
         contiguity.
         """
@@ -88,7 +95,9 @@ class RenderLayers:
                 f"Attempted to remove layer '{cls._get_layer_name(item)}'; Cannot "
                 "remove built-in layers"
             )
-        layer = cls._layers.remove(item)
+        layers = list(cls._layers)
+        layer = layers.remove(item)
+        cls._layers = tuple(layers)
         cls._reorder_layers()
         return layer
 
@@ -96,22 +105,22 @@ class RenderLayers:
     @classmethod
     def _(cls, layer: Layer) -> Layer:
         """
-        Removes a layer from the layer list, and relabels the indices of the
+        Removes a layer from the layer sequence, and relabels the indices of the
         remaining layers.
 
         Will not remove built-in layers.
 
         :param layer: The layer to be removed.
         :return: The removed layer
-        :raises ValueError: Raised if the layer is not a part of the layer list, or if
-        the layer to be removed is one of the built-in layers.
+        :raises ValueError: Raised if the layer is not a part of the layer sequence, or
+        if the layer to be removed is one of the built-in layers.
         """
 
     @remove_layer.register
     @classmethod
     def _(cls, index: int) -> Layer:
         """
-        Removes the layer at the given index from the layer list, and relabels the
+        Removes the layer at the given index from the layer sequence, and relabels the
         indices of the remaining layers.
 
         Will not remove built-in layers.
