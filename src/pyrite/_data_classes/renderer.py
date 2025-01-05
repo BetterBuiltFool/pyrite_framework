@@ -113,10 +113,18 @@ class DefaultRenderer(Renderer):
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue: dict[Layer, Sequence[Renderable]] = {}
+        cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
+
         for layer in RenderLayers._layers:
-            render_queue.update(
-                {layer: self.sort_layer(self.renderables.get(layer, {}))}
-            )
+            layer_set = self.renderables.get(layer, {})
+            culled_set: set[Renderable] = set()
+            # Pre cull our renderables. This will reduce the amount of sorting to do.
+            for camera in cameras:
+                culled_set |= set(camera.cull(layer_set))
+            # Puts everything into the renderqueue if there are no cameras
+            layer_set = culled_set if cameras else layer_set
+            render_queue.update({layer: self.sort_layer(layer_set)})
+
         render_queue.update(
             {
                 RenderLayers.CAMERA: self.sort_layer(
@@ -149,7 +157,8 @@ class DefaultRenderer(Renderer):
                 camera.surface.blits(
                     (
                         renderable.render(delta_time)
-                        for renderable in camera.cull(layer_queue)
+                        # for renderable in camera.cull(layer_queue)
+                        for renderable in layer_queue
                     )
                 )
 
