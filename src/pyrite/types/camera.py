@@ -61,9 +61,12 @@ class Camera(CameraBase, Renderable):
         self.surface.fill((0, 0, 0, 255))
 
     def get_rect(self) -> pygame.Rect:
-        return self.surface.get_rect()
-        # return self.viewport.move(-self.position[0], -self.position[1])
+        return self.viewport.move(self.position)
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
-        return (self.surface, self.get_rect())
-        # return (self.surface.subsurface(self.viewport), self.get_rect())
+        return (
+            pygame.transform.scale(
+                self.surface.subsurface(self.viewport), self.surface.get_rect().size
+            ),
+            (0, 0),
+        )
