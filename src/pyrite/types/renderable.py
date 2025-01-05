@@ -23,7 +23,7 @@ class Renderable(_BaseType, ABC):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
-        super().__init__(game_instance, enabled)
+        _BaseType.__init__(self, game_instance, enabled)
 
     @abstractmethod
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]:
