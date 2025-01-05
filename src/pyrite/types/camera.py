@@ -30,10 +30,11 @@ class CameraBase(ABC):
             position = self.viewport.topleft
         self.position = position
 
-    def cull(
-        self, delta_time: float, items: Iterable[Renderable]
-    ) -> Iterable[tuple[Renderable, pygame.Rect]]:
-        return (item.render(delta_time) for item in items)
+    def clear(self):
+        self.surface.fill((0, 0, 0, 0))
+
+    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+        return items
 
 
 class Camera(CameraBase, Renderable):
@@ -43,21 +44,26 @@ class Camera(CameraBase, Renderable):
 
     def __init__(
         self,
-        max_size: pygame.typing.RectLike,
+        max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
         game_instance=None,
         enabled=True,
         draw_index=0,
     ) -> None:
-        max_size = pygame.Rect(max_size)
+        max_size = pygame.Rect(0, 0, *max_size)
         surface = pygame.Surface(max_size.size)
-        CameraBase.__init__(self, max_size, surface, position)
+        CameraBase.__init__(self, surface, position)
         Renderable.__init__(
             self, game_instance, enabled, RenderLayers.CAMERA, draw_index
         )
 
+    def clear(self):
+        self.surface.fill((0, 0, 0, 255))
+
     def get_rect(self) -> pygame.Rect:
-        return self.viewport.move(*self.position)
+        return self.surface.get_rect()
+        # return self.viewport.move(-self.position[0], -self.position[1])
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
-        return (self.surface.subsurface(self.viewport), self.get_rect())
+        return (self.surface, self.get_rect())
+        # return (self.surface.subsurface(self.viewport), self.get_rect())
