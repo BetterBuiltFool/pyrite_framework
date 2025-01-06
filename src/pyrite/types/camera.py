@@ -61,6 +61,11 @@ class CameraBase(ABC):
 
         return point - Vector2(self.get_surface_rect().topleft)
 
+    def to_world(self, point: pygame.typing.Point) -> Vector2:
+        point = Vector2(point)
+
+        return point + Vector2(self.get_surface_rect().topleft)
+
 
 class Camera(CameraBase, Renderable):
     """
