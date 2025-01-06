@@ -160,7 +160,10 @@ class DefaultRenderer(Renderer):
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
             camera_surface, camera_location = camera.render(delta_time)
-            window.blit(camera_surface, camera_location)
+            window.blit(
+                pygame.transform.scale(camera_surface, window.get_rect().size),
+                camera_location,
+            )
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """

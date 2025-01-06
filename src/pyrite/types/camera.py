@@ -92,8 +92,6 @@ class Camera(CameraBase, Renderable):
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
         return (
-            pygame.transform.scale(
-                self.surface.subsurface(self.viewport), self.surface.get_rect().size
-            ),
+            self.surface.subsurface(self.viewport),
             (0, 0),
         )
