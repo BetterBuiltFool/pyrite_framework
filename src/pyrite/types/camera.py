@@ -80,8 +80,8 @@ class Camera(CameraBase, Renderable):
         enabled=True,
         draw_index=0,
     ) -> None:
-        max_size = pygame.Rect(0, 0, *max_size)
-        surface = pygame.Surface(max_size.size)
+        self.max_size = Vector2(max_size)
+        surface = pygame.Surface(self.max_size)
         CameraBase.__init__(self, surface, position)
         Renderable.__init__(
             self, game_instance, enabled, RenderLayers.CAMERA, draw_index
@@ -95,3 +95,10 @@ class Camera(CameraBase, Renderable):
             self.surface.subsurface(self.viewport),
             (0, 0),
         )
+
+    def zoom(self, zoom_level: float):
+        if zoom_level < 1:
+            raise ValueError("Cannot zoom out beyond zoom_level 1")
+        center = self.viewport.center
+        self.viewport.size = self.max_size / zoom_level
+        self.viewport.center = center
