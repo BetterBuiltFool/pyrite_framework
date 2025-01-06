@@ -154,13 +154,8 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
-                camera.surface.blits(
-                    (
-                        renderable.render(delta_time)
-                        # for renderable in camera.cull(layer_queue)
-                        for renderable in layer_queue
-                    )
-                )
+                for renderable in layer_queue:
+                    camera.draw(*renderable.render(delta_time))
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):

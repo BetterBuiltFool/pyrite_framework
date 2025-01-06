@@ -6,6 +6,7 @@ from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.enums import RenderLayers
 
 import pygame
+from pygame import Vector2
 
 
 class CameraBase(ABC):
@@ -27,14 +28,38 @@ class CameraBase(ABC):
         A rectangle representing the actual viewable area of the camera
         """
         if position is None:
-            position = self.viewport.topleft
-        self.position = position
+            position = self.viewport.center
+        self.position = Vector2(position)
 
     def clear(self):
         self.surface.fill((0, 0, 0, 0))
 
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(
+            Vector2(self.get_surface_rect().topleft) + Vector2(self.viewport.topleft),
+            self.viewport.size,
+        )
+        # return self.viewport.move(-Vector2(self.get_surface_rect().topleft))
+
+    def get_surface_rect(self) -> pygame.Rect:
+        return self.surface.get_rect(center=self.position)
+
+    def draw(self, surface: pygame.Surface, rect: pygame.Rect):
+        self.surface.blit(
+            surface,
+            self.to_local(rect.topleft),
+        )
+
     def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
-        return items
+        return (item for item in items if self._in_view(item.get_rect()))
+
+    def _in_view(self, rect: pygame.Rect) -> bool:
+        return self.get_rect().colliderect(rect)
+
+    def to_local(self, point: pygame.typing.Point) -> Vector2:
+        point = Vector2(point)
+
+        return point - Vector2(self.get_surface_rect().topleft)
 
 
 class Camera(CameraBase, Renderable):
@@ -59,15 +84,6 @@ class Camera(CameraBase, Renderable):
 
     def clear(self):
         self.surface.fill((0, 0, 0, 255))
-
-    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
-        return (item for item in items if self._in_view(item.get_rect()))
-
-    def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.viewport.move(self.position).colliderect(rect)
-
-    def get_rect(self) -> pygame.Rect:
-        return self.viewport.move(self.position)
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
         return (
