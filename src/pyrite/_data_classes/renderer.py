@@ -128,6 +128,8 @@ class DefaultRenderer(Renderer):
             culled_set: set[Renderable] = set()
             # Pre cull our renderables. This will reduce the amount of sorting to do.
             for camera in cameras:
+                if layer in camera.layer_mask:
+                    continue
                 culled_set |= set(camera.cull(layer_set))
             # Puts everything into the renderqueue if there are no cameras
             layer_set = culled_set if cameras else layer_set
@@ -162,6 +164,8 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             for camera in cameras:
+                if layer in camera.layer_mask:
+                    continue
                 for renderable in layer_queue:
                     camera.draw(*renderable.render(delta_time))
 

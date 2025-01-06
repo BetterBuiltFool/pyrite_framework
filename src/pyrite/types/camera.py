@@ -3,7 +3,7 @@ from collections.abc import Iterable
 
 
 from src.pyrite.types.renderable import Renderable
-from src.pyrite.types.enums import RenderLayers
+from src.pyrite.types.enums import Layer, RenderLayers
 
 import pygame
 from pygame import Vector2
@@ -21,6 +21,7 @@ class CameraBase(ABC):
         self,
         surface: pygame.Surface,
         position: pygame.typing.Point = None,
+        layer_mask: tuple[Layer] = None,
     ) -> None:
         self.surface = surface
         self.viewport = surface.get_rect()
@@ -30,6 +31,9 @@ class CameraBase(ABC):
         if position is None:
             position = self.viewport.center
         self.position = Vector2(position)
+        if layer_mask is None:
+            layer_mask = ()
+        self.layer_mask = layer_mask
 
     def clear(self):
         """
@@ -116,15 +120,36 @@ class Camera(CameraBase, Renderable):
         self,
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
+        layer_mask: tuple[Layer] = None,
         game_instance=None,
         enabled=True,
-        draw_index=0,
+        draw_index: int = 0,
     ) -> None:
+        """
+        Basic form of a camera that is capable of rendering to the screen.
+
+        :param max_size: Largest, most zoomed out size of the camera.
+        :param position: Position of the center of the camera surface, defaults to None
+        None will give the center of the viewport.
+        :param layer_mask: Layers that the camera will exclude from rendering,
+        defaults to None
+        :param game_instance: The instance of the game to which the rengerable belongs,
+        defaults to None. See Renderable.
+        :param enabled: Whether the Renderable will be drawn to the screen,
+        defaults to True
+        :param draw_index: Index determining draw order within a layer, defaults to 0
+        """
         self.max_size = Vector2(max_size)
         surface = pygame.Surface(self.max_size)
-        CameraBase.__init__(self, surface, position)
+        CameraBase.__init__(
+            self, surface=surface, position=position, layer_mask=layer_mask
+        )
         Renderable.__init__(
-            self, game_instance, enabled, RenderLayers.CAMERA, draw_index
+            self,
+            game_instance=game_instance,
+            enabled=enabled,
+            layer=RenderLayers.CAMERA,
+            draw_index=draw_index,
         )
 
     def clear(self):
