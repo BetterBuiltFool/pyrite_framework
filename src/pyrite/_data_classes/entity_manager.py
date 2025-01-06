@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from weakref import WeakSet
 
 from src.pyrite.types.entity import Entity
-from src.pyrite.types.service import Service
 
 if TYPE_CHECKING:
     from src.pyrite.types._base_type import _BaseType
@@ -56,40 +55,27 @@ class DefaultEntityManager(EntityManager):
     def __init__(self, game_instance: Game) -> None:
         super().__init__(game_instance)
         self.entities: WeakSet[Entity] = WeakSet()
-        self.services: WeakSet[Service] = WeakSet()
 
     def enable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
             self.entities.add(item)
-        elif isinstance(item, Service):
-            self.services.add(item)
 
     def disable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
             self.entities.discard(item)
-        elif isinstance(item, Service):
-            self.services.discard(item)
 
     def pre_update(self, delta_time: float):
-        for service in self.services:
-            service.pre_update(delta_time)
         for entity in self.entities:
             entity.pre_update(delta_time)
 
     def update(self, delta_time: float):
-        for service in self.services:
-            service.update(delta_time)
         for entity in self.entities:
             entity.update(delta_time)
 
     def post_update(self, delta_time: float):
-        for service in self.services:
-            service.post_update(delta_time)
         for entity in self.entities:
             entity.post_update(delta_time)
 
     def const_update(self, timestep: float):
-        for service in self.services:
-            service.const_update(timestep)
         for entity in self.entities:
             entity.const_update(timestep)
