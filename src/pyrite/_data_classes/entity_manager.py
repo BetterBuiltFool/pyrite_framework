@@ -3,13 +3,13 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-# from weakref import WeakSet
+from weakref import WeakSet
+
+from src.pyrite.types.entity import Entity
 
 if TYPE_CHECKING:
     from src.pyrite.types._base_type import _BaseType
     from src.pyrite.game import Game
-
-    # from src.pyrite.types.entity import Entity
 
 
 class EntityManager(ABC):
@@ -40,7 +40,7 @@ class EntityManager(ABC):
         pass
 
     @abstractmethod
-    def const_update(self, delta_time: float):
+    def const_update(self, timestep: float):
         pass
 
     @staticmethod
@@ -52,4 +52,32 @@ class EntityManager(ABC):
 
 class DefaultEntityManager(EntityManager):
 
-    pass
+    def __init__(self, game_instance: Game) -> None:
+        super().__init__(game_instance)
+        self.entities: WeakSet[Entity] = WeakSet()
+
+    def enable(self, item: _BaseType) -> None:
+        if not isinstance(item, Entity):
+            return
+        self.entities.add(item)
+
+    def disable(self, item: _BaseType) -> None:
+        if not isinstance(item, Entity):
+            return
+        self.entities.discard(item)
+
+    def pre_update(self, delta_time: float):
+        for entity in self.entities:
+            entity.pre_update(delta_time)
+
+    def update(self, delta_time: float):
+        for entity in self.entities:
+            entity.update(delta_time)
+
+    def post_update(self, delta_time: float):
+        for entity in self.entities:
+            entity.post_update(delta_time)
+
+    def const_update(self, timestep: float):
+        for entity in self.entities:
+            entity.const_update(timestep)
