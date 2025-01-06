@@ -18,6 +18,10 @@ import pygame
 
 
 class Renderer(ABC):
+    """
+    Class responsible to holding any enabled renderables,
+    and drawing them to the screen.
+    """
 
     def __init__(self, game_instance: Game) -> None:
         self.game_instance = game_instance
@@ -44,7 +48,7 @@ class Renderer(ABC):
         Draws the items from the renderable dictionary onto the passed surface.
 
         :param window: The game window, receiving final draws
-        :param renderables: A list of items that need to be rendered to the surface.
+        :param render_queue: A list of items that need to be rendered to the surface.
         """
         pass
 
@@ -55,7 +59,8 @@ class Renderer(ABC):
 
         Does nothing if the item is not a renderable.
 
-        :param item: Object being enabled. Must be a renderable to properly register.
+        :param item: Object being enabled. Objects that are not renderable will be
+        skipped.
         """
         pass
 
@@ -80,6 +85,9 @@ class Renderer(ABC):
 
 
 def _get_draw_index(renderable: Renderable) -> int:
+    """
+    Sort key for sorting by draw index.
+    """
     return renderable.draw_index
 
 
