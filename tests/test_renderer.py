@@ -33,6 +33,9 @@ class MockRenderable(Renderable):
     def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
         return super().render(delta_time)
 
+    def get_rect(self) -> Rect:
+        return super().get_rect()
+
 
 class MockEntity(_BaseType):
 
@@ -76,7 +79,7 @@ class TestDefaultRenderer(unittest.TestCase):
             self.assertGreaterEqual(key(item), key(previous))
 
     def setUp(self) -> None:
-        self.renderer = DefaultRenderer()
+        self.renderer = DefaultRenderer(None)
 
     def test_enable(self):
         # Ideal case

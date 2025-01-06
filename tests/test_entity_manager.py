@@ -1,117 +1,115 @@
+# from collections.abc import Callable, Sequence
+from contextlib import contextmanager
 import pathlib
 import sys
+
+# from typing import Any
 import unittest
+
+from pygame.rect import Rect as Rect
+from pygame.surface import Surface as Surface
+from pygame.typing import Point
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite._data_classes.entity_manager import (  # noqa:E402
-    EntityManager,
-    Entity,
-    Renderable,
-    UIElement,
-)
+
+from src.pyrite._data_classes.entity_manager import DefaultEntityManager  # noqa:E402
+from src.pyrite.types.enums import Layer  # noqa:E402
+from src.pyrite.types.entity import Entity  # noqa:E402
+from src.pyrite.types.renderable import Renderable  # noqa:E402
 
 
-class TestEntity(Entity):
+class MockRenderable(Renderable):
 
-    pass
+    def __init__(
+        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
+    ) -> None:
+        self.layer = layer
+        self.draw_index = draw_index
 
-
-class TestRenderable(Renderable):
-
-    def render(self, delta_time: float):
+    def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
         return super().render(delta_time)
 
-
-class TestUIElement(UIElement):
-
-    def render_ui(self, delta_time: float):
-        return super().render_ui(delta_time)
+    def get_rect(self) -> Rect:
+        return super().get_rect()
 
 
-class TestRenderableEntity(Renderable, Entity):
+class MockEntity(Entity):
 
-    def render(self, delta_time: float):
-        return super().render(delta_time)
-
-
-class TestUIEntity(UIElement, Entity):
-
-    def render_ui(self, delta_time: float):
-        return super().render_ui(delta_time)
+    def __init__(self, game_instance=None, enabled=True) -> None:
+        pass
 
 
-class Test_Metadata(unittest.TestCase):
+@contextmanager
+def make_renderable(*args, **kwds):
+    yield MockRenderable(*args, **kwds)
+
+
+@contextmanager
+def make_entity(*args, **kwds):
+    yield MockEntity(*args, **kwds)
+
+
+class TestDefaultEntityManager(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.entity_manager = EntityManager()
+        self.entity_manager = DefaultEntityManager(None)
 
     def test_enable(self):
-        bare_entities = [TestEntity() for i in range(5)]
-        bare_renderables = [TestRenderable() for i in range(5)]
-        bare_ui_elements = [TestUIElement() for i in range(5)]
-        renderable_entities = [TestRenderableEntity() for i in range(5)]
-        ui_entities = [TestUIEntity() for i in range(5)]
+        # Ideal case
 
-        for item in [
-            *bare_entities,
-            *bare_renderables,
-            *bare_ui_elements,
-            *renderable_entities,
-            *ui_entities,
-        ]:
-            self.entity_manager.enable(item)
-
-        for entity in [*bare_entities, *renderable_entities, *ui_entities]:
-            self.assertIn(entity, self.entity_manager.entities)
-
-        for renderable in [*bare_renderables, *renderable_entities]:
-            self.assertIn(renderable, self.entity_manager.renderables)
-
-        for element in [*bare_ui_elements, *ui_entities]:
-            self.assertIn(element, self.entity_manager.ui_elements)
-
-    def test_disable(self):
-        bare_entities = [TestEntity() for i in range(5)]
-        bare_renderables = [TestRenderable() for i in range(5)]
-        bare_ui_elements = [TestUIElement() for i in range(5)]
-        renderable_entities = [TestRenderableEntity() for i in range(5)]
-        ui_entities = [TestUIEntity() for i in range(5)]
-
-        for item in [
-            *bare_entities,
-            *bare_renderables,
-            *bare_ui_elements,
-            *renderable_entities,
-            *ui_entities,
-        ]:
-            self.entity_manager.enable(item)
-
-        # Disable select member types
-        for item in [
-            *bare_entities,
-            *bare_ui_elements,
-            *renderable_entities,
-        ]:
-            self.entity_manager.disable(item)
-
-        for entity in [*ui_entities]:
-            self.assertIn(entity, self.entity_manager.entities)
-
-        for entity in [*bare_entities, *renderable_entities]:
+        with make_entity() as entity:
             self.assertNotIn(entity, self.entity_manager.entities)
 
-        for renderable in [*bare_renderables]:
-            self.assertIn(renderable, self.entity_manager.renderables)
+            self.entity_manager.enable(entity)
 
-        for renderable in [*renderable_entities]:
-            self.assertNotIn(renderable, self.entity_manager.renderables)
+            self.assertIn(entity, self.entity_manager.entities)
+            self.entity_manager.entities = {}
 
-        for element in [*ui_entities]:
-            self.assertIn(element, self.entity_manager.ui_elements)
+        # Non-entity
+        with make_renderable() as renderable:
+            self.assertNotIn(entity, self.entity_manager.entities)
 
-        for element in [*bare_ui_elements]:
-            self.assertNotIn(element, self.entity_manager.ui_elements)
+            self.entity_manager.enable(renderable)
+
+            self.assertNotIn(renderable, self.entity_manager.entities)
+            self.entity_manager.entities = {}
+
+    def test_disable(self):
+        entities = [MockEntity() for _ in range(5)]
+
+        for entity in entities:
+            self.entity_manager.enable(entity)
+
+        for entity in entities:
+            self.assertIn(
+                entity,
+                self.entity_manager.entities,
+            )
+
+        disabled_entity = entities[2]  # Arbitrary index
+
+        self.entity_manager.disable(disabled_entity)
+
+        for entity in entities:
+            if entity is disabled_entity:
+                continue
+            self.assertIn(
+                entity,
+                self.entity_manager.entities,
+            )
+        self.assertNotIn(
+            disabled_entity,
+            self.entity_manager.entities,
+        )
+
+        # Try removing a mock renderable
+        renderable = MockRenderable()
+
+        self.entity_manager.disable(renderable)
+
+        # Try removing a renderable not in the collection
+        self.entity_manager.disable(disabled_entity)
 
 
 if __name__ == "__main__":

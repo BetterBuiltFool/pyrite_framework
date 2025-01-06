@@ -71,11 +71,10 @@ class Game:
         # This way, a surface exists even if the a window hasn't been created.
         self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
 
-        # Entity manager will handle holding onto all enabled entities, renderables,
-        # and ui elements.
-        # Note these are held in weaksets, and thus allow GC. Entities, etc., need
-        # additional references to stay alive.
-        self.entity_manager = EntityManager()
+        # Entity manager is responsible for holding and updating all entities.
+        # Renderer is responsible for holding and drawing all renderables.
+        # Both have a default version that will be spawned if none is provided.
+        self.entity_manager = EntityManager.get_entity_manager(self, **kwds)
         self.renderer = Renderer.get_renderer(self, **kwds)
 
     def __enter__(self) -> Self:
@@ -190,8 +189,7 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
-        for entity in self.entity_manager.entities:
-            entity.pre_update(delta_time)
+        pass
 
     def update(self, delta_time: float) -> None:
         """
@@ -200,8 +198,7 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
-        for entity in self.entity_manager.entities:
-            entity.update(delta_time)
+        pass
 
     def post_update(self, delta_time: float) -> None:
         """
@@ -210,8 +207,7 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
-        for entity in self.entity_manager.entities:
-            entity.post_update(delta_time)
+        pass
 
     def const_update(self, timestep: float) -> None:
         """
@@ -227,8 +223,7 @@ class Game:
         :param timestep: Simulated time passed since last update. Passed in from the
         game's timing_settings.
         """
-        for entity in self.entity_manager.entities:
-            entity.const_update(timestep)
+        pass
 
     def _update_block(self, delta_time: float) -> None:
         """
@@ -237,8 +232,11 @@ class Game:
         :param delta_time: Actual time passed since last frame, in seconds.
         """
         self.pre_update(delta_time)
+        self.entity_manager.pre_update(delta_time)
         self.update(delta_time)
+        self.entity_manager.update(delta_time)
         self.post_update(delta_time)
+        self.entity_manager.post_update(delta_time)
 
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
@@ -256,6 +254,7 @@ class Game:
         """
         while accumulated_time > timestep:
             self.const_update(timestep)
+            self.entity_manager.const_update(timestep)
             accumulated_time -= timestep
         return accumulated_time
 
