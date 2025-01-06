@@ -8,11 +8,12 @@ from typing import Self, TYPE_CHECKING
 from src.pyrite._data_classes.display_settings import DisplaySettings
 from src.pyrite._data_classes.entity_manager import EntityManager
 from src.pyrite._data_classes.metadata import Metadata
+from src.pyrite._data_classes.renderer import Renderer
 from src.pyrite._data_classes.timing_settings import TimingSettings
 
 if TYPE_CHECKING:
     from src.pyrite.types.entity import Entity
-    from src.pyrite.types.renderable import Renderable, UIElement
+    from src.pyrite.types.renderable import Renderable
 
 
 import pygame
@@ -75,6 +76,7 @@ class Game:
         # Note these are held in weaksets, and thus allow GC. Entities, etc., need
         # additional references to stay alive.
         self.entity_manager = EntityManager()
+        self.renderer = Renderer.get_renderer(self, **kwds)
 
     def __enter__(self) -> Self:
         """
@@ -97,11 +99,13 @@ class Game:
             self.main()
         return self.suppress_context_errors
 
-    def enable(self, item: Entity | Renderable | UIElement) -> None:
+    def enable(self, item: Entity | Renderable) -> None:
         self.entity_manager.enable(item)
+        self.renderer.enable(item)
 
-    def disable(self, item: Entity | Renderable | UIElement) -> None:
+    def disable(self, item: Entity | Renderable) -> None:
         self.entity_manager.disable(item)
+        self.renderer.disable(item)
 
     def create_window(self):
         """
@@ -262,21 +266,8 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
-        for entity in self.entity_manager.renderables:
-            surface, location = entity.render(delta_time)
-            window.blit(surface, location)
-
-    def render_ui(self, window: pygame.Surface, delta_time: float) -> None:
-        """
-        Late drawing phase for UI elements. Used for rendering any elements that must
-        be drawn after the main render phase, such as UI.
-
-        :param window: The main display window.
-        :param delta_time: Time passed since last frame, in seconds.
-        """
-        for entity in self.entity_manager.ui_elements:
-            surface, location = entity.render_ui(delta_time)
-            window.blit(surface, location)
+        render_queue = self.renderer.generate_render_queue()
+        self.renderer.render(window, delta_time, render_queue)
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
@@ -285,9 +276,10 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
+        # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))
+
         self.render(window, delta_time)
-        self.render_ui(window, delta_time)
 
         pygame.display.flip()
 

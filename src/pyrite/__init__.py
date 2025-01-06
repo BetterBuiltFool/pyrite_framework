@@ -5,7 +5,7 @@ from ._data_classes.metadata import Metadata  # noqa:F401
 from ._data_classes.timing_settings import TimingSettings  # noqa:F401
 from .game import Game, AsyncGame  # noqa:F401
 from .types.entity import Entity  # noqa:F401
-from .types.renderable import Renderable, UIElement  # noqa:F401
+from .types.renderable import Renderable  # noqa:F401
 
 DEFAULT_WINDOWED: DisplaySettings = DisplaySettings()
 """
