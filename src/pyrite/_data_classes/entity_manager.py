@@ -19,32 +19,74 @@ class EntityManager(ABC):
 
     @abstractmethod
     def enable(self, item: _BaseType) -> None:
+        """
+        Adds an entity to the collection of active entities.
+
+        Does nothing if the passed item is not an Entity.
+
+        :param item: Object being enabled. Objects that are not entities will be
+        skipped.
+        """
         pass
 
     @abstractmethod
     def disable(self, item: _BaseType) -> None:
+        """
+        Removes an entity from the collection of active entities.
+
+        Does nothing if the passed item is not an Entity.
+
+        :param item: Object being enabled. Objects that are not entities will be
+        skipped.
+        """
         pass
 
     # Update Methods
 
     @abstractmethod
     def pre_update(self, delta_time: float):
+        """
+        Runs the pre_update phase for active entities.
+
+        :param delta_time: Time passed since last frame
+        """
         pass
 
     @abstractmethod
     def update(self, delta_time: float):
+        """
+        Runs the update phase for active entities.
+
+        :param delta_time: Time passed since last frame
+        """
         pass
 
     @abstractmethod
     def post_update(self, delta_time: float):
+        """
+        Runs the post_update phase for active entities.
+
+        :param delta_time: Time passed since last frame
+        """
         pass
 
     @abstractmethod
     def const_update(self, timestep: float):
+        """
+        Runs the const_update phase for active entities.
+
+        :param timestep: Length of the simulated step
+        """
         pass
 
     @staticmethod
     def get_entity_manager(game_instance: Game, **kwds) -> EntityManager:
+        """
+        Extracts an entity manager from keyword arguments.
+        Gives the default entity manager if no entity manager is supplied.
+
+        Used for getting an entity manager for a new game instance
+        """
         if (entity_manager := kwds.get("entity_manager", None)) is None:
             entity_manager = DefaultEntityManager(game_instance)
         return entity_manager
