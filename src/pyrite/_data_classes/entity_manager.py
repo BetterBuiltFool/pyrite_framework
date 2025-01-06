@@ -1,21 +1,55 @@
-from weakref import WeakSet
+from __future__ import annotations
 
-from src.pyrite.types.entity import Entity
-from src.pyrite.types.renderable import Renderable
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+# from weakref import WeakSet
+
+if TYPE_CHECKING:
+    from src.pyrite.types._base_type import _BaseType
+    from src.pyrite.game import Game
+
+    # from src.pyrite.types.entity import Entity
 
 
-class EntityManager:
+class EntityManager(ABC):
 
-    def __init__(self) -> None:
-        self.entities: WeakSet[Entity] = WeakSet()
-        self.renderables: WeakSet[Renderable] = WeakSet()
+    def __init__(self, game_instance: Game) -> None:
+        self.game_instance = game_instance
 
-    def enable(self, item: Entity | Renderable) -> None:
-        if isinstance(item, Entity):
-            self.entities.add(item)
-        if isinstance(item, Renderable):
-            self.renderables.add(item)
+    @abstractmethod
+    def enable(self, item: _BaseType) -> None:
+        pass
 
-    def disable(self, item: Entity | Renderable) -> None:
-        self.entities.discard(item)
-        self.renderables.discard(item)
+    @abstractmethod
+    def disable(self, item: _BaseType) -> None:
+        pass
+
+    # Update Methods
+
+    @abstractmethod
+    def pre_update(self, delta_time: float):
+        pass
+
+    @abstractmethod
+    def update(self, delta_time: float):
+        pass
+
+    @abstractmethod
+    def post_update(self, delta_time: float):
+        pass
+
+    @abstractmethod
+    def const_update(self, delta_time: float):
+        pass
+
+    @staticmethod
+    def get_entity_manager(game_instance: Game, **kwds) -> EntityManager:
+        if (entity_manager := kwds.get("entity_manager", None)) is None:
+            entity_manager = DefaultEntityManager(game_instance)
+        return entity_manager
+
+
+class DefaultEntityManager(EntityManager):
+
+    pass
