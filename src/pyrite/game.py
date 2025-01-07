@@ -11,6 +11,8 @@ from src.pyrite._data_classes.metadata import Metadata
 from src.pyrite._data_classes.renderer import Renderer
 from src.pyrite._data_classes.timing_settings import TimingSettings
 
+import src.pyrite._helper.instance as instance
+
 if TYPE_CHECKING:
     from src.pyrite.types.entity import Entity
     from src.pyrite.types.renderable import Renderable
@@ -19,12 +21,6 @@ if TYPE_CHECKING:
 import pygame
 
 logger = logging.getLogger(__name__)
-
-_active_instance: Game = None
-
-
-def get_game_instance() -> Game:
-    return _active_instance
 
 
 class Game:
@@ -36,15 +32,16 @@ class Game:
     """
 
     def __new__(cls, *args, **kwds) -> Self:
-        global _active_instance
-        if _active_instance is not None:
-            _active_instance.is_running = False
+        active_instance = instance.get_game_instance()
+        if active_instance is not None:
+            active_instance.is_running = False
             logger.info(
-                f"Stopping {_active_instance}, only one game may be running at a time."
+                f"Stopping {active_instance}, only one game may be running at a time."
             )
         logger.info("Starting new game instance.")
-        _active_instance = super().__new__(cls)
-        return _active_instance
+        active_instance = super().__new__(cls)
+        instance.set_game_instance(active_instance)
+        return active_instance
 
     def __init__(self, **kwds) -> None:
 
