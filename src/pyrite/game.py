@@ -158,7 +158,7 @@ class Game:
         self._update_block(delta_time)
 
         if not (caption := self.game_data.caption):
-            caption = self.game_data.name
+            caption = self.game_data.title
         pygame.display.set_caption(caption)
         self._render_block(self.window, delta_time)
 

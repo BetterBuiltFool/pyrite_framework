@@ -11,13 +11,13 @@ class GameData:
     A collection of data about a game.
     """
 
-    name: str = "Game"
+    title: str = "Game"
     """
-    The name of the game.
+    The title of the game.
     """
     caption: str = None
     """
-    Text displayed by the title bar. Defaults to the game's name.
+    Text displayed by the title bar. Defaults to the game's title.
     """
     icon: pygame.Surface | None = None
     """
@@ -34,7 +34,7 @@ class GameData:
         metadata: GameData | None = kwds.get("game_data", None)
         if metadata is None:
             # If no metadata object is supplied, create one.
-            keys: set = {"name", "caption", "icon"}
+            keys: set = {"title", "caption", "icon"}
             params: dict = {key: kwds[key] for key in keys if key in kwds}
             metadata = GameData(**params)
         return metadata

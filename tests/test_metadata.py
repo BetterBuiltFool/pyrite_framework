@@ -10,12 +10,12 @@ from src.pyrite._data_classes.game_data import GameData  # noqa:E402
 class Test_GameData(unittest.TestCase):
 
     def test_get_game_data(self):
-        test_name = "Test"
+        test_title = "Test"
         test_caption = "Test caption"
         test_icon = None
         # Default case (Metadata object supplied)
         test_data = GameData(
-            name=test_name,
+            title=test_title,
             caption=test_caption,
             icon=test_icon,
         )
@@ -26,20 +26,20 @@ class Test_GameData(unittest.TestCase):
 
         # ideal case (All settings, no extras)
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "caption": test_caption,
             "icon": test_icon,
         }
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
         self.assertIs(test_data.icon, test_icon)
 
         # All settings, extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "caption": test_caption,
             "icon": test_icon,
             "foo": "bar",
@@ -47,32 +47,32 @@ class Test_GameData(unittest.TestCase):
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
         self.assertIs(test_data.icon, test_icon)
 
         # missing settings, no extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "icon": test_icon,
         }
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
         # missing settings, extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "icon": test_icon,
             "foo": "bar",
         }
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
@@ -81,7 +81,7 @@ class Test_GameData(unittest.TestCase):
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, "Game")
+        self.assertEqual(test_data.title, "Game")
         self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
@@ -90,7 +90,7 @@ class Test_GameData(unittest.TestCase):
 
         test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, "Game")
+        self.assertEqual(test_data.title, "Game")
         self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
