@@ -26,8 +26,3 @@ class CanConstUpdate(Protocol):
 class CanRender(Protocol):
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]: ...
-
-
-class CanRenderUI(Protocol):
-
-    def render_ui(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]: ...
