@@ -72,7 +72,7 @@ class Game:
         # Renderer is responsible for holding and drawing all renderables.
         # Both have a default version that will be spawned if none is provided.
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
-        self.renderer = Renderer.get_renderer(self, **kwds)
+        self.renderer = Renderer.get_renderer(**kwds)
 
     def __enter__(self) -> Self:
         """
