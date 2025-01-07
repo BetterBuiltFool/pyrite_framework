@@ -7,7 +7,7 @@ from typing import Self, TYPE_CHECKING
 
 from src.pyrite._data_classes.display_settings import DisplaySettings
 from src.pyrite._data_classes.entity_manager import EntityManager
-from src.pyrite._data_classes.metadata import Metadata
+from src.pyrite._data_classes.game_data import GameData
 from src.pyrite._data_classes.renderer import Renderer
 from src.pyrite._data_classes.timing_settings import TimingSettings
 
@@ -58,10 +58,10 @@ class Game:
         self.is_running = True
         self.clock = pygame.time.Clock()
 
-        # Extract various settings and metadata from keyword arguments.
+        # Extract various settings and game data from keyword arguments.
         # Creates defaults if none are provided.
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
-        self.metadata = Metadata.get_metadata(**kwds)
+        self.game_data = GameData.get_game_data(**kwds)
         self.timing_settings = TimingSettings.get_timing_settings(**kwds)
 
         # Get a surface the size of the requested resolution.
@@ -109,8 +109,8 @@ class Game:
         Updates the icon, if possible.
         The game's window and display settings are updated to reflect the new window.
         """
-        if self.metadata.icon is not None:
-            pygame.display.set_icon(self.metadata.icon)
+        if self.game_data.icon is not None:
+            pygame.display.set_icon(self.game_data.icon)
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
@@ -157,8 +157,8 @@ class Game:
 
         self._update_block(delta_time)
 
-        if not (caption := self.metadata.caption):
-            caption = self.metadata.name
+        if not (caption := self.game_data.caption):
+            caption = self.game_data.name
         pygame.display.set_caption(caption)
         self._render_block(self.window, delta_time)
 
