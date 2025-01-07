@@ -1,7 +1,12 @@
-import logging
+from __future__ import annotations
 
-# from ..game import get_game_instance
-import src.pyrite.game as game
+import logging
+from typing import TYPE_CHECKING
+
+import src.pyrite._helper.instance as instance
+
+if TYPE_CHECKING:
+    from src.pyrite.game import Game
 
 
 logger = logging.getLogger(__name__)
@@ -10,7 +15,9 @@ logger = logging.getLogger(__name__)
 class _BaseType:
 
     def __init__(self, game_instance=None, enabled=True) -> None:
-        self.game_instance: game.Game = game_instance
+        if game_instance is None:
+            game_instance = instance.get_game_instance()
+        self.game_instance: Game = game_instance
         self.enabled = enabled
 
     @property
@@ -21,9 +28,9 @@ class _BaseType:
     def enabled(self, value: bool) -> None:
         self._enabled = value
         if self.game_instance is None:
-            self.game_instance = game.get_game_instance()
+            self.game_instance = instance.get_game_instance()
         if self.game_instance is None:
-            logger.warning("No running game instance available.")
+            # logger.warning("No running game instance available.")
             return
         if value:
             self.game_instance.enable(self)
