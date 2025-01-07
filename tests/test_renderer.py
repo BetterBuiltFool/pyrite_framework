@@ -79,7 +79,7 @@ class TestDefaultRenderer(unittest.TestCase):
             self.assertGreaterEqual(key(item), key(previous))
 
     def setUp(self) -> None:
-        self.renderer = DefaultRenderer(None)
+        self.renderer = DefaultRenderer()
 
     def test_enable(self):
         # Ideal case

@@ -4,94 +4,94 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite._data_classes.metadata import Metadata  # noqa:E402
+from src.pyrite._data_classes.game_data import GameData  # noqa:E402
 
 
-class Test_Metadata(unittest.TestCase):
+class Test_GameData(unittest.TestCase):
 
-    def test_get_metadata(self):
-        test_name = "Test"
+    def test_get_game_data(self):
+        test_title = "Test"
         test_caption = "Test caption"
         test_icon = None
         # Default case (Metadata object supplied)
-        test_data = Metadata(
-            name=test_name,
+        test_data = GameData(
+            title=test_title,
             caption=test_caption,
             icon=test_icon,
         )
 
-        kwds = {"metadata": test_data}
+        kwds = {"game_data": test_data}
 
-        self.assertIs(test_data, Metadata.get_metadata(**kwds))
+        self.assertIs(test_data, GameData.get_game_data(**kwds))
 
         # ideal case (All settings, no extras)
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "caption": test_caption,
             "icon": test_icon,
         }
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
         self.assertIs(test_data.icon, test_icon)
 
         # All settings, extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "caption": test_caption,
             "icon": test_icon,
             "foo": "bar",
         }
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
+        self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
         self.assertIs(test_data.icon, test_icon)
 
         # missing settings, no extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "icon": test_icon,
         }
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
-        self.assertEqual(test_data.caption, test_name)
+        self.assertEqual(test_data.title, test_title)
+        self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
         # missing settings, extras
         kwds = {
-            "name": test_name,
+            "title": test_title,
             "icon": test_icon,
             "foo": "bar",
         }
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, test_name)
-        self.assertEqual(test_data.caption, test_name)
+        self.assertEqual(test_data.title, test_title)
+        self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
         # no settings, no extras
         kwds = {}
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, "Game")
-        self.assertEqual(test_data.caption, "Game")
+        self.assertEqual(test_data.title, "Game")
+        self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
         # no settings, extras
         kwds = {"foo": "bar"}
 
-        test_data = Metadata.get_metadata(**kwds)
+        test_data = GameData.get_game_data(**kwds)
 
-        self.assertEqual(test_data.name, "Game")
-        self.assertEqual(test_data.caption, "Game")
+        self.assertEqual(test_data.title, "Game")
+        self.assertEqual(test_data.caption, None)
         self.assertIs(test_data.icon, test_icon)
 
 

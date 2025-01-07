@@ -12,7 +12,6 @@ from src.pyrite.types.enums import RenderLayers
 
 if TYPE_CHECKING:
     from src.pyrite.types._base_type import _BaseType
-    from src.pyrite.game import Game
     from src.pyrite.types.enums import Layer
 
 import pygame
@@ -23,9 +22,6 @@ class Renderer(ABC):
     Class responsible to holding any enabled renderables,
     and drawing them to the screen.
     """
-
-    def __init__(self, game_instance: Game) -> None:
-        self.game_instance = game_instance
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -75,13 +71,13 @@ class Renderer(ABC):
         pass
 
     @staticmethod
-    def get_renderer(game_instance: Game, **kwds) -> Renderer:
+    def get_renderer(**kwds) -> Renderer:
         """
         Extracts a renderer from keyword arguments.
         Used for creating a renderer for a new Game instance
         """
         if (renderer := kwds.get("renderer", None)) is None:
-            renderer = DefaultRenderer(game_instance)
+            renderer = DefaultRenderer()
         return renderer
 
 
@@ -99,8 +95,7 @@ class DefaultRenderer(Renderer):
     screen (That's why they're last.)
     """
 
-    def __init__(self, game_instance: Game) -> None:
-        super().__init__(game_instance)
+    def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
 
     def enable(self, item: _BaseType):
