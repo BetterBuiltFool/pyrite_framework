@@ -71,9 +71,7 @@ class Game:
         # Entity manager is responsible for holding and updating all entities.
         # Renderer is responsible for holding and drawing all renderables.
         # Both have a default version that will be spawned if none is provided.
-        self.entity_manager: EntityManager = EntityManager.get_entity_manager(
-            self, **kwds
-        )
+        self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.renderer = Renderer.get_renderer(self, **kwds)
 
     def __enter__(self) -> Self:
