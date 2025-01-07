@@ -53,7 +53,7 @@ def make_entity(*args, **kwds):
 class TestDefaultEntityManager(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.entity_manager = DefaultEntityManager(None)
+        self.entity_manager = DefaultEntityManager()
 
     def test_enable(self):
         # Ideal case

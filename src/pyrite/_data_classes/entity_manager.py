@@ -9,13 +9,9 @@ from src.pyrite.types.entity import Entity
 
 if TYPE_CHECKING:
     from src.pyrite.types._base_type import _BaseType
-    from src.pyrite.game import Game
 
 
 class EntityManager(ABC):
-
-    def __init__(self, game_instance: Game) -> None:
-        self.game_instance = game_instance
 
     @abstractmethod
     def enable(self, item: _BaseType) -> None:
@@ -80,7 +76,7 @@ class EntityManager(ABC):
         pass
 
     @staticmethod
-    def get_entity_manager(game_instance: Game, **kwds) -> EntityManager:
+    def get_entity_manager(**kwds) -> EntityManager:
         """
         Extracts an entity manager from keyword arguments.
         Gives the default entity manager if no entity manager is supplied.
@@ -88,14 +84,13 @@ class EntityManager(ABC):
         Used for getting an entity manager for a new game instance
         """
         if (entity_manager := kwds.get("entity_manager", None)) is None:
-            entity_manager = DefaultEntityManager(game_instance)
+            entity_manager = DefaultEntityManager()
         return entity_manager
 
 
 class DefaultEntityManager(EntityManager):
 
-    def __init__(self, game_instance: Game) -> None:
-        super().__init__(game_instance)
+    def __init__(self) -> None:
         self.entities: WeakSet[Entity] = WeakSet()
 
     def enable(self, item: _BaseType) -> None:
