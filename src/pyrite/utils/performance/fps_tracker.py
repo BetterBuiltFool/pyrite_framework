@@ -3,10 +3,11 @@ from __future__ import annotations
 import sys
 from typing import Self, TYPE_CHECKING
 
+from src.pyrite.types.entity import Entity
+
 if TYPE_CHECKING:
     from src.pyrite.game import Game
     from src.pyrite.types import Container
-    from src.pyrite.types.entity import Entity
 
 
 class FPSTracker(Entity):
@@ -15,7 +16,7 @@ class FPSTracker(Entity):
     def __new__(cls, *args, **kwds) -> Self:
         instance = cls._instance
         if instance is None:
-            instance = super().__new__(*args, **kwds)
+            instance = super().__new__(FPSTracker)
             cls._instance = instance
         return instance
 
@@ -37,7 +38,7 @@ class FPSTracker(Entity):
 
         self.max_entities = max(
             self.max_entities,
-            len(game_instance.entity_manager.get_number_entities()) - 1,
+            game_instance.entity_manager.get_number_entities() - 1,
         )
 
         self.max_renderables = max(
