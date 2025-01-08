@@ -25,17 +25,9 @@ class CameraBase(ABC):
     def __init__(
         self,
         surface: pygame.Surface,
-        position: pygame.typing.Point = None,
         layer_mask: tuple[Layer] = None,
     ) -> None:
         self.surface = surface
-        self.viewport = surface.get_rect()
-        """
-        A rectangle representing the actual viewable area of the camera
-        """
-        if position is None:
-            position = self.viewport.center
-        self.position = Vector2(position)
         if layer_mask is None:
             layer_mask = ()
         self.layer_mask = layer_mask
@@ -46,26 +38,6 @@ class CameraBase(ABC):
         Default fill is solid black.
         """
         self.surface.fill((0, 0, 0, 0))
-
-    def get_rect(self) -> pygame.Rect:
-        """
-        Gives the viewport converted to worldspace.
-
-        :return: A Rectangle matching the size of the viewport, with worldspace
-        coordinates.
-        """
-        return pygame.Rect(
-            self.to_world(self.viewport.topleft),
-            self.viewport.size,
-        )
-
-    def get_surface_rect(self) -> pygame.Rect:
-        """
-        Gets the rect of the camera's surface, in worldspace, centered on the position.
-
-        :return: A Rectangle matching the size of the camera surface, in worldspace.
-        """
-        return self.surface.get_rect(center=self.position)
 
     def draw(self, renderable: pygame.Surface, rect: pygame.Rect):
         """
@@ -91,7 +63,7 @@ class CameraBase(ABC):
         return (item for item in items if self._in_view(item.get_rect()))
 
     def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.get_rect().colliderect(rect)
+        return self.surface.get_rect().colliderect(rect)
 
     def to_local(self, point: pygame.typing.Point) -> Vector2:
         """
@@ -100,9 +72,7 @@ class CameraBase(ABC):
         :param point: A point, in world space
         :return: The local space equivalent of _point_
         """
-        point = Vector2(point)
-
-        return point - Vector2(self.get_surface_rect().topleft)
+        return Vector2(point)
 
     def to_world(self, point: pygame.typing.Point) -> Vector2:
         """
@@ -111,9 +81,8 @@ class CameraBase(ABC):
         :param point: A point, in local space
         :return: The world space equivalent of _point_
         """
-        point = Vector2(point)
 
-        return point + Vector2(self.get_surface_rect().topleft)
+        return Vector2(point)
 
 
 class Camera(CameraBase, Renderable):
@@ -146,9 +115,14 @@ class Camera(CameraBase, Renderable):
         """
         self.max_size = Vector2(max_size)
         surface = pygame.Surface(self.max_size)
-        CameraBase.__init__(
-            self, surface=surface, position=position, layer_mask=layer_mask
-        )
+        self.viewport = surface.get_rect()
+        """
+        A rectangle representing the actual viewable area of the camera
+        """
+        if position is None:
+            position = self.viewport.center
+        self.position = Vector2(position)
+        CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
             self,
             container=container,
@@ -164,11 +138,44 @@ class Camera(CameraBase, Renderable):
         """
         self.surface.fill((0, 0, 0, 255))
 
+    def _in_view(self, rect: pygame.Rect) -> bool:
+        return self.get_rect().colliderect(rect)
+
+    def get_surface_rect(self) -> pygame.Rect:
+        """
+        Gets the rect of the camera's surface, in worldspace, centered on the position.
+
+        :return: A Rectangle matching the size of the camera surface, in worldspace.
+        """
+        return self.surface.get_rect(center=self.position)
+
+    def get_rect(self) -> pygame.Rect:
+        """
+        Gives the viewport converted to worldspace.
+
+        :return: A Rectangle matching the size of the viewport, with worldspace
+        coordinates.
+        """
+        return pygame.Rect(
+            self.to_world(self.viewport.topleft),
+            self.viewport.size,
+        )
+
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
         return (
             self.surface.subsurface(self.viewport),
             (0, 0),
         )
+
+    def to_local(self, point: pygame.typing.Point) -> Vector2:
+        point = Vector2(point)
+
+        return point - Vector2(self.get_surface_rect().topleft)
+
+    def to_world(self, point: pygame.typing.Point) -> Vector2:
+        point = Vector2(point)
+
+        return point + Vector2(self.get_surface_rect().topleft)
 
     def zoom(self, zoom_level: float):
         """
