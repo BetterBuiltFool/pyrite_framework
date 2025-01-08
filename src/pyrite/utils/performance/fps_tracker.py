@@ -29,7 +29,7 @@ class FPSTracker(Entity):
         self.max_entities: int = 0
         self.max_renderables: int = 0
 
-    def post_update(self, delta_time: float) -> None:
+    def pre_update(self, delta_time: float) -> None:
         game_instance: Game = self.container
 
         current_fps = game_instance.clock.get_fps()
