@@ -94,6 +94,7 @@ class Camera(CameraBase, Renderable):
         self,
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
+        viewport: pygame.Rect = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
@@ -105,6 +106,9 @@ class Camera(CameraBase, Renderable):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
+        :param viewport: A rectangle representing the actual viewable area of the
+        camera, defaults to None.
+        None will give the center of the viewport.
         :param layer_mask: Layers that the camera will exclude from rendering,
         defaults to None
         :param container: The instance of the game to which the rengerable belongs,
@@ -115,7 +119,9 @@ class Camera(CameraBase, Renderable):
         """
         self.max_size = Vector2(max_size)
         surface = pygame.Surface(self.max_size)
-        self.viewport = surface.get_rect()
+        if viewport is None:
+            viewport = surface.get_rect()
+        self.viewport = viewport
         """
         A rectangle representing the actual viewable area of the camera
         """
