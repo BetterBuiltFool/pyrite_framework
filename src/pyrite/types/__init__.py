@@ -1,6 +1,28 @@
-from typing import Protocol
+from __future__ import annotations
+
+from typing import Protocol, runtime_checkable, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._base_type import _BaseType
 
 import pygame
+
+
+@runtime_checkable
+class Container(Protocol):
+    """
+    An object that can forward Entities and Renderables to the active EntityManager and
+    Renderer for enabling and disabling.
+    """
+
+    container: Container
+    """
+    A Container for the container. Needs to loop back into the game class eventually.
+    """
+
+    def enable(self, item: _BaseType) -> None: ...
+
+    def disable(self, item: _BaseType) -> None: ...
 
 
 class CanUpdate(Protocol):

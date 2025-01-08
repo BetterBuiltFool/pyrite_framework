@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 from abc import ABC
 from collections.abc import Iterable
-
+from typing import TYPE_CHECKING
 
 from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.enums import Layer, RenderLayers
 
 import pygame
 from pygame import Vector2
+
+if TYPE_CHECKING:
+    from src.pyrite.types import Container
 
 
 class CameraBase(ABC):
@@ -121,7 +126,7 @@ class Camera(CameraBase, Renderable):
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
         layer_mask: tuple[Layer] = None,
-        game_instance=None,
+        container: Container = None,
         enabled=True,
         draw_index: int = 0,
     ) -> None:
@@ -133,7 +138,7 @@ class Camera(CameraBase, Renderable):
         None will give the center of the viewport.
         :param layer_mask: Layers that the camera will exclude from rendering,
         defaults to None
-        :param game_instance: The instance of the game to which the rengerable belongs,
+        :param container: The instance of the game to which the rengerable belongs,
         defaults to None. See Renderable.
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
@@ -146,7 +151,7 @@ class Camera(CameraBase, Renderable):
         )
         Renderable.__init__(
             self,
-            game_instance=game_instance,
+            container=container,
             enabled=enabled,
             layer=RenderLayers.CAMERA,
             draw_index=draw_index,

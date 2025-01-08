@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import src.pyrite._helper.instance as instance
 
 if TYPE_CHECKING:
-    from src.pyrite.game import Game
+    from src.pyrite.types import Container
 
 
 logger = logging.getLogger(__name__)
@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 class _BaseType:
 
-    def __init__(self, game_instance=None, enabled=True) -> None:
-        if game_instance is None:
-            game_instance = instance.get_game_instance()
-        self.game_instance: Game = game_instance
+    def __init__(self, container: Container = None, enabled=True) -> None:
+        if container is None:
+            container = instance.get_game_instance()
+        self.container: Container = container
         self.enabled = enabled
 
     @property
@@ -27,12 +27,11 @@ class _BaseType:
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
-        if self.game_instance is None:
-            self.game_instance = instance.get_game_instance()
-        if self.game_instance is None:
-            # logger.warning("No running game instance available.")
+        # if self.container is None:
+        if self.container is None:
+            logger.warning(f"{self} has no container for enabling/disabling.")
             return
         if value:
-            self.game_instance.enable(self)
+            self.container.enable(self)
         else:
-            self.game_instance.disable(self)
+            self.container.disable(self)

@@ -1,9 +1,15 @@
+from __future__ import annotations
+
 from abc import abstractmethod, ABC
+from typing import TYPE_CHECKING
 
 from ._base_type import _BaseType
 from src.pyrite.types.enums import Layer
 
 import pygame
+
+if TYPE_CHECKING:
+    from src.pyrite.types import Container
 
 
 class Renderable(_BaseType, ABC):
@@ -12,7 +18,11 @@ class Renderable(_BaseType, ABC):
     """
 
     def __init__(
-        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=0
+        self,
+        container: Container = None,
+        enabled=True,
+        layer: Layer = None,
+        draw_index=0,
     ) -> None:
         self.layer: Layer = layer
         self.draw_index = draw_index
@@ -23,7 +33,7 @@ class Renderable(_BaseType, ABC):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
-        _BaseType.__init__(self, game_instance, enabled)
+        _BaseType.__init__(self, container, enabled)
 
     @abstractmethod
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]:
