@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 simple_game_framework.code-workspace
 manual_testing.py
+.vscode/settings.json
