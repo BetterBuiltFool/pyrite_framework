@@ -70,6 +70,13 @@ class Renderer(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_number_renderables(self) -> int:
+        """
+        Returns the total number of renderables being tracked by the renderer.
+        """
+        pass
+
     @staticmethod
     def get_renderer(**kwds) -> Renderer:
         """
@@ -172,6 +179,12 @@ class DefaultRenderer(Renderer):
                 pygame.transform.scale(camera_surface, window.get_rect().size),
                 camera_location,
             )
+
+    def get_number_renderables(self) -> int:
+        count = 0
+        for layer_set in self.renderables.values():
+            count += len(layer_set)
+        return count
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """

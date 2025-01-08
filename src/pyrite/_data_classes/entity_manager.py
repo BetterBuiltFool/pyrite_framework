@@ -75,6 +75,15 @@ class EntityManager(ABC):
         """
         pass
 
+    # Profiling methods
+
+    @abstractmethod
+    def get_number_entities(self) -> int:
+        """
+        Returns the number ot active entities managed by the entity manager.
+        """
+        pass
+
     @staticmethod
     def get_entity_manager(**kwds) -> EntityManager:
         """
@@ -116,3 +125,6 @@ class DefaultEntityManager(EntityManager):
     def const_update(self, timestep: float):
         for entity in self.entities:
             entity.const_update(timestep)
+
+    def get_number_entities(self) -> int:
+        return len(self.entities)
