@@ -17,6 +17,10 @@ if TYPE_CHECKING:
 
 
 class Dazzler(Entity, Renderable):
+    """
+    A simple renderable entity with a semi-complex render step to to stress-test the
+    framework.
+    """
 
     def __init__(
         self,
@@ -57,7 +61,13 @@ class Dazzler(Entity, Renderable):
 
     @staticmethod
     def multispawn(number_spawns, area: pygame.typing.RectLike) -> set[Dazzler]:
-        print(area)
+        """
+        Creates a number of Dazzlers randomly distributed within a rectangular area.
+
+        :param number_spawns: Number of Dazzlers to be spawned
+        :param area: Rectangular area to spawn the Dazzlers in
+        :return: A set containing the spawned Dazzlers.
+        """
         area = Rect(area)
         min_x, min_y = area.topleft
         size_x, size_y = area.size
