@@ -79,6 +79,9 @@ class EntityManager(ABC):
 
     @abstractmethod
     def get_number_entities(self) -> int:
+        """
+        Returns the number ot active entities managed by the entity manager.
+        """
         pass
 
     @staticmethod
