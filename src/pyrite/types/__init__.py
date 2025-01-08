@@ -14,6 +14,11 @@ class Container(Protocol):
     Renderer for enabling and disabling.
     """
 
+    container: Container
+    """
+    A Container for the container. Needs to loop back into the game class eventually.
+    """
+
     def enable(self, item: _BaseType) -> None: ...
 
     def disable(self, item: _BaseType) -> None: ...
