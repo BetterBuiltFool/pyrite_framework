@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
@@ -14,7 +13,7 @@ if TYPE_CHECKING:
     from src.pyrite.types import Container
 
 
-class CameraBase(ABC):
+class CameraBase:
     """
     Defines the important attributes of a camera for the sake of drawing onto its
     surface.
