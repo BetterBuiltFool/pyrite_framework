@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.pyrite.game import Game
@@ -10,6 +10,14 @@ if TYPE_CHECKING:
 
 
 class FPSTracker(Entity):
+    _instance: FPSTracker = None
+
+    def __new__(cls, *args, **kwds) -> Self:
+        instance = cls._instance
+        if instance is None:
+            instance = super().__new__(*args, **kwds)
+            cls._instance = instance
+        return instance
 
     def __init__(self, container: Container = None, enabled=True) -> None:
         super().__init__(container, enabled)
