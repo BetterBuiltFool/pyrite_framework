@@ -28,9 +28,8 @@ class _BaseType:
     def enabled(self, value: bool) -> None:
         self._enabled = value
         # if self.container is None:
-        #     self.container = instance.get_game_instance()
         if self.container is None:
-            # logger.warning("No running game instance available.")
+            logger.warning(f"{self} has no container for enabling/disabling.")
             return
         if value:
             self.container.enable(self)
