@@ -1,3 +1,14 @@
+from __future__ import annotations
+
+import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.pyrite.game import Game
+    from src.pyrite.types import Container
+    from src.pyrite.types.entity import Entity
+
+
 class FPSTracker(Entity):
 
     def __init__(self, container: Container = None, enabled=True) -> None:
@@ -6,11 +17,6 @@ class FPSTracker(Entity):
         self.min: float = sys.float_info.max
         self.max_entities: int = 0
         self.max_renderables: int = 0
-
-    def __del__(self):
-        print(f"Maximum framerate: {self.max:.1f}; Minimum framerate: {self.min:.1f}")
-        print(f"Maximum entities at once: {self.max_entities}")
-        print(f"Maximum renderables at once: {self.max_renderables}")
 
     def post_update(self, delta_time: float) -> None:
         game_instance: Game = self.container
@@ -22,10 +28,10 @@ class FPSTracker(Entity):
             self.min = min(current_fps, self.min)
 
         self.max_entities = max(
-            self.max_entities, len(game_instance.entity_manager.entities) - 1
+            self.max_entities,
+            len(game_instance.entity_manager.get_number_entities()) - 1,
         )
 
-        renderables = 0
-        for layer in game_instance.renderer.renderables.values():
-            renderables += len(layer)
-        self.max_renderables = max(self.max_renderables, renderables)
+        self.max_renderables = max(
+            self.max_renderables, game_instance.renderer.get_number_renderables()
+        )
