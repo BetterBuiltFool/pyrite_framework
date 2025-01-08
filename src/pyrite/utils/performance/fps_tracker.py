@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from numbers import Number
 import sys
 from typing import Self, TYPE_CHECKING
 
@@ -24,6 +25,7 @@ class FPSTracker(Entity):
         self.container: Game = self.container
         self.max: float = 0
         self.min: float = sys.float_info.max
+        self.current_fps: float = 0
         self.max_entities: int = 0
         self.max_renderables: int = 0
 
@@ -31,6 +33,8 @@ class FPSTracker(Entity):
         game_instance: Game = self.container
 
         current_fps = game_instance.clock.get_fps()
+
+        self.current_fps = current_fps
 
         self.max = max(current_fps, self.max)
         if current_fps > 0:  # To bypass startup lag
@@ -44,3 +48,15 @@ class FPSTracker(Entity):
         self.max_renderables = max(
             self.max_renderables, game_instance.renderer.get_number_renderables()
         )
+
+    def dump_data(self) -> dict[str, Number]:
+        """
+        Returns a dict with tracked stats.
+        """
+        return {
+            "current_fps": self.current_fps,
+            "max_fps": self.max,
+            "min_fps": self.min,
+            "max_entities": self.max_entities,
+            "max_renderables": self.max_renderables,
+        }
