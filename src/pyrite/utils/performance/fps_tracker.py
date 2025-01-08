@@ -7,7 +7,6 @@ from src.pyrite.types.entity import Entity
 
 if TYPE_CHECKING:
     from src.pyrite.game import Game
-    from src.pyrite.types import Container
 
 
 class FPSTracker(Entity):
@@ -20,8 +19,9 @@ class FPSTracker(Entity):
             cls._instance = instance
         return instance
 
-    def __init__(self, container: Container = None, enabled=True) -> None:
-        super().__init__(container, enabled)
+    def __init__(self, game_instance: Game = None, enabled=True) -> None:
+        super().__init__(game_instance, enabled)
+        self.container: Game = self.container
         self.max: float = 0
         self.min: float = sys.float_info.max
         self.max_entities: int = 0
