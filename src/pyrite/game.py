@@ -45,6 +45,8 @@ class Game:
 
     def __init__(self, **kwds) -> None:
 
+        self.container = self  # To satisfy Container protocol
+
         suppress_init: bool = kwds.get("suppress_init", False)
         self.debug_mode: bool = kwds.get("debug_mode", False)
         self.suppress_context_errors: bool = kwds.get("suppress_context_errors", False)
