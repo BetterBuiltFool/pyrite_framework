@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Protocol, TYPE_CHECKING
+from typing import Protocol, runtime_checkable, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType
@@ -8,6 +8,7 @@ if TYPE_CHECKING:
 import pygame
 
 
+@runtime_checkable
 class Container(Protocol):
     """
     An object that can forward Entities and Renderables to the active EntityManager and
