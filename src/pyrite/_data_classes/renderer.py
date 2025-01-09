@@ -77,6 +77,13 @@ class Renderer(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_rendered_last_frame(self) -> int:
+        """
+        Returns the number of rednerables that were actually drawn in the previous
+        frame.
+        """
+
     @staticmethod
     def get_renderer(**kwds) -> Renderer:
         """
