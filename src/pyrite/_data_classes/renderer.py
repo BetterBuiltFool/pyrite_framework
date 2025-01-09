@@ -111,6 +111,7 @@ class DefaultRenderer(Renderer):
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
+        self._rendered_last_frame: int = 0
 
     def enable(self, item: _BaseType):
         if not isinstance(item, Renderable):
@@ -161,6 +162,7 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
+        self._rendered_last_frame = 0
         cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
         if not cameras:
             # Treat the screen as a camera for the sake of rendering if there are no
@@ -173,6 +175,7 @@ class DefaultRenderer(Renderer):
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
+            self._rendered_last_frame += len(layer_queue)
             for camera in cameras:
                 if layer in camera.layer_mask:
                     continue
@@ -192,6 +195,9 @@ class DefaultRenderer(Renderer):
         for layer_set in self.renderables.values():
             count += len(layer_set)
         return count
+
+    def get_rendered_last_frame(self) -> int:
+        return self._rendered_last_frame
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """
