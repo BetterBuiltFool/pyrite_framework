@@ -37,14 +37,16 @@ class Dazzler(Entity, Renderable):
         self.position = pygame.Vector2(position)
 
     def const_update(self, timestep: float) -> None:
+        if self.counter > 5:
+            return
         self.counter += 1
 
     def get_rect(self) -> Rect:
         return self.surface.get_rect(center=self.position)
 
     def render(self, delta_time: float) -> tuple[Surface, Rect]:
-        while self.counter > 5:
-            self.counter -= 5
+        if self.counter > 5:
+            self.counter = 0
             self.surface.fill(pygame.Color("white"))
             for _ in range(3):
                 x = random.randrange(0, 24, 8)
