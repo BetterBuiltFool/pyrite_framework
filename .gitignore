@@ -163,3 +163,5 @@ cython_debug/
 simple_game_framework.code-workspace
 manual_testing.py
 .vscode/settings.json
+profile.html
+profile.json
