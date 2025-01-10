@@ -42,7 +42,7 @@ class Renderer(ABC):
         render_queue: dict[Any, Sequence[Renderable]],
     ):
         """
-        Draws the items from the renderable dictionary onto the passed surface.
+        Draws the items from the render queue onto the passed surface.
 
         :param window: The game window, receiving final draws
         :param render_queue: A list of items that need to be rendered to the surface.
@@ -167,6 +167,15 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         layer: Layer,
     ):
+        """
+        Extracts the renderables from the layer_queue, and has them drawn to the
+        cameras.
+
+        :param layer_queue: The ordered sequence of renderables to be drawn.
+        :param cameras: The cameras being drawn to.
+        :param delta_time: Time passed since last frame.
+        :param layer: the layer being drawn from, for layermask testing.
+        """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
             self.render_item(renderable, cameras, delta_time, layer)
@@ -178,6 +187,14 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         layer: Layer,
     ):
+        """
+        Draws a renderable to the cameras, adjusting its world position to camera space.
+
+        :param renderable: Item to be drawn.
+        :param cameras: The cameras being drawn to.
+        :param delta_time: Time passed since last frame.
+        :param layer: layer being drawn, for layermask testing.
+        """
         surface = renderable.render(delta_time)
         position = renderable.get_rect().topleft
         for camera in cameras:
@@ -191,6 +208,14 @@ class DefaultRenderer(Renderer):
         cameras: Sequence[CameraBase],
         delta_time: float,
     ):
+        """
+        Goes through the ui elements, and draws them to the screen. They are already in
+        camera space, so they do not get adjusted.
+
+        :param ui_elements: The sequence of ui elements to be drawn, in order.
+        :param cameras: The cameras being drawn to.
+        :param delta_time: Time passed since last frame.
+        """
         for ui_element in ui_elements:
             surface = ui_element.render(delta_time)
             position = ui_element.get_rect().topleft
