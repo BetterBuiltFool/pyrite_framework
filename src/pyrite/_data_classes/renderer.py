@@ -160,6 +160,17 @@ class DefaultRenderer(Renderer):
             culled_set |= set(camera.cull(layer_set))
         return culled_set
 
+    def render_layer(
+        self,
+        layer_queue: Sequence[Renderable],
+        cameras: Sequence[CameraBase],
+        delta_time: float,
+        layer: Layer,
+    ):
+        self._rendered_last_frame += len(layer_queue)
+        for renderable in layer_queue:
+            self.render_item(renderable, cameras, delta_time, layer)
+
     def render_item(
         self,
         renderable: Renderable,
@@ -206,10 +217,7 @@ class DefaultRenderer(Renderer):
 
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
-            layer_queue = render_queue.get(layer, [])
-            self._rendered_last_frame += len(layer_queue)
-            for renderable in layer_queue:
-                self.render_item(renderable, cameras, delta_time, layer)
+            self.render_layer(render_queue.get(layer, []), cameras, delta_time, layer)
 
         self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
 
