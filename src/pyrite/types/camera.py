@@ -144,7 +144,7 @@ class Camera(CameraBase, Renderable):
         self.surface.fill((0, 0, 0, 255))
 
     def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.get_rect().colliderect(rect)
+        return self.get_viewport_rect().colliderect(rect)
 
     def get_surface_rect(self) -> pygame.Rect:
         """
@@ -154,7 +154,7 @@ class Camera(CameraBase, Renderable):
         """
         return self.surface.get_rect(center=self.position)
 
-    def get_rect(self) -> pygame.Rect:
+    def get_viewport_rect(self) -> pygame.Rect:
         """
         Gives the viewport converted to worldspace.
 
@@ -165,6 +165,9 @@ class Camera(CameraBase, Renderable):
             self.to_world(self.viewport.topleft),
             self.viewport.size,
         )
+
+    def get_rect(self) -> pygame.Rect:
+        return self.viewport.move_to(topleft=(0, 0))
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface.subsurface(self.viewport)
