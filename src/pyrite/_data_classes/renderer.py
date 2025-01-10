@@ -140,14 +140,6 @@ class DefaultRenderer(Renderer):
 
         render_queue.update(
             {
-                RenderLayers.UI_LAYER: self.sort_layer(
-                    self.renderables.get(RenderLayers.UI_LAYER, {})
-                )
-            }
-        )
-
-        render_queue.update(
-            {
                 RenderLayers.CAMERA: self.sort_layer(
                     self.renderables.get(RenderLayers.CAMERA, {})
                 )
@@ -213,12 +205,12 @@ class DefaultRenderer(Renderer):
     def render_ui(
         self,
         ui_elements: Sequence[Renderable],
-        cameras: Sequence[CameraBase],
+        window: pygame.Surface,
         delta_time: float,
     ):
         """
         Goes through the ui elements, and draws them to the screen. They are already in
-        camera space, so they do not get adjusted.
+        screen space, so they do not get adjusted.
 
         :param ui_elements: The sequence of ui elements to be drawn, in order.
         :param cameras: The cameras being drawn to.
@@ -227,10 +219,7 @@ class DefaultRenderer(Renderer):
         for ui_element in ui_elements:
             surface = ui_element.render(delta_time)
             position = ui_element.get_rect().topleft
-            for camera in cameras:
-                if RenderLayers.UI_LAYER in camera.layer_mask:
-                    continue
-                camera.surface.blit(surface, position)
+            window.blit(surface, position)
 
     def render(
         self,
@@ -252,8 +241,6 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             self.render_layer(render_queue.get(layer, []), cameras, delta_time, layer)
 
-        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
-
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
             camera_surface = camera.render(delta_time)
@@ -261,6 +248,9 @@ class DefaultRenderer(Renderer):
                 pygame.transform.scale(camera_surface, window.get_rect().size),
                 camera.get_rect(),
             )
+
+        # Render the UI last.
+        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
 
     def get_number_renderables(self) -> int:
         count = 0
