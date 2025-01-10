@@ -38,19 +38,6 @@ class CameraBase:
         """
         self.surface.fill((0, 0, 0, 0))
 
-    def draw(self, renderable: pygame.Surface, rect: pygame.Rect):
-        """
-        Draws a surface onto the camera's surface, adjusting the rectangle position to
-        local space.
-
-        :param renderable: Surface being drawn onto the camera surface
-        :param rect: Rectangle conveying world space position of the renderable.
-        """
-        self.surface.blit(
-            renderable,
-            self.to_local(rect.topleft),
-        )
-
     def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
         """
         Removes any renderables that do not fall within view of the camera.
@@ -144,7 +131,7 @@ class Camera(CameraBase, Renderable):
         self.surface.fill((0, 0, 0, 255))
 
     def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.get_rect().colliderect(rect)
+        return self.get_viewport_rect().colliderect(rect)
 
     def get_surface_rect(self) -> pygame.Rect:
         """
@@ -154,7 +141,7 @@ class Camera(CameraBase, Renderable):
         """
         return self.surface.get_rect(center=self.position)
 
-    def get_rect(self) -> pygame.Rect:
+    def get_viewport_rect(self) -> pygame.Rect:
         """
         Gives the viewport converted to worldspace.
 
@@ -166,11 +153,11 @@ class Camera(CameraBase, Renderable):
             self.viewport.size,
         )
 
-    def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
-        return (
-            self.surface.subsurface(self.viewport),
-            (0, 0),
-        )
+    def get_rect(self) -> pygame.Rect:
+        return self.viewport.move_to(topleft=(0, 0))
+
+    def render(self, delta_time: float) -> pygame.Surface:
+        return self.surface.subsurface(self.viewport)
 
     def to_local(self, point: pygame.typing.Point) -> Vector2:
         point = Vector2(point)

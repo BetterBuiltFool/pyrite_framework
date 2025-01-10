@@ -29,12 +29,16 @@ class RenderLayers:
     MIDGROUND = Layer(1, "Midground")
     FOREGROUND = Layer(2, "Foreground")
     UI_LAYER = Layer(3, "UI Layer")
+    """
+    Special layer that is drawn in camera space, not world space.
+    """
     CAMERA = Layer(-1, "Camera")
-    """Special layer for camera objects. Not in the layer sequence. Always draw last.
+    """
+    Special layer for camera objects. Not in the layer sequence. Always draw last.
     """
 
     # Ordered set of layers
-    _layers = (BACKGROUND, MIDGROUND, FOREGROUND, UI_LAYER)
+    _layers = (BACKGROUND, MIDGROUND, FOREGROUND)
 
     @classmethod
     def add_layer(cls, layer: Layer):
@@ -48,8 +52,8 @@ class RenderLayers:
         # Convert to list for easy modification
         layers = list(cls._layers)
         if layer._render_index is None:
-            # No index? Put it just behind UI layer
-            layer._render_index = len(layers) - 1
+            # No index? Just put it on the end.
+            layer._render_index = len(layers)
         layers.insert(layer._render_index, layer)
         # Convert back to tuple and update the class attribute
         # Tuples may be more efficient in some use cases.

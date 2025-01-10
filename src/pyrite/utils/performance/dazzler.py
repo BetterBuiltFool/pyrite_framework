@@ -30,7 +30,7 @@ class Dazzler(Entity, Renderable):
         draw_index=0,
     ) -> None:
         super().__init__(container, enabled, RenderLayers.BACKGROUND, draw_index)
-        self.counter = 0
+        self.counter = random.randint(0, 5)
         self.surface = Surface((32, 32))
         self.surface.fill(pygame.Color("white"))
         self.subsurface = Surface((8, 8))
@@ -44,7 +44,7 @@ class Dazzler(Entity, Renderable):
     def get_rect(self) -> Rect:
         return self.surface.get_rect(center=self.position)
 
-    def render(self, delta_time: float) -> tuple[Surface, Rect]:
+    def render(self, delta_time: float) -> Surface:
         if self.counter > 5:
             self.counter = 0
             self.surface.fill(pygame.Color("white"))
@@ -59,7 +59,7 @@ class Dazzler(Entity, Renderable):
                 )
                 self.subsurface.fill(color)
                 self.surface.blit(self.subsurface, (x, y))
-        return (self.surface, self.get_rect())
+        return self.surface
 
     @staticmethod
     def multispawn(number_spawns, area: pygame.typing.RectLike) -> set[Dazzler]:
@@ -75,12 +75,14 @@ class Dazzler(Entity, Renderable):
         size_x, size_y = area.size
         max_x = min_x + size_x
         max_y = min_y + size_y
+        draw_range = int(number_spawns / 2)
         return {
             Dazzler(
                 position=(
                     random.randrange(min_x, max_x, 32),
                     random.randrange(min_y, max_y, 32),
-                )
+                ),
+                draw_index=random.randrange(-draw_range, draw_range),
             )
             for _ in range(number_spawns)
         }
