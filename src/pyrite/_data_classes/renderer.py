@@ -135,15 +135,7 @@ class DefaultRenderer(Renderer):
         cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
 
         for layer in RenderLayers._layers:
-            layer_set = self.renderables.get(layer, {})
-            culled_set: set[Renderable] = set()
-            # Pre cull our renderables. This will reduce the amount of sorting to do.
-            for camera in cameras:
-                if layer in camera.layer_mask:
-                    continue
-                culled_set |= set(camera.cull(layer_set))
-            # Puts everything into the renderqueue if there are no cameras
-            layer_set = culled_set if cameras else layer_set
+            layer_set = self.precull(self.renderables.get(layer, {}), layer, cameras)
             render_queue.update({layer: self.sort_layer(layer_set)})
 
         render_queue.update(
@@ -155,6 +147,18 @@ class DefaultRenderer(Renderer):
         )
 
         return render_queue
+
+    def precull(
+        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
+    ) -> set[Renderable]:
+        if not cameras:
+            return layer_set
+        culled_set: set[Renderable] = set()
+        for camera in cameras:
+            if layer in camera.layer_mask:
+                continue
+            culled_set |= set(camera.cull(layer_set))
+        return culled_set
 
     def render(
         self,
