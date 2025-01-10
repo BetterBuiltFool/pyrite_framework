@@ -140,6 +140,14 @@ class DefaultRenderer(Renderer):
 
         render_queue.update(
             {
+                RenderLayers.UI_LAYER: self.sort_layer(
+                    self.renderables.get(RenderLayers.UI_LAYER, {})
+                )
+            }
+        )
+
+        render_queue.update(
+            {
                 RenderLayers.CAMERA: self.sort_layer(
                     self.renderables.get(RenderLayers.CAMERA, {})
                 )
