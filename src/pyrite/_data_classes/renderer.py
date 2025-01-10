@@ -202,7 +202,7 @@ class DefaultRenderer(Renderer):
             camera_surface = camera.render(delta_time)
             window.blit(
                 pygame.transform.scale(camera_surface, window.get_rect().size),
-                (0, 0),
+                camera.get_rect(),
             )
 
     def get_number_renderables(self) -> int:
