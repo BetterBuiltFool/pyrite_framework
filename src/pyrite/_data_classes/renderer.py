@@ -174,6 +174,20 @@ class DefaultRenderer(Renderer):
                 continue
             camera.surface.blit(surface, camera.to_local(position))
 
+    def render_ui(
+        self,
+        ui_elements: Sequence[Renderable],
+        cameras: Sequence[CameraBase],
+        delta_time: float,
+    ):
+        for ui_element in ui_elements:
+            surface = ui_element.render(delta_time)
+            position = ui_element.get_rect().topleft
+            for camera in cameras:
+                if RenderLayers.UI_LAYER in camera.layer_mask:
+                    continue
+                camera.surface.blit(surface, position)
+
     def render(
         self,
         window: pygame.Surface,
@@ -196,6 +210,8 @@ class DefaultRenderer(Renderer):
             self._rendered_last_frame += len(layer_queue)
             for renderable in layer_queue:
                 self.render_item(renderable, cameras, delta_time, layer)
+
+        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
