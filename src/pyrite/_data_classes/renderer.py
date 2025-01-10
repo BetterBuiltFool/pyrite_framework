@@ -160,6 +160,20 @@ class DefaultRenderer(Renderer):
             culled_set |= set(camera.cull(layer_set))
         return culled_set
 
+    def render_item(
+        self,
+        renderable: Renderable,
+        cameras: Sequence[CameraBase],
+        delta_time: float,
+        layer: Layer,
+    ):
+        surface = renderable.render(delta_time)
+        draw_rect = renderable.get_rect()
+        for camera in cameras:
+            if layer in camera.layer_mask:
+                continue
+            camera.draw(surface, draw_rect)
+
     def render(
         self,
         window: pygame.Surface,
@@ -181,12 +195,7 @@ class DefaultRenderer(Renderer):
             layer_queue = render_queue.get(layer, [])
             self._rendered_last_frame += len(layer_queue)
             for renderable in layer_queue:
-                surface = renderable.render(delta_time)
-                draw_rect = renderable.get_rect()
-                for camera in cameras:
-                    if layer in camera.layer_mask:
-                        continue
-                    camera.draw(surface, draw_rect)
+                self.render_item(renderable, cameras, delta_time, layer)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
