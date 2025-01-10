@@ -168,11 +168,11 @@ class DefaultRenderer(Renderer):
         layer: Layer,
     ):
         surface = renderable.render(delta_time)
-        draw_rect = renderable.get_rect()
+        position = renderable.get_rect().topleft
         for camera in cameras:
             if layer in camera.layer_mask:
                 continue
-            camera.draw(surface, draw_rect)
+            camera.surface.blit(surface, camera.to_local(position))
 
     def render(
         self,

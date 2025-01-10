@@ -38,19 +38,6 @@ class CameraBase:
         """
         self.surface.fill((0, 0, 0, 0))
 
-    def draw(self, renderable: pygame.Surface, rect: pygame.Rect):
-        """
-        Draws a surface onto the camera's surface, adjusting the rectangle position to
-        local space.
-
-        :param renderable: Surface being drawn onto the camera surface
-        :param rect: Rectangle conveying world space position of the renderable.
-        """
-        self.surface.blit(
-            renderable,
-            self.to_local(rect.topleft),
-        )
-
     def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
         """
         Removes any renderables that do not fall within view of the camera.
