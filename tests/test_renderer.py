@@ -163,13 +163,11 @@ class TestDefaultRenderer(unittest.TestCase):
         backgrounds = []
         midgrounds = []
         foregrounds = []
-        ui_elements = []
 
         element_dict: dict[Layer, list[Renderable]] = {
             RenderLayers.BACKGROUND: backgrounds,
             RenderLayers.MIDGROUND: midgrounds,
             RenderLayers.FOREGROUND: foregrounds,
-            RenderLayers.UI_LAYER: ui_elements,
         }
 
         for layer, elements in element_dict.items():
