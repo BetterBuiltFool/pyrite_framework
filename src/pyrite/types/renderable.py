@@ -36,7 +36,7 @@ class Renderable(_BaseType, ABC):
         _BaseType.__init__(self, container, enabled)
 
     @abstractmethod
-    def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]:
+    def render(self, delta_time: float) -> pygame.Surface:
         """
         Supplies a surface ready to be blitted to another surface.
 

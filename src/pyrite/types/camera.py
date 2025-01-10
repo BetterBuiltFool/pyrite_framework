@@ -166,11 +166,8 @@ class Camera(CameraBase, Renderable):
             self.viewport.size,
         )
 
-    def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.typing.Point]:
-        return (
-            self.surface.subsurface(self.viewport),
-            (0, 0),
-        )
+    def render(self, delta_time: float) -> pygame.Surface:
+        return self.surface.subsurface(self.viewport)
 
     def to_local(self, point: pygame.typing.Point) -> Vector2:
         point = Vector2(point)

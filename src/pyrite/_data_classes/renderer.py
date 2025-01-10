@@ -180,18 +180,20 @@ class DefaultRenderer(Renderer):
             # _layers is sorted by desired draw order.
             layer_queue = render_queue.get(layer, [])
             self._rendered_last_frame += len(layer_queue)
-            for camera in cameras:
-                if layer in camera.layer_mask:
-                    continue
-                for renderable in layer_queue:
-                    camera.draw(*renderable.render(delta_time))
+            for renderable in layer_queue:
+                surface = renderable.render(delta_time)
+                draw_rect = renderable.get_rect()
+                for camera in cameras:
+                    if layer in camera.layer_mask:
+                        continue
+                    camera.draw(surface, draw_rect)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            camera_surface, camera_location = camera.render(delta_time)
+            camera_surface = camera.render(delta_time)
             window.blit(
                 pygame.transform.scale(camera_surface, window.get_rect().size),
-                camera_location,
+                (0, 0),
             )
 
     def get_number_renderables(self) -> int:

@@ -44,7 +44,7 @@ class Dazzler(Entity, Renderable):
     def get_rect(self) -> Rect:
         return self.surface.get_rect(center=self.position)
 
-    def render(self, delta_time: float) -> tuple[Surface, Rect]:
+    def render(self, delta_time: float) -> Surface:
         if self.counter > 5:
             self.counter = 0
             self.surface.fill(pygame.Color("white"))
@@ -59,7 +59,7 @@ class Dazzler(Entity, Renderable):
                 )
                 self.subsurface.fill(color)
                 self.surface.blit(self.subsurface, (x, y))
-        return (self.surface, self.get_rect())
+        return self.surface
 
     @staticmethod
     def multispawn(number_spawns, area: pygame.typing.RectLike) -> set[Dazzler]:
