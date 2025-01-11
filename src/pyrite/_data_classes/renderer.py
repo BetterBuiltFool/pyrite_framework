@@ -197,9 +197,12 @@ class DefaultRenderer(Renderer):
         :param layer: layer being drawn, for layermask testing.
         """
         surface = renderable.render(delta_time)
-        position = renderable.get_rect().topleft
+        rect = renderable.get_rect()
+        position = rect.topleft
         for camera in cameras:
             if layer in camera.layer_mask:
+                continue
+            if not camera._in_view(rect):
                 continue
             camera.surface.blit(surface, camera.to_local(position))
 
