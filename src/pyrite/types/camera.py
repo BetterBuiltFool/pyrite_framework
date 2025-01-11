@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
 from src.pyrite.types.renderable import Renderable
@@ -76,12 +76,13 @@ class ScreenSector:
     Represents a portion of the screen for rendering out cameras.
     """
 
-    def __init__(self, frect: pygame.FRect) -> None:
+    def __init__(self, frect: pygame.FRect = pygame.FRect(0, 0, 1, 1)) -> None:
         """
         Represents a portion of the screen for rendering out cameras.
 
         :param frect: A float rect representing the portion of the screen the sector
-        takes up. Values should be between 0 and 1.
+        takes up. Values should be between 0 and 1. Defaults to (0, 0, 1, 1),
+        full window.
         """
         self.frect = frect
 
@@ -113,6 +114,7 @@ class Camera(CameraBase, Renderable):
         self,
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
+        screen_sectors: ScreenSector | Sequence[ScreenSector] = None,
         viewport: pygame.Rect = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -125,6 +127,8 @@ class Camera(CameraBase, Renderable):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
+        :param screen_sectors: Defines sections of the screen to render to. If multiple
+        screen sectors are used, the camera will be rendered and scaled to each of them.
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
         None will give the center of the viewport.
@@ -147,6 +151,11 @@ class Camera(CameraBase, Renderable):
         if position is None:
             position = self.viewport.center
         self.position = Vector2(position)
+        if screen_sectors is None:
+            screen_sectors = [ScreenSector()]
+        if not isinstance(screen_sectors, Sequence):
+            screen_sectors = [screen_sectors]
+        self.screen_sectors: Sequence[ScreenSector] = screen_sectors
         CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
             self,
