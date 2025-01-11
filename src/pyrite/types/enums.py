@@ -36,6 +36,11 @@ class RenderLayers:
     """
     Special layer for camera objects. Not in the layer sequence. Always draw last.
     """
+    SCREEN_SCETORS = Layer(-2, "Screen Sectors")
+    """
+    Special layer for screen sectors, which are attached to cameras and determine where
+    and how on the window the camera is rendered.
+    """
 
     # Ordered set of layers
     _layers = (BACKGROUND, MIDGROUND, FOREGROUND)
