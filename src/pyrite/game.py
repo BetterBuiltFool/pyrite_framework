@@ -22,6 +22,20 @@ import pygame
 
 logger = logging.getLogger(__name__)
 
+_active_instance = None
+
+
+def get_game_instance() -> Game | None:
+    return _active_instance
+
+
+def set_game_instance(instance: Game):
+    global _active_instance
+    _active_instance = instance
+
+
+defaults._default_container_getter = get_game_instance
+
 
 class Game:
     """
@@ -32,7 +46,7 @@ class Game:
     """
 
     def __new__(cls, *args, **kwds) -> Self:
-        active_instance = defaults.get_game_instance()
+        active_instance = get_game_instance()
         if active_instance is not None:
             active_instance.is_running = False
             logger.info(
@@ -40,7 +54,7 @@ class Game:
             )
         logger.info("Starting new game instance.")
         active_instance = super().__new__(cls)
-        defaults.set_game_instance(active_instance)
+        set_game_instance(active_instance)
         return active_instance
 
     def __init__(self, **kwds) -> None:
