@@ -30,6 +30,17 @@ class Container(Protocol):
     def disable(self, item: _BaseType) -> None: ...
 
 
+class HasPosition(Protocol):
+    """
+    Describes an object that has a Vector2 position attribute.
+    """
+
+    position: pygame.Vector2
+    """
+    The location of the item, either in world space or local space.
+    """
+
+
 class CanUpdate(Protocol):
 
     def update(self, delta_time: float) -> None: ...
