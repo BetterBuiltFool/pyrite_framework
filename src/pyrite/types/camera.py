@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
-from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.enums import Layer, RenderLayers
+from src.pyrite.types.renderable import Renderable
+from src.pyrite.types.screen_sector import ScreenSector
 
 import pygame
 from pygame import Vector2
@@ -80,6 +81,7 @@ class Camera(CameraBase, Renderable):
         self,
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
+        screen_sectors: ScreenSector | Sequence[ScreenSector] = None,
         viewport: pygame.Rect = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -92,6 +94,8 @@ class Camera(CameraBase, Renderable):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
+        :param screen_sectors: Defines sections of the screen to render to. If multiple
+        screen sectors are used, the camera will be rendered and scaled to each of them.
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
         None will give the center of the viewport.
@@ -114,6 +118,11 @@ class Camera(CameraBase, Renderable):
         if position is None:
             position = self.viewport.center
         self.position = Vector2(position)
+        if screen_sectors is None:
+            screen_sectors = [ScreenSector()]
+        if not isinstance(screen_sectors, Sequence):
+            screen_sectors = [screen_sectors]
+        self.screen_sectors: Sequence[ScreenSector] = screen_sectors
         CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
             self,

@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
-from src.pyrite.types.camera import CameraBase
+from src.pyrite.types.camera import CameraBase, Camera
 from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.enums import RenderLayers
 
@@ -203,6 +203,15 @@ class DefaultRenderer(Renderer):
                 continue
             camera.surface.blit(surface, camera.to_local(position))
 
+    def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
+        camera_surface = camera.render(delta_time)
+        for sector in camera.screen_sectors:
+            render_rect = sector.get_rect(window)
+            window.blit(
+                pygame.transform.scale(camera_surface, render_rect.size),
+                render_rect,
+            )
+
     def render_ui(
         self,
         ui_elements: Sequence[Renderable],
@@ -244,11 +253,7 @@ class DefaultRenderer(Renderer):
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            camera_surface = camera.render(delta_time)
-            window.blit(
-                pygame.transform.scale(camera_surface, window.get_rect().size),
-                camera.get_rect(),
-            )
+            self.draw_camera(camera, window, delta_time)
 
         # Render the UI last.
         self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
