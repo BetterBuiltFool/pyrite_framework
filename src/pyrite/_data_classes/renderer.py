@@ -91,7 +91,8 @@ class Renderer(ABC):
         Used for creating a renderer for a new Game instance
         """
         if (renderer := kwds.get("renderer", None)) is None:
-            renderer = DefaultRenderer()
+            renderer_type = get_default_renderer_type()
+            renderer = renderer_type()
         return renderer
 
 
@@ -277,3 +278,15 @@ class DefaultRenderer(Renderer):
         negatives.reverse()
 
         return renderables + negatives
+
+
+_default_renderer_type = DefaultRenderer
+
+
+def get_default_renderer_type() -> type[Renderer]:
+    return _default_renderer_type
+
+
+def set_default_renderer_type(renderer_type: type[Renderer]):
+    global _default_renderer_type
+    _default_renderer_type = renderer_type

@@ -93,7 +93,8 @@ class EntityManager(ABC):
         Used for getting an entity manager for a new game instance
         """
         if (entity_manager := kwds.get("entity_manager", None)) is None:
-            entity_manager = DefaultEntityManager()
+            manager_type = get_default_entity_manager_type()
+            entity_manager = manager_type()
         return entity_manager
 
 
@@ -128,3 +129,15 @@ class DefaultEntityManager(EntityManager):
 
     def get_number_entities(self) -> int:
         return len(self.entities)
+
+
+_default_entity_manager_type = DefaultEntityManager
+
+
+def get_default_entity_manager_type() -> type[EntityManager]:
+    return _default_entity_manager_type
+
+
+def set_default_entity_manager_type(manager_type: type[EntityManager]):
+    global _default_entity_manager_type
+    _default_entity_manager_type = manager_type
