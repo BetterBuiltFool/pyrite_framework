@@ -80,15 +80,17 @@ class Game:
         self.game_data = GameData.get_game_data(**kwds)
         self.timing_settings = TimingSettings.get_timing_settings(**kwds)
 
-        # Get a surface the size of the requested resolution.
-        # This way, a surface exists even if the a window hasn't been created.
-        self.windows: pygame.Surface = pygame.Surface(self.display_settings.resolution)
-
         # Entity manager is responsible for holding and updating all entities.
         # Renderer is responsible for holding and drawing all renderables.
         # Both have a default version that will be spawned if none is provided.
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.renderer = Renderer.get_renderer(**kwds)
+
+        # Get a surface the size of the requested resolution.
+        # This way, a surface exists even if the a window hasn't been created.
+        self.window: pygame.Surface = pygame.Surface(self.display_settings.resolution)
+
+        self.create_window()
 
     def __enter__(self) -> Self:
         """
