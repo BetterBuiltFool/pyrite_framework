@@ -4,6 +4,7 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
 from src.pyrite.types.enums import Layer, RenderLayers
+from src.pyrite.types.entity import Entity
 from src.pyrite.types.renderable import Renderable
 from src.pyrite.types.screen_sector import ScreenSector
 
@@ -11,7 +12,7 @@ import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container
+    from src.pyrite.types import Container, HasPosition
 
 
 class CameraBase:
@@ -214,3 +215,53 @@ class Camera(CameraBase, Renderable):
 
         # Overwrite the viewport with the new (valid) rect
         self.viewport = new_view
+
+
+class ChaseCamera(Camera, Entity):
+
+    def __init__(
+        self,
+        max_size: pygame.typing.Point,
+        position: pygame.typing.Point = None,
+        container=None,
+        screen_sectors: ScreenSector | Sequence[ScreenSector] = None,
+        enabled=True,
+        draw_index=0,
+        target: HasPosition = None,
+        ease_factor: float = 8.0,
+        max_distance: float = -1,
+    ) -> None:
+        if target and position is None:
+            position = target.position
+        Camera.__init__(
+            self,
+            max_size=max_size,
+            position=position,
+            screen_sectors=screen_sectors,
+            container=container,
+            enabled=enabled,
+            draw_index=draw_index,
+        )
+        self.target = target
+        self.ease_factor = ease_factor
+        self.max_distance = max_distance
+
+    def post_update(self, delta_time: float) -> None:
+        if not self.target:
+            return
+        # delta = self.target.position - self.position
+        delta = self.position - self.target.position
+        distance = delta.magnitude()
+        if distance == 0:
+            return
+        delta_normalized = delta.normalize()
+        distance_adjustment = distance / self.ease_factor
+        distance_adjustment *= 60 * delta_time
+        distance -= distance_adjustment
+        new_delta = delta_normalized * distance
+        if self.max_distance >= 0:
+            new_delta.clamp_magnitude_ip(0, self.max_distance)
+        self.position: pygame.Vector2 = self.target.position + new_delta
+
+        # ease = (delta.elementwise() / self.ease_factor) * (60 * delta_time)
+        # self.position += ease
