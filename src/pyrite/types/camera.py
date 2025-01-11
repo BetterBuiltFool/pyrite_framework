@@ -235,6 +235,32 @@ class ChaseCamera(Camera, Entity):
         max_distance: float = -1,
         relative_lag: bool = False,
     ) -> None:
+        """
+        A camera that is capable of chasing a target
+
+        :param max_size: Largest, most zoomed out size of the camera.
+        :param position: Position of the center of the camera surface, defaults to None
+        None will give the center of the viewport.
+        :param screen_sectors: Defines sections of the screen to render to. If multiple
+        screen sectors are used, the camera will be rendered and scaled to each of them.
+        :param viewport: A rectangle representing the actual viewable area of the
+        camera, defaults to None.
+        None will give the center of the viewport.
+        :param layer_mask: Layers that the camera will exclude from rendering,
+        defaults to None
+        :param container: The instance of the game to which the rengerable belongs,
+        defaults to None. See Renderable.
+        :param enabled: Whether the Renderable will be drawn to the screen,
+        defaults to True
+        :param draw_index: Index determining draw order within a layer, defaults to 0
+        :param target: Object with a position to chase.
+        :param ease_factor: Determines the rate at which the camera pursues the target.
+        Larger = slower.
+        :param max_distance: Maximum distance, in world space, that the target may be
+        from the camera. Camera will "speed up" to maintain this distance.
+        :param relative_lag: Bool determining if the max distance is relative to zoom
+        level. If true, the max distance will be consistent within screen space.
+        """
         if target and position is None:
             position = target.position
         Camera.__init__(
@@ -260,7 +286,7 @@ class ChaseCamera(Camera, Entity):
             return
         delta = self.calculate_ease(self.position - self.target.position, delta_time)
         if self.max_distance >= 0:
-            delta.clamp_magnitude_ip(0, self.max_distance)
+            delta = self.clamp_magnitude(delta)
         self.position: Vector2 = self.target.position + delta
 
     def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
@@ -272,7 +298,7 @@ class ChaseCamera(Camera, Entity):
         distance_adjustment *= 60 * delta_time
         distance -= distance_adjustment
 
-        return self.clamp_magnitude(delta_normalized * distance)
+        return delta_normalized * distance
 
     def clamp_magnitude(self, delta: Vector2) -> Vector2:
         pass
@@ -281,4 +307,4 @@ class ChaseCamera(Camera, Entity):
         return delta.clamp_magnitude(0, self.max_distance)
 
     def _clamp_magnitude_scaled(self, delta: Vector2) -> Vector2:
-        return delta.clamp_magnitude(0, self.max_distance / math.sqrt(self._zoom_level))
+        return delta.clamp_magnitude(0, self.max_distance / self._zoom_level)
