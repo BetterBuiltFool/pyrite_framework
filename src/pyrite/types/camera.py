@@ -71,6 +71,39 @@ class CameraBase:
         return Vector2(point)
 
 
+class ScreenSector:
+    """
+    Represents a portion of the screen for rendering out cameras.
+    """
+
+    def __init__(self, frect: pygame.FRect) -> None:
+        """
+        Represents a portion of the screen for rendering out cameras.
+
+        :param frect: A float rect representing the portion of the screen the sector
+        takes up. Values should be between 0 and 1.
+        """
+        self.frect = frect
+
+    def get_rect(self, surface: pygame.Surface) -> pygame.Rect:
+        """
+        Calculates the subrect for the sector
+
+        :param surface: A surface being partitioned by the screen sector
+        :return: A rectangle proportionate to both the surface rectangle, and the
+        screen sectors' frect.
+        """
+        frect = self.frect
+        surface_rect = surface.get_rect()
+        rect = pygame.Rect(
+            left=(frect.left * surface_rect.left),
+            top=(frect.top * surface_rect.top),
+            width=(frect.width * surface_rect.width),
+            height=(frect.height * surface_rect.height),
+        )
+        return rect
+
+
 class Camera(CameraBase, Renderable):
     """
     Basic form of a camera that is capable of rendering to the screen.
