@@ -96,12 +96,16 @@ class ScreenSector:
         """
         frect = self.frect
         surface_rect = surface.get_rect()
-        rect = pygame.Rect(
-            left=(frect.left * surface_rect.left),
-            top=(frect.top * surface_rect.top),
-            width=(frect.width * surface_rect.width),
-            height=(frect.height * surface_rect.height),
+        topleft = (
+            int(frect.left * surface_rect.left),
+            int(frect.top * surface_rect.top),
         )
+        size = (
+            int(frect.width * surface_rect.width),
+            int(frect.height * surface_rect.height),
+        )
+        rect = pygame.Rect()
+        rect.topleft, rect.size = topleft, size
         return rect
 
 
