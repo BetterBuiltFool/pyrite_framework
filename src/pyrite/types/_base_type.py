@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-import src.pyrite._helper.instance as instance
+import src.pyrite._helper.defaults as defaults
 
 if TYPE_CHECKING:
     from src.pyrite.types import Container
@@ -16,7 +16,7 @@ class _BaseType:
 
     def __init__(self, container: Container = None, enabled=True) -> None:
         if container is None:
-            container = instance.get_game_instance()
+            container = defaults.get_game_instance()
         self.container: Container = container
         self.enabled = enabled
 
