@@ -220,6 +220,10 @@ class Camera(CameraBase, Renderable):
 
 
 class ChaseCamera(Camera, Entity):
+    """
+    A camera sub-type that can chase a target with a controllable easing factor and
+    maximum distance.
+    """
 
     def __init__(
         self,
@@ -235,7 +239,7 @@ class ChaseCamera(Camera, Entity):
         relative_lag: bool = False,
     ) -> None:
         """
-        A camera that is capable of chasing a target
+        A camera that is capable of chasing a target.
 
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
@@ -257,6 +261,7 @@ class ChaseCamera(Camera, Entity):
         Larger = slower.
         :param max_distance: Maximum distance, in world space, that the target may be
         from the camera. Camera will "speed up" to maintain this distance.
+        Negative numbers will disable.
         :param relative_lag: Bool determining if the max distance is relative to zoom
         level. If true, the max distance will be consistent within screen space.
         """
@@ -274,6 +279,10 @@ class ChaseCamera(Camera, Entity):
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
+        """
+        Maximum distance the camera may be from the target.
+        Negative numbers will disable.
+        """
         self.clamp_magnitude = (
             self._clamp_magnitude_invariant
             if not relative_lag
