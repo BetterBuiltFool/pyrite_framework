@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+import typing
+
 import pygame
+
+if typing.TYPE_CHECKING:
+    from pygame.typing import RectLike
 
 
 class ScreenSector:
@@ -6,9 +13,7 @@ class ScreenSector:
     Represents a portion of the screen for rendering out cameras.
     """
 
-    def __init__(
-        self, frect: pygame.FRect | pygame.typing.RectLike = (0, 0, 1, 1)
-    ) -> None:
+    def __init__(self, frect: pygame.FRect | RectLike = (0, 0, 1, 1)) -> None:
         """
         Represents a portion of the screen for rendering out cameras.
 

@@ -5,7 +5,8 @@ import typing
 
 import pygame
 
-import pygame.typing
+if typing.TYPE_CHECKING:
+    from pygame.typing import Point
 
 
 @dataclass
@@ -21,7 +22,7 @@ class DisplaySettings:
     :param vsync: Flag for enabling vsync, defaults to 0 (off)
     """
 
-    resolution: pygame.typing.Point = (800, 600)
+    resolution: Point = (800, 600)
     """
     A Point-like object representing the width and height of the window.
     """
