@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
+import math
 from typing import TYPE_CHECKING
 
 from src.pyrite.types.enums import Layer, RenderLayers
@@ -124,6 +125,7 @@ class Camera(CameraBase, Renderable):
         if not isinstance(screen_sectors, Sequence):
             screen_sectors = [screen_sectors]
         self.screen_sectors: Sequence[ScreenSector] = screen_sectors
+        self._zoom_level: float = 1
         CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
             self,
@@ -195,6 +197,7 @@ class Camera(CameraBase, Renderable):
         """
         if zoom_level < 1:
             raise ValueError("Cannot zoom out beyond zoom_level 1")
+        self._zoom_level = zoom_level
 
         center = self.viewport.center
 
@@ -230,6 +233,7 @@ class ChaseCamera(Camera, Entity):
         target: HasPosition = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
+        relative_lag: bool = False,
     ) -> None:
         if target and position is None:
             position = target.position
@@ -245,23 +249,36 @@ class ChaseCamera(Camera, Entity):
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
+        self.clamp_magnitude = (
+            self._clamp_magnitude_invariant
+            if not relative_lag
+            else self._clamp_magnitude_scaled
+        )
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
             return
-        # delta = self.target.position - self.position
-        delta = self.position - self.target.position
+        delta = self.calculate_ease(self.position - self.target.position, delta_time)
+        if self.max_distance >= 0:
+            delta.clamp_magnitude_ip(0, self.max_distance)
+        self.position: Vector2 = self.target.position + delta
+
+    def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
         distance = delta.magnitude()
         if distance == 0:
-            return
+            return delta
         delta_normalized = delta.normalize()
         distance_adjustment = distance / self.ease_factor
         distance_adjustment *= 60 * delta_time
         distance -= distance_adjustment
-        new_delta = delta_normalized * distance
-        if self.max_distance >= 0:
-            new_delta.clamp_magnitude_ip(0, self.max_distance)
-        self.position: pygame.Vector2 = self.target.position + new_delta
 
-        # ease = (delta.elementwise() / self.ease_factor) * (60 * delta_time)
-        # self.position += ease
+        return self.clamp_magnitude(delta_normalized * distance)
+
+    def clamp_magnitude(self, delta: Vector2) -> Vector2:
+        pass
+
+    def _clamp_magnitude_invariant(self, delta: Vector2) -> Vector2:
+        return delta.clamp_magnitude(0, self.max_distance)
+
+    def _clamp_magnitude_scaled(self, delta: Vector2) -> Vector2:
+        return delta.clamp_magnitude(0, self.max_distance / math.sqrt(self._zoom_level))
