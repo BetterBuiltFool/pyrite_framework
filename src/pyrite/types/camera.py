@@ -76,7 +76,9 @@ class ScreenSector:
     Represents a portion of the screen for rendering out cameras.
     """
 
-    def __init__(self, frect: pygame.FRect = pygame.FRect(0, 0, 1, 1)) -> None:
+    def __init__(
+        self, frect: pygame.FRect | pygame.typing.RectLike = (0, 0, 1, 1)
+    ) -> None:
         """
         Represents a portion of the screen for rendering out cameras.
 
@@ -84,7 +86,7 @@ class ScreenSector:
         takes up. Values should be between 0 and 1. Defaults to (0, 0, 1, 1),
         full window.
         """
-        self.frect = frect
+        self.frect = pygame.FRect(frect)
 
     def get_rect(self, surface: pygame.Surface) -> pygame.Rect:
         """
