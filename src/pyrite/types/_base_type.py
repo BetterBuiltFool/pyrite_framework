@@ -16,7 +16,7 @@ class _BaseType:
 
     def __init__(self, container: Container = None, enabled=True) -> None:
         if container is None:
-            container = defaults.get_game_instance()
+            container = defaults.get_default_container()
         self.container: Container = container
         self.enabled = enabled
 
