@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-import math
 from typing import TYPE_CHECKING
 
 from src.pyrite.types.enums import Layer, RenderLayers
