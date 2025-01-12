@@ -52,11 +52,15 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
     def update(self, delta_time: float):
         self.position.y += self.velocity * delta_time
         self.position.y = max(
-            0, min(self.position.y, (self.container.size.y - self.size.y))
+            self.size.y / 2,
+            min(self.position.y, (self.container.size.y - (self.size.y / 2))),
         )
 
     def get_rect(self) -> pygame.Rect:
-        return pygame.Rect(self.position, self.size)
+        rect = pygame.Rect((0, 0), self.size)
+        rect.center = self.position
+        return rect
+        # return pygame.Rect(self.position, self.size)
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface
@@ -256,9 +260,9 @@ class Court(pyrite.Entity):
 
         self.size = pygame.Vector2(court_size)
 
-        self.p1_paddle = self.create_paddle(10)
+        self.p1_paddle = self.create_paddle(15)
 
-        self.p2_paddle = self.create_paddle(self.size.x - 20)
+        self.p2_paddle = self.create_paddle(self.size.x - 15)
 
         self.net = Net(self)
         self.net.position = pygame.Vector2((self.size.x / 2) - (self.net.size.x / 2), 0)
@@ -360,7 +364,7 @@ class Court(pyrite.Entity):
 
     def create_paddle(self, x_pos: int) -> Paddle:
         paddle = Paddle(self)
-        paddle.position = pygame.Vector2(x_pos, (self.size.y / 2) - (paddle.size.y / 2))
+        paddle.position = pygame.Vector2(x_pos, (self.size.y / 2))
         return paddle
 
 
