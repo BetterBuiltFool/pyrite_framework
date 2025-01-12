@@ -210,6 +210,17 @@ class Court(pyrite.Entity):
             self.check_ball_collisions(self.ball)
 
     def check_ball_collisions(self, ball: Ball):
+        self.check_ball_in_bounds(ball)
+        self.check_ball_paddle_hit(
+            ball,
+            {
+                self.p1_paddle: self.p1_paddle.get_rect(),
+                self.p2_paddle: self.p2_paddle.get_rect(),
+            },
+        )
+        self.check_ball_scored(ball, self.score_zones)
+
+    def check_ball_in_bounds(self, ball: Ball):
         max_y = self.size.y - (ball.size.y / 2)
         min_y = ball.size.y / 2
         if ball.position.y > max_y or ball.position.y < min_y:
@@ -218,7 +229,16 @@ class Court(pyrite.Entity):
         # Clamp position. This will prevent weird double bouncing from clipping the
         # sides
         ball.position.y = max(min_y, min(ball.position.y, max_y))
-        self.check_ball_scored(ball, self.score_zones)
+
+    def check_ball_paddle_hit(self, ball: Ball, paddles: dict[Paddle, pygame.Rect]):
+        hit = ball.get_rect().collidedict(paddles, values=True)
+        if hit is not None:
+            ball.velocity.x = -ball.velocity.x
+
+            paddle = hit[0]
+            delta_x = ball.position.x - paddle.position.x
+            sign = delta_x / abs(delta_x)
+            ball.position.x += ((ball.size.x / 2) + (paddle.size.x / 2)) * sign
 
     def check_ball_scored(self, ball: Ball, score_zones: dict[Player, pygame.Rect]):
         scored = ball.get_rect().collidedict(score_zones, values=True)
