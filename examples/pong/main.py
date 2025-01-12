@@ -67,7 +67,7 @@ class PaddleController(Protocol):
 
 
 class ScoreCounter(pyrite.Renderable):
-    font = pygame.Font()
+    font = pygame.Font(size=48)
 
     def __init__(
         self,
@@ -81,22 +81,22 @@ class ScoreCounter(pyrite.Renderable):
         super().__init__(container, enabled, layer, draw_index)
         self.player = player
         self.position = pygame.Vector2(position)
-        self.size = pygame.Vector2(32, 32)
+        self.size = pygame.Vector2(64, 64)
 
         self.surface = pygame.Surface(self.size)
 
     def get_rect(self) -> pygame.Rect:
-        rect = pygame.Rect(size=self.size)
+        rect = pygame.Rect((0, 0), self.size)
         rect.center = self.position
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
-        bg_color = pygame.Color("gray88")
+        bg_color = pygame.Color("black")
         self.surface.fill(bg_color)
         score_draw = self.font.render(
             str(self.player.score),
             antialias=True,
-            color=pygame.Color("black"),
+            color=pygame.Color("grey88"),
             bgcolor=bg_color,
         )
         self.surface.blit(
@@ -249,8 +249,15 @@ class Court(pyrite.Entity):
             self.player2: pygame.Rect(self.size.x + 10, 0, 10, self.size.y),
         }
 
-        self.player1_scorebox = ScoreCounter(self.player1)
-        self.player1_scorebox.position = pygame.Vector2((self.size.x / 2), 32)
+        self.player1_scorebox = ScoreCounter(self.player2)
+        self.player1_scorebox.position = pygame.Vector2(
+            (self.size.x / 4), self.size.y + 64
+        )
+
+        self.player2_scorebox = ScoreCounter(self.player1)
+        self.player2_scorebox.position = pygame.Vector2(
+            (3 * self.size.x / 4), self.size.y + 64
+        )
 
     def enable(self, item):
         self.container.enable(item)
