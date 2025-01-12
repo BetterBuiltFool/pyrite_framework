@@ -186,6 +186,13 @@ class Court(pyrite.Entity):
         self.is_playing = False
         self.ball: Ball = Ball(self, False)
 
+        self.player1 = Player()
+        self.player2 = Player()
+        self.score_zones = {
+            self.player1: pygame.Rect(-10, 0, 10, self.size.y),
+            self.player2: pygame.Rect(self.size.x + 10, 0, 10, self.size.y),
+        }
+
     def enable(self, item):
         self.container.enable(item)
 
@@ -211,10 +218,12 @@ class Court(pyrite.Entity):
         # Clamp position. This will prevent weird double bouncing from clipping the
         # sides
         ball.position.y = max(min_y, min(ball.position.y, max_y))
+        self.check_ball_scored(ball, self.score_zones)
 
     def check_ball_scored(self, ball: Ball, score_zones: dict[Player, pygame.Rect]):
-        scored_player, _ = ball.get_rect().collidedict(score_zones, values=True)
-        if scored_player:
+        scored = ball.get_rect().collidedict(score_zones, values=True)
+        if scored is not None:
+            scored_player = scored[0]
             scored_player.score += 1
             ball.enabled = False
             self.is_playing = False
