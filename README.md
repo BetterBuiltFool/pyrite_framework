@@ -73,10 +73,10 @@
     </li>
     <li><a href="#usage">Usage</a></li>
       <ul>
-        <li><a href="#types">Types</a></li>
-        <li><a href="#using-asset-handles">Using Asset Handles</a></li>
-        <li><a href="#importing-resources">Importing Resources</a></li>
-        <li><a href="#configuration">Configuration</a></li>
+        <li><a href="#using-game">Using Game</a></li>
+        <li><a href="#loop-phases">Loop Phases</a></li>
+        <li><a href="#entities-and-renderables">Entities and Renderables</a></li>
+        <li><a href="#forget-about-screen-space">Forget About Screen Space</a></li>
       </ul>
     <li><a href="#roadmap">Roadmap</a></li>
     <!--<li><a href="#contributing">Contributing</a></li>-->
@@ -95,7 +95,7 @@
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 -->
 
-Pyrite is a framework for eliminating much of the boilerplate of setting up a pygame project and getting running, while encouraging good project architecture with proper seperation of responsibilities among game elements.
+Pyrite is a framework for eliminating much of the boilerplate of setting up a pygame project and getting running, while encouraging good project architecture with proper seperation of responsibilities among game elements. It includes several built-in systems to get development up and going.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -127,7 +127,7 @@ Pyrite additionally is built for pygame-ce, which must also be installed.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Pyrite is built around a single main class: the Game class.
+At its core, Pyrite is built around a single main class: the Game class.
 Game is useable as-is in its default state, or it can be subclassed to allow for more specific behaviors.
 
 ### Using Game
@@ -215,20 +215,17 @@ A game is built around a loop, and that loop has certain phases. The pyrite game
 
 6. Render: For drawing to the screen.
 
-7. UI Render: For rendering UI objects over top any game objects.
-
-By default, each phase calls on active entities and renderables, and calls their own appropriate methods. If you subclass Game and overwrite any of those methods, ensure that they still call them on entities and renderables.
+The basic Game class will call each of the phases after Events on all active Entities and Renderables, but also has these available as methods to allow for more specific behavior when subclassed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Entities, Renderables, and UI Elements
-##### Oh, my!
+### Entities and Renderables
 
 These are the core feature of Pyrite. All game objects should inherit from at least one of these. They allow you to define behaviors, and render out images onto the screen.
 
 #### Entity
 
-An entity is any object that has behavior. They can be typical objects, like an enemy, or obstacle, or they can be systems and services, like a physics service. To use, simply subclass Entity, and overwrite one of the four update-phase methods. Then, when the entity is created, it will automatically have those methods called each frame.
+An entity is any object that has behavior. They can be typical objects, like an enemy, or obstacle, or they can be systems and services, like a physics service. To use, simply subclass Entity, and overwrite at least one of the four update-phase methods. Then, when the entity is created, it will automatically have those methods called each frame.
 
 ```python
 
@@ -259,26 +256,47 @@ class MyEntity(Entity):
         )
 ```
 
-This will create a simple entity that will move with the WASD keys. Note, however, that it does not show anything on screen.
+This will create a simple entity that will move with the WASD keys. Note, however, that it does not show anything on screen, as it is not renderable.
 
 
 #### Renderables
 
-Renderables are anything that needs to be drawn to the screen. They must implement the render method, and must return a surface and a point/rect.
+Renderables are anything that needs to be drawn to the screen. They must implement the render method, which must return a ready-to-draw surface, and the get_rect method, which returns a pygame Rectangle, with the position and size of the renderable.
 Classes can inherit from both Entity and Renderable, to allow them to both be drawn and have behavior.
 
 ```python
 class MyRenderable(Renderable):
 
+    # __init__ here
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(100, 50, 10, 10)
+
     def render(self, delta_time: float):
         surface = Surface((10, 10))
         surface.fill(Color("fuchsia"))
-        position = (100, 50)
-        return (surface, position)
+        return surface
 ```
 
-This will draw a small fuchsia square at a relative position of 100, 50.
+This will draw a small fuchsia square at a world position of 100, 50.
 
+#### UI Elements
+
+There's a special layer in the the render system, the UI layer. Renderables in the UI layer are always drawn in screen space, not world space.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Forget About Screen Space
+
+It's all about world space, now.
+
+Pyrite features a camera system as part of its default renderer. Cameras are moveable and zoomable, and automatically ignore any renderables they can't see, speeding up your game when items are offscreen.
+
+You can even have multiple cameras, rendered to different parts of the screen!
+
+Renderables have layers and draw indexes to ensure that everything is drawn in the desired order. You can even add additional layers, and have cameras ignore layers, as needed.
+
+Cameras are even optional. Pyrite will treat your world space just like screen space, if you don't want/need cameras for your project.
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -288,7 +306,8 @@ This will draw a small fuchsia square at a relative position of 100, 50.
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] 
+- [ ] Add a world space conversion for clicking.
+- [ ] (Eternal) Improve the renderer. Faster rendering means more renderables!
 
 <!--
 - [ ] Feature 2
