@@ -151,7 +151,7 @@ class AIController(pyrite.Entity):
             self.paddle.position.y = self.court.size.y / 2
             self.paddle.velocity = 0
             return
-        if (self.paddle.position.x - self.court.ball.position.x) > (
+        if abs(self.paddle.position.x - self.court.ball.position.x) > (
             self.court.size.x / 2
         ):
             self.paddle.velocity = 0
@@ -276,12 +276,18 @@ class Court(pyrite.Entity):
             self, paddle=self.p1_paddle, control_keys=(pygame.K_w, pygame.K_s)
         )
 
+        # ---------------------------------------------------------------------------------------------------
+        #
+        # Swap these two to do 2 player
+        #
+
         # self.player2_controller: PaddleController = PlayerController(
         #     self, paddle=self.p2_paddle, control_keys=(pygame.K_UP, pygame.K_DOWN)
         # )
         self.player2_controller: PaddleController = AIController(
             self, paddle=self.p2_paddle
         )
+        # ---------------------------------------------------------------------------------------------------
 
         self.is_playing = False
         self.ball: Ball = Ball(self, False)
