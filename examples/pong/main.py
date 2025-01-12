@@ -130,6 +130,32 @@ class PlayerController(pyrite.Entity):
             self.paddle.velocity = self.paddle.max_speed * y
 
 
+class AIController(pyrite.Entity):
+
+    def __init__(
+        self,
+        container: Court = None,
+        enabled=True,
+        paddle: Paddle = None,
+    ) -> None:
+        super().__init__(container, enabled)
+        self.court = court
+        self.paddle = paddle
+
+    def update(self, delta_time: float) -> None:
+        if not self.court.is_playing:
+            self.paddle.position.y = (self.court.size.y / 2) - (self.paddle.size.y / 2)
+            self.paddle.velocity = 0
+            return
+        ball_y = self.court.ball.position.y
+        if self.paddle.position.y > ball_y:
+            self.paddle.velocity = self.paddle.max_speed
+        elif self.paddle.position.y < ball_y:
+            self.paddle.velocity = -self.paddle.max_speed
+        else:
+            self.paddle.velocity = 0
+
+
 class Player:
 
     def __init__(self) -> None:
