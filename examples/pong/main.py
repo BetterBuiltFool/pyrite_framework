@@ -131,7 +131,7 @@ class Court(pyrite.Entity):
     def enable(self, item):
         self.container.enable(item)
 
-    def diasble(self, item):
+    def disable(self, item):
         self.container.disable(item)
 
 
