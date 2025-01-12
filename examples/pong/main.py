@@ -3,11 +3,14 @@ Pong is a very basic game, and thus makes for a good introduction to the basic u
 Pyrite.
 
 This example makes use of no image assets.
+
+Sound effects courtesy of Kenney.nl, via opengameart.org
 """
 
 from __future__ import annotations
 
 import math
+from pathlib import Path
 import random
 from typing import Protocol
 
@@ -17,8 +20,14 @@ from pyrite.types.enums import Layer, RenderLayers
 
 import pygame
 
+pygame.mixer.init()
+
 
 class Paddle(pyrite.Entity, pyrite.Renderable):
+    hit_sounds: list[pygame.Sound] = [
+        pygame.Sound(Path(f"examples/pong/assets/sounds/phaserUp{i+1}.mp3"))
+        for i in range(7)
+    ]
 
     def __init__(
         self,
@@ -154,6 +163,14 @@ class Ball(pyrite.Entity, pyrite.Renderable):
 
 
 class Court(pyrite.Entity):
+    wall_bounce_sounds: list[pygame.Sound] = [
+        pygame.Sound(Path(f"examples/pong/assets/sounds/twoTone{i+1}.mp3"))
+        for i in range(2)
+    ]
+    point_scored_sounds: list[pygame.Sound] = [
+        pygame.Sound(Path(f"examples/pong/assets/sounds/spaceTrash{i+1}.mp3"))
+        for i in range(5)
+    ]
 
     def __init__(
         self,
@@ -226,6 +243,7 @@ class Court(pyrite.Entity):
         if ball.position.y > max_y or ball.position.y < min_y:
             # Deflect off the sides
             ball.velocity.y = -ball.velocity.y
+            random.choice(self.wall_bounce_sounds).play()
         # Clamp position. This will prevent weird double bouncing from clipping the
         # sides
         ball.position.y = max(min_y, min(ball.position.y, max_y))
@@ -239,6 +257,7 @@ class Court(pyrite.Entity):
             delta_x = ball.position.x - paddle.position.x
             sign = delta_x / abs(delta_x)
             ball.position.x += ((ball.size.x / 2) + (paddle.size.x / 2)) * sign
+            random.choice(paddle.hit_sounds).play()
 
     def check_ball_scored(self, ball: Ball, score_zones: dict[Player, pygame.Rect]):
         scored = ball.get_rect().collidedict(score_zones, values=True)
@@ -247,6 +266,7 @@ class Court(pyrite.Entity):
             scored_player.score += 1
             ball.enabled = False
             self.is_playing = False
+            random.choice(self.point_scored_sounds).play()
 
     def start(self):
         self.ball.enabled = True
