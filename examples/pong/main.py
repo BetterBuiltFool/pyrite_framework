@@ -151,10 +151,15 @@ class AIController(pyrite.Entity):
             self.paddle.position.y = self.court.size.y / 2
             self.paddle.velocity = 0
             return
-        ball_y = self.court.ball.position.y
-        if self.paddle.position.y < ball_y:
+        if (self.paddle.position.x - self.court.ball.position.x) > (
+            self.court.size.x / 2
+        ):
+            self.paddle.velocity = 0
+            return
+        ball_delta_y = self.court.ball.position.y - self.paddle.position.y
+        if ball_delta_y > 8:
             self.paddle.velocity = self.paddle.max_speed
-        elif self.paddle.position.y > ball_y:
+        elif ball_delta_y < 8:
             self.paddle.velocity = -self.paddle.max_speed
         else:
             self.paddle.velocity = 0
