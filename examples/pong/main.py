@@ -66,6 +66,45 @@ class PaddleController(Protocol):
     paddle: Paddle
 
 
+class ScoreCounter(pyrite.Renderable):
+    font = pygame.Font()
+
+    def __init__(
+        self,
+        player: Player,
+        container: Container = None,
+        enabled=True,
+        layer: Layer = None,
+        draw_index=0,
+        position: pygame.Vector2 = (0, 0),
+    ) -> None:
+        super().__init__(container, enabled, layer, draw_index)
+        self.player = player
+        self.position = pygame.Vector2(position)
+        self.size = pygame.Vector2(32, 32)
+
+        self.surface = pygame.Surface(self.size)
+
+    def get_rect(self) -> pygame.Rect:
+        rect = pygame.Rect(size=self.size)
+        rect.center = self.position
+        return rect
+
+    def render(self, delta_time: float) -> pygame.Surface:
+        bg_color = pygame.Color("gray88")
+        self.surface.fill(bg_color)
+        score_draw = self.font.render(
+            self.player.score,
+            antialias=True,
+            color=pygame.Color("black"),
+            bgcolor=bg_color,
+        )
+        self.surface.blit(
+            score_draw, score_draw.get_rect(center=self.surface.get_rect().center)
+        )
+        return self.surface
+
+
 class PlayerController(pyrite.Entity):
 
     def __init__(
