@@ -55,10 +55,6 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
 
     def update(self, delta_time: float):
         self.position.y += self.velocity * delta_time
-        self.position.y = max(
-            self.size.y / 2,
-            min(self.position.y, (self.container.size.y - (self.size.y / 2))),
-        )
 
     def get_rect(self) -> pygame.Rect:
         # Personal preference, really, but I tend to prefer using position-on-center
@@ -399,6 +395,10 @@ class Court(pyrite.Entity):
         if self.is_playing:
             self.check_ball_collisions(self.ball)
 
+    def post_update(self, delta_time: float) -> None:
+        self.check_paddle_in_bounds(self.p1_paddle)
+        self.check_paddle_in_bounds(self.p2_paddle)
+
     def check_ball_collisions(self, ball: Ball):
         """
         Runs collision detect on all of the important things to compare the ball to.
@@ -430,6 +430,15 @@ class Court(pyrite.Entity):
         # Clamp position. This will prevent weird double bouncing from clipping the
         # sides
         ball.position.y = max(min_y, min(ball.position.y, max_y))
+
+    def check_paddle_in_bounds(self, paddle: Paddle):
+        """
+        Ensures the paddle is where it should be.
+        """
+        paddle.position.y = max(
+            paddle.size.y / 2,
+            min(paddle.position.y, (self.size.y - (paddle.size.y / 2))),
+        )
 
     def check_ball_paddle_hit(self, ball: Ball, paddles: dict[Paddle, pygame.Rect]):
         """
