@@ -174,11 +174,25 @@ class Court(pyrite.Entity):
             self, paddle=self.p2_paddle, control_keys=(pygame.K_UP, pygame.K_DOWN)
         )
 
+        self.is_playing = False
+        self.ball: Ball = Ball(self, False)
+
     def enable(self, item):
         self.container.enable(item)
 
     def disable(self, item):
         self.container.disable(item)
+
+    def update(self, delta_time: float) -> None:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            if not self.is_playing:
+                self.start()
+                self.is_playing = True
+
+    def start(self):
+        self.ball.enabled = True
+        self.ball.position = self.size.elementwise() / 2
 
 
 if __name__ == "__main__":
