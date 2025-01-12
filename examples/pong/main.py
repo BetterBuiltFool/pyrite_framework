@@ -7,6 +7,8 @@ This example makes use of no image assets.
 
 from __future__ import annotations
 
+import math
+import random
 from typing import Protocol
 
 import pyrite
@@ -122,17 +124,32 @@ class Ball(pyrite.Entity, pyrite.Renderable):
     ) -> None:
         super().__init__(container, enabled, layer, draw_index)
 
+        self.court: Court = container
+
         self.position = pygame.Vector2(start_position)
         self.size = pygame.Vector2(16, 16)
 
         self.surface = pygame.Surface(self.size)
         self.surface.fill(pygame.Color("white"))
 
+        self.max_velocity = 256
+        self.velocity = pygame.Vector2(0, 0)
+
     def update(self, delta_time: float) -> None:
-        pass
+        self.position += self.velocity * delta_time
+        max_y = self.court.size.y - (self.size.y / 2)
+        min_y = self.size.y / 2
+        if self.position.y > max_y or self.position.y < min_y:
+            # Deflect off the sides
+            self.velocity.y = -self.velocity.y
+        # Clamp position. This will prevent weird double bouncing from clipping the
+        # sides
+        self.position.y = max(min_y, min(self.position.y, max_y))
 
     def get_rect(self) -> pygame.Rect:
-        return pygame.Rect(self.position, self.size)
+        rect = pygame.Rect((0, 0), self.size)
+        rect.center = self.position
+        return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface
@@ -153,15 +170,9 @@ class Court(pyrite.Entity):
 
         self.size = court_size
 
-        self.p1_paddle = Paddle(self)
-        self.p1_paddle.position = pygame.Vector2(
-            10, (self.size.y / 2) - (self.p1_paddle.size.y / 2)
-        )
+        self.p1_paddle = self.create_paddle(10)
 
-        self.p2_paddle = Paddle(self)
-        self.p2_paddle.position = pygame.Vector2(
-            self.size.x - 20, (self.size.y / 2) - (self.p2_paddle.size.y / 2)
-        )
+        self.p2_paddle = self.create_paddle(self.size.x - 20)
 
         self.net = Net(self)
         self.net.position = pygame.Vector2((self.size.x / 2) - (self.net.size.x / 2), 0)
@@ -193,6 +204,14 @@ class Court(pyrite.Entity):
     def start(self):
         self.ball.enabled = True
         self.ball.position = self.size.elementwise() / 2
+        directions = [math.sin(math.pi / 4), -math.sin(math.pi / 4)]
+        direction = pygame.Vector2(random.choice(directions), random.choice(directions))
+        self.ball.velocity = direction * self.ball.max_velocity
+
+    def create_paddle(self, x_pos: int) -> Paddle:
+        paddle = Paddle(self)
+        paddle.position = pygame.Vector2(x_pos, (self.size.y / 2) - (paddle.size.y / 2))
+        return paddle
 
 
 if __name__ == "__main__":
