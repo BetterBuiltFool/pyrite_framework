@@ -61,7 +61,7 @@ class Net(pyrite.Renderable):
         for index in range(10):
             pygame.draw.rect(
                 self.surface,
-                pygame.Color("white"),
+                pygame.Color("gray88"),
                 pygame.Rect(0, index * 50, 10, 25),
             )
 
@@ -69,6 +69,34 @@ class Net(pyrite.Renderable):
         return pygame.Rect(self.position, self.size)
 
     def render(self, delta_time: float):
+        return self.surface
+
+
+class Ball(pyrite.Entity, pyrite.Renderable):
+
+    def __init__(
+        self,
+        container: Container = None,
+        enabled=True,
+        layer: Layer = None,
+        draw_index=0,
+        start_position: pygame.typing.Point = (0, 0),
+    ) -> None:
+        super().__init__(container, enabled, layer, draw_index)
+
+        self.position = pygame.Vector2(start_position)
+        self.size = pygame.Vector2(10, 10)
+
+        self.surface = pygame.Surface(self.size)
+        self.surface.fill(pygame.Color("white"))
+
+    def update(self, delta_time: float) -> None:
+        pass
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(self.position, self.size)
+
+    def render(self, delta_time: float) -> pygame.Surface:
         return self.surface
 
 
