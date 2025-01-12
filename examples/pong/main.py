@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pyrite
 from pyrite.types import Container
-from pyrite.types.enums import Layer
+from pyrite.types.enums import Layer, RenderLayers
 
 import pygame
 
@@ -42,6 +42,36 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
         return self.surface
 
 
+class Net(pyrite.Renderable):
+
+    def __init__(
+        self,
+        container: Container = None,
+        enabled=True,
+        draw_index=0,
+        position: pygame.typing.Point = (0, 0),
+    ) -> None:
+        layer = RenderLayers.BACKGROUND
+        super().__init__(container, enabled, layer, draw_index)
+        self.position = pygame.Vector2(position)
+        self.size = pygame.Vector2(10, 500)
+
+        self.surface = pygame.Surface(self.size)
+
+        for index in range(10):
+            pygame.draw.rect(
+                self.surface,
+                pygame.Color("white"),
+                pygame.Rect(0, index * 50, 10, 25),
+            )
+
+    def get_rect(self) -> pygame.Rect:
+        return pygame.Rect(self.position, self.size)
+
+    def render(self, delta_time: float):
+        return self.surface
+
+
 class Court:
 
     def __init__(
@@ -64,6 +94,9 @@ class Court:
         self.p2_paddle.position = pygame.Vector2(
             self.size.x - 20, (self.size.y / 2) - (self.p2_paddle.size.y / 2)
         )
+
+        self.net = Net(self)
+        self.net.position = pygame.Vector2((self.size.x / 2) - (self.net.size.x / 2), 0)
 
     def enable(self, item):
         self.container.enable(item)
