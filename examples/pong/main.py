@@ -238,7 +238,7 @@ class Ball(pyrite.Entity, pyrite.Renderable):
     def speed_up(self):
         speed = self.velocity.magnitude()
         direction = self.velocity.normalize()
-        speed += 1
+        speed *= 1.05
         self.velocity = speed * direction
 
 
