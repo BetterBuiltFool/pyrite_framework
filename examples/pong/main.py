@@ -100,13 +100,15 @@ class Ball(pyrite.Entity, pyrite.Renderable):
         return self.surface
 
 
-class Court:
+class Court(pyrite.Entity):
 
     def __init__(
-        self, game_instance: pyrite.Game, court_size: pygame.Vector2 = None
+        self,
+        game_instance: pyrite.Game = None,
+        enabled=True,
+        court_size: pygame.Vector2 = None,
     ) -> None:
-
-        self.container = game_instance
+        super().__init__(game_instance, enabled)
 
         if court_size is None:
             court_size = pygame.Vector2(game_instance.window.size)
