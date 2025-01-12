@@ -170,6 +170,10 @@ class Court(pyrite.Entity):
             self, paddle=self.p1_paddle, control_keys=(pygame.K_w, pygame.K_s)
         )
 
+        self.player2_controller: PaddleController = PlayerController(
+            self, paddle=self.p2_paddle, control_keys=(pygame.K_UP, pygame.K_DOWN)
+        )
+
     def enable(self, item):
         self.container.enable(item)
 
