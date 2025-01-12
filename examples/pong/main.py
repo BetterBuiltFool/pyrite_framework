@@ -212,6 +212,13 @@ class Court(pyrite.Entity):
         # sides
         ball.position.y = max(min_y, min(ball.position.y, max_y))
 
+    def check_ball_scored(self, ball: Ball, score_zones: dict[Player, pygame.Rect]):
+        scored_player, _ = ball.get_rect().collidedict(score_zones, values=True)
+        if scored_player:
+            scored_player.score += 1
+            ball.enabled = False
+            self.is_playing = False
+
     def start(self):
         self.ball.enabled = True
         self.ball.position = self.size.elementwise() / 2
