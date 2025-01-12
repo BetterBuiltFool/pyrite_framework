@@ -20,7 +20,7 @@ from pyrite.types.enums import Layer, RenderLayers
 
 import pygame
 
-pygame.mixer.init()
+pygame.init()
 
 
 class Paddle(pyrite.Entity, pyrite.Renderable):
@@ -94,7 +94,7 @@ class ScoreCounter(pyrite.Renderable):
         bg_color = pygame.Color("gray88")
         self.surface.fill(bg_color)
         score_draw = self.font.render(
-            self.player.score,
+            str(self.player.score),
             antialias=True,
             color=pygame.Color("black"),
             bgcolor=bg_color,
@@ -148,11 +148,11 @@ class Net(pyrite.Renderable):
         layer = RenderLayers.BACKGROUND
         super().__init__(container, enabled, layer, draw_index)
         self.position = pygame.Vector2(position)
-        self.size = pygame.Vector2(10, 500)
+        self.size = pygame.Vector2(10, 400)
 
         self.surface = pygame.Surface(self.size)
 
-        for index in range(10):
+        for index in range(8):
             pygame.draw.rect(
                 self.surface,
                 pygame.Color("gray88"),
@@ -222,7 +222,7 @@ class Court(pyrite.Entity):
         if court_size is None:
             court_size = pygame.Vector2(game_instance.window.size)
 
-        self.size = court_size
+        self.size = pygame.Vector2(court_size)
 
         self.p1_paddle = self.create_paddle(10)
 
@@ -248,6 +248,9 @@ class Court(pyrite.Entity):
             self.player1: pygame.Rect(-10, 0, 10, self.size.y),
             self.player2: pygame.Rect(self.size.x + 10, 0, 10, self.size.y),
         }
+
+        self.player1_scorebox = ScoreCounter(self.player1)
+        self.player1_scorebox.position = pygame.Vector2((self.size.x / 2), 32)
 
     def enable(self, item):
         self.container.enable(item)
@@ -323,4 +326,4 @@ class Court(pyrite.Entity):
 if __name__ == "__main__":
     with pyrite.Game(resolution=(800, 500)) as pong_game:
         pong_game.game_data.title = "Example Pong"
-        court = Court(pong_game)
+        court = Court(pong_game, court_size=(800, 400))
