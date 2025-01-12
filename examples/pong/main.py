@@ -7,6 +7,8 @@ This example makes use of no image assets.
 
 from __future__ import annotations
 
+from typing import Protocol
+
 import pyrite
 from pyrite.types import Container
 from pyrite.types.enums import Layer, RenderLayers
@@ -18,7 +20,7 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
 
     def __init__(
         self,
-        container: Container = None,
+        container: Court = None,
         enabled=True,
         layer: Layer = None,
         draw_index=0,
@@ -26,20 +28,56 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
     ) -> None:
         super().__init__(container, enabled, layer, draw_index)
 
+        self.container: Court = container
         self.position = pygame.Vector2(start_postion)
         self.size = pygame.Vector2(10, 64)
+
+        self.max_speed = 256
+        self.velocity = 0
 
         self.surface = pygame.Surface(self.size)
         self.surface.fill(pygame.Color("white"))
 
     def update(self, delta_time: float):
-        pass
+        self.position.y += self.velocity * delta_time
+        self.position.y = max(
+            0, min(self.position.y, (self.container.size.y - self.size.y))
+        )
 
     def get_rect(self) -> pygame.Rect:
         return pygame.Rect(self.position, self.size)
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface
+
+
+class PaddleController(Protocol):
+    paddle: Paddle
+
+
+class PlayerController(pyrite.Entity):
+
+    def __init__(
+        self,
+        container: Container = None,
+        enabled=True,
+        paddle: Paddle = None,
+        control_keys: tuple[int, int] = (0, 0),
+    ) -> None:
+        super().__init__(container, enabled)
+        self.paddle = paddle
+        self.up_key = control_keys[0]
+        self.down_key = control_keys[1]
+
+    def pre_update(self, delta_time: float) -> None:
+        keys = pygame.key.get_pressed()
+        y = 0
+        if keys[self.up_key]:
+            y -= 1
+        if keys[self.down_key]:
+            y += 1
+        if self.paddle is not None:
+            self.paddle.velocity = self.paddle.max_speed * y
 
 
 class Net(pyrite.Renderable):
@@ -127,6 +165,10 @@ class Court(pyrite.Entity):
 
         self.net = Net(self)
         self.net.position = pygame.Vector2((self.size.x / 2) - (self.net.size.x / 2), 0)
+
+        self.player1_controller: PaddleController = PlayerController(
+            self, paddle=self.p1_paddle, control_keys=(pygame.K_w, pygame.K_s)
+        )
 
     def enable(self, item):
         self.container.enable(item)
