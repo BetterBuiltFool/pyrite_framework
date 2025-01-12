@@ -82,6 +82,12 @@ class PlayerController(pyrite.Entity):
             self.paddle.velocity = self.paddle.max_speed * y
 
 
+class Player:
+
+    def __init__(self) -> None:
+        self.score = 0
+
+
 class Net(pyrite.Renderable):
 
     def __init__(
@@ -137,14 +143,6 @@ class Ball(pyrite.Entity, pyrite.Renderable):
 
     def update(self, delta_time: float) -> None:
         self.position += self.velocity * delta_time
-        max_y = self.court.size.y - (self.size.y / 2)
-        min_y = self.size.y / 2
-        if self.position.y > max_y or self.position.y < min_y:
-            # Deflect off the sides
-            self.velocity.y = -self.velocity.y
-        # Clamp position. This will prevent weird double bouncing from clipping the
-        # sides
-        self.position.y = max(min_y, min(self.position.y, max_y))
 
     def get_rect(self) -> pygame.Rect:
         rect = pygame.Rect((0, 0), self.size)
@@ -200,6 +198,19 @@ class Court(pyrite.Entity):
             if not self.is_playing:
                 self.start()
                 self.is_playing = True
+
+        if self.is_playing:
+            self.check_ball_collisions(self.ball)
+
+    def check_ball_collisions(self, ball: Ball):
+        max_y = self.size.y - (ball.size.y / 2)
+        min_y = ball.size.y / 2
+        if ball.position.y > max_y or ball.position.y < min_y:
+            # Deflect off the sides
+            ball.velocity.y = -ball.velocity.y
+        # Clamp position. This will prevent weird double bouncing from clipping the
+        # sides
+        ball.position.y = max(min_y, min(ball.position.y, max_y))
 
     def start(self):
         self.ball.enabled = True
