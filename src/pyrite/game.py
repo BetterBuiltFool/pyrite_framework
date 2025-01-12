@@ -278,8 +278,7 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
-        render_queue = self.renderer.generate_render_queue()
-        self.renderer.render(window, delta_time, render_queue)
+        pass
 
     def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
         """
@@ -290,6 +289,9 @@ class Game:
         """
         # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))
+
+        render_queue = self.renderer.generate_render_queue()
+        self.renderer.render(window, delta_time, render_queue)
 
         self.render(window, delta_time)
 
