@@ -200,6 +200,12 @@ class Ball(pyrite.Entity, pyrite.Renderable):
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface
 
+    def speed_up(self):
+        speed = self.velocity.magnitude()
+        direction = self.velocity.normalize()
+        speed += 1
+        self.velocity = speed * direction
+
 
 class Court(pyrite.Entity):
     wall_bounce_sounds: list[pygame.Sound] = [
@@ -292,6 +298,7 @@ class Court(pyrite.Entity):
         if ball.position.y > max_y or ball.position.y < min_y:
             # Deflect off the sides
             ball.velocity.y = -ball.velocity.y
+            ball.speed_up()
             random.choice(self.wall_bounce_sounds).play()
         # Clamp position. This will prevent weird double bouncing from clipping the
         # sides
@@ -306,6 +313,7 @@ class Court(pyrite.Entity):
             delta_x = ball.position.x - paddle.position.x
             sign = delta_x / abs(delta_x)
             ball.position.x += ((ball.size.x / 2) + (paddle.size.x / 2)) * sign
+            ball.speed_up()
             random.choice(paddle.hit_sounds).play()
 
     def check_ball_scored(self, ball: Ball, score_zones: dict[Player, pygame.Rect]):
