@@ -143,18 +143,18 @@ class AIController(pyrite.Entity):
         paddle: Paddle = None,
     ) -> None:
         super().__init__(container, enabled)
-        self.court = court
+        self.court = container
         self.paddle = paddle
 
     def update(self, delta_time: float) -> None:
         if not self.court.is_playing:
-            self.paddle.position.y = (self.court.size.y / 2) - (self.paddle.size.y / 2)
+            self.paddle.position.y = self.court.size.y / 2
             self.paddle.velocity = 0
             return
         ball_y = self.court.ball.position.y
-        if self.paddle.position.y > ball_y:
+        if self.paddle.position.y < ball_y:
             self.paddle.velocity = self.paddle.max_speed
-        elif self.paddle.position.y < ball_y:
+        elif self.paddle.position.y > ball_y:
             self.paddle.velocity = -self.paddle.max_speed
         else:
             self.paddle.velocity = 0
@@ -271,8 +271,11 @@ class Court(pyrite.Entity):
             self, paddle=self.p1_paddle, control_keys=(pygame.K_w, pygame.K_s)
         )
 
-        self.player2_controller: PaddleController = PlayerController(
-            self, paddle=self.p2_paddle, control_keys=(pygame.K_UP, pygame.K_DOWN)
+        # self.player2_controller: PaddleController = PlayerController(
+        #     self, paddle=self.p2_paddle, control_keys=(pygame.K_UP, pygame.K_DOWN)
+        # )
+        self.player2_controller: PaddleController = AIController(
+            self, paddle=self.p2_paddle
         )
 
         self.is_playing = False
