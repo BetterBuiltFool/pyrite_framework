@@ -4,10 +4,10 @@ from numbers import Number
 import sys
 from typing import Self, TYPE_CHECKING
 
-from src.pyrite.types.entity import Entity
+from ...types.entity import Entity
 
 if TYPE_CHECKING:
-    from src.pyrite.game import Game
+    from ...game import Game
 
 
 class FPSTracker(Entity):

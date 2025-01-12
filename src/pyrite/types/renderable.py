@@ -4,12 +4,12 @@ from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
 from ._base_type import _BaseType
-from src.pyrite.types.enums import Layer
+from .enums import Layer
 
 import pygame
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container
+    from . import Container
 
 
 class Renderable(_BaseType, ABC):
