@@ -3,16 +3,16 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING
 
-from src.pyrite.types.entity import Entity
-from src.pyrite.types.renderable import Renderable
+from ...types.entity import Entity
+from ...types.renderable import Renderable
 
-from src.pyrite.types.enums import RenderLayers
+from ...types.enums import RenderLayers
 
 import pygame
 from pygame import Surface, Rect
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container
+    from ...types import Container
     from pygame.typing import Point
 
 

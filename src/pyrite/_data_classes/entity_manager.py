@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 
 from weakref import WeakSet
 
-from src.pyrite.types.entity import Entity
+from ..types.entity import Entity
 
 if TYPE_CHECKING:
-    from src.pyrite.types._base_type import _BaseType
+    from ..types._base_type import _BaseType
 
 
 class EntityManager(ABC):

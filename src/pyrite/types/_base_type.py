@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import src.pyrite._helper.defaults as defaults
+from .._helper import defaults
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container
+    from . import Container
 
 
 class _BaseType:

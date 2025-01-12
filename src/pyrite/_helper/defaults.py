@@ -3,7 +3,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container
+    from ..types import Container
 
 
 _default_container_getter = None

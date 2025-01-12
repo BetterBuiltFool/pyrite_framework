@@ -3,16 +3,16 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
-from src.pyrite.types.enums import Layer, RenderLayers
-from src.pyrite.types.entity import Entity
-from src.pyrite.types.renderable import Renderable
-from src.pyrite.types.screen_sector import ScreenSector
+from .enums import Layer, RenderLayers
+from .entity import Entity
+from .renderable import Renderable
+from .screen_sector import ScreenSector
 
 import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from src.pyrite.types import Container, HasPosition
+    from . import Container, HasPosition
 
 
 class CameraBase:

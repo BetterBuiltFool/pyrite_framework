@@ -5,17 +5,17 @@ import logging
 from types import TracebackType
 from typing import Self, TYPE_CHECKING
 
-from src.pyrite._data_classes.display_settings import DisplaySettings
-from src.pyrite._data_classes.entity_manager import EntityManager
-from src.pyrite._data_classes.game_data import GameData
-from src.pyrite._data_classes.renderer import Renderer
-from src.pyrite._data_classes.timing_settings import TimingSettings
+from ._data_classes.display_settings import DisplaySettings
+from ._data_classes.entity_manager import EntityManager
+from ._data_classes.game_data import GameData
+from ._data_classes.renderer import Renderer
+from ._data_classes.timing_settings import TimingSettings
 
-import src.pyrite._helper.defaults as defaults
+from ._helper import defaults
 
 if TYPE_CHECKING:
-    from src.pyrite.types.entity import Entity
-    from src.pyrite.types.renderable import Renderable
+    from .types.entity import Entity
+    from .types.renderable import Renderable
 
 
 import pygame

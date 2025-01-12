@@ -6,13 +6,13 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
-from src.pyrite.types.camera import CameraBase, Camera
-from src.pyrite.types.renderable import Renderable
-from src.pyrite.types.enums import RenderLayers
+from ..types.camera import CameraBase, Camera
+from ..types.renderable import Renderable
+from ..types.enums import RenderLayers
 
 if TYPE_CHECKING:
-    from src.pyrite.types._base_type import _BaseType
-    from src.pyrite.types.enums import Layer
+    from ..types._base_type import _BaseType
+    from ..types.enums import Layer
 
 import pygame
 
