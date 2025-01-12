@@ -102,16 +102,24 @@ class DefaultEntityManager(EntityManager):
 
     def __init__(self) -> None:
         self.entities: WeakSet[Entity] = WeakSet()
+        self.new_entities: set[Entity] = set()
+        self.disabled_entities: set[Entity] = set()
 
     def enable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
-            self.entities.add(item)
+            self.new_entities.add(item)
 
     def disable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
-            self.entities.discard(item)
+            self.disabled_entities.add(item)
 
     def pre_update(self, delta_time: float):
+        for entity in self.new_entities:
+            self.entities.add(entity)
+        self.new_entities = set()
+        for entity in self.disabled_entities:
+            self.entities.discard(entity)
+        self.disabled_entities = set()
         for entity in self.entities:
             entity.pre_update(delta_time)
 
