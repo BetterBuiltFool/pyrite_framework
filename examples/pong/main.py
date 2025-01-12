@@ -27,7 +27,7 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
         super().__init__(container, enabled, layer, draw_index)
 
         self.position = pygame.Vector2(start_postion)
-        self.size = (10, 32)
+        self.size = pygame.Vector2(10, 64)
 
         self.surface = pygame.Surface(self.size)
         self.surface.fill(pygame.Color("white"))
@@ -42,6 +42,37 @@ class Paddle(pyrite.Entity, pyrite.Renderable):
         return self.surface
 
 
+class Court:
+
+    def __init__(
+        self, game_instance: pyrite.Game, court_size: pygame.Vector2 = None
+    ) -> None:
+
+        self.container = game_instance
+
+        if court_size is None:
+            court_size = pygame.Vector2(game_instance.window.size)
+
+        self.size = court_size
+
+        self.p1_paddle = Paddle(self)
+        self.p1_paddle.position = pygame.Vector2(
+            10, (self.size.y / 2) - (self.p1_paddle.size.y / 2)
+        )
+
+        self.p2_paddle = Paddle(self)
+        self.p2_paddle.position = pygame.Vector2(
+            self.size.x - 20, (self.size.y / 2) - (self.p2_paddle.size.y / 2)
+        )
+
+    def enable(self, item):
+        self.container.enable(item)
+
+    def diasble(self, item):
+        self.container.disable(item)
+
+
 if __name__ == "__main__":
     with pyrite.Game(resolution=(800, 500)) as pong_game:
         pong_game.game_data.title = "Example Pong"
+        court = Court(pong_game)
