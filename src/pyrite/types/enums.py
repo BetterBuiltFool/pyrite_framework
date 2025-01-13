@@ -173,7 +173,7 @@ class AnchorPoint:
         rectangle.__setattr__(self.target_attribute, position)
 
 
-class AnchorPoints(Enum):
+class Anchor(Enum):
     """
     An enum for modifying the position of a rectangle for renderables.
     """
