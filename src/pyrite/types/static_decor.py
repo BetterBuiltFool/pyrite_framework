@@ -38,6 +38,8 @@ class StaticDecor(Renderable):
         :param display_surface: The image or surface to be shown.
         :param position: Location of the Decor object, in world space,
         defaults to (0, 0)
+        :param anchor: AnchorPoint that determines where on the object the position
+        references, defaults to Anchor.CENTER
         :param container: Container object for the renderable, defaults to None
         :param enabled: Whether or not the object should be active immediately upon
         spawn, defaults to True
