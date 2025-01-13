@@ -141,17 +141,33 @@ class RenderLayers:
 
 
 class AnchorPoint:
+    """
+    Determines where on a surface the position is based.
+    """
 
     def __init__(self, target_attribute: str) -> None:
         self.target_attribute = target_attribute
 
     def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
+        """
+        Supplies a new rectangle, with the size of the original, but the location of
+        the rectangle based on the given position, and the anchor point's assigned
+        attribute.
+
+        :param rectangle: A rect-like that will be moved to the position
+        :param position: A position to move the rectangle to.
+        :return: The new rectangle, in the position location.
+        """
         rect = pygame.Rect(rectangle)
         rect.__setattr__(self.target_attribute, position)
         return rect
 
 
 class AnchorPoints(Enum):
+    """
+    An enum for modifying the position of a rectangle for renderables.
+    """
+
     TOPLEFT = AnchorPoint("topleft")
     MIDTOP = AnchorPoint("midtop")
     TOPRIGHT = AnchorPoint("topright")
