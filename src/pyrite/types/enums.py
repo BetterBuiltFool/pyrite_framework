@@ -1,6 +1,12 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
+import typing
+
+import pygame
+
+if typing.TYPE_CHECKING:
+    from pygame.typing import Point, RectLike
 
 
 class Layer:
@@ -131,3 +137,52 @@ class RenderLayers:
         :raises IndexError: Raised if the index is invalid.
         :raises ValueError: Raised if the index belongs to a built-in layer.
         """
+
+
+class AnchorPoint:
+    """
+    Determines where on a surface the position is based.
+    """
+
+    def __init__(self, target_attribute: str) -> None:
+        self.target_attribute = target_attribute
+
+    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
+        """
+        Supplies a new rectangle, with the size of the original, but the location of
+        the rectangle based on the given position, and the anchor point's assigned
+        attribute.
+
+        :param rectangle: A rect-like that will be moved to the position
+        :param position: A position to move the rectangle to.
+        :return: The new rectangle, in the position location.
+        """
+        rect = pygame.Rect(rectangle)
+        rect.__setattr__(self.target_attribute, position)
+        return rect
+
+    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
+        """
+        Moves the passed rectangle to the position, with that position being based on
+        the anchorpoint.
+
+        :param rectangle: A rectangle that will have its position modified.
+        :param position: A position to move the rectangle to.
+        """
+        rectangle.__setattr__(self.target_attribute, position)
+
+
+class Anchor:
+    """
+    An enum for modifying the position of a rectangle for renderables.
+    """
+
+    TOPLEFT = AnchorPoint("topleft")
+    MIDTOP = AnchorPoint("midtop")
+    TOPRIGHT = AnchorPoint("topright")
+    MIDLEFT = AnchorPoint("midleft")
+    CENTER = AnchorPoint("center")
+    MIDRIGHT = AnchorPoint("midright")
+    BOTTOMLEFT = AnchorPoint("bottomleft")
+    MIDBOTTOM = AnchorPoint("midbottom")
+    BOTTOMRIGHT = AnchorPoint("bottomright")
