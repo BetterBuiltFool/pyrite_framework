@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import Enum
 from functools import singledispatchmethod
 import typing
 
@@ -173,7 +172,7 @@ class AnchorPoint:
         rectangle.__setattr__(self.target_attribute, position)
 
 
-class Anchor(Enum):
+class Anchor:
     """
     An enum for modifying the position of a rectangle for renderables.
     """
