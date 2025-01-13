@@ -162,6 +162,16 @@ class AnchorPoint:
         rect.__setattr__(self.target_attribute, position)
         return rect
 
+    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
+        """
+        Moves the passed rectangle to the position, with that position being based on
+        the anchorpoint.
+
+        :param rectangle: A rectangle that will have its position modified.
+        :param position: A position to move the rectangle to.
+        """
+        rectangle.__setattr__(self.target_attribute, position)
+
 
 class AnchorPoints(Enum):
     """
