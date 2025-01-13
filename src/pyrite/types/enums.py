@@ -1,6 +1,13 @@
 from __future__ import annotations
 
+from enum import Enum
 from functools import singledispatchmethod
+import typing
+
+import pygame
+
+if typing.TYPE_CHECKING:
+    from pygame.typing import Point, RectLike
 
 
 class Layer:
@@ -131,3 +138,26 @@ class RenderLayers:
         :raises IndexError: Raised if the index is invalid.
         :raises ValueError: Raised if the index belongs to a built-in layer.
         """
+
+
+class AnchorPoint:
+
+    def __init__(self, target_attribute: str) -> None:
+        self.target_attribute = target_attribute
+
+    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
+        rect = pygame.Rect(rectangle)
+        rect.__setattr__(self.target_attribute, position)
+        return rect
+
+
+class AnchorPoints(Enum):
+    TOPLEFT = AnchorPoint("topleft")
+    MIDTOP = AnchorPoint("midtop")
+    TOPRIGHT = AnchorPoint("topright")
+    MIDLEFT = AnchorPoint("midleft")
+    CENTER = AnchorPoint("center")
+    MIDRIGHT = AnchorPoint("midright")
+    BOTTOMLEFT = AnchorPoint("bottomleft")
+    MIDBOTTOM = AnchorPoint("midbottom")
+    BOTTOMRIGHT = AnchorPoint("bottomright")
