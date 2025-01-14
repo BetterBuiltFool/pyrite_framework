@@ -15,3 +15,6 @@ def get_pos() -> tuple[int, int]:
     game_instance = game.get_game_instance()
     if game_instance is None:
         return mouse_screen_pos
+    return game_instance.renderer.screen_to_world(
+        mouse_screen_pos, game_instance.window
+    )
