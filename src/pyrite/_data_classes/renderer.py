@@ -6,6 +6,8 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
+# from pygame.typing import Point
+
 from ..types.camera import CameraBase, Camera
 from ..types.renderable import Renderable
 from ..types.enums import RenderLayers
@@ -86,12 +88,14 @@ class Renderer(ABC):
         """
 
     @abstractmethod
-    def screen_to_world(self, screen_position: Point) -> Point:
+    def screen_to_world(self, screen_position: Point, window: pygame.Surface) -> Point:
         """
         Converts the given screen position into a position in the world.
 
         :param screen_position: A point-like value representing screen space.
-        :return: The world space equivalent of the screen space position.
+        :param window: The surface that represents the window.
+        :return: The world space equivalent of the screen space position. If this is
+        not possible, the original point is returned.
         """
         pass
 
@@ -297,6 +301,20 @@ class DefaultRenderer(Renderer):
         negatives.reverse()
 
         return renderables + negatives
+
+    def screen_to_world(self, screen_position: Point, window: pygame.Surface) -> Point:
+        cameras: set[Camera]
+        if not (cameras := self.renderables.get(RenderLayers.CAMERA, set())):
+            return screen_position
+
+        for camera in cameras:
+            for screen_sector in camera.screen_sectors:
+                render_rect = screen_sector.get_rect(window)
+                if render_rect.collidepoint(screen_position):
+                    return camera.to_world(screen_position)
+
+        # All else fails,
+        return screen_position
 
 
 _default_renderer_type = DefaultRenderer
