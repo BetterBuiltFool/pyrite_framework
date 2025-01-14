@@ -13,6 +13,7 @@ from ..types.enums import RenderLayers
 if TYPE_CHECKING:
     from ..types._base_type import _BaseType
     from ..types.enums import Layer
+    from pygame.typing import Point
 
 import pygame
 
@@ -83,6 +84,16 @@ class Renderer(ABC):
         Returns the number of rednerables that were actually drawn in the previous
         frame.
         """
+
+    @abstractmethod
+    def screen_to_world(self, screen_position: Point) -> Point:
+        """
+        Converts the given screen position into a position in the world.
+
+        :param screen_position: A point-like value representing screen space.
+        :return: The world space equivalent of the screen space position.
+        """
+        pass
 
     @staticmethod
     def get_renderer(**kwds) -> Renderer:
