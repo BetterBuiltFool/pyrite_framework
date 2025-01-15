@@ -310,8 +310,22 @@ class DefaultRenderer(Renderer):
         for camera in cameras:
             for screen_sector in camera.screen_sectors:
                 render_rect = screen_sector.get_rect(window)
-                if render_rect.collidepoint(screen_position):
-                    return camera.to_world(screen_position)
+                if not render_rect.collidepoint(screen_position):
+                    continue
+                # Convert from screen to viewport coords
+                relative_pos = pygame.Vector2(screen_position) - pygame.Vector2(
+                    render_rect.topleft
+                )
+                viewport_world = camera.get_viewport_rect()
+                scale_x, scale_y = pygame.Vector2(
+                    render_rect.size
+                ).elementwise() / pygame.Vector2(viewport_world.size)
+                # Doesn't work. FIXME
+                viewport_space_position: pygame.Vector2 = relative_pos.elementwise() / (
+                    scale_x,
+                    scale_y,
+                )
+                return viewport_space_position.elementwise() + viewport_world.topleft
 
         # All else fails,
         return screen_position
