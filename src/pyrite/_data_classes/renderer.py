@@ -15,7 +15,6 @@ from ..types.enums import RenderLayers
 if TYPE_CHECKING:
     from ..types._base_type import _BaseType
     from ..types.enums import Layer
-    from pygame.typing import Point
 
 import pygame
 
@@ -86,18 +85,6 @@ class Renderer(ABC):
         Returns the number of rednerables that were actually drawn in the previous
         frame.
         """
-
-    @abstractmethod
-    def screen_to_world(self, screen_position: Point, window: pygame.Surface) -> Point:
-        """
-        Converts the given screen position into a position in the world.
-
-        :param screen_position: A point-like value representing screen space.
-        :param window: The surface that represents the window.
-        :return: The world space equivalent of the screen space position. If this is
-        not possible, the original point is returned.
-        """
-        pass
 
     @staticmethod
     def get_renderer(**kwds) -> Renderer:
@@ -301,34 +288,6 @@ class DefaultRenderer(Renderer):
         negatives.reverse()
 
         return renderables + negatives
-
-    def screen_to_world(self, screen_position: Point, window: pygame.Surface) -> Point:
-        cameras: set[Camera]
-        if not (cameras := self.renderables.get(RenderLayers.CAMERA, set())):
-            return screen_position
-
-        for camera in cameras:
-            for screen_sector in camera.screen_sectors:
-                render_rect = screen_sector.get_rect(window)
-                if not render_rect.collidepoint(screen_position):
-                    continue
-                # Convert from screen to viewport coords
-                relative_pos = pygame.Vector2(screen_position) - pygame.Vector2(
-                    render_rect.topleft
-                )
-                viewport_world = camera.get_viewport_rect()
-                scale_x, scale_y = pygame.Vector2(
-                    render_rect.size
-                ).elementwise() / pygame.Vector2(viewport_world.size)
-                # Doesn't work. FIXME
-                viewport_space_position: pygame.Vector2 = relative_pos.elementwise() / (
-                    scale_x,
-                    scale_y,
-                )
-                return viewport_space_position.elementwise() + viewport_world.topleft
-
-        # All else fails,
-        return screen_position
 
 
 _default_renderer_type = DefaultRenderer
