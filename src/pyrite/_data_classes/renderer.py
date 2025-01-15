@@ -6,6 +6,8 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakSet
 
+# from pygame.typing import Point
+
 from ..types.camera import CameraBase, Camera
 from ..types.renderable import Renderable
 from ..types.enums import RenderLayers
