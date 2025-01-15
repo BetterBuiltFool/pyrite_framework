@@ -1,5 +1,7 @@
 from ._base_type import _BaseType
 
+import pygame
+
 
 class Entity(_BaseType):
     """
@@ -45,5 +47,14 @@ class Entity(_BaseType):
         depending on timestep length.
 
         :param timestep: Length of the timestep being simulated.
+        """
+        pass
+
+    def on_event(self, event: pygame.Event):
+        """
+        An event hook. Events will be passed to the entity when it's enabled, and can
+        be handled here.
+
+        :param event: A pygame event.
         """
         pass

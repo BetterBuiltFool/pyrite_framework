@@ -313,7 +313,7 @@ class Game:
     def process_events(self, events: list[pygame.Event]) -> None:
         """
         Takes the list of events generated, and processes them.
-        by default, the events are passed on to handle_event.
+        by default, the events are passed on to handle_event and the entity manager.
         Pygame.QUIT is specifically checked.
 
         :param events: List of events since last frame.
@@ -321,6 +321,8 @@ class Game:
         for event in events:
             if event.type == pygame.QUIT:
                 self.quit_called()
+
+            self.entity_manager.handle_event(event)
             self.handle_event(event)
 
     def handle_event(self, event: pygame.Event) -> None:
