@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
+from pygame.typing import Point
+
 from .enums import Layer, RenderLayers
 from .entity import Entity
 from .renderable import Renderable
@@ -69,6 +71,16 @@ class CameraBase:
         :param point: A point, in local space
         :return: The world space equivalent of _point_
         """
+
+        return Vector2(point)
+
+    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+
+        return Vector2(point)
+
+    def screen_to_world_clamped(
+        self, point: Point, sector_index: int = 0
+    ) -> Vector2 | None:
 
         return Vector2(point)
 
@@ -179,6 +191,51 @@ class Camera(CameraBase, Renderable):
         point = Vector2(point)
 
         return point + Vector2(self.get_surface_rect().topleft)
+
+    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+        sector = self.screen_sectors[sector_index]
+        sector_rect = self._get_sector_rect(sector)
+
+        viewport_world = self.get_viewport_rect()
+
+        viewport_space_position = self._screen_to_viewport(
+            point, sector_rect, Vector2(viewport_world.size)
+        )
+
+        return viewport_space_position.elementwise() + viewport_world.topleft
+
+    def screen_to_world_clamped(
+        self, point: Point, sector_index: int = 0
+    ) -> Vector2 | None:
+        sector = self.screen_sectors[sector_index]
+        sector_rect = self._get_sector_rect(sector)
+
+        if not sector_rect.collidepoint(point):
+            return None
+
+        viewport_world = self.get_viewport_rect()
+
+        viewport_space_position = self._screen_to_viewport(
+            point, sector_rect, Vector2(viewport_world.size)
+        )
+
+        return viewport_space_position.elementwise() + viewport_world.topleft
+
+    def _screen_to_viewport(
+        self, point: Point, sector_rect: pygame.Rect, viewport_size: Vector2
+    ) -> Vector2:
+        relative_pos = pygame.Vector2(point) - pygame.Vector2(sector_rect.topleft)
+        scale_x, scale_y = (
+            pygame.Vector2(sector_rect.size).elementwise() / viewport_size
+        )
+        viewport_space_position: pygame.Vector2 = relative_pos.elementwise() / (
+            scale_x,
+            scale_y,
+        )
+        return viewport_space_position
+
+    def _get_sector_rect(self, sector: ScreenSector) -> pygame.Rect:
+        return sector.get_rect(pygame.display.get_surface())
 
     def zoom(self, zoom_level: float):
         """
