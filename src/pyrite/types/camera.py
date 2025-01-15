@@ -55,7 +55,7 @@ class CameraBase:
 
     def to_local(self, point: pygame.typing.Point) -> Vector2:
         """
-        Converts a point in world space to local space.
+        Converts a point in world space to local space (The camera'ssurface)
 
         :param point: A point, in world space
         :return: The local space equivalent of _point_
@@ -64,7 +64,7 @@ class CameraBase:
 
     def to_world(self, point: pygame.typing.Point) -> Vector2:
         """
-        Converts a point in local space to world space.
+        Converts a point in local space (The camera's surface) to world space.
 
         :param point: A point, in local space
         :return: The world space equivalent of _point_
