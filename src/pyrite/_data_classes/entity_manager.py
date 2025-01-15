@@ -10,6 +10,8 @@ from ..types.entity import Entity
 if TYPE_CHECKING:
     from ..types._base_type import _BaseType
 
+import pygame
+
 
 class EntityManager(ABC):
 
@@ -75,6 +77,15 @@ class EntityManager(ABC):
         """
         pass
 
+    @abstractmethod
+    def handle_event(self, event: pygame.Event):
+        """
+        Passes the event down to all active entities.
+
+        :param event: A pygame event.
+        """
+        pass
+
     # Profiling methods
 
     @abstractmethod
@@ -134,6 +145,10 @@ class DefaultEntityManager(EntityManager):
     def const_update(self, timestep: float):
         for entity in self.entities:
             entity.const_update(timestep)
+
+    def handle_event(self, event: pygame.Event):
+        for entity in self.entities:
+            entity.on_event(event)
 
     def get_number_entities(self) -> int:
         return len(self.entities)
