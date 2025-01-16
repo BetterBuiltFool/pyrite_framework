@@ -19,11 +19,7 @@ if TYPE_CHECKING:
 import pygame
 
 
-class Renderer(ABC):
-    """
-    Class responsible to holding any enabled renderables,
-    and drawing them to the screen.
-    """
+class RenderManager(ABC):
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -33,21 +29,6 @@ class Renderer(ABC):
         The keys are metadata used by the renderer to determine factors like layer
         culling and, partially, draw order. They can be of any type, but must be a type
         the render method knows how to handle.
-        """
-        pass
-
-    @abstractmethod
-    def render(
-        self,
-        window: pygame.Surface,
-        delta_time: float,
-        render_queue: dict[Any, Sequence[Renderable]],
-    ):
-        """
-        Draws the items from the render queue onto the passed surface.
-
-        :param window: The game window, receiving final draws
-        :param render_queue: A list of items that need to be rendered to the surface.
         """
         pass
 
@@ -79,6 +60,39 @@ class Renderer(ABC):
         """
         pass
 
+    @staticmethod
+    def get_render_manager(**kwds) -> RenderManager:
+        """
+        Extracts a render manager from keyword arguments.
+        Used for creating a render manager for a new Game instance
+        """
+        if (render_manager := kwds.get("render_manager", None)) is None:
+            manager_type = get_default_render_manager_type()
+            render_manager = manager_type()
+        return render_manager
+
+
+class Renderer(ABC):
+    """
+    Class responsible to holding any enabled renderables,
+    and drawing them to the screen.
+    """
+
+    @abstractmethod
+    def render(
+        self,
+        window: pygame.Surface,
+        delta_time: float,
+        render_queue: dict[Any, Sequence[Renderable]],
+    ):
+        """
+        Draws the items from the render queue onto the passed surface.
+
+        :param window: The game window, receiving final draws
+        :param render_queue: A list of items that need to be rendered to the surface.
+        """
+        pass
+
     @abstractmethod
     def get_rendered_last_frame(self) -> int:
         """
@@ -103,6 +117,10 @@ def _get_draw_index(renderable: Renderable) -> int:
     Sort key for sorting by draw index.
     """
     return renderable.draw_index
+
+
+class DefaultRenderManager(RenderManager):
+    pass
 
 
 class DefaultRenderer(Renderer):
@@ -283,6 +301,18 @@ class DefaultRenderer(Renderer):
         negatives.reverse()
 
         return renderables + negatives
+
+
+_default_render_manager_type = DefaultRenderManager
+
+
+def get_default_render_manager_type() -> type[Renderer]:
+    return _default_render_manager_type
+
+
+def set_default_render_manager_type(render_manager_type: type[RenderManager]):
+    global _default_render_manager_type
+    _default_render_manager_type = render_manager_type
 
 
 _default_renderer_type = DefaultRenderer
