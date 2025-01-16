@@ -20,6 +20,10 @@ import pygame
 
 
 class RenderManager(ABC):
+    """
+    An object for managing renderables. Can enable and disable them, and generates a
+    render queue for the renderer.
+    """
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -74,8 +78,7 @@ class RenderManager(ABC):
 
 class Renderer(ABC):
     """
-    Class responsible to holding any enabled renderables,
-    and drawing them to the screen.
+    Class responsible for drawing renderables to the screen.
     """
 
     @abstractmethod
@@ -124,6 +127,9 @@ class DefaultRenderManager(RenderManager):
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
         self._rendered_last_frame: int = 0
+
+    # Does not need a buffer for renderables, they should *NOT* be generated during the
+    # render phase.
 
     def enable(self, item: _BaseType):
         if not isinstance(item, Renderable):
@@ -246,6 +252,13 @@ class DefaultRenderer(Renderer):
             camera.surface.blit(surface, camera.to_local(position))
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
+        """
+        Draws the given camera to the window, at each of its surface sectors.
+
+        :param camera: Camera being drawn to the screen
+        :param window: Game window being drawn to
+        :param delta_time: Time passed since last frame, if needed for any calculations.
+        """
         camera_surface = camera.render(delta_time)
         for sector in camera.surface_sectors:
             render_rect = sector.get_rect(window)
