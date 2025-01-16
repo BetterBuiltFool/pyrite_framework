@@ -106,11 +106,6 @@ def _get_draw_index(renderable: Renderable) -> int:
 
 
 class DefaultRenderer(Renderer):
-    """
-    TODO Add cameras. Give a special layer that's always last.
-    In the render phase, extract any cameras, draw to them, and then draw them to the
-    screen (That's why they're last.)
-    """
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
