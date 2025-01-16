@@ -39,6 +39,15 @@ class EntityManager(ABC):
         """
         pass
 
+    @abstractmethod
+    def flush_buffer(self):
+        """
+        Many iterables cannot or should not be modified during iteration, so enables
+        and disables should be buffered. This method is called at the beginning of the
+        update phase to ensure those buffers have been accounted for.
+        """
+        pass
+
     # Update Methods
 
     @abstractmethod
@@ -124,15 +133,15 @@ class DefaultEntityManager(EntityManager):
         if isinstance(item, Entity):
             self._disabled_buffer.add(item)
 
-    def pre_update(self, delta_time: float):
-        # TODO Make this its own method
-        for entity in self._added_buffer:
-            self.entities.add(entity)
+    def flush_buffer(self):
+        self.entities |= self._added_buffer
+
+        self.entities -= self._disabled_buffer
 
         self._added_buffer = set()
-        for entity in self._added_buffer:
-            self.entities.discard(entity)
         self._disabled_buffer = set()
+
+    def pre_update(self, delta_time: float):
         for entity in self.entities:
             entity.pre_update(delta_time)
 
