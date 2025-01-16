@@ -8,7 +8,7 @@ from typing import Self, TYPE_CHECKING
 from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
-from .core.renderer import Renderer
+from .core.renderer import Renderer, RenderManager
 from .core.rate_settings import RateSettings
 
 from ._helper import defaults
@@ -84,6 +84,7 @@ class Game:
         # Renderer is responsible for holding and drawing all renderables.
         # Both have a default version that will be spawned if none is provided.
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
+        self.render_manager = RenderManager.get_render_manager(**kwds)
         self.renderer = Renderer.get_renderer(**kwds)
 
         # Create a placeholder for the window, and the create the actual window
@@ -113,11 +114,11 @@ class Game:
 
     def enable(self, item: Entity | Renderable) -> None:
         self.entity_manager.enable(item)
-        self.renderer.enable(item)
+        self.render_manager.enable(item)
 
     def disable(self, item: Entity | Renderable) -> None:
         self.entity_manager.disable(item)
-        self.renderer.disable(item)
+        self.render_manager.disable(item)
 
     def create_window(self):
         """
@@ -294,7 +295,7 @@ class Game:
         # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))
 
-        render_queue = self.renderer.generate_render_queue()
+        render_queue = self.render_manager.generate_render_queue()
         self.renderer.render(window, delta_time, render_queue)
 
         self.render(window, delta_time)

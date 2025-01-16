@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 import pygame
 
 
-class Renderer(ABC):
+class RenderManager(ABC):
     """
-    Class responsible to holding any enabled renderables,
-    and drawing them to the screen.
+    An object for managing renderables. Can enable and disable them, and generates a
+    render queue for the renderer.
     """
 
     @abstractmethod
@@ -33,21 +33,6 @@ class Renderer(ABC):
         The keys are metadata used by the renderer to determine factors like layer
         culling and, partially, draw order. They can be of any type, but must be a type
         the render method knows how to handle.
-        """
-        pass
-
-    @abstractmethod
-    def render(
-        self,
-        window: pygame.Surface,
-        delta_time: float,
-        render_queue: dict[Any, Sequence[Renderable]],
-    ):
-        """
-        Draws the items from the render queue onto the passed surface.
-
-        :param window: The game window, receiving final draws
-        :param render_queue: A list of items that need to be rendered to the surface.
         """
         pass
 
@@ -79,6 +64,38 @@ class Renderer(ABC):
         """
         pass
 
+    @staticmethod
+    def get_render_manager(**kwds) -> RenderManager:
+        """
+        Extracts a render manager from keyword arguments.
+        Used for creating a render manager for a new Game instance
+        """
+        if (render_manager := kwds.get("render_manager", None)) is None:
+            manager_type = get_default_render_manager_type()
+            render_manager = manager_type()
+        return render_manager
+
+
+class Renderer(ABC):
+    """
+    Class responsible for drawing renderables to the screen.
+    """
+
+    @abstractmethod
+    def render(
+        self,
+        window: pygame.Surface,
+        delta_time: float,
+        render_queue: dict[Any, Sequence[Renderable]],
+    ):
+        """
+        Draws the items from the render queue onto the passed surface.
+
+        :param window: The game window, receiving final draws
+        :param render_queue: A list of items that need to be rendered to the surface.
+        """
+        pass
+
     @abstractmethod
     def get_rendered_last_frame(self) -> int:
         """
@@ -105,16 +122,14 @@ def _get_draw_index(renderable: Renderable) -> int:
     return renderable.draw_index
 
 
-class DefaultRenderer(Renderer):
-    """
-    TODO Add cameras. Give a special layer that's always last.
-    In the render phase, extract any cameras, draw to them, and then draw them to the
-    screen (That's why they're last.)
-    """
+class DefaultRenderManager(RenderManager):
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
         self._rendered_last_frame: int = 0
+
+    # Does not need a buffer for renderables, they should *NOT* be generated during the
+    # render phase.
 
     def enable(self, item: _BaseType):
         if not isinstance(item, Renderable):
@@ -163,6 +178,32 @@ class DefaultRenderer(Renderer):
             culled_set |= set(camera.cull(layer_set))
         return culled_set
 
+    def get_number_renderables(self) -> int:
+        count = 0
+        for layer_set in self.renderables.values():
+            count += len(layer_set)
+        return count
+
+    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
+        """
+        Sorts a sequence of renderables by draw_index, such that they are ordered
+        0 -> Infinity | -Infinity -> -1
+
+        :param renderables: list of renderables to sort
+        :return: Sorted list
+        """
+        renderables = sorted(renderables, key=_get_draw_index)
+        pivot = bisect.bisect_left(renderables, 0, key=_get_draw_index)
+        negatives = renderables[:pivot]
+        del renderables[:pivot]
+
+        negatives.reverse()
+
+        return renderables + negatives
+
+
+class DefaultRenderer(Renderer):
+
     def render_layer(
         self,
         layer_queue: Sequence[Renderable],
@@ -193,6 +234,8 @@ class DefaultRenderer(Renderer):
         """
         Draws a renderable to the cameras, adjusting its world position to camera space.
 
+        TODO: Make this take a surface so we only have to render once.
+
         :param renderable: Item to be drawn.
         :param cameras: The cameras being drawn to.
         :param delta_time: Time passed since last frame.
@@ -209,6 +252,13 @@ class DefaultRenderer(Renderer):
             camera.surface.blit(surface, camera.to_local(position))
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
+        """
+        Draws the given camera to the window, at each of its surface sectors.
+
+        :param camera: Camera being drawn to the screen
+        :param window: Game window being drawn to
+        :param delta_time: Time passed since last frame, if needed for any calculations.
+        """
         camera_surface = camera.render(delta_time)
         for sector in camera.surface_sectors:
             render_rect = sector.get_rect(window)
@@ -263,31 +313,20 @@ class DefaultRenderer(Renderer):
         # Render the UI last.
         self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
 
-    def get_number_renderables(self) -> int:
-        count = 0
-        for layer_set in self.renderables.values():
-            count += len(layer_set)
-        return count
-
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
 
-    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
-        """
-        Sorts a sequence of renderables by draw_index, such that they are ordered
-        0 -> Infinity | -Infinity -> -1
 
-        :param renderables: list of renderables to sort
-        :return: Sorted list
-        """
-        renderables = sorted(renderables, key=_get_draw_index)
-        pivot = bisect.bisect_left(renderables, 0, key=_get_draw_index)
-        negatives = renderables[:pivot]
-        del renderables[:pivot]
+_default_render_manager_type = DefaultRenderManager
 
-        negatives.reverse()
 
-        return renderables + negatives
+def get_default_render_manager_type() -> type[Renderer]:
+    return _default_render_manager_type
+
+
+def set_default_render_manager_type(render_manager_type: type[RenderManager]):
+    global _default_render_manager_type
+    _default_render_manager_type = render_manager_type
 
 
 _default_renderer_type = DefaultRenderer
