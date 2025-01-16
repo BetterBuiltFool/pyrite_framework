@@ -15,7 +15,7 @@ sys.path.append(str(pathlib.Path.cwd()))
 
 from src.pyrite.types.enums import Layer, RenderLayers  # noqa:E402
 from src.pyrite.core.renderer import (  # noqa:E402
-    DefaultRenderer,
+    DefaultRenderManager,
     _get_draw_index,
 )
 from src.pyrite.types.renderable import Renderable  # noqa:E402
@@ -53,7 +53,7 @@ def make_entity(*args, **kwds):
     yield MockEntity(*args, **kwds)
 
 
-class TestDefaultRenderer(unittest.TestCase):
+class TestDefaultRenderManager(unittest.TestCase):
 
     def assertIsSorted(
         self,
@@ -79,82 +79,88 @@ class TestDefaultRenderer(unittest.TestCase):
             self.assertGreaterEqual(key(item), key(previous))
 
     def setUp(self) -> None:
-        self.renderer = DefaultRenderer()
+        self.render_manager = DefaultRenderManager()
 
     def test_enable(self):
         # Ideal case
         with make_renderable(layer=RenderLayers.MIDGROUND) as renderable:
-            self.assertNotIn(RenderLayers.MIDGROUND, self.renderer.renderables.keys())
+            self.assertNotIn(
+                RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
+            )
 
-            self.renderer.enable(renderable)
-            self.assertIn(RenderLayers.MIDGROUND, self.renderer.renderables.keys())
+            self.render_manager.enable(renderable)
+            self.assertIn(
+                RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
+            )
 
             self.assertIn(
                 renderable,
-                self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
             )
-            self.renderer.renderables = {}
+            self.render_manager.renderables = {}
 
         # Renderable, no layer
         with make_renderable() as renderable:
             self.assertIs(renderable.layer, None)
 
-            self.renderer.enable(renderable)
-            self.assertIn(RenderLayers.MIDGROUND, self.renderer.renderables.keys())
+            self.render_manager.enable(renderable)
+            self.assertIn(
+                RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
+            )
             self.assertIs(renderable.layer, RenderLayers.MIDGROUND)
 
             self.assertIn(
                 renderable,
-                self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
             )
-            self.renderer.renderables = {}
+            self.render_manager.renderables = {}
 
         # Not renderable
         with make_entity() as item:
 
-            self.renderer.enable(item)
+            self.render_manager.enable(item)
 
             self.assertNotIn(
                 item,
-                self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
             )
-            self.renderer.renderables = {}
+            self.render_manager.renderables = {}
 
     def test_disable(self):
         renderables = [MockRenderable() for _ in range(5)]
 
         for renderable in renderables:
-            self.renderer.enable(renderable)
+            self.render_manager.enable(renderable)
 
         for renderable in renderables:
             self.assertIn(
                 renderable,
-                self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
             )
 
         disabled_renderable = renderables[2]  # Arbitrary index
 
-        self.renderer.disable(disabled_renderable)
+        self.render_manager.disable(disabled_renderable)
 
         for renderable in renderables:
             if renderable is disabled_renderable:
                 continue
             self.assertIn(
                 renderable,
-                self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
             )
         self.assertNotIn(
             disabled_renderable,
-            self.renderer.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
+            self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
         )
 
         # Try removing a mock entity
         entity = MockEntity()
 
-        self.renderer.disable(entity)
+        self.render_manager.disable(entity)
 
         # Try removing a renderable not in the collection
-        self.renderer.disable(disabled_renderable)
+        self.render_manager.disable(disabled_renderable)
 
     def test_generate_render_queue(self):
         # Ideal case
@@ -178,15 +184,15 @@ class TestDefaultRenderer(unittest.TestCase):
             element for elements in element_dict.values() for element in elements
         ]
         for renderable in all_elements:
-            self.renderer.enable(renderable)
+            self.render_manager.enable(renderable)
 
-        render_queue = self.renderer.generate_render_queue()
+        render_queue = self.render_manager.generate_render_queue()
         self.maxDiff = None
         for layer, dict_elements in element_dict.items():
             render_elements = render_queue.get(layer, [])
             self.assertListEqual(dict_elements, render_elements)
 
-        self.renderer.renderables = {}
+        self.render_manager.renderables = {}
 
         # Renderables out of order
         renderables: list[Renderable] = []
@@ -197,12 +203,12 @@ class TestDefaultRenderer(unittest.TestCase):
             for i in range(3, 0, -1):
                 new_element = MockRenderable(layer=layer, draw_index=i - 1)
                 elements.append(new_element)
-                self.renderer.enable(new_element)
+                self.render_manager.enable(new_element)
 
-        render_queue = self.renderer.generate_render_queue()
+        render_queue = self.render_manager.generate_render_queue()
         self.assertIsSorted(render_queue.get(RenderLayers.MIDGROUND), _get_draw_index)
 
-        self.renderer.renderables = {}
+        self.render_manager.renderables = {}
 
         # Extra layers
         renderables: list[Renderable] = []
@@ -216,14 +222,14 @@ class TestDefaultRenderer(unittest.TestCase):
             for i in range(3, 0, -1):
                 new_element = MockRenderable(layer=layer, draw_index=i - 1)
                 elements.append(new_element)
-                self.renderer.enable(new_element)
+                self.render_manager.enable(new_element)
 
-        render_queue = self.renderer.generate_render_queue()
+        render_queue = self.render_manager.generate_render_queue()
 
         self.assertIn(RenderLayers.MIDGROUND, render_queue.keys())
         self.assertNotIn(extra_layer, render_queue.keys())
 
-        self.renderer.renderables = {}
+        self.render_manager.renderables = {}
 
 
 if __name__ == "__main__":
