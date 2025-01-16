@@ -167,6 +167,10 @@ class Anchor:
         rectangle.__setattr__(self.target_attribute, position)
 
 
+# TODO Add CustomAnchor, which uses an FRect like SurfaceSector to determine relative
+# position. Maybe Vector2 instead? We'll see.
+
+
 class AnchorPoint:
     """
     An enum for modifying the position of a rectangle for renderables.
