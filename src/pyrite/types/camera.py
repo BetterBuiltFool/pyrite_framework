@@ -8,7 +8,7 @@ from pygame.typing import Point
 from .enums import Layer, RenderLayers
 from .entity import Entity
 from .renderable import Renderable
-from .screen_sector import ScreenSector
+from .surface_sector import SurfaceSector
 
 import pygame
 from pygame import Vector2
@@ -94,7 +94,7 @@ class Camera(CameraBase, Renderable):
         self,
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
-        screen_sectors: ScreenSector | Sequence[ScreenSector] = None,
+        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
         viewport: pygame.Rect = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -107,8 +107,9 @@ class Camera(CameraBase, Renderable):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
-        :param screen_sectors: Defines sections of the screen to render to. If multiple
-        screen sectors are used, the camera will be rendered and scaled to each of them.
+        :param surface_sectors: Defines sections of the screen to render to. If multiple
+        surface sectors are used, the camera will be rendered and scaled to each of
+        them.
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
         None will give the center of the viewport.
@@ -131,11 +132,11 @@ class Camera(CameraBase, Renderable):
         if position is None:
             position = self.viewport.center
         self.position = Vector2(position)
-        if screen_sectors is None:
-            screen_sectors = [ScreenSector()]
-        if not isinstance(screen_sectors, Sequence):
-            screen_sectors = [screen_sectors]
-        self.screen_sectors: Sequence[ScreenSector] = screen_sectors
+        if surface_sectors is None:
+            surface_sectors = [SurfaceSector()]
+        if not isinstance(surface_sectors, Sequence):
+            surface_sectors = [surface_sectors]
+        self.surface_sectors: Sequence[SurfaceSector] = surface_sectors
         self._zoom_level: float = 1
         CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
@@ -195,7 +196,7 @@ class Camera(CameraBase, Renderable):
     def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
         """
         Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the screen sector, it will extrapolate to
+        If the screen coordinate is outside the surface sector, it will extrapolate to
         find the equivalent space.
 
         :param point: A location in screen space, usually pygame.mouse.get_pos()
@@ -204,7 +205,7 @@ class Camera(CameraBase, Renderable):
         number of sectors.
         :return: The screen position, in world space relative to the camera
         """
-        sector = self.screen_sectors[sector_index]
+        sector = self.surface_sectors[sector_index]
         sector_rect = self._get_sector_rect(sector)
 
         viewport_world = self.get_viewport_rect()
@@ -221,7 +222,7 @@ class Camera(CameraBase, Renderable):
         """
         Variant of screen_to_world.
         Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the screen sector, it will instead return
+        If the screen coordinate is outside the surface sector, it will instead return
         None.
 
         Use this when it needs to be clear that the mouse is outside the camera
@@ -233,7 +234,7 @@ class Camera(CameraBase, Renderable):
         number of sectors.
         :return: The screen position, in world space relative to the camera
         """
-        sector = self.screen_sectors[sector_index]
+        sector = self.surface_sectors[sector_index]
         sector_rect = self._get_sector_rect(sector)
 
         if not sector_rect.collidepoint(point):
@@ -260,7 +261,7 @@ class Camera(CameraBase, Renderable):
         )
         return viewport_space_position
 
-    def _get_sector_rect(self, sector: ScreenSector) -> pygame.Rect:
+    def _get_sector_rect(self, sector: SurfaceSector) -> pygame.Rect:
         return sector.get_rect(pygame.display.get_surface())
 
     def zoom(self, zoom_level: float):
@@ -313,7 +314,7 @@ class ChaseCamera(Camera, Entity):
         max_size: pygame.typing.Point,
         position: pygame.typing.Point = None,
         container=None,
-        screen_sectors: ScreenSector | Sequence[ScreenSector] = None,
+        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
         enabled=True,
         draw_index=0,
         target: HasPosition = None,
@@ -327,8 +328,9 @@ class ChaseCamera(Camera, Entity):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
-        :param screen_sectors: Defines sections of the screen to render to. If multiple
-        screen sectors are used, the camera will be rendered and scaled to each of them.
+        :param surface_sectors: Defines sections of the screen to render to. If multiple
+        surface sectors are used, the camera will be rendered and scaled to each of
+        them.
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
         None will give the center of the viewport.
@@ -354,7 +356,7 @@ class ChaseCamera(Camera, Entity):
             self,
             max_size=max_size,
             position=position,
-            screen_sectors=screen_sectors,
+            surface_sectors=surface_sectors,
             container=container,
             enabled=enabled,
             draw_index=draw_index,
