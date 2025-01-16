@@ -42,11 +42,6 @@ class RenderLayers:
     """
     Special layer for camera objects. Not in the layer sequence. Always draw last.
     """
-    SCREEN_SCETORS = Layer(-2, "Screen Sectors")
-    """
-    Special layer for screen sectors, which are attached to cameras and determine where
-    and how on the window the camera is rendered.
-    """
 
     # Ordered set of layers
     _layers = (BACKGROUND, MIDGROUND, FOREGROUND)
@@ -139,7 +134,7 @@ class RenderLayers:
         """
 
 
-class AnchorPoint:
+class Anchor:
     """
     Determines where on a surface the position is based.
     """
@@ -172,17 +167,21 @@ class AnchorPoint:
         rectangle.__setattr__(self.target_attribute, position)
 
 
-class Anchor:
+# TODO Add CustomAnchor, which uses an FRect like SurfaceSector to determine relative
+# position. Maybe Vector2 instead? We'll see.
+
+
+class AnchorPoint:
     """
     An enum for modifying the position of a rectangle for renderables.
     """
 
-    TOPLEFT = AnchorPoint("topleft")
-    MIDTOP = AnchorPoint("midtop")
-    TOPRIGHT = AnchorPoint("topright")
-    MIDLEFT = AnchorPoint("midleft")
-    CENTER = AnchorPoint("center")
-    MIDRIGHT = AnchorPoint("midright")
-    BOTTOMLEFT = AnchorPoint("bottomleft")
-    MIDBOTTOM = AnchorPoint("midbottom")
-    BOTTOMRIGHT = AnchorPoint("bottomright")
+    TOPLEFT = Anchor("topleft")
+    MIDTOP = Anchor("midtop")
+    TOPRIGHT = Anchor("topright")
+    MIDLEFT = Anchor("midleft")
+    CENTER = Anchor("center")
+    MIDRIGHT = Anchor("midright")
+    BOTTOMLEFT = Anchor("bottomleft")
+    MIDBOTTOM = Anchor("midbottom")
+    BOTTOMRIGHT = Anchor("bottomright")

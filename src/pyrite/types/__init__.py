@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable, TYPE_CHECKING
 
-from .screen_sector import ScreenSector  # noqa: F401
-from .camera import CameraBase, Camera  # noqa: F401
+from .camera import CameraBase, Camera, ChaseCamera  # noqa: F401
 from .entity import Entity  # noqa: F401
+from .enums import RenderLayers, AnchorPoint  # noqa: F401
 from .renderable import Renderable  # noqa: F401
+from .surface_sector import SurfaceSector  # noqa: F401
+from .static_decor import StaticDecor  # noqa: F401
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType

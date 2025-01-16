@@ -4,7 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite._data_classes.game_data import GameData  # noqa:E402
+from src.pyrite.core.game_data import GameData  # noqa:E402
 
 
 class Test_GameData(unittest.TestCase):

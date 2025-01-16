@@ -26,10 +26,10 @@ def set_max_tickrate(value: float):
     MAX_TICK_RATE_WARNING = value
 
 
-class TimingSettings:
+class RateSettings:
     def __init__(self, fps_cap: int = 0, tick_rate: float = 20) -> None:
         """
-        Creates a new Timings object, which hold framerate data for a Game object.
+        Creates a new Rates object, which hold framerate data for a Game object.
 
         :param fps_cap: Maximum frame rate, in frames per second, defaults to 0.
         0 uncaps framerate.
@@ -113,15 +113,15 @@ class TimingSettings:
         self._tick_rate = 1 / target
 
     @staticmethod
-    def get_timing_settings(**kwds) -> TimingSettings:
+    def get_rate_settings(**kwds) -> RateSettings:
         """
-        Creates a TimingSettings object from external arguments.
-        Used for generating timing settings from arguments passed into Game init.
+        Creates a RateSettings object from external arguments.
+        Used for generating rate settings from arguments passed into Game init.
         """
-        timing_data: TimingSettings | None = kwds.get("timing_data", None)
-        if timing_data is None:
-            # Creates a new TimingSettings if one hasn't been passed.
+        rate_data: RateSettings | None = kwds.get("rate_settings", None)
+        if rate_data is None:
+            # Creates a new RateSettings if one hasn't been passed.
             keys: set = {"fps_cap", "tick_rate", "fixed_timestep"}
             params: dict = {key: kwds[key] for key in keys if key in kwds}
-            timing_data = TimingSettings(**params)
-        return typing.cast(TimingSettings, timing_data)
+            rate_data = RateSettings(**params)
+        return typing.cast(RateSettings, rate_data)
