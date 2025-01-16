@@ -39,6 +39,16 @@ class EntityManager(ABC):
         """
         pass
 
+    @abstractmethod
+    def flush_buffer(self):
+        """
+        Used to allow the entity manager to update its entity collection safely,
+        without modifying it while iterating over it.
+
+        Called at the beginning of the loop, before event handling.
+        """
+        pass
+
     # Update Methods
 
     @abstractmethod
@@ -124,15 +134,15 @@ class DefaultEntityManager(EntityManager):
         if isinstance(item, Entity):
             self._disabled_buffer.add(item)
 
-    def pre_update(self, delta_time: float):
-        # TODO Make this its own method
-        for entity in self._added_buffer:
-            self.entities.add(entity)
+    def flush_buffer(self):
+        self.entities |= self._added_buffer
+
+        self.entities -= self._disabled_buffer
 
         self._added_buffer = set()
-        for entity in self._added_buffer:
-            self.entities.discard(entity)
         self._disabled_buffer = set()
+
+    def pre_update(self, delta_time: float):
         for entity in self.entities:
             entity.pre_update(delta_time)
 

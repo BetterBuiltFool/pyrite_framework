@@ -164,6 +164,9 @@ class Game:
             self.rate_settings.fps_cap, accumulated_time
         )
 
+        # This will ensure new entities are processed properly for the new frame.
+        self.entity_manager.flush_buffer()
+
         self.process_events(pygame.event.get())
 
         if self.rate_settings.tick_rate > 0:
@@ -244,6 +247,7 @@ class Game:
 
         :param delta_time: Actual time passed since last frame, in seconds.
         """
+
         self.pre_update(delta_time)
         self.entity_manager.pre_update(delta_time)
         self.update(delta_time)
