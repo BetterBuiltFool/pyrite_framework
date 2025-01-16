@@ -46,7 +46,7 @@ class FPSTracker(Entity):
         )
 
         self.max_renderables = max(
-            self.max_renderables, game_instance.renderer.get_number_renderables()
+            self.max_renderables, game_instance.render_manager.get_number_renderables()
         )
 
     def dump_data(self) -> dict[str, Number]:
