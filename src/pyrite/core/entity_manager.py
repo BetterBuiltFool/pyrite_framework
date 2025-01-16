@@ -113,26 +113,26 @@ class DefaultEntityManager(EntityManager):
 
     def __init__(self) -> None:
         self.entities: WeakSet[Entity] = WeakSet()
-        self.new_entities: set[Entity] = set()
-        self.disabled_entities: set[Entity] = set()
+        self._added_buffer: set[Entity] = set()
+        self._disabled_buffer: set[Entity] = set()
 
     def enable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
-            self.new_entities.add(item)
+            self._added_buffer.add(item)
 
     def disable(self, item: _BaseType) -> None:
         if isinstance(item, Entity):
-            self.disabled_entities.add(item)
+            self._disabled_buffer.add(item)
 
     def pre_update(self, delta_time: float):
         # TODO Make this its own method
-        for entity in self.new_entities:
+        for entity in self._added_buffer:
             self.entities.add(entity)
 
-        self.new_entities = set()
-        for entity in self.disabled_entities:
+        self._added_buffer = set()
+        for entity in self._added_buffer:
             self.entities.discard(entity)
-        self.disabled_entities = set()
+        self._disabled_buffer = set()
         for entity in self.entities:
             entity.pre_update(delta_time)
 
