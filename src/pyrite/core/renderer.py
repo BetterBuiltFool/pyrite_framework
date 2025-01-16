@@ -120,10 +120,6 @@ def _get_draw_index(renderable: Renderable) -> int:
 
 
 class DefaultRenderManager(RenderManager):
-    pass
-
-
-class DefaultRenderer(Renderer):
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
@@ -163,6 +159,32 @@ class DefaultRenderer(Renderer):
         )
 
         return render_queue
+
+    def get_number_renderables(self) -> int:
+        count = 0
+        for layer_set in self.renderables.values():
+            count += len(layer_set)
+        return count
+
+    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
+        """
+        Sorts a sequence of renderables by draw_index, such that they are ordered
+        0 -> Infinity | -Infinity -> -1
+
+        :param renderables: list of renderables to sort
+        :return: Sorted list
+        """
+        renderables = sorted(renderables, key=_get_draw_index)
+        pivot = bisect.bisect_left(renderables, 0, key=_get_draw_index)
+        negatives = renderables[:pivot]
+        del renderables[:pivot]
+
+        negatives.reverse()
+
+        return renderables + negatives
+
+
+class DefaultRenderer(Renderer):
 
     def precull(
         self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
@@ -205,6 +227,8 @@ class DefaultRenderer(Renderer):
     ):
         """
         Draws a renderable to the cameras, adjusting its world position to camera space.
+
+        TODO: Make this take a surface so we only have to render once.
 
         :param renderable: Item to be drawn.
         :param cameras: The cameras being drawn to.
@@ -276,31 +300,8 @@ class DefaultRenderer(Renderer):
         # Render the UI last.
         self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
 
-    def get_number_renderables(self) -> int:
-        count = 0
-        for layer_set in self.renderables.values():
-            count += len(layer_set)
-        return count
-
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
-
-    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
-        """
-        Sorts a sequence of renderables by draw_index, such that they are ordered
-        0 -> Infinity | -Infinity -> -1
-
-        :param renderables: list of renderables to sort
-        :return: Sorted list
-        """
-        renderables = sorted(renderables, key=_get_draw_index)
-        pivot = bisect.bisect_left(renderables, 0, key=_get_draw_index)
-        negatives = renderables[:pivot]
-        del renderables[:pivot]
-
-        negatives.reverse()
-
-        return renderables + negatives
 
 
 _default_render_manager_type = DefaultRenderManager
