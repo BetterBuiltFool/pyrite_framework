@@ -160,6 +160,18 @@ class DefaultRenderManager(RenderManager):
 
         return render_queue
 
+    def precull(
+        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
+    ) -> set[Renderable]:
+        if not cameras:
+            return layer_set
+        culled_set: set[Renderable] = set()
+        for camera in cameras:
+            if layer in camera.layer_mask:
+                continue
+            culled_set |= set(camera.cull(layer_set))
+        return culled_set
+
     def get_number_renderables(self) -> int:
         count = 0
         for layer_set in self.renderables.values():
@@ -185,18 +197,6 @@ class DefaultRenderManager(RenderManager):
 
 
 class DefaultRenderer(Renderer):
-
-    def precull(
-        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
-    ) -> set[Renderable]:
-        if not cameras:
-            return layer_set
-        culled_set: set[Renderable] = set()
-        for camera in cameras:
-            if layer in camera.layer_mask:
-                continue
-            culled_set |= set(camera.cull(layer_set))
-        return culled_set
 
     def render_layer(
         self,
