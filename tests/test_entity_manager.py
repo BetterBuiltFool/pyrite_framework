@@ -13,7 +13,7 @@ from pygame.typing import Point
 
 sys.path.append(str(pathlib.Path.cwd()))
 
-from src.pyrite._data_classes.entity_manager import DefaultEntityManager  # noqa:E402
+from src.pyrite.core.entity_manager import DefaultEntityManager  # noqa:E402
 from src.pyrite.types.enums import Layer  # noqa:E402
 from src.pyrite.types.entity import Entity  # noqa:E402
 from src.pyrite.types.renderable import Renderable  # noqa:E402

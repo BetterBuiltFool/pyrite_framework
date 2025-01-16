@@ -5,11 +5,11 @@ import logging
 from types import TracebackType
 from typing import Self, TYPE_CHECKING
 
-from ._data_classes.display_settings import DisplaySettings
-from ._data_classes.entity_manager import EntityManager
-from ._data_classes.game_data import GameData
-from ._data_classes.renderer import Renderer
-from ._data_classes.timing_settings import TimingSettings
+from .core.display_settings import DisplaySettings
+from .core.entity_manager import EntityManager
+from .core.game_data import GameData
+from .core.renderer import Renderer
+from .core.timing_settings import TimingSettings
 
 from ._helper import defaults
 

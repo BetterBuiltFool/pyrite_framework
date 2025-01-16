@@ -9,8 +9,8 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-import src.pyrite._data_classes.timing_settings as timing_settings  # noqa:E402
-from src.pyrite._data_classes.timing_settings import TimingSettings  # noqa:E402
+import src.pyrite.core.timing_settings as timing_settings  # noqa:E402
+from src.pyrite.core.timing_settings import TimingSettings  # noqa:E402
 
 settings_logger = logging.getLogger(timing_settings.__name__)
 
