@@ -15,6 +15,7 @@ from ..types.enums import RenderLayers
 if TYPE_CHECKING:
     from ..types._base_type import _BaseType
     from ..types.enums import Layer
+    from pygame import Rect
 
 import pygame
 
@@ -222,34 +223,32 @@ class DefaultRenderer(Renderer):
         """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
-            self.render_item(renderable, cameras, delta_time, layer)
+            rendered_surface = renderable.render(delta_time)
+            self.render_item(rendered_surface, renderable.get_rect(), cameras, layer)
 
     def render_item(
         self,
-        renderable: Renderable,
+        rendered_surface: Renderable,
+        renderable_rect: Rect,
         cameras: Sequence[CameraBase],
-        delta_time: float,
         layer: Layer,
     ):
         """
         Draws a renderable to the cameras, adjusting its world position to camera space.
 
-        TODO: Make this take a surface so we only have to render once.
-
-        :param renderable: Item to be drawn.
+        :param rendered_surface: The surface to be drawn to the camera.
+        :param renderable_rect: The rendered item's rectangle in world space.
         :param cameras: The cameras being drawn to.
-        :param delta_time: Time passed since last frame.
         :param layer: layer being drawn, for layermask testing.
         """
-        surface = renderable.render(delta_time)
-        rect = renderable.get_rect()
-        position = rect.topleft
         for camera in cameras:
             if layer in camera.layer_mask:
                 continue
-            if not camera._in_view(rect):
+            if not camera._in_view(renderable_rect):
                 continue
-            camera.surface.blit(surface, camera.to_local(position))
+            camera.surface.blit(
+                rendered_surface, camera.to_local(renderable_rect.topleft)
+            )
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
         """
