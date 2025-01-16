@@ -125,8 +125,10 @@ class DefaultEntityManager(EntityManager):
             self.disabled_entities.add(item)
 
     def pre_update(self, delta_time: float):
+        # TODO Make this its own method
         for entity in self.new_entities:
             self.entities.add(entity)
+
         self.new_entities = set()
         for entity in self.disabled_entities:
             self.entities.discard(entity)
