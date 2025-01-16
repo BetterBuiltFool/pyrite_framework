@@ -210,7 +210,7 @@ class DefaultRenderer(Renderer):
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
         camera_surface = camera.render(delta_time)
-        for sector in camera.screen_sectors:
+        for sector in camera.surface_sectors:
             render_rect = sector.get_rect(window)
             window.blit(
                 pygame.transform.scale(camera_surface, render_rect.size),
