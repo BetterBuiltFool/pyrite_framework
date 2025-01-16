@@ -42,9 +42,10 @@ class EntityManager(ABC):
     @abstractmethod
     def flush_buffer(self):
         """
-        Many iterables cannot or should not be modified during iteration, so enables
-        and disables should be buffered. This method is called at the beginning of the
-        update phase to ensure those buffers have been accounted for.
+        Used to allow the entity manager to update its entity collection safely,
+        without modifying it while iterating over it.
+
+        Called at the beginning of the loop, before event handling.
         """
         pass
 
