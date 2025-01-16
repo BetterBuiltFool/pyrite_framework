@@ -63,8 +63,10 @@ class TestDefaultEntityManager(unittest.TestCase):
 
             self.entity_manager.enable(entity)
 
+            self.entity_manager.flush_buffer()
+
             self.assertIn(entity, self.entity_manager.entities)
-            self.entity_manager.entities = {}
+            self.entity_manager.entities = set()
 
         # Non-entity
         with make_renderable() as renderable:
@@ -72,14 +74,18 @@ class TestDefaultEntityManager(unittest.TestCase):
 
             self.entity_manager.enable(renderable)
 
+            self.entity_manager.flush_buffer()
+
             self.assertNotIn(renderable, self.entity_manager.entities)
-            self.entity_manager.entities = {}
+            self.entity_manager.entities = set()
 
     def test_disable(self):
         entities = [MockEntity() for _ in range(5)]
 
         for entity in entities:
             self.entity_manager.enable(entity)
+
+        self.entity_manager.flush_buffer()
 
         for entity in entities:
             self.assertIn(
@@ -90,6 +96,8 @@ class TestDefaultEntityManager(unittest.TestCase):
         disabled_entity = entities[2]  # Arbitrary index
 
         self.entity_manager.disable(disabled_entity)
+
+        self.entity_manager.flush_buffer()
 
         for entity in entities:
             if entity is disabled_entity:
