@@ -9,7 +9,7 @@ from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
 from .core.renderer import Renderer
-from .core.timing_settings import TimingSettings
+from .core.rate_settings import RateSettings
 
 from ._helper import defaults
 
@@ -78,7 +78,7 @@ class Game:
         # Creates defaults if none are provided.
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
         self.game_data = GameData.get_game_data(**kwds)
-        self.timing_settings = TimingSettings.get_timing_settings(**kwds)
+        self.rate_settings = RateSettings.get_rate_settings(**kwds)
 
         # Entity manager is responsible for holding and updating all entities.
         # Renderer is responsible for holding and drawing all renderables.
@@ -161,14 +161,14 @@ class Game:
         """
 
         delta_time, accumulated_time = self._get_frame_time(
-            self.timing_settings.fps_cap, accumulated_time
+            self.rate_settings.fps_cap, accumulated_time
         )
 
         self.process_events(pygame.event.get())
 
-        if self.timing_settings.tick_rate > 0:
+        if self.rate_settings.tick_rate > 0:
             accumulated_time = self._fixed_update_block(
-                self.timing_settings.fixed_timestep, accumulated_time
+                self.rate_settings.fixed_timestep, accumulated_time
             )
 
         self._update_block(delta_time)
@@ -234,7 +234,7 @@ class Game:
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
 
         :param timestep: Simulated time passed since last update. Passed in from the
-        game's timing_settings.
+        game's rate_settings.
         """
         pass
 
@@ -261,7 +261,7 @@ class Game:
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
 
         :param timestep: Length of the time step, in seconds. Passed from
-        timing_settings.
+        rate_settings.
         :param accumulated_time: Time passed since last const_update.
         :return: Remaining accumulated time.
         """
