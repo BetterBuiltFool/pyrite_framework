@@ -134,7 +134,7 @@ class RenderLayers:
         """
 
 
-class AnchorPoint:
+class Anchor:
     """
     Determines where on a surface the position is based.
     """
@@ -167,17 +167,17 @@ class AnchorPoint:
         rectangle.__setattr__(self.target_attribute, position)
 
 
-class Anchor:
+class AnchorPoint:
     """
     An enum for modifying the position of a rectangle for renderables.
     """
 
-    TOPLEFT = AnchorPoint("topleft")
-    MIDTOP = AnchorPoint("midtop")
-    TOPRIGHT = AnchorPoint("topright")
-    MIDLEFT = AnchorPoint("midleft")
-    CENTER = AnchorPoint("center")
-    MIDRIGHT = AnchorPoint("midright")
-    BOTTOMLEFT = AnchorPoint("bottomleft")
-    MIDBOTTOM = AnchorPoint("midbottom")
-    BOTTOMRIGHT = AnchorPoint("bottomright")
+    TOPLEFT = Anchor("topleft")
+    MIDTOP = Anchor("midtop")
+    TOPRIGHT = Anchor("topright")
+    MIDLEFT = Anchor("midleft")
+    CENTER = Anchor("center")
+    MIDRIGHT = Anchor("midright")
+    BOTTOMLEFT = Anchor("bottomleft")
+    MIDBOTTOM = Anchor("midbottom")
+    BOTTOMRIGHT = Anchor("bottomright")

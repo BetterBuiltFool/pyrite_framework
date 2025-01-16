@@ -7,13 +7,13 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from . import Container
-    from .enums import Layer, AnchorPoint
+    from .enums import Layer, Anchor
     from pygame import Surface, Rect
     from pygame.typing import Point
 
 
 from .renderable import Renderable
-from .enums import Anchor
+from .enums import AnchorPoint
 
 
 class StaticDecor(Renderable):
@@ -26,7 +26,7 @@ class StaticDecor(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        anchor: AnchorPoint = Anchor.CENTER,
+        anchor: Anchor = AnchorPoint.CENTER,
         container: Container = None,
         enabled=True,
         layer: Layer = None,
