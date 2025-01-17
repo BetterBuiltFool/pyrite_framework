@@ -167,6 +167,34 @@ class Anchor:
         rectangle.__setattr__(self.target_attribute, position)
 
 
+class CustomAnchor(Anchor):
+    """
+    A custom variant of Anchor, where a supplied offset is used to determine where in
+    the rectangle the position is based.
+    """
+
+    def __init__(self, relative_position: Point) -> None:
+        """
+        Creates a custom anchor point, defining a relative point for the location of
+        the position of a rectangle.
+
+        :param relative_position: (0, 0) is top left, and (1, 1) is bottom right.
+        """
+        self._relative_position = pygame.Vector2(relative_position)
+
+    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
+        rect = pygame.Rect(rectangle)
+        pivot: pygame.Vector2 = self._relative_position.elementwise() * rect.size
+        offset = pygame.Vector2(rect.topleft) - pivot
+        rect.topleft = offset
+        return rect
+
+    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
+        pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
+        offset = pygame.Vector2(rectangle.topleft) - pivot
+        rectangle.topleft = offset
+
+
 # TODO Add CustomAnchor, which uses an FRect like SurfaceSector to determine relative
 # position. Maybe Vector2 instead? We'll see.
 
