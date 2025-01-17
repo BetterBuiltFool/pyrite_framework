@@ -41,7 +41,7 @@
 <h3 align="center">Pyrite</h3>
 
   <p align="center">
-    The Simple Game Framework
+    The Foolproof Game Framework
     <br />
     <a href="https://github.com/BetterBuiltFool/pyrite_framework"><strong>Explore the docs »</strong></a>
     <br />
@@ -215,24 +215,24 @@ A game is built around a loop, and that loop has certain phases. The pyrite game
 
 6. Render: For drawing to the screen.
 
-The basic Game class will call each of the phases after Events on all active Entities and Renderables, but also has these available as methods to allow for more specific behavior when subclassed.
+The basic Game class will call each of the phases on all enabled Entities and Renderables, but also has these available as methods to allow for more specific behavior when subclassed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Entities and Renderables
 
-These are the core feature of Pyrite. All game objects should inherit from at least one of these. They allow you to define behaviors, and render out images onto the screen.
+These are the core feature of Pyrite. Most objects in your game should inherit from at least one of these. They allow you to define behaviors, and render out images onto the screen.
 
 #### Entity
 
-An entity is any object that has behavior. They can be typical objects, like an enemy, or obstacle, or they can be systems and services, like a physics service. To use, simply subclass Entity, and overwrite at least one of the four update-phase methods. Then, when the entity is created, it will automatically have those methods called each frame.
+An entity is any object that has behavior. They can be typical objects, like an enemy, or obstacle, or they can be systems and services, like a physics service. To use, simply subclass Entity, and overwrite at least one of the four update-phase methods or the on_event method. Then, when the entity is created, it will automatically have those methods called each frame.
 
 ```python
 
 class MyEntity(Entity):
 
-    def __init__(self, game_instance=None, enabled=True):
-        super().__init__(game_instance, enabled)
+    def __init__(self, container=None, enabled=True):
+        super().__init__(container, enabled)
         self.position: tuple[int, int] = (0, 0)
 
 
@@ -286,18 +286,19 @@ There's a special layer in the the render system, the UI layer. Renderables in t
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### Forget About Screen Space
+### Screen Space vs World Space
 
-It's all about world space, now.
+In base pygame, all surfaces are rendered in terms of screen space. This means that changing the resolution changes the size of the display, but not the objects on it. This means either a complicated setup that accounts for the window size before figuring out where to draw everything, or locking down the resolution, never to be changed.
 
 Pyrite features a camera system as part of its default renderer. Cameras are moveable and zoomable, and automatically ignore any renderables they can't see, speeding up your game when items are offscreen.
 
-You can even have multiple cameras, rendered to different parts of the screen!
+You can even have multiple cameras, rendered to different parts of the screen!*
 
 Renderables have layers and draw indexes to ensure that everything is drawn in the desired order. You can even add additional layers, and have cameras ignore layers, as needed.
 
-Cameras are even optional. Pyrite will treat your world space just like screen space, if you don't want/need cameras for your project.
+Cameras are, or course, optional. Pyrite can treat your world space just like screen space if you don't want/need cameras for your project.
 
+*Currently, multiple cameras slows the game greatly.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -306,7 +307,6 @@ Cameras are even optional. Pyrite will treat your world space just like screen s
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Add a world space conversion for clicking.
 - [ ] (Eternal) Improve the renderer. Faster rendering means more renderables!
 
 <!--
