@@ -2,6 +2,8 @@
 Pong is a very basic game, and thus makes for a good introduction to the basic usage of
 Pyrite.
 
+Built with pyrite v0.10.2
+
 This example makes use of no image assets.
 
 Sound effects courtesy of Kenney.nl, via opengameart.org
