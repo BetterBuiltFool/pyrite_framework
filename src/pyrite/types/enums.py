@@ -140,7 +140,7 @@ class Anchor:
     """
 
     def __init__(self, target_attribute: str) -> None:
-        self.target_attribute = target_attribute
+        self._target_attribute = target_attribute
 
     def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
         """
@@ -153,7 +153,7 @@ class Anchor:
         :return: The new rectangle, in the position location.
         """
         rect = pygame.Rect(rectangle)
-        rect.__setattr__(self.target_attribute, position)
+        rect.__setattr__(self._target_attribute, position)
         return rect
 
     def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
@@ -164,7 +164,7 @@ class Anchor:
         :param rectangle: A rectangle that will have its position modified.
         :param position: A position to move the rectangle to.
         """
-        rectangle.__setattr__(self.target_attribute, position)
+        rectangle.__setattr__(self._target_attribute, position)
 
 
 class CustomAnchor(Anchor):
