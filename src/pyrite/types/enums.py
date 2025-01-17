@@ -136,39 +136,6 @@ class RenderLayers:
 
 class Anchor:
     """
-    Determines where on a surface the position is based.
-    """
-
-    def __init__(self, target_attribute: str) -> None:
-        self._target_attribute = target_attribute
-
-    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
-        """
-        Supplies a new rectangle, with the size of the original, but the location of
-        the rectangle based on the given position, and the anchor point's assigned
-        attribute.
-
-        :param rectangle: A rect-like that will be moved to the position
-        :param position: A position to move the rectangle to.
-        :return: The new rectangle, in the position location.
-        """
-        rect = pygame.Rect(rectangle)
-        rect.__setattr__(self._target_attribute, position)
-        return rect
-
-    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
-        """
-        Moves the passed rectangle to the position, with that position being based on
-        the anchorpoint.
-
-        :param rectangle: A rectangle that will have its position modified.
-        :param position: A position to move the rectangle to.
-        """
-        rectangle.__setattr__(self._target_attribute, position)
-
-
-class CustomAnchor(Anchor):
-    """
     A custom variant of Anchor, where a supplied offset is used to determine where in
     the rectangle the position is based.
     """
@@ -195,21 +162,17 @@ class CustomAnchor(Anchor):
         rectangle.topleft = offset
 
 
-# TODO Add CustomAnchor, which uses an FRect like SurfaceSector to determine relative
-# position. Maybe Vector2 instead? We'll see.
-
-
 class AnchorPoint:
     """
     An enum for modifying the position of a rectangle for renderables.
     """
 
-    TOPLEFT = Anchor("topleft")
-    MIDTOP = Anchor("midtop")
-    TOPRIGHT = Anchor("topright")
-    MIDLEFT = Anchor("midleft")
-    CENTER = Anchor("center")
-    MIDRIGHT = Anchor("midright")
-    BOTTOMLEFT = Anchor("bottomleft")
-    MIDBOTTOM = Anchor("midbottom")
-    BOTTOMRIGHT = Anchor("bottomright")
+    TOPLEFT = Anchor((0, 0))
+    MIDTOP = Anchor((0.5, 0))
+    TOPRIGHT = Anchor((1, 0))
+    MIDLEFT = Anchor((0, 0.5))
+    CENTER = Anchor((0.5, 0.5))
+    MIDRIGHT = Anchor((1, 0.5))
+    BOTTOMLEFT = Anchor((0, 1))
+    MIDBOTTOM = Anchor((0.5, 1))
+    BOTTOMRIGHT = Anchor((1, 1))
