@@ -136,13 +136,12 @@ class RenderLayers:
 
 class Anchor:
     """
-    A custom variant of Anchor, where a supplied offset is used to determine where in
-    the rectangle the position is based.
+    Defines, relative to a rectangle, what spot is considered the position.
     """
 
     def __init__(self, relative_position: Point) -> None:
         """
-        Creates a custom anchor point, defining a relative point for the location of
+        Creates an anchor point, defining a relative point for the location of
         the position of a rectangle.
 
         :param relative_position: (0, 0) is top left, and (1, 1) is bottom right.
