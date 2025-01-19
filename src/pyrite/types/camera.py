@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING
 
-from pygame.typing import Point
 
 from .enums import Layer, RenderLayers
 from .entity import Entity
@@ -15,6 +14,7 @@ from pygame import Vector2
 
 if TYPE_CHECKING:
     from . import Container, HasPosition
+    from pygame.typing import Point
 
 
 class CameraBase:
@@ -55,7 +55,7 @@ class CameraBase:
     def _in_view(self, rect: pygame.Rect) -> bool:
         return self.surface.get_rect().colliderect(rect)
 
-    def to_local(self, point: pygame.typing.Point) -> Vector2:
+    def to_local(self, point: Point) -> Vector2:
         """
         Converts a point in world space to local space (The camera'ssurface)
 
@@ -64,7 +64,7 @@ class CameraBase:
         """
         return Vector2(point)
 
-    def to_world(self, point: pygame.typing.Point) -> Vector2:
+    def to_world(self, point: Point) -> Vector2:
         """
         Converts a point in local space (The camera's surface) to world space.
 
@@ -92,8 +92,8 @@ class Camera(CameraBase, Renderable):
 
     def __init__(
         self,
-        max_size: pygame.typing.Point,
-        position: pygame.typing.Point = None,
+        max_size: Point,
+        position: Point = None,
         surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
         viewport: pygame.Rect = None,
         layer_mask: tuple[Layer] = None,
@@ -183,12 +183,12 @@ class Camera(CameraBase, Renderable):
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface.subsurface(self.viewport)
 
-    def to_local(self, point: pygame.typing.Point) -> Vector2:
+    def to_local(self, point: Point) -> Vector2:
         point = Vector2(point)
 
         return point - Vector2(self.get_surface_rect().topleft)
 
-    def to_world(self, point: pygame.typing.Point) -> Vector2:
+    def to_world(self, point: Point) -> Vector2:
         point = Vector2(point)
 
         return point + Vector2(self.get_surface_rect().topleft)
@@ -311,8 +311,8 @@ class ChaseCamera(Camera, Entity):
 
     def __init__(
         self,
-        max_size: pygame.typing.Point,
-        position: pygame.typing.Point = None,
+        max_size: Point,
+        position: Point = None,
         container=None,
         surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
         enabled=True,

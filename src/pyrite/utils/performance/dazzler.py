@@ -13,7 +13,7 @@ from pygame import Surface, Rect
 
 if TYPE_CHECKING:
     from ...types import Container
-    from pygame.typing import Point
+    from pygame.typing import Point, RectLike
 
 
 class Dazzler(Entity, Renderable):
@@ -62,7 +62,7 @@ class Dazzler(Entity, Renderable):
         return self.surface
 
     @staticmethod
-    def multispawn(number_spawns, area: pygame.typing.RectLike) -> set[Dazzler]:
+    def multispawn(number_spawns, area: RectLike) -> set[Dazzler]:
         """
         Creates a number of Dazzlers randomly distributed within a rectangular area.
 
