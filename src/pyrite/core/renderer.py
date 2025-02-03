@@ -159,6 +159,14 @@ class DefaultRenderManager(RenderManager):
 
         render_queue.update(
             {
+                RenderLayers.UI_LAYER: self.sort_layer(
+                    self.renderables.get(RenderLayers.UI_LAYER, {})
+                )
+            }
+        )
+
+        render_queue.update(
+            {
                 RenderLayers.CAMERA: self.sort_layer(
                     self.renderables.get(RenderLayers.CAMERA, {})
                 )
@@ -310,7 +318,7 @@ class DefaultRenderer(Renderer):
             self.draw_camera(camera, window, delta_time)
 
         # Render the UI last.
-        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), cameras, delta_time)
+        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), window, delta_time)
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
