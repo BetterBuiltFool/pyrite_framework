@@ -6,6 +6,7 @@ from .core.rate_settings import RateSettings  # noqa:F401
 from .game import Game, AsyncGame  # noqa:F401
 from .types.entity import Entity  # noqa:F401
 from .types.renderable import Renderable  # noqa:F401
+from .types.enums import RenderLayers, AnchorPoint  # noqa: F401
 
 DEFAULT_WINDOWED: DisplaySettings = DisplaySettings()
 """
