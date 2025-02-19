@@ -6,6 +6,8 @@ import typing
 
 # import pygame
 from pygame import Vector2
+from pygame.rect import Rect as Rect
+from pygame.surface import Surface as Surface
 
 
 if typing.TYPE_CHECKING:
@@ -54,3 +56,11 @@ class SpriteSheet(Renderable):
         self.position = Vector2(position)
         self.anchor = anchor
         self.surface: Surface = None
+
+    def get_rect(self) -> Rect:
+        rect = self.surface.get_rect()
+        self.anchor.anchor_rect_ip(rect, self.position)
+        return rect
+
+    def render(self, delta_time: float) -> Surface:
+        return self.surface
