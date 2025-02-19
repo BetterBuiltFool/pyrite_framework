@@ -44,6 +44,7 @@ class SpriteSheet(Renderable):
         state_dict: StateDict,
         position: Point,
         anchor: Anchor = AnchorPoint.CENTER,
+        start_state: Any = None,
         container: Container = None,
         enabled=True,
         layer: Layer = None,
@@ -56,6 +57,7 @@ class SpriteSheet(Renderable):
         self.surface: Surface = None
 
         self._state = None
+        self.state = start_state
 
     @property
     def state(self) -> Any:
