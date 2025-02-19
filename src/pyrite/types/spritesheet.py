@@ -4,20 +4,21 @@ from abc import ABC, abstractmethod
 
 import typing
 
-import pygame
+# import pygame
+from pygame import Vector2
 
 
 if typing.TYPE_CHECKING:
     from typing import Any
-# from . import Container
-# from .enums import Layer, Anchor
-# from pygame import Surface, Rect
-# from pygame.typing import Point
+    from . import Container
+    from .enums import Layer, Anchor
+    from pygame import Rect, Surface
+    from pygame.typing import Point
 
 
 from .renderable import Renderable
 
-# from .enums import AnchorPoint
+from .enums import AnchorPoint
 
 
 class StateDict(ABC):
@@ -26,7 +27,7 @@ class StateDict(ABC):
     """
 
     @abstractmethod
-    def get(self, key: Any) -> pygame.Rect:
+    def get(self, key: Any) -> Rect:
         """
         Returns a rect matching the provided key.
 
@@ -38,4 +39,18 @@ class StateDict(ABC):
 
 class SpriteSheet(Renderable):
 
-    pass
+    def __init__(
+        self,
+        state_dict: StateDict,
+        position: Point,
+        anchor: Anchor = AnchorPoint.CENTER,
+        container: Container = None,
+        enabled=True,
+        layer: Layer = None,
+        draw_index=0,
+    ) -> None:
+        super().__init__(container, enabled, layer, draw_index)
+        self.state_dict = state_dict
+        self.position = Vector2(position)
+        self.anchor = anchor
+        self.surface: Surface = None
