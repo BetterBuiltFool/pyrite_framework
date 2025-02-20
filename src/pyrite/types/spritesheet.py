@@ -5,14 +5,14 @@ from abc import ABC, abstractmethod
 import typing
 
 # import pygame
-from pygame import Vector2
+from pygame import Rect, Vector2
 
 
 if typing.TYPE_CHECKING:
     from typing import Any
     from . import Container
     from .enums import Layer, Anchor
-    from pygame import Rect, Surface
+    from pygame import Surface
     from pygame.typing import Point
 
 
@@ -35,6 +35,38 @@ class StateDict(ABC):
         :return: A rectangle representing the subsurface of the spritesheet.
         """
         pass
+
+
+class RowColumnStateDict(StateDict):
+    """
+    Version of state dict that uses rows and columns and a constant size for each
+    sprite.
+
+    Takes keys as tuples of row, column
+    """
+
+    def __init__(self, number_rows: int, number_columns, sprite_size: Point) -> None:
+        sprite_width, sprite_height = sprite_size
+        self._state = [
+            [
+                Rect(
+                    column * sprite_width,
+                    row * sprite_height,
+                    sprite_width,
+                    sprite_height,
+                )
+                for column in range(number_columns)
+            ]
+            for row in range(number_rows)
+        ]
+        self.sprite_size = sprite_size
+
+    def get(self, key: tuple[int, int]) -> Rect:
+        if key is None:
+            key = (0, 0)
+        row = key[0]
+        column = key[1]
+        return self._state[row][column]
 
 
 class SpriteSheet(Renderable):
