@@ -75,7 +75,7 @@ class SpriteSheet(Renderable):
         self,
         sprite_sheet: Surface,
         state_dict: StateDict,
-        position: Point,
+        position: Point = (0, 0),
         anchor: Anchor = AnchorPoint.CENTER,
         start_state: Any = None,
         container: Container = None,
