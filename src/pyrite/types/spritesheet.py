@@ -73,6 +73,7 @@ class SpriteSheet(Renderable):
 
     def __init__(
         self,
+        sprite_sheet: Surface,
         state_dict: StateDict,
         position: Point,
         anchor: Anchor = AnchorPoint.CENTER,
@@ -83,6 +84,7 @@ class SpriteSheet(Renderable):
         draw_index=0,
     ) -> None:
         super().__init__(container, enabled, layer, draw_index)
+        self._sprite_sheet = sprite_sheet
         self.state_dict = state_dict
         self.position = Vector2(position)
         self.anchor = anchor
@@ -98,7 +100,7 @@ class SpriteSheet(Renderable):
     @state.setter
     def state(self, state_key: Any):
         self._state = state_key
-        self.surface = self.state_dict.get(state_key)
+        self.surface = self._sprite_sheet.subsurface(self.state_dict.get(state_key))
 
     def get_rect(self) -> Rect:
         rect = self.surface.get_rect()
