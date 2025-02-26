@@ -22,7 +22,7 @@ from .renderable import Renderable
 from .enums import AnchorPoint
 
 
-class StateDict(ABC):
+class SpriteMap(ABC):
     """
     A dictionary of rects for getting the subsurfaces for a spritesheet.
     """
@@ -38,9 +38,9 @@ class StateDict(ABC):
         pass
 
 
-class RowColumnStateDict(StateDict):
+class RowColumnSpriteMap(SpriteMap):
     """
-    Version of state dict that uses rows and columns and a constant size for each
+    Version of SpriteMap that uses rows and columns and a constant size for each
     sprite.
 
     Takes keys as tuples of row, column
@@ -48,7 +48,7 @@ class RowColumnStateDict(StateDict):
 
     def __init__(self, number_rows: int, number_columns, sprite_size: Point) -> None:
         sprite_width, sprite_height = sprite_size
-        self._state = [
+        self._map = [
             [
                 Rect(
                     column * sprite_width,
@@ -67,33 +67,33 @@ class RowColumnStateDict(StateDict):
             key = (0, 0)
         row = key[0]
         column = key[1]
-        return self._state[row][column]
+        return self._map[row][column]
 
 
-class StringStateDict(StateDict):
+class StringSpriteMap(SpriteMap):
     """
-    Version of state dict that takes a string key dictionary.
+    Version of SpriteMap that takes a string key dictionary.
     """
 
     def __init__(self, string_dict: dict[str, Rect]) -> None:
-        self._state = string_dict
+        self._map = string_dict
 
     @staticmethod
-    def from_file(spritesheet_state_file: TextIO, decoder: Callable) -> StringStateDict:
+    def from_file(spritesheet_map_file: TextIO, decoder: Callable) -> StringSpriteMap:
         """
-        Creates a StringStateDict from a file, using a supplied decoder function.
+        Creates a StringSpriteMap from a file, using a supplied decoder function.
         The decoder must take a file-like object, and return a dictionary with string
         keys and pygame rectangles as values.
 
-        :param spritesheet_state_file: File or file-like object from which the decoder
+        :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
         :param decoder: A callable that can read the specified file and turn it into a
         dict.
-        :return: A StringStateDict based on the data from the supplied file.
+        :return: A StringSpriteMap based on the data from the supplied file.
         """
 
-        state_dict = decoder(spritesheet_state_file)
-        return StringStateDict(state_dict)
+        map_dict = decoder(spritesheet_map_file)
+        return StringSpriteMap(map_dict)
 
     def get(self, key: str) -> Rect:
         return self.get(key)
@@ -104,7 +104,7 @@ class SpriteSheet(Renderable):
     def __init__(
         self,
         sprite_sheet: Surface,
-        state_dict: StateDict,
+        sprite_map: SpriteMap,
         position: Point = (0, 0),
         anchor: Anchor = AnchorPoint.CENTER,
         start_state: Any = None,
@@ -115,7 +115,7 @@ class SpriteSheet(Renderable):
     ) -> None:
         super().__init__(container, enabled, layer, draw_index)
         self._sprite_sheet = sprite_sheet
-        self.state_dict = state_dict
+        self.sprite_map = sprite_map
         self.position = Vector2(position)
         self.anchor = anchor
         self.surface: Surface = None
@@ -130,7 +130,7 @@ class SpriteSheet(Renderable):
     @state.setter
     def state(self, state_key: Any):
         self._state = state_key
-        self.surface = self._sprite_sheet.subsurface(self.state_dict.get(state_key))
+        self.surface = self._sprite_sheet.subsurface(self.sprite_map.get(state_key))
 
     def get_rect(self) -> Rect:
         rect = self.surface.get_rect()
