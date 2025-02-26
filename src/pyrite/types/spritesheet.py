@@ -95,6 +95,9 @@ class StringStateDict(StateDict):
         state_dict = decoder(spritesheet_state_file)
         return StringStateDict(state_dict)
 
+    def get(self, key: str) -> Rect:
+        return self.get(key)
+
 
 class SpriteSheet(Renderable):
 
