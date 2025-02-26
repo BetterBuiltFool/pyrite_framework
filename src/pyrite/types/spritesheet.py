@@ -69,6 +69,15 @@ class RowColumnStateDict(StateDict):
         return self._state[row][column]
 
 
+class StringStateDict(StateDict):
+    """
+    Version of state dict that takes a string key dictionary.
+    """
+
+    def __init__(self, string_dict: dict[str, Rect]) -> None:
+        self._state = string_dict
+
+
 class SpriteSheet(Renderable):
 
     def __init__(
