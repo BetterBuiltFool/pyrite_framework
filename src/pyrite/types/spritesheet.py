@@ -96,7 +96,7 @@ class StringSpriteMap(SpriteMap):
         return StringSpriteMap(map_dict)
 
     def get(self, key: str) -> Rect:
-        return self.get(key)
+        return self._map.get(key)
 
 
 class SpriteSheet(Renderable):
