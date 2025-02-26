@@ -9,7 +9,8 @@ from pygame import Rect, Vector2
 
 
 if typing.TYPE_CHECKING:
-    from typing import Any
+    from collections.abc import Callable
+    from typing import Any, TextIO
     from . import Container
     from .enums import Layer, Anchor
     from pygame import Surface
@@ -76,6 +77,23 @@ class StringStateDict(StateDict):
 
     def __init__(self, string_dict: dict[str, Rect]) -> None:
         self._state = string_dict
+
+    @staticmethod
+    def from_file(spritesheet_state_file: TextIO, decoder: Callable) -> StringStateDict:
+        """
+        Creates a StringStateDict from a file, using a supplied decoder function.
+        The decoder must take a file-like object, and return a dictionary with string
+        keys and pygame rectangles as values.
+
+        :param spritesheet_state_file: File or file-like object from which the decoder
+        will convert into a dict
+        :param decoder: A callable that can read the specified file and turn it into a
+        dict.
+        :return: A StringStateDict based on the data from the supplied file.
+        """
+
+        state_dict = decoder(spritesheet_state_file)
+        return StringStateDict(state_dict)
 
 
 class SpriteSheet(Renderable):
