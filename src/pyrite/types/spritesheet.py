@@ -127,7 +127,7 @@ class SpriteSheet(Renderable):
 
     def __init__(
         self,
-        sprite_sheet: Surface,
+        reference_sprite: Surface,
         sprite_map: SpriteMap,
         position: Point = (0, 0),
         start_state: Any = None,
@@ -140,8 +140,8 @@ class SpriteSheet(Renderable):
         """
         Creates a new Spritesheet renderable.
 
-        :param sprite_sheet: The reference surface containing all of the subsurfaces
-        needed.
+        :param reference_sprite: The reference surface containing all of the subsurfaces
+        needed. As a reference, can be shared by multiple sprite sheets.
         :param sprite_map: A SpriteMap of any type, containing the Rect coordinates of
         all of the subsurfaces.
         :param position: The SpriteSheet's position in world space, defaults to (0, 0)
@@ -156,7 +156,7 @@ class SpriteSheet(Renderable):
         :param draw_index: Relative order the renderable will be drawn in, defaults to 0
         """
         super().__init__(container, enabled, layer, draw_index)
-        self._sprite_sheet = sprite_sheet
+        self._reference_sprite = reference_sprite
         self.sprite_map = sprite_map
         self.position = Vector2(position)
         self.anchor = anchor
@@ -177,7 +177,7 @@ class SpriteSheet(Renderable):
     @state.setter
     def state(self, state_key: Any):
         self._state = state_key
-        self.surface = self._sprite_sheet.subsurface(self.sprite_map.get(state_key))
+        self.surface = self._reference_sprite.subsurface(self.sprite_map.get(state_key))
 
     def get_rect(self) -> Rect:
         rect = self.surface.get_rect()
