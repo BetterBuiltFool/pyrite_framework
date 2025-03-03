@@ -83,9 +83,12 @@ class StringSpriteMap(SpriteMap):
         spritesheet_map_file: TextIO, decoder: Callable = None
     ) -> StringSpriteMap:
         """
-        Creates a StringSpriteMap from a file, using a supplied decoder function.
+        Creates a StringSpriteMap from a text file, using a supplied decoder function.
         The decoder must take a file-like object, and return a dictionary with string
         keys and pygame rectangles as values.
+
+        The default decoder function assumes a layout where each subrect is on its own
+        line, with no blank lines, and each line takes the form of "[state] = x y w h"
 
         :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
