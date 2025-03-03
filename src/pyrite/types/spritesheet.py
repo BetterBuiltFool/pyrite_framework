@@ -117,19 +117,44 @@ class StringSpriteMap(SpriteMap):
 
 
 class SpriteSheet(Renderable):
+    """
+    A renderable that can display subsections of a larger surface.
+    Useful for animations, or otherwise collecting multiple images
+    into one larger surface.
+
+    Requires a SpriteMap.
+    """
 
     def __init__(
         self,
         sprite_sheet: Surface,
         sprite_map: SpriteMap,
         position: Point = (0, 0),
-        anchor: Anchor = AnchorPoint.CENTER,
         start_state: Any = None,
+        anchor: Anchor = AnchorPoint.CENTER,
         container: Container = None,
         enabled=True,
         layer: Layer = None,
         draw_index=0,
     ) -> None:
+        """
+        Creates a new Spritesheet renderable.
+
+        :param sprite_sheet: The reference surface containing all of the subsurfaces
+        needed.
+        :param sprite_map: A SpriteMap of any type, containing the Rect coordinates of
+        all of the subsurfaces.
+        :param position: The SpriteSheet's position in world space, defaults to (0, 0)
+        :param start_state: The initial state of the SpriteSheet. None allows the
+        SpriteMap to choose. Defaults to None.
+        :param anchor: Determines where on the subsurface the position references,
+        defaults to AnchorPoint.CENTER
+        :param container: Object containing the renderable, defaults to None
+        :param enabled: Whether the renderable should be rendered, defaults to True
+        :param layer: Layer in the layer queue the renderable will be drawn in,
+        defaults to None
+        :param draw_index: Relative order the renderable will be drawn in, defaults to 0
+        """
         super().__init__(container, enabled, layer, draw_index)
         self._sprite_sheet = sprite_sheet
         self.sprite_map = sprite_map
@@ -142,6 +167,11 @@ class SpriteSheet(Renderable):
 
     @property
     def state(self) -> Any:
+        """
+        A value used by the SpriteMap to select the subsurface to be displayed.
+
+        Type matches the type of the key used by the chosen SpriteMap.
+        """
         return self._state
 
     @state.setter
