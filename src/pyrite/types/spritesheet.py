@@ -79,7 +79,9 @@ class StringSpriteMap(SpriteMap):
         self._map = string_dict
 
     @staticmethod
-    def from_file(spritesheet_map_file: TextIO, decoder: Callable) -> StringSpriteMap:
+    def from_file(
+        spritesheet_map_file: TextIO, decoder: Callable = None
+    ) -> StringSpriteMap:
         """
         Creates a StringSpriteMap from a file, using a supplied decoder function.
         The decoder must take a file-like object, and return a dictionary with string
@@ -91,6 +93,18 @@ class StringSpriteMap(SpriteMap):
         dict.
         :return: A StringSpriteMap based on the data from the supplied file.
         """
+        if not decoder:
+
+            def decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
+                states: dict[str, Rect] = {}
+                for line in sprite_map_file.readlines():
+                    key, value = line.split("=")
+                    key = key.strip(" ")
+                    value = value.strip("\n")
+                    value = value.lstrip()
+                    values = [int(subvalue) for subvalue in value.split(" ")]
+                    states.update({key: Rect(*values)})
+                return states
 
         map_dict = decoder(spritesheet_map_file)
         return StringSpriteMap(map_dict)
