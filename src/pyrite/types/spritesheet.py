@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import typing
 
-# import pygame
+import pygame
 from pygame import Rect, Vector2
 
 
@@ -165,6 +165,9 @@ class SpriteSheet(Renderable):
         self._state = None
         self.state = start_state
 
+        self.flip_x = False
+        self.flip_y = False
+
     @property
     def state(self) -> Any:
         """
@@ -177,7 +180,11 @@ class SpriteSheet(Renderable):
     @state.setter
     def state(self, state_key: Any):
         self._state = state_key
-        self.surface = self._reference_sprite.subsurface(self.sprite_map.get(state_key))
+        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(state_key))
+        self._set_surface(subsurface, self.flip_x, self.flip_y)
+
+    def _set_surface(self, subsurface, flip_x, flip_y):
+        self.surface = pygame.transform.flip(subsurface, flip_x, flip_y)
 
     def get_rect(self) -> Rect:
         rect = self.surface.get_rect()
