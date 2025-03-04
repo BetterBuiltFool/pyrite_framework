@@ -162,11 +162,11 @@ class SpriteSheet(Renderable):
         self.anchor = anchor
         self.surface: Surface = None
 
-        self._state = None
-        self.state = start_state
-
         self.flip_x = False
         self.flip_y = False
+
+        self._state = None
+        self.state = start_state
 
     @property
     def state(self) -> Any:
