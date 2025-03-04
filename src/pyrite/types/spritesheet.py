@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+import pathlib
 import typing
 
 import pygame
@@ -9,6 +10,7 @@ from pygame import Rect, Vector2
 
 
 if typing.TYPE_CHECKING:
+    import os
     from collections.abc import Callable
     from typing import Any, TextIO
     from . import Container
@@ -111,6 +113,15 @@ class StringSpriteMap(SpriteMap):
 
         map_dict = decoder(spritesheet_map_file)
         return StringSpriteMap(map_dict)
+
+    @staticmethod
+    def from_path(
+        spritesheet_map_path: os.PathLike | str, decoder: Callable = None
+    ) -> StringSpriteMap:
+
+        path = pathlib.Path(spritesheet_map_path)
+        with open(path) as spritemap_file:
+            return StringSpriteMap.from_file(spritemap_file, decoder)
 
     def get(self, key: str) -> Rect:
         return self._map.get(key)
