@@ -173,8 +173,8 @@ class SpriteSheet(Renderable):
         self.anchor = anchor
         self.surface: Surface = None
 
-        self.flip_x = False
-        self.flip_y = False
+        self._flip_x = False
+        self._flip_y = False
 
         self._state = None
         self.state = start_state
@@ -192,7 +192,27 @@ class SpriteSheet(Renderable):
     def state(self, state_key: Any):
         self._state = state_key
         subsurface = self._reference_sprite.subsurface(self.sprite_map.get(state_key))
-        self._set_surface(subsurface, self.flip_x, self.flip_y)
+        self._set_surface(subsurface, self._flip_x, self._flip_y)
+
+    @property
+    def flip_x(self):
+        return self._flip_x
+
+    @flip_x.setter
+    def flip_x(self, is_flipped: bool):
+        self._flip_x = is_flipped
+        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(self._state))
+        self._set_surface(subsurface, is_flipped, self._flip_y)
+
+    @property
+    def flip_y(self):
+        return self._flip_y
+
+    @flip_y.setter
+    def flip_y(self, is_flipped: bool):
+        self._flip_y = is_flipped
+        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(self._state))
+        self._set_surface(subsurface, self._flip_x, is_flipped)
 
     def _set_surface(self, subsurface, flip_x, flip_y):
         self.surface = pygame.transform.flip(subsurface, flip_x, flip_y)
