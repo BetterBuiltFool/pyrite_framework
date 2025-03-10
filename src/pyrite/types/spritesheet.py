@@ -189,31 +189,13 @@ class SpriteSheet(Renderable):
         """
         return self._state
 
-    @state.setter
-    def state(self, state_key: Any):
-        self._state = state_key
-        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(state_key))
-        self._set_surface(subsurface, self._flip_x, self._flip_y)
-
     @property
     def flip_x(self):
         return self._flip_x
 
-    @flip_x.setter
-    def flip_x(self, is_flipped: bool):
-        self._flip_x = is_flipped
-        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(self._state))
-        self._set_surface(subsurface, is_flipped, self._flip_y)
-
     @property
     def flip_y(self):
         return self._flip_y
-
-    @flip_y.setter
-    def flip_y(self, is_flipped: bool):
-        self._flip_y = is_flipped
-        subsurface = self._reference_sprite.subsurface(self.sprite_map.get(self._state))
-        self._set_surface(subsurface, self._flip_x, is_flipped)
 
     def set_state(
         self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
