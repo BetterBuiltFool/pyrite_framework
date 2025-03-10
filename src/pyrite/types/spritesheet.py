@@ -200,6 +200,18 @@ class SpriteSheet(Renderable):
     def set_state(
         self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
     ):
+        """
+        Updates the attributes of the spritesheet that determine the surface to be
+        drawn.
+
+        Then, updates the surface to reflect these new values.
+
+        If a parameter is None, it will use the current value stored by the spritesheet.
+
+        :param state_key: The key used to determine the subrect, defaults to None
+        :param flip_x: Whether to flip along the x axis, defaults to None
+        :param flip_y: Whether to flip along th y axis, defaults to None
+        """
 
         self._state, self._flip_x, self._flip_y = self._validate_state(
             state_key, flip_x, flip_y
@@ -215,6 +227,7 @@ class SpriteSheet(Renderable):
     def _validate_state(
         self, state_key: Any, flip_x: bool, flip_y: bool
     ) -> tuple[Any, bool, bool]:
+
         state_key = state_key or self.state
         flip_x = flip_x if flip_x is not None else self.flip_x
         flip_y = flip_y if flip_y is not None else self.flip_y
