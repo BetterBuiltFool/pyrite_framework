@@ -242,12 +242,26 @@ class SpriteSheet(Renderable):
         self._set_surface(subsurface, self._flip_x, self._flip_y)
 
     def get_subsurface(self, state_key: Any) -> Surface:
+        """
+        Gets a subsurface of the reference sheet based on the supplied state_key.
+
+        :param state_key: State value appropriate for the spritesheet's SpriteMap
+        :return: The subsurface matching the state key.
+        """
         rect = self.sprite_map.get(state_key)
         return self._reference_sprite.subsurface(rect)
 
     def _validate_state(
         self, state_key: Any, flip_x: bool, flip_y: bool
     ) -> tuple[Any, bool, bool]:
+        """
+        Replaces any unsupplied parameter with the value stored in the spritesheet
+
+        :param state_key: The key used to determine the subrect
+        :param flip_x: Whether to flip along the x axis
+        :param flip_y: Whether to flip along th y axis
+        :return: A tuple containing the validate values, in order.
+        """
 
         state_key = state_key or self.state
         flip_x = flip_x if flip_x is not None else self.flip_x
@@ -256,6 +270,14 @@ class SpriteSheet(Renderable):
         return (state_key, flip_x, flip_y)
 
     def _set_surface(self, subsurface: Surface, flip_x: bool, flip_y: bool):
+        """
+        Creates a new surface from the supplied subsurface, transformed to match the
+        appropriate flip settings.
+
+        :param subsurface: Reference surface being transformed.
+        :param flip_x: Whether to flip along the x axis
+        :param flip_y: Whether to flip along th y axis
+        """
         self.surface = pygame.transform.flip(subsurface, flip_x, flip_y)
 
     def get_rect(self) -> Rect:
