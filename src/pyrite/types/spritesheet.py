@@ -214,8 +214,7 @@ class SpriteSheet(Renderable):
         """
         self.set_state_no_update(state_key, flip_x, flip_y)
 
-        subsurface = self.get_subsurface(self._state)
-        self._set_surface(subsurface, self._flip_x, self._flip_y)
+        self.force_sprite_update()
 
     def set_state_no_update(
         self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
@@ -234,6 +233,13 @@ class SpriteSheet(Renderable):
         self._state, self._flip_x, self._flip_y = self._validate_state(
             state_key, flip_x, flip_y
         )
+
+    def force_sprite_update(self):
+        """
+        Forces the sprite to update based on the internal state parameters.
+        """
+        subsurface = self.get_subsurface(self._state)
+        self._set_surface(subsurface, self._flip_x, self._flip_y)
 
     def get_subsurface(self, state_key: Any) -> Surface:
         rect = self.sprite_map.get(state_key)
