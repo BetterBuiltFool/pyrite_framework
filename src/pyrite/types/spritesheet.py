@@ -177,7 +177,8 @@ class SpriteSheet(Renderable):
         self._flip_y = False
 
         self._state = None
-        self.state = start_state
+        self.set_state(start_state)
+        # self.state = start_state
 
     @property
     def state(self) -> Any:
@@ -214,7 +215,31 @@ class SpriteSheet(Renderable):
         subsurface = self._reference_sprite.subsurface(self.sprite_map.get(self._state))
         self._set_surface(subsurface, self._flip_x, is_flipped)
 
-    def _set_surface(self, subsurface, flip_x, flip_y):
+    def set_state(
+        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+    ):
+
+        self._state, self._flip_x, self._flip_y = self._validate_state(
+            state_key, flip_x, flip_y
+        )
+
+        subsurface = self.get_subsurface(self._state)
+        self._set_surface(subsurface, self._flip_x, self._flip_y)
+
+    def get_subsurface(self, state_key: Any) -> Surface:
+        rect = self.sprite_map.get(state_key)
+        return self._reference_sprite.subsurface(rect)
+
+    def _validate_state(
+        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+    ) -> tuple[Any, bool, bool]:
+        state_key = state_key or self.state
+        flip_x = flip_x if flip_x is not None else self.flip_x
+        flip_y = flip_y if flip_y is not None else self.flip_y
+
+        return (state_key, flip_x, flip_y)
+
+    def _set_surface(self, subsurface: Surface, flip_x: bool, flip_y: bool):
         self.surface = pygame.transform.flip(subsurface, flip_x, flip_y)
 
     def get_rect(self) -> Rect:
