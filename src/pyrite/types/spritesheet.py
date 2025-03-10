@@ -212,13 +212,28 @@ class SpriteSheet(Renderable):
         :param flip_x: Whether to flip along the x axis, defaults to None
         :param flip_y: Whether to flip along th y axis, defaults to None
         """
+        self.set_state_no_update(state_key, flip_x, flip_y)
+
+        subsurface = self.get_subsurface(self._state)
+        self._set_surface(subsurface, self._flip_x, self._flip_y)
+
+    def set_state_no_update(
+        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+    ):
+        """
+        Updates the attributes of the spritesheet that determine the surface to be
+        drawn, but exlicitly does NOT update the current sprite.
+
+        If a parameter is None, it will use the current value stored by the spritesheet.
+
+        :param state_key: The key used to determine the subrect, defaults to None
+        :param flip_x: Whether to flip along the x axis, defaults to None
+        :param flip_y: Whether to flip along th y axis, defaults to None
+        """
 
         self._state, self._flip_x, self._flip_y = self._validate_state(
             state_key, flip_x, flip_y
         )
-
-        subsurface = self.get_subsurface(self._state)
-        self._set_surface(subsurface, self._flip_x, self._flip_y)
 
     def get_subsurface(self, state_key: Any) -> Surface:
         rect = self.sprite_map.get(state_key)
