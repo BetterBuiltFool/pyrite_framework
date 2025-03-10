@@ -213,7 +213,7 @@ class SpriteSheet(Renderable):
         return self._reference_sprite.subsurface(rect)
 
     def _validate_state(
-        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+        self, state_key: Any, flip_x: bool, flip_y: bool
     ) -> tuple[Any, bool, bool]:
         state_key = state_key or self.state
         flip_x = flip_x if flip_x is not None else self.flip_x
