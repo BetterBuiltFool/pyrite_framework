@@ -69,8 +69,7 @@ class RowColumnSpriteMap(SpriteMap):
     def get(self, key: tuple[int, int]) -> Rect:
         if key is None:
             key = (0, 0)
-        row = key[0]
-        column = key[1]
+        row, column = key
         return self._map[row][column]
 
 
