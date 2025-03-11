@@ -71,6 +71,29 @@ class TestRowColumnSpriteMap(unittest.TestCase):
             # Cannot unpack string that long
 
 
+class TestStringSpriteMap(unittest.TestCase):
+
+    def assertHasAttr(self, obj: object, attribute_name: str):
+        self.assertTrue(
+            hasattr(obj, attribute_name),
+            msg=f"{obj=} lacks attribute: {attribute_name=}",
+        )
+
+    def test_init_from_dict(self):
+        rects = {
+            "one": pygame.Rect(0, 0, 100, 100),
+            "two": pygame.Rect(100, 0, 100, 100),
+            "three": pygame.Rect((100, 100, 50, 50)),
+        }
+        sprite_map = StringSpriteMap(rects)
+
+        self.assertHasAttr(sprite_map, "_map")
+
+        self.assertEqual(sprite_map._map["one"], rects["one"])
+        self.assertEqual(sprite_map._map["two"], rects["two"])
+        self.assertEqual(sprite_map._map["three"], rects["three"])
+
+
 if __name__ == "__main__":
 
     unittest.main()
