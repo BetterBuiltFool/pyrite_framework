@@ -45,6 +45,8 @@ class RowColumnSpriteMap(SpriteMap):
     Version of SpriteMap that uses rows and columns and a constant size for each
     sprite.
 
+    sprite_size is the size of the displayed object, not the reference sheet.
+
     Takes keys as tuples of row, column
     """
 
@@ -75,6 +77,7 @@ class RowColumnSpriteMap(SpriteMap):
 class StringSpriteMap(SpriteMap):
     """
     Version of SpriteMap that takes a string key dictionary.
+    TODO: Give this a better name. Don't forget to update the tests!
     """
 
     def __init__(self, string_dict: dict[str, Rect]) -> None:
