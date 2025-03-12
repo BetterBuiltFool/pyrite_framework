@@ -40,7 +40,7 @@ class SpriteMap(ABC):
         pass
 
 
-class RowColumnSpriteMap(SpriteMap):
+class SimpleSpriteMap(SpriteMap):
     """
     Version of SpriteMap that uses rows and columns and a constant size for each
     sprite.

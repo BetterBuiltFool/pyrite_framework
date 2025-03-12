@@ -8,7 +8,7 @@ import pygame
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types.spritesheet import (  # noqa:E402
-    RowColumnSpriteMap,
+    SimpleSpriteMap,
     StringSpriteMap,
 )
 
@@ -24,7 +24,7 @@ class TestRowColumnSpriteMap(unittest.TestCase):
     def test_init(self):
         # Create a sprite map with 5 rows (y), 10 columns (x), and a size of 100x100
         # pixels
-        sprite_map = RowColumnSpriteMap(5, 10, (100, 100))
+        sprite_map = SimpleSpriteMap(5, 10, (100, 100))
         self.assertHasAttr(sprite_map, "_map")
         self.assertTrue(len(sprite_map._map) == 5)
         self.assertTrue(len(sprite_map._map[0]) == 10)
@@ -32,7 +32,7 @@ class TestRowColumnSpriteMap(unittest.TestCase):
         self.assertEqual(sprite_map.sprite_size, (100, 100))
 
     def test_get(self):
-        sprite_map = RowColumnSpriteMap(5, 10, (100, 100))
+        sprite_map = SimpleSpriteMap(5, 10, (100, 100))
 
         # Normal get
         rect = sprite_map.get((0, 0))
