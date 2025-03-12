@@ -126,6 +126,21 @@ class DictSpriteMap(SpriteMap):
     def from_path(
         spritesheet_map_path: os.PathLike | str, decoder: Callable = None
     ) -> DictSpriteMap:
+        """
+        Opens the files at the specified location, and creates a DictSpriteMap from it,
+        using a supplied decoder function.
+        The decoder must take a file-like object, and return a dictionary with string
+        keys and pygame rectangles as values.
+
+        The default decoder function assumes a layout where each subrect is on its own
+        line, with no blank lines, and each line takes the form of "[state] = x y w h"
+
+        :param spritesheet_map_file: File or file-like object from which the decoder
+        will convert into a dict
+        :param decoder: A callable that can read the specified file and turn it into a
+        dict.
+        :return: A DictSpriteMap based on the data from the supplied file.
+        """
 
         path = pathlib.Path(spritesheet_map_path)
         with open(path) as spritemap_file:
