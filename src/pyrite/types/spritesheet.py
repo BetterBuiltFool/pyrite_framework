@@ -80,10 +80,9 @@ class SimpleSpriteMap(SpriteMap):
         return self._map[row][column]
 
 
-class StringSpriteMap(SpriteMap):
+class DictSpriteMap(SpriteMap):
     """
-    Version of SpriteMap that takes a string key dictionary.
-    TODO: Give this a better name. Don't forget to update the tests!
+    Version of SpriteMap that uses a dictionary of Rects. Can be generated from file.
     """
 
     def __init__(self, string_dict: dict[str, Rect]) -> None:
@@ -92,9 +91,9 @@ class StringSpriteMap(SpriteMap):
     @staticmethod
     def from_file(
         spritesheet_map_file: TextIO, decoder: Callable = None
-    ) -> StringSpriteMap:
+    ) -> DictSpriteMap:
         """
-        Creates a StringSpriteMap from a text file, using a supplied decoder function.
+        Creates a DictSpriteMap from a text file, using a supplied decoder function.
         The decoder must take a file-like object, and return a dictionary with string
         keys and pygame rectangles as values.
 
@@ -105,7 +104,7 @@ class StringSpriteMap(SpriteMap):
         will convert into a dict
         :param decoder: A callable that can read the specified file and turn it into a
         dict.
-        :return: A StringSpriteMap based on the data from the supplied file.
+        :return: A DictSpriteMap based on the data from the supplied file.
         """
         if not decoder:
 
@@ -121,16 +120,16 @@ class StringSpriteMap(SpriteMap):
                 return states
 
         map_dict = decoder(spritesheet_map_file)
-        return StringSpriteMap(map_dict)
+        return DictSpriteMap(map_dict)
 
     @staticmethod
     def from_path(
         spritesheet_map_path: os.PathLike | str, decoder: Callable = None
-    ) -> StringSpriteMap:
+    ) -> DictSpriteMap:
 
         path = pathlib.Path(spritesheet_map_path)
         with open(path) as spritemap_file:
-            return StringSpriteMap.from_file(spritemap_file, decoder)
+            return DictSpriteMap.from_file(spritemap_file, decoder)
 
     def get(self, key: str) -> Rect:
         return self._map.get(key)

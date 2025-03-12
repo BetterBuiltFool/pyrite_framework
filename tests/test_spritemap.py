@@ -9,7 +9,7 @@ import pygame
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types.spritesheet import (  # noqa:E402
     SimpleSpriteMap,
-    StringSpriteMap,
+    DictSpriteMap,
 )
 
 
@@ -86,7 +86,7 @@ class TestStringSpriteMap(unittest.TestCase):
             "two": pygame.Rect(100, 0, 100, 100),
             "three": pygame.Rect((100, 100, 50, 50)),
         }
-        sprite_map = StringSpriteMap(rects)
+        sprite_map = DictSpriteMap(rects)
 
         self.assertHasAttr(sprite_map, "_map")
 
@@ -101,7 +101,7 @@ class TestStringSpriteMap(unittest.TestCase):
             "three": pygame.Rect((100, 100, 50, 50)),
         }
         file = StringIO("one = 0 0 100 100\ntwo = 100 0 100 100\nthree = 100 100 50 50")
-        sprite_map = StringSpriteMap.from_file(file)
+        sprite_map = DictSpriteMap.from_file(file)
 
         self.assertHasAttr(sprite_map, "_map")
 
@@ -115,7 +115,7 @@ class TestStringSpriteMap(unittest.TestCase):
             "two": pygame.Rect(100, 0, 100, 100),
             "three": pygame.Rect((100, 100, 50, 50)),
         }
-        sprite_map = StringSpriteMap(rects)
+        sprite_map = DictSpriteMap(rects)
 
         # Normal Case
 
