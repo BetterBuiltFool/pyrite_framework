@@ -109,6 +109,28 @@ class TestStringSpriteMap(unittest.TestCase):
         self.assertEqual(sprite_map._map["two"], rects["two"])
         self.assertEqual(sprite_map._map["three"], rects["three"])
 
+    def test_get(self):
+        rects = {
+            "one": pygame.Rect(0, 0, 100, 100),
+            "two": pygame.Rect(100, 0, 100, 100),
+            "three": pygame.Rect((100, 100, 50, 50)),
+        }
+        sprite_map = StringSpriteMap(rects)
+
+        # Normal Case
+
+        rect = sprite_map.get("one")
+
+        self.assertEqual(rect, rects["one"])
+
+        # Default Case
+
+        rect = sprite_map.get("Caboose")
+
+        self.assertIsNone(rect)
+
+        # No error cases, though default likely will cause errors.
+
 
 if __name__ == "__main__":
 
