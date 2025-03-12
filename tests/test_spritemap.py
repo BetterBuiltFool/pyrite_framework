@@ -1,3 +1,4 @@
+from io import StringIO
 import pathlib
 import sys
 import unittest
@@ -86,6 +87,21 @@ class TestStringSpriteMap(unittest.TestCase):
             "three": pygame.Rect((100, 100, 50, 50)),
         }
         sprite_map = StringSpriteMap(rects)
+
+        self.assertHasAttr(sprite_map, "_map")
+
+        self.assertEqual(sprite_map._map["one"], rects["one"])
+        self.assertEqual(sprite_map._map["two"], rects["two"])
+        self.assertEqual(sprite_map._map["three"], rects["three"])
+
+    def test_init_from_file(self):
+        rects = {
+            "one": pygame.Rect(0, 0, 100, 100),
+            "two": pygame.Rect(100, 0, 100, 100),
+            "three": pygame.Rect((100, 100, 50, 50)),
+        }
+        file = StringIO("one = 0 0 100 100\ntwo = 100 0 100 100\nthree = 100 100 50 50")
+        sprite_map = StringSpriteMap.from_file(file)
 
         self.assertHasAttr(sprite_map, "_map")
 
