@@ -247,10 +247,14 @@ class SpriteSheet(Renderable):
         """
         Gets a subsurface of the reference sheet based on the supplied state_key.
 
+        If the key is invalid, returns the current surface.
+
         :param state_key: State value appropriate for the spritesheet's SpriteMap
         :return: The subsurface matching the state key.
         """
         rect = self.sprite_map.get(state_key)
+        if rect is None:
+            return self.surface
         return self._reference_sprite.subsurface(rect)
 
     def _validate_state(
