@@ -8,6 +8,7 @@ import pygame
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types._base_type import _BaseType  # noqa:E402
 from src.pyrite.types.spritesheet import (  # noqa:E402
+    SimpleSpriteMap,
     SpriteSheet,
 )
 
@@ -34,4 +35,60 @@ class MockGame:
 class TestSpriteSheet(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.spritesheet = SpriteSheet()
+        game = MockGame()
+        sprite_map = SimpleSpriteMap(8, 8, (8, 8))
+        self.spritesheet = SpriteSheet(
+            test_image, sprite_map, start_state=(0, 0), container=game
+        )
+
+    def test_validate_state(self):
+
+        # Case All params used, changing flip values
+
+        self.assertEqual(
+            ((0, 0), True, True), self.spritesheet._validate_state((0, 0), True, True)
+        )
+
+        # Case All params used, matching existing flip values
+
+        self.assertEqual(
+            ((0, 0), False, False),
+            self.spritesheet._validate_state((0, 0), False, False),
+        )
+
+        # Case Default flip params
+
+        self.assertEqual(
+            ((0, 0), False, False),
+            self.spritesheet._validate_state((0, 0), None, None),
+        )
+
+        # Case Default flip params with different current value
+
+        self.spritesheet._flip_x = True
+
+        self.assertEqual(
+            ((0, 0), True, False),
+            self.spritesheet._validate_state((0, 0), None, None),
+        )
+
+        self.spritesheet._flip_x = False
+
+        # Case Default state key param
+
+        self.assertEqual(
+            ((0, 0), False, False),
+            self.spritesheet._validate_state(None, False, False),
+        )
+
+        # Case match, no params used
+
+        self.assertEqual(
+            ((0, 0), False, False),
+            self.spritesheet._validate_state(None, None, None),
+        )
+
+
+if __name__ == "__main__":
+
+    unittest.main()
