@@ -20,6 +20,18 @@ for i in range(8):
             test_image.fill((255, 0, 255), (i, j, 8, 8))
 
 
+class TestSpriteMap(SimpleSpriteMap):
+    """
+    Mockup sprite map that doesn't return the default rect on invalid key.
+    """
+
+    def get(self, key: tuple[int, int]) -> pygame.Rect:
+        if key is None:
+            return key
+        row, column = key
+        return self._map[row][column]
+
+
 class MockGame:
 
     def __init__(self) -> None:
@@ -36,7 +48,7 @@ class TestSpriteSheet(unittest.TestCase):
 
     def setUp(self) -> None:
         game = MockGame()
-        sprite_map = SimpleSpriteMap(8, 8, (8, 8))
+        sprite_map = TestSpriteMap(8, 8, (8, 8))
         self.spritesheet = SpriteSheet(
             test_image, sprite_map, start_state=(0, 0), container=game
         )
@@ -86,6 +98,27 @@ class TestSpriteSheet(unittest.TestCase):
         self.assertEqual(
             ((0, 0), False, False),
             self.spritesheet._validate_state(None, None, None),
+        )
+
+    def test_get_subsurface(self):
+        key = (1, 1)
+
+        subsurface = self.spritesheet._reference_sprite.subsurface(
+            self.spritesheet.sprite_map.get(key)
+        )
+
+        self.assertEqual(
+            # Since both surfaces are valid subsurfaces, their offsets should match.
+            subsurface.get_offset(),
+            self.spritesheet.get_subsurface(key).get_offset(),
+        )
+
+        invalid_key = None
+
+        self.assertIs(
+            # invalid key should cause the current surface to be returned.
+            self.spritesheet.surface,
+            self.spritesheet.get_subsurface(invalid_key),
         )
 
 
