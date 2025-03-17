@@ -28,5 +28,13 @@ class _BaseType:
             return
         if value:
             self.container.enable(self)
+            self.on_enable()
         else:
             self.container.disable(self)
+            self.on_disable()
+
+    def on_enable(self):
+        pass
+
+    def on_disable(self):
+        pass
