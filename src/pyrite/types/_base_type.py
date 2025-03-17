@@ -27,14 +27,18 @@ class _BaseType:
         if self.container is None:
             return
         if value:
+            self.on_preenable()
             self.container.enable(self)
             self.on_enable()
         else:
+            self.on_predisable()
             self.container.disable(self)
             self.on_disable()
 
-    def on_enable(self):
-        pass
+    def on_preenable(self): ...
 
-    def on_disable(self):
-        pass
+    def on_enable(self): ...
+
+    def on_predisable(self): ...
+
+    def on_disable(self): ...
