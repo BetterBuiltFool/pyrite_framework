@@ -79,7 +79,7 @@ class SpriteMap(ABC):
         keys and pygame rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
-        line, with no blank lines, and each line takes the form of "[state] = x y w h"
+        line, with no blank lines, and each line takes the form of "[key] = x y w h"
 
         :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
@@ -103,7 +103,7 @@ class SpriteMap(ABC):
         keys and pygame rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
-        line, with no blank lines, and each line takes the form of "[state] = x y w h"
+        line, with no blank lines, and each line takes the form of "[key] = x y w h"
 
         :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
@@ -172,7 +172,7 @@ class DictSpriteMap(SpriteMap):
         keys and pygame rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
-        line, with no blank lines, and each line takes the form of "[state] = x y w h"
+        line, with no blank lines, and each line takes the form of "[key] = x y w h"
 
         :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
@@ -183,15 +183,15 @@ class DictSpriteMap(SpriteMap):
         if not decoder:
 
             def decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
-                states: dict[str, Rect] = {}
+                sprites: dict[str, Rect] = {}
                 for line in sprite_map_file.readlines():
                     key, value = line.split("=")
                     key = key.strip(" ")
                     value = value.strip("\n")
                     value = value.lstrip()
                     values = [int(subvalue) for subvalue in value.split(" ")]
-                    states.update({key: Rect(*values)})
-                return states
+                    sprites.update({key: Rect(*values)})
+                return sprites
 
         map_dict = decoder(spritesheet_map_file)
         return DictSpriteMap(map_dict)
@@ -207,7 +207,7 @@ class DictSpriteMap(SpriteMap):
         keys and pygame rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
-        line, with no blank lines, and each line takes the form of "[state] = x y w h"
+        line, with no blank lines, and each line takes the form of "[key] = x y w h"
 
         :param spritesheet_map_file: File or file-like object from which the decoder
         will convert into a dict
@@ -273,18 +273,17 @@ class SpriteSheet(Renderable):
         self._flip_x = False
         self._flip_y = False
 
-        self._state = None
-        self.set_state(start_state)
-        # self.state = start_state
+        self._sprite_key = None
+        self.set_sprite(start_state)
 
     @property
-    def state(self) -> Any:
+    def sprite_key(self) -> Any:
         """
         A value used by the SpriteMap to select the subsurface to be displayed.
 
         Type matches the type of the key used by the chosen SpriteMap.
         """
-        return self._state
+        return self._sprite_key
 
     @property
     def flip_x(self):
@@ -294,8 +293,8 @@ class SpriteSheet(Renderable):
     def flip_y(self):
         return self._flip_y
 
-    def set_state(
-        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+    def set_sprite(
+        self, sprite_key: Any = None, flip_x: bool = None, flip_y: bool = None
     ):
         """
         Updates the attributes of the spritesheet that determine the surface to be
@@ -305,16 +304,16 @@ class SpriteSheet(Renderable):
 
         If a parameter is None, it will use the current value stored by the spritesheet.
 
-        :param state_key: The key used to determine the subrect, defaults to None
+        :param sprite_key: The key used to determine the subrect, defaults to None
         :param flip_x: Whether to flip along the x axis, defaults to None
         :param flip_y: Whether to flip along th y axis, defaults to None
         """
-        self.set_state_no_update(state_key, flip_x, flip_y)
+        self.set_sprite_no_update(sprite_key, flip_x, flip_y)
 
         self.force_sprite_update()
 
-    def set_state_no_update(
-        self, state_key: Any = None, flip_x: bool = None, flip_y: bool = None
+    def set_sprite_no_update(
+        self, sprite_key: Any = None, flip_x: bool = None, flip_y: bool = None
     ):
         """
         Updates the attributes of the spritesheet that determine the surface to be
@@ -322,53 +321,53 @@ class SpriteSheet(Renderable):
 
         If a parameter is None, it will use the current value stored by the spritesheet.
 
-        :param state_key: The key used to determine the subrect, defaults to None
+        :param sprite_key: The key used to determine the subrect, defaults to None
         :param flip_x: Whether to flip along the x axis, defaults to None
         :param flip_y: Whether to flip along th y axis, defaults to None
         """
 
-        self._state, self._flip_x, self._flip_y = self._validate_state(
-            state_key, flip_x, flip_y
+        self._sprite_key, self._flip_x, self._flip_y = self._validate_state(
+            sprite_key, flip_x, flip_y
         )
 
     def force_sprite_update(self):
         """
         Forces the sprite to update based on the internal state parameters.
         """
-        subsurface = self.get_subsurface(self._state)
+        subsurface = self.get_subsurface(self._sprite_key)
         self._set_surface(subsurface, self._flip_x, self._flip_y)
 
-    def get_subsurface(self, state_key: Any) -> Surface:
+    def get_subsurface(self, sprite_key: Any) -> Surface:
         """
-        Gets a subsurface of the reference sheet based on the supplied state_key.
+        Gets a subsurface of the reference sheet based on the supplied sprite_key.
 
         If the key is invalid, returns the current surface.
 
-        :param state_key: State value appropriate for the spritesheet's SpriteMap
-        :return: The subsurface matching the state key.
+        :param sprite_key: Key value appropriate for the spritesheet's SpriteMap
+        :return: The subsurface matching the sprite key.
         """
-        rect = self.sprite_map.get(state_key)
+        rect = self.sprite_map.get(sprite_key)
         if rect is None:
             return self.surface
         return self._reference_sprite.subsurface(rect)
 
     def _validate_state(
-        self, state_key: Any, flip_x: bool, flip_y: bool
+        self, sprite_key: Any, flip_x: bool, flip_y: bool
     ) -> tuple[Any, bool, bool]:
         """
         Replaces any unsupplied parameter with the value stored in the spritesheet
 
-        :param state_key: The key used to determine the subrect
+        :param sprite_key: The key used to determine the subrect
         :param flip_x: Whether to flip along the x axis
         :param flip_y: Whether to flip along th y axis
         :return: A tuple containing the validate values, in order.
         """
 
-        state_key = state_key or self.state
+        sprite_key = sprite_key or self.sprite_key
         flip_x = flip_x if flip_x is not None else self.flip_x
         flip_y = flip_y if flip_y is not None else self.flip_y
 
-        return (state_key, flip_x, flip_y)
+        return (sprite_key, flip_x, flip_y)
 
     def _set_surface(self, subsurface: Surface, flip_x: bool, flip_y: bool):
         """
