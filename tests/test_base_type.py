@@ -4,6 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
+from pyrite.types import Container  # noqa:E402
 from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
 
@@ -52,6 +53,90 @@ class Test_BaseType(unittest.TestCase):
         for entity in disabled_entities:
             entity.enabled = False
             self.assertNotIn(entity, self.mock_game.items)
+
+    def test_on_enable(self):
+        class TestItem(_BaseType):
+            def __init__(self, container: Container = None, enabled=True) -> None:
+                super().__init__(container, enabled)
+                self._is_enabled = enabled
+
+            def on_enable(self):
+                self._is_enabled = True
+
+        test_item = TestItem(self.mock_game, False)
+
+        self.assertNotIn(test_item, self.mock_game.items)
+        self.assertFalse(test_item._is_enabled)
+
+        test_item.enabled = True
+
+        self.assertIn(test_item, self.mock_game.items)
+        self.assertTrue(test_item._is_enabled)
+
+    def test_on_preenable(self):
+        class TestItem(_BaseType):
+            def __init__(
+                self,
+                test_case: unittest.TestCase,
+                container: Container = None,
+                enabled=True,
+            ) -> None:
+                super().__init__(container, enabled)
+                self.test_case = test_case
+
+            def on_preenable(self):
+                # Only true if item is not already enabled.
+                self.test_case.assertNotIn(self, self.container.items)
+
+        test_item = TestItem(self, self.mock_game, False)
+
+        self.assertNotIn(test_item, self.mock_game.items)
+
+        test_item.enabled = True
+
+        self.assertIn(test_item, self.mock_game.items)
+
+    def test_on_disable(self):
+        class TestItem(_BaseType):
+            def __init__(self, container: Container = None, enabled=True) -> None:
+                super().__init__(container, enabled)
+                self._is_enabled = enabled
+
+            def on_disable(self):
+                self._is_enabled = False
+
+        test_item = TestItem(self.mock_game, True)
+
+        self.assertIn(test_item, self.mock_game.items)
+        self.assertTrue(test_item._is_enabled)
+
+        test_item.enabled = False
+
+        self.assertNotIn(test_item, self.mock_game.items)
+        self.assertFalse(test_item._is_enabled)
+
+    def test_on_predisable(self):
+        class TestItem(_BaseType):
+            def __init__(
+                self,
+                test_case: unittest.TestCase,
+                container: Container = None,
+                enabled=True,
+            ) -> None:
+                super().__init__(container, enabled)
+                self.test_case = test_case
+
+            def on_predisable(self):
+                # Only true if item is not already disabled.
+                self.test_case.assertIn(self, self.container.items)
+
+        test_item = TestItem(self, self.mock_game, True)
+
+        self.assertIn(test_item, self.mock_game.items)
+
+        test_item.enabled = False
+
+        self.assertNotIn(test_item, self.mock_game.items)
 
 
 if __name__ == "__main__":
