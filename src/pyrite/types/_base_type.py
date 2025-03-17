@@ -35,10 +35,36 @@ class _BaseType:
             self.container.disable(self)
             self.on_disable()
 
-    def on_preenable(self): ...
+    def on_preenable(self):
+        """
+        Event called just before the object is enabled.
+        Useful if the object needs to be modified before going through the enabling
+        process.
+        Does NOT guarantee the object is not already enabled.
+        """
 
-    def on_enable(self): ...
+    def on_enable(self):
+        """
+        Event called just after the object has been enabled.
+        Useful for when an object needs to perform actions on other objects immediately
+        after being enabled.
+        Guarantees the object is now enabled, but does NOT guarantee the object was not
+        previously enabled.
+        """
 
-    def on_predisable(self): ...
+    def on_predisable(self):
+        """
+        Event called just before the object is disabled.
+        Useful if the object needs to perform some kind of cleanup action before
+        disabling.
+        Does NOT guarantee the object has not already been disabled.
+        """
 
-    def on_disable(self): ...
+    def on_disable(self):
+        """
+        Event called just after the object has been disabled.
+        Useful if the object needs to perform and action, like cleanup, only after it
+        has been disabled.
+        Guarantees the object is now disabled, but does NOT guarantee the object was not
+        previously disabled.
+        """
