@@ -27,28 +27,31 @@ class TestEntity(_BaseType):
 
 class Test_BaseType(unittest.TestCase):
 
-    def test_enable(self):
-        mock_game = MockGame()
-        test_entities = [TestEntity(game_instance=mock_game) for _ in range(5)]
+    def setUp(self) -> None:
+        self.mock_game = MockGame()
+        self.test_entities = [
+            TestEntity(game_instance=self.mock_game) for _ in range(5)
+        ]
 
-        for entity in test_entities:
-            self.assertIn(entity, mock_game.items)
+    def test_enable(self):
+
+        for entity in self.test_entities:
+            self.assertIn(entity, self.mock_game.items)
 
     def test_disable(self):
-        mock_game = MockGame()
-        test_entities = {TestEntity(game_instance=mock_game) for _ in range(5)}
 
+        test_entities = set(self.test_entities)
         disabled_entities: set[TestEntity] = {
-            entity for index, entity in enumerate(test_entities) if index % 2 == 0
+            entity for index, entity in enumerate(self.test_entities) if index % 2 == 0
         }
         enabled_entities = test_entities - disabled_entities
 
         for entity in enabled_entities:
-            self.assertIn(entity, mock_game.items)
+            self.assertIn(entity, self.mock_game.items)
 
         for entity in disabled_entities:
             entity.enabled = False
-            self.assertNotIn(entity, mock_game.items)
+            self.assertNotIn(entity, self.mock_game.items)
 
 
 if __name__ == "__main__":
