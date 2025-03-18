@@ -136,7 +136,7 @@ class DefaultEntityManager(EntityManager):
             return item not in self.entities
         return False
 
-    def disable(self, item: _BaseType) -> None:
+    def disable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
             self._disabled_buffer.add(item)
             return item in self.entities
