@@ -41,6 +41,7 @@ class _BaseType:
         Useful if the object needs to be modified before going through the enabling
         process.
         Does NOT guarantee the object is not already enabled.
+
         """
 
     def on_enable(self):
@@ -48,8 +49,8 @@ class _BaseType:
         Event called just after the object has been enabled.
         Useful for when an object needs to perform actions on other objects immediately
         after being enabled.
-        Guarantees the object is now enabled, but does NOT guarantee the object was not
-        previously enabled.
+        Guarantees the object is now enabled, and only runs when the object was
+        previously disabled.
         """
 
     def on_predisable(self):
@@ -65,6 +66,6 @@ class _BaseType:
         Event called just after the object has been disabled.
         Useful if the object needs to perform and action, like cleanup, only after it
         has been disabled.
-        Guarantees the object is now disabled, but does NOT guarantee the object was not
-        previously disabled.
+        Guarantees the object is now disabled, and that the object was previously
+        disabled.
         """
