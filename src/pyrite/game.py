@@ -112,13 +112,17 @@ class Game:
             self.main()
         return self.suppress_context_errors
 
-    def enable(self, item: Entity | Renderable) -> None:
-        self.entity_manager.enable(item)
+    def enable(self, item: Entity | Renderable) -> bool:
+        enabled = self.entity_manager.enable(item)
         self.render_manager.enable(item)
+        return enabled
+        # return self.entity_manager.enable(item) or self.render_manager.enable(item)
 
-    def disable(self, item: Entity | Renderable) -> None:
-        self.entity_manager.disable(item)
+    def disable(self, item: Entity | Renderable) -> bool:
+        disabled = self.entity_manager.disable(item)
         self.render_manager.disable(item)
+        return disabled
+        # return self.entity_manager.disable(item) or self.render_manager.disable(item)
 
     def create_window(self):
         """
