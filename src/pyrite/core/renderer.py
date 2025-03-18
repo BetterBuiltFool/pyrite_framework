@@ -38,7 +38,7 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def enable(self, item: _BaseType):
+    def enable(self, item: _BaseType) -> bool:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -46,15 +46,19 @@ class RenderManager(ABC):
 
         :param item: Object being enabled. Objects that are not renderable will be
         skipped.
+        :return: True if enable is successful, False if not, such as object already
+        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType):
+    def disable(self, item: _BaseType) -> bool:
         """
         Removes the item from the collection of renderables.
 
         :param item: Renderable being removed.
+        :return: True if disable is successful, False if not, such as object already
+        disabled.
         """
         pass
 
