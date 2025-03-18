@@ -13,11 +13,15 @@ class MockGame:
     def __init__(self) -> None:
         self.items = set()
 
-    def enable(self, item: _BaseType):
+    def enable(self, item: _BaseType) -> bool:
+        new = item not in self.items
         self.items.add(item)
+        return new
 
     def disable(self, item: _BaseType):
+        new = item in self.items
         self.items.discard(item)
+        return new
 
 
 class TestEntity(_BaseType):
