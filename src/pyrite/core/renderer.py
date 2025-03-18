@@ -38,7 +38,7 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def enable(self, item: _BaseType):
+    def enable(self, item: _BaseType) -> bool:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -46,15 +46,19 @@ class RenderManager(ABC):
 
         :param item: Object being enabled. Objects that are not renderable will be
         skipped.
+        :return: True if enable is successful, False if not, such as object already
+        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType):
+    def disable(self, item: _BaseType) -> bool:
         """
         Removes the item from the collection of renderables.
 
         :param item: Renderable being removed.
+        :return: True if disable is successful, False if not, such as object already
+        disabled.
         """
         pass
 
@@ -132,22 +136,39 @@ class DefaultRenderManager(RenderManager):
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.
 
-    def enable(self, item: _BaseType):
+    def enable(self, item: _BaseType) -> bool:
         if not isinstance(item, Renderable):
-            return
+            return False
         layer = item.layer
         if layer is None:
             # No layer set, force it to midground
             layer = RenderLayers.MIDGROUND
             item.layer = layer
         render_layer = self.renderables.setdefault(layer, WeakSet())
+
+        # Check if this is a fresh enable
+        newly_added = item not in render_layer
+
         render_layer.add(item)
+
+        return newly_added
 
     def disable(self, item: _BaseType):
         if not isinstance(item, Renderable):
-            return
+            return False
         layer = item.layer
-        self.renderables.get(layer, WeakSet()).discard(item)
+
+        render_layer = self.renderables.get(layer, WeakSet())
+
+        # Check if this is a fresh disable
+        newly_disabled = item in render_layer
+
+        if newly_disabled:
+            # Changing this to check newly_disabled to avoid redundant check from
+            # discard
+            render_layer.remove(item)
+
+        return newly_disabled
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue: dict[Layer, Sequence[Renderable]] = {}

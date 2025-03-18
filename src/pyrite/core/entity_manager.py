@@ -16,7 +16,7 @@ import pygame
 class EntityManager(ABC):
 
     @abstractmethod
-    def enable(self, item: _BaseType) -> None:
+    def enable(self, item: _BaseType) -> bool:
         """
         Adds an entity to the collection of active entities.
 
@@ -24,11 +24,13 @@ class EntityManager(ABC):
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
+        :return: True if enable is successful, False if not, such as object already
+        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType) -> None:
+    def disable(self, item: _BaseType) -> bool:
         """
         Removes an entity from the collection of active entities.
 
@@ -36,6 +38,8 @@ class EntityManager(ABC):
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
+        :return: True if disable is successful, False if not, such as object already
+        disabled.
         """
         pass
 
@@ -126,13 +130,17 @@ class DefaultEntityManager(EntityManager):
         self._added_buffer: set[Entity] = set()
         self._disabled_buffer: set[Entity] = set()
 
-    def enable(self, item: _BaseType) -> None:
+    def enable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
             self._added_buffer.add(item)
+            return item not in self.entities
+        return False
 
-    def disable(self, item: _BaseType) -> None:
+    def disable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
             self._disabled_buffer.add(item)
+            return item in self.entities
+        return False
 
     def flush_buffer(self):
         self.entities |= self._added_buffer
