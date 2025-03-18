@@ -136,22 +136,39 @@ class DefaultRenderManager(RenderManager):
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.
 
-    def enable(self, item: _BaseType):
+    def enable(self, item: _BaseType) -> bool:
         if not isinstance(item, Renderable):
-            return
+            return False
         layer = item.layer
         if layer is None:
             # No layer set, force it to midground
             layer = RenderLayers.MIDGROUND
             item.layer = layer
         render_layer = self.renderables.setdefault(layer, WeakSet())
+
+        # Check if this is a fresh enable
+        newly_added = item not in render_layer
+
         render_layer.add(item)
+
+        return newly_added
 
     def disable(self, item: _BaseType):
         if not isinstance(item, Renderable):
-            return
+            return False
         layer = item.layer
-        self.renderables.get(layer, WeakSet()).discard(item)
+
+        render_layer = self.renderables.get(layer, WeakSet())
+
+        # Check if this is a fresh disable
+        newly_disabled = item in render_layer
+
+        if newly_disabled:
+            # Changing this to check newly_disabled to avoid redundant check from
+            # discard
+            render_layer.remove(item)
+
+        return newly_disabled
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue: dict[Layer, Sequence[Renderable]] = {}
