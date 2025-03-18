@@ -38,7 +38,7 @@ class EntityManager(ABC):
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
-        :return: True if enable is successful, False if not, such as object already
+        :return: True if disable is successful, False if not, such as object already
         disabled.
         """
         pass
