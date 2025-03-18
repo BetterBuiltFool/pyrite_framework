@@ -28,12 +28,12 @@ class _BaseType:
             return
         if value:
             self.on_preenable()
-            self.container.enable(self)
-            self.on_enable()
+            if self.container.enable(self):
+                self.on_enable()
         else:
             self.on_predisable()
-            self.container.disable(self)
-            self.on_disable()
+            if self.container.disable(self):
+                self.on_disable()
 
     def on_preenable(self):
         """
