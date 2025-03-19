@@ -16,6 +16,17 @@ if typing.TYPE_CHECKING:
 from .renderable import Renderable
 from .enums import AnchorPoint
 
+first_creation = True
+
+
+def warn_deprecated():
+    if first_creation:
+        warnings.warn(
+            "StaticDecor is deprecated. Use Sprite instead.", DeprecationWarning
+        )
+        global first_creation
+        first_creation = False
+
 
 class StaticDecor(Renderable):
     """
@@ -51,9 +62,7 @@ class StaticDecor(Renderable):
         :param layer: Render layer to which the object belongs, defaults to None
         :param draw_index: Draw order for the renderable, defaults to 0
         """
-        warnings.warn(
-            "StaticDecor is deprecated. Use Sprite instead.", DeprecationWarning
-        )
+        warn_deprecated()
         super().__init__(container, enabled, layer, draw_index)
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
