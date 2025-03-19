@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import typing
+import warnings
 
 import pygame
 
@@ -18,6 +19,8 @@ from .enums import AnchorPoint
 
 class StaticDecor(Renderable):
     """
+    DEPRECATED
+
     A basic renderable with a world position and a surface to display.
     Has no behavior, just renders.
     """
@@ -33,6 +36,8 @@ class StaticDecor(Renderable):
         draw_index=0,
     ) -> None:
         """
+        DEPRECATED
+
         A Decor object with no behavior. Renders a surface based on its position.
 
         :param display_surface: The image or surface to be shown.
@@ -46,6 +51,9 @@ class StaticDecor(Renderable):
         :param layer: Render layer to which the object belongs, defaults to None
         :param draw_index: Draw order for the renderable, defaults to 0
         """
+        warnings.warn(
+            "StaticDecor is deprecated. Use Sprite instead.", DeprecationWarning
+        )
         super().__init__(container, enabled, layer, draw_index)
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
