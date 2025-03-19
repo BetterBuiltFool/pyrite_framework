@@ -16,7 +16,7 @@ from .renderable import Renderable
 from .enums import AnchorPoint
 
 
-class sprite(Renderable):
+class Sprite(Renderable):
     """
     A basic renderable with a world position and a surface to display.
     """
