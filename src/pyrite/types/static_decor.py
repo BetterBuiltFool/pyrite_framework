@@ -20,11 +20,11 @@ first_creation = True
 
 
 def warn_deprecated():
+    global first_creation
     if first_creation:
         warnings.warn(
             "StaticDecor is deprecated. Use Sprite instead.", DeprecationWarning
         )
-        global first_creation
         first_creation = False
 
 
