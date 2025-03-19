@@ -96,6 +96,7 @@ class Camera(CameraBase, Renderable):
         position: Point = None,
         surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
         viewport: pygame.Rect = None,
+        smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
@@ -113,6 +114,8 @@ class Camera(CameraBase, Renderable):
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
         None will give the center of the viewport.
+        :param smooth_scale: Determines if the camera will be smoothed when run through
+        the scaling step, defaults to False.
         :param layer_mask: Layers that the camera will exclude from rendering,
         defaults to None
         :param container: The instance of the game to which the rengerable belongs,
@@ -129,6 +132,10 @@ class Camera(CameraBase, Renderable):
         """
         A rectangle representing the actual viewable area of the camera
         """
+        self._smooth_scale = smooth_scale
+        self._scale_method = (
+            pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
+        )
         if position is None:
             position = self.viewport.center
         self.position = Vector2(position)
@@ -146,6 +153,18 @@ class Camera(CameraBase, Renderable):
             layer=RenderLayers.CAMERA,
             draw_index=draw_index,
         )
+
+    @property
+    def smooth_scale(self) -> bool:
+        return self._smooth_scale
+
+    @smooth_scale.setter
+    def smooth_scale(self, flag: bool):
+        self._smooth_scale = flag
+        if flag:
+            self._scale_method = pygame.transform.smoothscale
+            return
+        self._scale_method = pygame.transform.scale
 
     def clear(self):
         """
@@ -264,6 +283,19 @@ class Camera(CameraBase, Renderable):
     def _get_sector_rect(self, sector: SurfaceSector) -> pygame.Rect:
         return sector.get_rect(pygame.display.get_surface())
 
+    def scale_view(
+        self, camera_surface: pygame.Surface, target_size: Point
+    ) -> pygame.Surface:
+        """
+        Returns a scaled version of the camera's view surface using the camera's chosen
+        scale method.
+
+        :param camera_surface: the rendered camera surface
+        :param target_size: Destination size of the surface
+        :return: The scaled surface.
+        """
+        return self._scale_method(camera_surface, target_size)
+
     def zoom(self, zoom_level: float):
         """
         Adjusts the viewport size to match the zoom level.
@@ -315,6 +347,7 @@ class ChaseCamera(Camera, Entity):
         position: Point = None,
         container=None,
         surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
+        smooth_scale: bool = False,
         enabled=True,
         draw_index=0,
         target: HasPosition = None,
@@ -357,6 +390,7 @@ class ChaseCamera(Camera, Entity):
             max_size=max_size,
             position=position,
             surface_sectors=surface_sectors,
+            smooth_scale=smooth_scale,
             container=container,
             enabled=enabled,
             draw_index=draw_index,

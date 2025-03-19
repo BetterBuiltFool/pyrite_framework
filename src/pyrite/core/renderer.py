@@ -291,7 +291,7 @@ class DefaultRenderer(Renderer):
         for sector in camera.surface_sectors:
             render_rect = sector.get_rect(window)
             window.blit(
-                pygame.transform.scale(camera_surface, render_rect.size),
+                camera.scale_view(camera_surface, render_rect.size),
                 render_rect,
             )
 
