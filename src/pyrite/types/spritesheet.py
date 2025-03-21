@@ -218,8 +218,7 @@ class DictSpriteMap(SpriteMap):
 
 class SpriteSheet:
     """
-    TODO Update docs
-    A renderable that can display subsections of a larger surface.
+    A tool that can select subsections of a larger surface for display.
     Useful for animations, or otherwise collecting multiple images
     into one larger surface.
 
@@ -233,7 +232,7 @@ class SpriteSheet:
         start_state: Any = None,
     ) -> None:
         """
-        Creates a new Spritesheet renderable.
+        Creates a new Spritesheet.
 
         :param reference_sprite: The reference surface containing all of the subsurfaces
         needed. As a reference, can be shared by multiple sprite sheets.
