@@ -49,18 +49,28 @@ class Sprite(Renderable):
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
         self.anchor = anchor
+
+        # Clients can update these easily enough.
         self._flip_x = False
         self._flip_y = False
 
     @property
-    def flip_x(self):
+    def flip_x(self) -> bool:
         return self._flip_x
 
+    @flip_x.setter
+    def flip_x(self, flag: bool):
+        self._flip_x = flag
+
     @property
-    def flip_y(self):
+    def flip_y(self) -> bool:
         return self._flip_y
 
-    def set_sprite(self, sprite_image: Surface, flip_x=None, flip_y=None):
+    @flip_y.setter
+    def flip_y(self, flag: bool):
+        self.flip_y = flag
+
+    def set_surface(self, sprite_image: Surface, flip_x=None, flip_y=None):
         flip_x = flip_x if flip_x is not None else self.flip_x
         flip_y = flip_y if flip_y is not None else self.flip_y
 
