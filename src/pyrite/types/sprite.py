@@ -93,13 +93,26 @@ class Sprite(Renderable):
         """
         self.flip_y = flag
 
-    def set_surface(self, sprite_image: Surface, flip_x=None, flip_y=None):
+    def set_surface(
+        self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
+    ):
+        """
+        Changes the sprite's display to match the given properties.
+        If any parameter is None, it uses the sprite's current setting.
+
+        :param sprite_image: The raw surface being used, defaults to None
+        :param flip_x: Whether to flip along the x axis, defaults to None
+        :param flip_y: Whether to flip along the y axis, defaults to None
+        """
+        sprite_image = (
+            sprite_image if sprite_image is not None else self._reference_image
+        )
         flip_x = flip_x if flip_x is not None else self.flip_x
         flip_y = flip_y if flip_y is not None else self.flip_y
 
         self.flip_x, self.flip_y = flip_x, flip_y
 
-        self._reference_image = pygame.transform.flip(sprite_image, flip_x, flip_y)
+        self._reference_image = sprite_image
 
         self._force_update_surface()
 
