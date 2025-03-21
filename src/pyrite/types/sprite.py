@@ -91,7 +91,7 @@ class Sprite(Renderable):
 
         :param flag: Boolean determining whether to flip the sprite image.
         """
-        self.flip_y = flag
+        self._flip_y = flag
 
     def set_surface(
         self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
