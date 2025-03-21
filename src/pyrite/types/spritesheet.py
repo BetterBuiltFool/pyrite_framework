@@ -5,23 +5,15 @@ from abc import ABC, abstractmethod
 import pathlib
 import typing
 
-import pygame
-from pygame import Rect, Vector2
+from pygame import Rect
 
 
 if typing.TYPE_CHECKING:
     import os
     from collections.abc import Callable
     from typing import Any, TextIO
-    from . import Container
-    from .enums import Layer, Anchor
     from pygame import Surface
     from pygame.typing import Point
-
-
-from .renderable import Renderable
-
-from .enums import AnchorPoint
 
 
 class SpriteMap(ABC):
@@ -224,8 +216,9 @@ class DictSpriteMap(SpriteMap):
         return self._map.get(key)
 
 
-class SpriteSheet(Renderable):
+class SpriteSheet:
     """
+    TODO Update docs
     A renderable that can display subsections of a larger surface.
     Useful for animations, or otherwise collecting multiple images
     into one larger surface.
@@ -237,13 +230,7 @@ class SpriteSheet(Renderable):
         self,
         reference_sprite: Surface,
         sprite_map: SpriteMap,
-        position: Point = (0, 0),
         start_state: Any = None,
-        anchor: Anchor = AnchorPoint.CENTER,
-        container: Container = None,
-        enabled=True,
-        layer: Layer = None,
-        draw_index=0,
     ) -> None:
         """
         Creates a new Spritesheet renderable.
@@ -252,29 +239,15 @@ class SpriteSheet(Renderable):
         needed. As a reference, can be shared by multiple sprite sheets.
         :param sprite_map: A SpriteMap of any type, containing the Rect coordinates of
         all of the subsurfaces.
-        :param position: The SpriteSheet's position in world space, defaults to (0, 0)
         :param start_state: The initial state of the SpriteSheet. None allows the
         SpriteMap to choose. Defaults to None.
-        :param anchor: Determines where on the subsurface the position references,
-        defaults to AnchorPoint.CENTER
-        :param container: Object containing the renderable, defaults to None
-        :param enabled: Whether the renderable should be rendered, defaults to True
-        :param layer: Layer in the layer queue the renderable will be drawn in,
-        defaults to None
-        :param draw_index: Relative order the renderable will be drawn in, defaults to 0
         """
-        super().__init__(container, enabled, layer, draw_index)
         self._reference_sprite = reference_sprite
         self.sprite_map = sprite_map
-        self.position = Vector2(position)
-        self.anchor = anchor
+
         self.surface: Surface = None
 
-        self._flip_x = False
-        self._flip_y = False
-
-        self._sprite_key = None
-        self.set_sprite(start_state)
+        self._sprite_key = start_state
 
     @property
     def sprite_key(self) -> Any:
@@ -285,17 +258,7 @@ class SpriteSheet(Renderable):
         """
         return self._sprite_key
 
-    @property
-    def flip_x(self):
-        return self._flip_x
-
-    @property
-    def flip_y(self):
-        return self._flip_y
-
-    def set_sprite(
-        self, sprite_key: Any = None, flip_x: bool = None, flip_y: bool = None
-    ):
+    def get_sprite(self, sprite_key: Any = None):
         """
         Updates the attributes of the spritesheet that determine the surface to be
         drawn.
@@ -308,34 +271,9 @@ class SpriteSheet(Renderable):
         :param flip_x: Whether to flip along the x axis, defaults to None
         :param flip_y: Whether to flip along th y axis, defaults to None
         """
-        self.set_sprite_no_update(sprite_key, flip_x, flip_y)
-
-        self.force_sprite_update()
-
-    def set_sprite_no_update(
-        self, sprite_key: Any = None, flip_x: bool = None, flip_y: bool = None
-    ):
-        """
-        Updates the attributes of the spritesheet that determine the surface to be
-        drawn, but exlicitly does NOT update the current sprite.
-
-        If a parameter is None, it will use the current value stored by the spritesheet.
-
-        :param sprite_key: The key used to determine the subrect, defaults to None
-        :param flip_x: Whether to flip along the x axis, defaults to None
-        :param flip_y: Whether to flip along th y axis, defaults to None
-        """
-
-        self._sprite_key, self._flip_x, self._flip_y = self._validate_state(
-            sprite_key, flip_x, flip_y
-        )
-
-    def force_sprite_update(self):
-        """
-        Forces the sprite to update based on the internal state parameters.
-        """
-        subsurface = self.get_subsurface(self._sprite_key)
-        self._set_surface(subsurface, self._flip_x, self._flip_y)
+        self._sprite_key = sprite_key
+        self.surface = self.get_subsurface(sprite_key)
+        return self.surface
 
     def get_subsurface(self, sprite_key: Any) -> Surface:
         """
@@ -350,40 +288,3 @@ class SpriteSheet(Renderable):
         if rect is None:
             return self.surface
         return self._reference_sprite.subsurface(rect)
-
-    def _validate_state(
-        self, sprite_key: Any, flip_x: bool, flip_y: bool
-    ) -> tuple[Any, bool, bool]:
-        """
-        Replaces any unsupplied parameter with the value stored in the spritesheet
-
-        :param sprite_key: The key used to determine the subrect
-        :param flip_x: Whether to flip along the x axis
-        :param flip_y: Whether to flip along th y axis
-        :return: A tuple containing the validate values, in order.
-        """
-
-        sprite_key = sprite_key or self.sprite_key
-        flip_x = flip_x if flip_x is not None else self.flip_x
-        flip_y = flip_y if flip_y is not None else self.flip_y
-
-        return (sprite_key, flip_x, flip_y)
-
-    def _set_surface(self, subsurface: Surface, flip_x: bool, flip_y: bool):
-        """
-        Creates a new surface from the supplied subsurface, transformed to match the
-        appropriate flip settings.
-
-        :param subsurface: Reference surface being transformed.
-        :param flip_x: Whether to flip along the x axis
-        :param flip_y: Whether to flip along th y axis
-        """
-        self.surface = pygame.transform.flip(subsurface, flip_x, flip_y)
-
-    def get_rect(self) -> Rect:
-        rect = self.surface.get_rect()
-        self.anchor.anchor_rect_ip(rect, self.position)
-        return rect
-
-    def render(self, delta_time: float) -> Surface:
-        return self.surface
