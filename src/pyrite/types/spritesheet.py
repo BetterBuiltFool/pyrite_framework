@@ -245,8 +245,6 @@ class SpriteSheet:
         self._reference_sprite = reference_sprite
         self.sprite_map = sprite_map
 
-        self.surface: Surface = None
-
         self._sprite_key = start_state
 
     @property
@@ -258,33 +256,36 @@ class SpriteSheet:
         """
         return self._sprite_key
 
-    def get_sprite(self, sprite_key: Any = None):
+    def get_sprite(self, sprite_key: Any = None) -> Surface | None:
         """
-        Updates the attributes of the spritesheet that determine the surface to be
-        drawn.
+        Gets the sprite image that matches the given key, updating the stored key.
+        Returns the sprite image that matches the key.
 
-        Then, updates the surface to reflect these new values.
+        If no key is supplied, returns the image that matches the current key.
 
-        If a parameter is None, it will use the current value stored by the spritesheet.
+        If no surface is available, returns None.
 
-        :param sprite_key: The key used to determine the subrect, defaults to None
-        :param flip_x: Whether to flip along the x axis, defaults to None
-        :param flip_y: Whether to flip along th y axis, defaults to None
+        :param sprite_key: The key used to determine the subrect of the desired sprite
+        image, defaults to None
+        :return: The subsurface matching the sprite key, or None if the key is not
+        valid.
         """
+        sprite_key = sprite_key if sprite_key is not None else self._sprite_key
         self._sprite_key = sprite_key
-        self.surface = self.get_subsurface(sprite_key)
-        return self.surface
+        return self.get_subsurface(sprite_key)
 
-    def get_subsurface(self, sprite_key: Any) -> Surface:
+    def get_subsurface(self, sprite_key: Any = None) -> Surface | None:
         """
         Gets a subsurface of the reference sheet based on the supplied sprite_key.
+        Does not change the state of the sprite sheet.
 
         If the key is invalid, returns the current surface.
 
         :param sprite_key: Key value appropriate for the spritesheet's SpriteMap
-        :return: The subsurface matching the sprite key.
+        :return: The subsurface matching the sprite key, or None if the key is not
+        valid.
         """
         rect = self.sprite_map.get(sprite_key)
         if rect is None:
-            return self.surface
+            return None
         return self._reference_sprite.subsurface(rect)
