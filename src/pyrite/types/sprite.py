@@ -49,6 +49,16 @@ class Sprite(Renderable):
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
         self.anchor = anchor
+        self._flip_x = False
+        self._flip_y = False
+
+    @property
+    def flip_x(self):
+        return self._flip_x
+
+    @property
+    def flip_y(self):
+        return self._flip_y
 
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
