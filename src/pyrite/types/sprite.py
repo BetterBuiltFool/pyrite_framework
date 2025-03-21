@@ -46,6 +46,7 @@ class Sprite(Renderable):
         :param draw_index: Draw order for the renderable, defaults to 0
         """
         super().__init__(container, enabled, layer, draw_index)
+        self._reference_image = display_surface
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
         self.anchor = anchor
@@ -76,7 +77,14 @@ class Sprite(Renderable):
 
         self.flip_x, self.flip_y = flip_x, flip_y
 
-        new_surface = pygame.transform.flip(sprite_image, flip_x, flip_y)
+        self._reference_image = pygame.transform.flip(sprite_image, flip_x, flip_y)
+
+        self._force_update_surface()
+
+    def _force_update_surface(self):
+        new_surface = pygame.transform.flip(
+            self._reference_image, self.flip_x, self.flip_y
+        )
 
         self.display_surface = new_surface
 
