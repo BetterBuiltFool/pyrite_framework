@@ -60,6 +60,16 @@ class Sprite(Renderable):
     def flip_y(self):
         return self._flip_y
 
+    def set_sprite(self, sprite_image: Surface, flip_x=None, flip_y=None):
+        flip_x = flip_x if flip_x is not None else self.flip_x
+        flip_y = flip_y if flip_y is not None else self.flip_y
+
+        self.flip_x, self.flip_y = flip_x, flip_y
+
+        new_surface = pygame.transform.flip(sprite_image, flip_x, flip_y)
+
+        self.display_surface = new_surface
+
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
         self.anchor.anchor_rect_ip(rect, self.position)
