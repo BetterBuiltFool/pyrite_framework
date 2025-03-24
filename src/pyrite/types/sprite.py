@@ -46,9 +46,82 @@ class Sprite(Renderable):
         :param draw_index: Draw order for the renderable, defaults to 0
         """
         super().__init__(container, enabled, layer, draw_index)
+        self._reference_image = display_surface
         self.display_surface = display_surface
         self.position = pygame.Vector2(position)
         self.anchor = anchor
+
+        # Clients can update these easily enough.
+        self._flip_x = False
+        self._flip_y = False
+
+    @property
+    def flip_x(self) -> bool:
+        """
+        Shows if the image is set to be flipped along the x axis.
+        """
+        return self._flip_x
+
+    @flip_x.setter
+    def flip_x(self, flag: bool):
+        """
+        Sets the sprite to be flipped along the x axis.
+        Note: setting this directly will not automatically flip the display. Use
+        set_surface() for that, or call _force_update_surface() after setting the flip
+        parameters.
+
+        :param flag: Boolean determining whether to flip the sprite image.
+        """
+        self._flip_x = flag
+
+    @property
+    def flip_y(self) -> bool:
+        """
+        Shows if the image is set to be flipped along the y axis.
+        """
+        return self._flip_y
+
+    @flip_y.setter
+    def flip_y(self, flag: bool):
+        """
+        Sets the sprite to be flipped along the y axis.
+        Note: setting this directly will not automatically flip the display. Use
+        set_surface() for that, or call _force_update_surface() after setting the flip
+        parameters.
+
+        :param flag: Boolean determining whether to flip the sprite image.
+        """
+        self._flip_y = flag
+
+    def set_surface(
+        self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
+    ):
+        """
+        Changes the sprite's display to match the given properties.
+        If any parameter is None, it uses the sprite's current setting.
+
+        :param sprite_image: The raw surface being used, defaults to None
+        :param flip_x: Whether to flip along the x axis, defaults to None
+        :param flip_y: Whether to flip along the y axis, defaults to None
+        """
+        sprite_image = (
+            sprite_image if sprite_image is not None else self._reference_image
+        )
+        flip_x = flip_x if flip_x is not None else self.flip_x
+        flip_y = flip_y if flip_y is not None else self.flip_y
+
+        self.flip_x, self.flip_y = flip_x, flip_y
+
+        self._reference_image = sprite_image
+
+        self._force_update_surface()
+
+    def _force_update_surface(self):
+        new_surface = pygame.transform.flip(
+            self._reference_image, self.flip_x, self.flip_y
+        )
+
+        self.display_surface = new_surface
 
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
