@@ -52,9 +52,8 @@ class TestSpriteSheet(unittest.TestCase):
 
         invalid_key = None
 
-        self.assertIs(
-            # invalid key should cause the current surface to be returned.
-            self.spritesheet.surface,
+        self.assertIsNone(
+            # invalid key should cause None to be returned.
             self.spritesheet.get_subsurface(invalid_key),
         )
 
