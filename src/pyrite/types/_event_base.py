@@ -42,7 +42,14 @@ class InstanceEvent(ABC):
         This is never called directly, the instance event subclass will have its own
         defined call method that defines its parameters, which are passed on to the
         listeners.
+
         TODO Add threading/async support options.
+
+        TODO For threading/asyncio control, externalize the thread starter, so the
+        InstanceEvent calls to an object that can start either a regular thread or
+        asyncio thread as needed. The object doing the threading can be exchanged at
+        will, as needed. The game object might be a good option for doing that, since
+        it will know if it is async aware or not.
         """
         for listener in self.listeners:
             listener(*args, **kwds)
