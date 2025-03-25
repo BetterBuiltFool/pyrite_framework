@@ -7,6 +7,7 @@ from weakref import ref, WeakKeyDictionary
 
 
 T = TypeVar("T", bound="EventBase")
+E = TypeVar("E", bound="InstanceEvent")
 
 
 class InstanceEvent(ABC):
@@ -50,4 +51,21 @@ class InstanceEvent(ABC):
 
 class EventBase(ABC):
     def __init__(self) -> None:
-        super().__init__()
+        self.events: dict[type[InstanceEvent], InstanceEvent] = {}
+
+    def add_listener(self, event: type[InstanceEvent]) -> Callable:
+
+        def decorator(listener: Callable) -> Callable:
+            self._register(event, listener)
+            return listener
+
+        return decorator
+
+    def _register(self, event: type[E], listener: Callable):
+        pass
+
+    def add_event(self, event: type[E]) -> E:
+        pass
+
+    def get_event(self, event_type: type[E]) -> E | None:
+        pass
