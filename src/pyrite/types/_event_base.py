@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Callable
-from typing import TypeVar
+from typing import cast, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 
@@ -78,7 +78,8 @@ class EventBase(ABC):
         :param event_type: Type of event being hosted.
         :param listener: Callable that must match event signature.
         """
-        pass
+        event_instance = self.add_event(event_type)
+        event_instance._register(listener)
 
     def add_event(self, event_type: type[E]) -> E:
         """
@@ -97,4 +98,5 @@ class EventBase(ABC):
         :param event_type: Type of event to find.
         :return: The event instance if it exists, otherwise None.
         """
-        pass
+        result = self.events.get(event_type, None)
+        return cast(E, result)
