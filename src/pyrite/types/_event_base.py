@@ -19,6 +19,7 @@ class InstanceEvent(ABC):
         Adds a reference to the owning instance, in case the event requires it.
         """
         self.listeners = set()
+        self.async_listeners = set()
         """
         A set containing all listeners for this event instance.
         TODO Make a WeakSet? Otherwise may try and call dead functions.
@@ -36,6 +37,12 @@ class InstanceEvent(ABC):
     def _deregister(self, listener: Callable):
         self.listeners.discard(listener)
 
+    def _register_async(self, listener: Callable):
+        self.async_listeners.add(listener)
+
+    def _deregister_async(self, listener: Callable):
+        self.async_listeners.discard(listener)
+
     def _notify(self, *args, **kwds):
         """
         Calls all registered listeners, passing along the args and kwds.
@@ -51,6 +58,8 @@ class InstanceEvent(ABC):
         will, as needed. The game object might be a good option for doing that, since
         it will know if it is async aware or not.
         """
+        # for async_listener in self.async_listeners:
+        #     thread_starter.start_thread(listener, *args, **kwds)
         for listener in self.listeners:
             listener(*args, **kwds)
 
