@@ -53,19 +53,48 @@ class EventBase(ABC):
     def __init__(self) -> None:
         self.events: dict[type[InstanceEvent], InstanceEvent] = {}
 
-    def add_listener(self, event: type[InstanceEvent]) -> Callable:
+    def add_listener(self, event_type: type[E]) -> Callable:
+        """
+        Adds a function, method, or other callable to the InstanceEvent's listeners.
+        That listener will be called whenever the event is fired.
+        TODO make this able to accept non-static methods.
+
+        :param event_type: The type of the event being set up.
+        :return: The original listener, to be available for reuse.
+        """
 
         def decorator(listener: Callable) -> Callable:
-            self._register(event, listener)
+            self._register(event_type, listener)
             return listener
 
         return decorator
 
-    def _register(self, event: type[E], listener: Callable):
+    def _register(self, event_type: type[E], listener: Callable):
+        """
+        FOR INTERNAL OR ADVANCED USE ONLY
+        Ensures the given event type exists, and registers the listener
+        callable within it.
+
+        :param event_type: Type of event being hosted.
+        :param listener: Callable that must match event signature.
+        """
         pass
 
-    def add_event(self, event: type[E]) -> E:
-        pass
+    def add_event(self, event_type: type[E]) -> E:
+        """
+        Creates a new instance of the event_type given, and adds it to the internal
+        event registry, if the event does not already exist.
+
+        :param event_type: The type of the event being added.
+        :return: The instance of the event type, either new or extant.
+        """
+        return self.events.setdefault(event_type, event_type(self))
 
     def get_event(self, event_type: type[E]) -> E | None:
+        """
+        Gets the instance of the event type if it exists.
+
+        :param event_type: Type of event to find.
+        :return: The event instance if it exists, otherwise None.
+        """
         pass
