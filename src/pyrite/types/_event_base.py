@@ -22,7 +22,6 @@ class InstanceEvent(ABC):
         """
         A set containing all listeners for this event instance.
         TODO Make a WeakSet? Otherwise may try and call dead functions.
-        TODO Add a set for listeners that are non-static methods.
         """
 
     def __init_subclass__(cls) -> None:
@@ -50,14 +49,49 @@ class InstanceEvent(ABC):
 
 
 class HasEvents(ABC):
+    """
+    Required ancestor for making use of the Instance Event system.
+    All entities and renderables inherit from HasEvents, and can support Instance
+    Events.
+
+    Other classes may inherit from HasEvents as well in order to use Instance events.
+
+    Classes with Instance Events should declare those events in their docstrings.
+    """
+
     def __init__(self) -> None:
+        """
+        Do NOT try to instantiate this.
+        """
         self.events: dict[type[InstanceEvent], InstanceEvent] = {}
 
     def add_listener(self, event_type: type[E]) -> Callable:
         """
         Adds a function, method, or other callable to the InstanceEvent's listeners.
         That listener will be called whenever the event is fired.
-        TODO make this able to accept non-static methods.
+        Note: This will not fail if the object does not have the specified event. That
+        listener will just never be called. Beware of typos!
+
+        To use within a class, an inner function can be used as the listener, usually
+        best to set this up in the initializer.
+
+        Example:
+        ____________________________________________________________________________________________
+
+        class A:
+
+            def __init__(self):
+                self.event_haver = SomeEntity()
+
+                @self.event_haver.add_listener(OnSomeEvent)
+                def _(event_param1, event_param2):
+                    print(self)
+                    # Do something
+        ____________________________________________________________________________________________
+
+        Every instance of A will create its own listener, which can reference "self" to
+        refer to that instance, while also allowing access to the event's
+        parameters.
 
         :param event_type: The type of the event being set up.
         :return: The original listener, to be available for reuse.
@@ -74,6 +108,7 @@ class HasEvents(ABC):
         FOR INTERNAL OR ADVANCED USE ONLY
         Ensures the given event type exists, and registers the listener
         callable within it.
+        TODO: Should it ensure the event exists? Could make debugging harder.
 
         :param event_type: Type of event being hosted.
         :param listener: Callable that must match event signature.
