@@ -3,14 +3,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._helper import defaults
+from ._event_base import EventBase
 
 if TYPE_CHECKING:
     from . import Container
 
 
-class _BaseType:
+class _BaseType(EventBase):
 
     def __init__(self, container: Container = None, enabled=True) -> None:
+        super().__init__()
         if container is None:
             container = defaults.get_default_container()
         self.container: Container = container
