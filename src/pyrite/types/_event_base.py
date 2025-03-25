@@ -6,7 +6,7 @@ from typing import cast, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 
-T = TypeVar("T", bound="EventBase")
+T = TypeVar("T", bound="HasEvents")
 E = TypeVar("E", bound="InstanceEvent")
 
 
@@ -27,8 +27,8 @@ class InstanceEvent(ABC):
 
     def __init_subclass__(cls) -> None:
         # Using a WeakKeyDictionary since we only need the instance if the
-        # EventBase instance is still around. We don't need to keep hold on the
-        # EventBase instance.
+        # HasEvents instance is still around. We don't need to keep hold on the
+        # HasEvents instance.
         cls.instances = WeakKeyDictionary()
 
     def _register(self, listener: Callable):
@@ -49,7 +49,7 @@ class InstanceEvent(ABC):
             listener(*args, **kwds)
 
 
-class EventBase(ABC):
+class HasEvents(ABC):
     def __init__(self) -> None:
         self.events: dict[type[InstanceEvent], InstanceEvent] = {}
 

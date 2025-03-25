@@ -3,13 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._helper import defaults
-from ._event_base import EventBase
+from ._event_base import HasEvents
 
 if TYPE_CHECKING:
     from . import Container
 
 
-class _BaseType(EventBase):
+class _BaseType(HasEvents):
 
     def __init__(self, container: Container = None, enabled=True) -> None:
         super().__init__()
