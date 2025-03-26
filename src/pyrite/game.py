@@ -13,6 +13,8 @@ from .core.rate_settings import RateSettings
 
 from ._helper import defaults
 
+from .utils import threading
+
 if TYPE_CHECKING:
     from .types.entity import Entity
     from .types.renderable import Renderable
@@ -74,6 +76,9 @@ class Game:
         self.is_running = True
         self.clock = pygame.time.Clock()
 
+        # Ensures the threading service is properly initialized.
+        self.init_threader()
+
         # Extract various settings and game data from keyword arguments.
         # Creates defaults if none are provided.
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
@@ -119,6 +124,9 @@ class Game:
         return any(
             [self.entity_manager.disable(item), self.render_manager.disable(item)]
         )
+
+    def init_threader(self):
+        threading.set_regular_mode()
 
     def create_window(self):
         """
@@ -361,6 +369,9 @@ class AsyncGame(Game):
         while self.is_running:
             accumulated_time = self._main_loop_body(accumulated_time)
             await asyncio.sleep(0)
+
+    def init_threader(self):
+        threading.set_asyncio_mode()
 
     def main(self):
         """
