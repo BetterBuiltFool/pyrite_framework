@@ -5,6 +5,9 @@ from collections.abc import Callable
 from typing import cast, TypeVar
 from weakref import ref, WeakKeyDictionary
 
+# This is NOT the standard library threading module.
+from ..utils import threading
+
 
 T = TypeVar("T", bound="HasEvents")
 E = TypeVar("E", bound="InstanceEvent")
@@ -19,7 +22,6 @@ class InstanceEvent(ABC):
         Adds a reference to the owning instance, in case the event requires it.
         """
         self.listeners = set()
-        self.async_listeners = set()
         """
         A set containing all listeners for this event instance.
         TODO Make a WeakSet? Otherwise may try and call dead functions.
@@ -37,31 +39,30 @@ class InstanceEvent(ABC):
     def _deregister(self, listener: Callable):
         self.listeners.discard(listener)
 
-    def _register_async(self, listener: Callable):
-        self.async_listeners.add(listener)
-
-    def _deregister_async(self, listener: Callable):
-        self.async_listeners.discard(listener)
-
     def _notify(self, *args, **kwds):
         """
         Calls all registered listeners, passing along the args and kwds.
         This is never called directly, the instance event subclass will have its own
         defined call method that defines its parameters, which are passed on to the
         listeners.
-
-        TODO Add threading/async support options.
-
-        TODO For threading/asyncio control, externalize the thread starter, so the
-        InstanceEvent calls to an object that can start either a regular thread or
-        asyncio thread as needed. The object doing the threading can be exchanged at
-        will, as needed. The game object might be a good option for doing that, since
-        it will know if it is async aware or not.
         """
-        # for async_listener in self.async_listeners:
-        #     thread_starter.start_thread(listener, *args, **kwds)
+
+        # Decision was made for all instance event listeners to be async.
+        # The risk of race conditions is inevitable, and while synchronous calls can't
+        # technically form race conditions, the fact that they can be called at any
+        # time means it's always possible to have even a sync event make a change at an
+        # unexpected time, mirorring a race condition.
+
+        # Threads also adds the benefit of an exception not necessarily crashing the
+        # entire game, just the thread.
+
+        # TODO If there is demand for sync listeners, make them the exception, not the
+        # rule. Add a seperate list and registration method for those.
         for listener in self.listeners:
-            listener(*args, **kwds)
+            # The pyrite threading module can be set to run regular threads or asyncio
+            # threads.
+            threading.start_thread(listener, *args)
+            # listener(*args, **kwds)
 
 
 class HasEvents(ABC):
@@ -87,6 +88,9 @@ class HasEvents(ABC):
         That listener will be called whenever the event is fired.
         Note: This will not fail if the object does not have the specified event. That
         listener will just never be called. Beware of typos!
+
+        Listeners will be called in threads. If the game is being run is Async mode,
+        all listeners must be coroutines, even without sleep statements.
 
         To use within a class, an inner function can be used as the listener, usually
         best to set this up in the initializer.
