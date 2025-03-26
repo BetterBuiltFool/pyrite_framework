@@ -27,5 +27,15 @@ class AsyncThreader(BaseThreader):
 active_threader = DefaultThreader()
 
 
+def set_asyncio_mode():
+    global active_threader
+    active_threader = AsyncThreader()
+
+
+def set_regular_mode():
+    global active_threader
+    active_threader = DefaultThreader()
+
+
 def start_thread(callable: Callable, *args, **kwds) -> None:
     active_threader.start_thread(callable, *args, **kwds)
