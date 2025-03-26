@@ -126,7 +126,7 @@ class Game:
         )
 
     def init_threader(self):
-        threading.set_regular_mode()
+        threading._set_regular_mode()
 
     def create_window(self):
         """
@@ -371,7 +371,7 @@ class AsyncGame(Game):
             await asyncio.sleep(0)
 
     def init_threader(self):
-        threading.set_asyncio_mode()
+        threading._set_asyncio_mode()
 
     def main(self):
         """

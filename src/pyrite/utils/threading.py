@@ -24,18 +24,18 @@ class AsyncThreader(BaseThreader):
 
 # Probably don't need classes for this, honestly just assigning two different functions
 # would be sufficient.
-active_threader = DefaultThreader()
+_active_threader = DefaultThreader()
 
 
-def set_asyncio_mode():
-    global active_threader
-    active_threader = AsyncThreader()
+def _set_asyncio_mode():
+    global _active_threader
+    _active_threader = AsyncThreader()
 
 
-def set_regular_mode():
-    global active_threader
-    active_threader = DefaultThreader()
+def _set_regular_mode():
+    global _active_threader
+    _active_threader = DefaultThreader()
 
 
 def start_thread(callable: Callable, *args, **kwds) -> None:
-    active_threader.start_thread(callable, *args, **kwds)
+    _active_threader.start_thread(callable, *args, **kwds)
