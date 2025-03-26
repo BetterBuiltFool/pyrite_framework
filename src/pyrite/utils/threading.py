@@ -13,10 +13,17 @@ class BaseThreader(ABC):
 
 
 class DefaultThreader(BaseThreader):
-    def start_thread(self, callable_: Callable, *args) -> None:
-        threading.Thread(target=callable_, args=args).start()
+    def start_thread(self, callable: Callable, *args) -> None:
+        threading.Thread(target=callable, args=args).start()
 
 
 class AsyncThreader(BaseThreader):
-    def start_thread(self, callable_: Callable, *args) -> None:
-        asyncio.create_task(callable_(*args))
+    def start_thread(self, callable: Callable, *args) -> None:
+        asyncio.create_task(callable(*args))
+
+
+active_threader = DefaultThreader()
+
+
+def start_thread(callable: Callable, *args) -> None:
+    active_threader.start_thread(callable, *args)
