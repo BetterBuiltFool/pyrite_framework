@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, cast, TypeVar
+from typing import Any, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 # This is NOT the standard library threading module.
 from ..utils import threading
 
 
-T = TypeVar("T", bound="HasEvents")
+T = TypeVar("T")
 E = TypeVar("E", bound="InstanceEvent")
 
 
@@ -100,41 +100,3 @@ class InstanceEvent(ABC):
             # threads.
             threading.start_thread(listener, *args)
             # listener(*args, **kwds)
-
-
-class HasEvents(ABC):
-    """
-    Required ancestor for making use of the Instance Event system.
-    All entities and renderables inherit from HasEvents, and can support Instance
-    Events.
-
-    Other classes may inherit from HasEvents as well in order to use Instance events.
-
-    Classes with Instance Events should declare those events in their docstrings.
-    """
-
-    def __init__(self) -> None:
-        """
-        Do NOT try to instantiate this.
-        """
-        self.events: dict[type[InstanceEvent], InstanceEvent] = {}
-
-    def add_event(self, event_type: type[E]) -> E:
-        """
-        Creates a new instance of the event_type given, and adds it to the internal
-        event registry, if the event does not already exist.
-
-        :param event_type: The type of the event being added.
-        :return: The instance of the event type, either new or extant.
-        """
-        return self.events.setdefault(event_type, event_type(self))
-
-    def get_event(self, event_type: type[E]) -> E | None:
-        """
-        Gets the instance of the event type if it exists.
-
-        :param event_type: Type of event to find.
-        :return: The event instance if it exists, otherwise None.
-        """
-        result = self.events.get(event_type, None)
-        return cast(E, result)
