@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Callable
-from typing import cast, TypeVar
+from typing import Any, cast, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 # This is NOT the standard library threading module.
@@ -32,6 +32,9 @@ class InstanceEvent(ABC):
         # HasEvents instance is still around. We don't need to keep hold on the
         # HasEvents instance.
         cls.instances = WeakKeyDictionary()
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        self._notify(*args, **kwds)
 
     def _register(self, listener: Callable):
         self.listeners.add(listener)
