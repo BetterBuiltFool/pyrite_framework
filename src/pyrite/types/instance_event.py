@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
 from weakref import ref, WeakKeyDictionary
@@ -14,9 +14,36 @@ E = TypeVar("E", bound="InstanceEvent")
 
 
 class InstanceEvent(ABC):
+    """
+    Events that are bound to an instance of an object. They accumulate listeners, which
+    respond when the event fires.
+
+    The __call__ method defines the event's parameters, which will be passed on to the
+    listener. The listener must be able to receive these parameters, or else will error.
+    For implementation of __call__, either forward the event parameters to
+    super().__call__() [The default], or forward them into _notify().
+
+    For user-created events, they are fired by calling the event, passing along its
+    parameters.
+
+    ------------------Naming Conventions-----------------
+
+    Objects with instance events should have those events as attributes. Pyrite uses
+    PascalCase/UpperCamelCase for event attribute names, like used with class names, to
+    help to convey that they are a distinct type of attribute.
+
+    Instance event classes should start with "On" to convey that they are events.
+    """
+
     instances: WeakKeyDictionary[T, InstanceEvent] = WeakKeyDictionary()
 
     def __init__(self, instance: T) -> None:
+        """
+        Creates a new instance of the Instance Event.
+
+        :param instance: The object the instance event is tied to. This allows access
+        to the owning instance if needed.
+        """
         self.instance = ref(instance)
         """
         Adds a reference to the owning instance, in case the event requires it.
@@ -33,7 +60,8 @@ class InstanceEvent(ABC):
         # HasEvents instance.
         cls.instances = WeakKeyDictionary()
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    @abstractmethod
+    def __call__(self, *args: Any, **kwds: Any) -> None:
         self._notify(*args, **kwds)
 
     def add_listener(self, listener: Callable) -> Callable:
