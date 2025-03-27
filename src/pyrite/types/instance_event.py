@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import ref, WeakKeyDictionary
+from weakref import ref, WeakKeyDictionary, WeakSet
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -48,10 +48,9 @@ class InstanceEvent(ABC):
         """
         Adds a reference to the owning instance, in case the event requires it.
         """
-        self.listeners = set()
+        self.listeners = WeakSet()
         """
         A set containing all listeners for this event instance.
-        TODO Make a WeakSet? Otherwise may try and call dead functions.
         """
 
     def __init_subclass__(cls) -> None:
