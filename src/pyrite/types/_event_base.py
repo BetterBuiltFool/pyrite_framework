@@ -36,6 +36,40 @@ class InstanceEvent(ABC):
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         self._notify(*args, **kwds)
 
+    def add_listener(self, listener: Callable) -> Callable:
+        """
+        Adds a function, method, or other callable to this InstanceEvent's listeners.
+        That listener will be called whenever the event is fired.
+
+        Listeners will be called in threads. If the game is being run is Async mode,
+        all listeners must be coroutines, even without sleep statements.
+
+        To use within a class, an inner function can be used as the listener, usually
+        best to set this up in the initializer.
+
+        Example:
+        ____________________________________________________________________________________________
+
+        class A:
+
+            def __init__(self):
+                self.event_haver = SomeEntity()
+
+                @self.event_haver.OnSomeEvent.add_listener
+                def _(event_param1, event_param2):
+                    print(self)
+                    # Do something
+        ____________________________________________________________________________________________
+
+        Every instance of A will create its own listener, which can reference "self" to
+        refer to that instance, while also allowing access to the event's
+        parameters.
+
+        :return: The original listener, to be available for reuse.
+        """
+        self._register(listener)
+        return listener
+
     def _register(self, listener: Callable):
         self.listeners.add(listener)
 
@@ -84,60 +118,6 @@ class HasEvents(ABC):
         Do NOT try to instantiate this.
         """
         self.events: dict[type[InstanceEvent], InstanceEvent] = {}
-
-    def add_listener(self, event_type: type[E]) -> Callable:
-        """
-        Adds a function, method, or other callable to the InstanceEvent's listeners.
-        That listener will be called whenever the event is fired.
-        Note: This will not fail if the object does not have the specified event. That
-        listener will just never be called. Beware of typos!
-
-        Listeners will be called in threads. If the game is being run is Async mode,
-        all listeners must be coroutines, even without sleep statements.
-
-        To use within a class, an inner function can be used as the listener, usually
-        best to set this up in the initializer.
-
-        Example:
-        ____________________________________________________________________________________________
-
-        class A:
-
-            def __init__(self):
-                self.event_haver = SomeEntity()
-
-                @self.event_haver.add_listener(OnSomeEvent)
-                def _(event_param1, event_param2):
-                    print(self)
-                    # Do something
-        ____________________________________________________________________________________________
-
-        Every instance of A will create its own listener, which can reference "self" to
-        refer to that instance, while also allowing access to the event's
-        parameters.
-
-        :param event_type: The type of the event being set up.
-        :return: The original listener, to be available for reuse.
-        """
-
-        def decorator(listener: Callable) -> Callable:
-            self._register(event_type, listener)
-            return listener
-
-        return decorator
-
-    def _register(self, event_type: type[E], listener: Callable):
-        """
-        FOR INTERNAL OR ADVANCED USE ONLY
-        Ensures the given event type exists, and registers the listener
-        callable within it.
-        TODO: Should it ensure the event exists? Could make debugging harder.
-
-        :param event_type: Type of event being hosted.
-        :param listener: Callable that must match event signature.
-        """
-        event_instance = self.add_event(event_type)
-        event_instance._register(listener)
 
     def add_event(self, event_type: type[E]) -> E:
         """
