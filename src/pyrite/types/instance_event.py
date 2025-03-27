@@ -51,7 +51,8 @@ class InstanceEvent(ABC):
         self.listeners = set()
         """
         A set containing all listeners for this event instance.
-        TODO Make a WeakSet? Otherwise may try and call dead functions.
+        TODO Find a way to eliminate the listener after its parent is dead.
+        Otherwise, will hold up GC
         """
 
     def __init_subclass__(cls) -> None:
