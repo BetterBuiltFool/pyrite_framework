@@ -44,16 +44,26 @@ class InstanceEvent(ABC):
         :param instance: The object the instance event is tied to. This allows access
         to the owning instance if needed.
         """
-        self.instance = ref(instance)
-        """
-        Adds a reference to the owning instance, in case the event requires it.
-        """
+        self._instance = ref(instance)
         self.listeners = set()
         """
         A set containing all listeners for this event instance.
         TODO Find a way to eliminate the listener after its parent is dead.
         Otherwise, will hold up GC
+        Solution: Use WeakKeyDictionary w/ the listener owner as the key
+        Change add_listener to descriptor?
         """
+
+    @property
+    def instance(self) -> T | None:
+        """
+        The owning instance of the event.
+
+        Weakly stored to so garbage collection can happen normally, but this property
+        allows direct access to the instance as long as it still exists.
+        """
+        # Provides dereferenced access to the owning instance
+        return self._instance()
 
     def __init_subclass__(cls) -> None:
         # Using a WeakKeyDictionary since we only need the instance if the
