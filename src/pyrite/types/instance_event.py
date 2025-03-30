@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import ref, WeakKeyDictionary
+from weakref import proxy, ref, WeakKeyDictionary, WeakSet
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -11,6 +11,24 @@ from ..utils import threading
 
 T = TypeVar("T")
 E = TypeVar("E", bound="InstanceEvent")
+
+
+def weaken_closures(listener: Callable) -> Callable:
+    """
+    Converts a callable's closures to proxies, so the callable doesn't prevent garbage
+    collection on the enclosed objects.
+
+    Makes no changes if the callable has no closures.
+
+    :return: The listener, without strong references.
+    """
+    if listener.__closure__ is None:
+        return listener
+
+    for cell in listener.__closure__:
+        cell.cell_contents = proxy(cell.cell_contents)
+
+    return listener
 
 
 class InstanceEvent(ABC):
@@ -45,7 +63,7 @@ class InstanceEvent(ABC):
         to the owning instance if needed.
         """
         self._instance = ref(instance)
-        self.listeners = set()
+        self.listeners = WeakSet()
         """
         A set containing all listeners for this event instance.
         TODO Find a way to eliminate the listener after its parent is dead.
