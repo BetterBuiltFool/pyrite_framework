@@ -66,10 +66,10 @@ class InstanceEvent(ABC):
         self.listeners = WeakSet()
         """
         A set containing all listeners for this event instance.
-        TODO Find a way to eliminate the listener after its parent is dead.
-        Otherwise, will hold up GC
-        Solution: Use WeakKeyDictionary w/ the listener owner as the key
-        Change add_listener to descriptor?
+
+        TODO: Consider who should be responsible for tracking listeners.
+        Currently, the object creating the listener is responsible, with this set only
+        being for calling them.
         """
 
     @property
@@ -100,9 +100,12 @@ class InstanceEvent(ABC):
 
         Listeners will be called in threads. If the game is being run is Async mode,
         all listeners must be coroutines, even without sleep statements.
+        TODO: Make this automatic somehow?
 
         To use within a class, an inner function can be used as the listener, usually
-        best to set this up in the initializer.
+        best to set this up in the initializer, or any method that is only called once.
+        You will also need to maintain a reference to each listener inside the instance
+        to prevent it from being garbage collected.
 
         Example:
         ____________________________________________________________________________________________
@@ -113,18 +116,24 @@ class InstanceEvent(ABC):
                 self.event_haver = SomeEntity()
 
                 @self.event_haver.OnSomeEvent.add_listener
-                def _(event_param1, event_param2):
+                def listener_name(event_param1, event_param2):
                     print(self)
                     # Do something
+
+                self.event_listeners = [listener_name]
         ____________________________________________________________________________________________
 
         Every instance of A will create its own listener, which can reference "self" to
         refer to that instance, while also allowing access to the event's
         parameters.
 
-        :return: The original listener, to be available for reuse.
+        Note: This method will remove strong references in any closures in the listener.
+        This means the listener function will not prevent the creating object from
+        being garbage collected.
+
+        :return: The original listener, to be available for reuse and access.
         """
-        self._register(listener)
+        self._register(weaken_closures(listener))
         return listener
 
     def _register(self, listener: Callable):
