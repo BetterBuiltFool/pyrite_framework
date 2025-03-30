@@ -50,6 +50,9 @@ class InstanceEvent(ABC):
     PascalCase/UpperCamelCase for event attribute names, like used with class names, to
     help to convey that they are a distinct type of attribute.
 
+    The attributes should have docstrings containing the event signature of the event
+    they relate to.
+
     Instance event classes should start with "On" to convey that they are events.
     """
 
