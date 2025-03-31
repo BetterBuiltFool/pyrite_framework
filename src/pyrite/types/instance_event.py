@@ -26,6 +26,8 @@ def weaken_closures(listener: Callable) -> Callable:
         return listener
 
     for cell in listener.__closure__:
+        # FIXME This will proxy the proxies if a listener is passed through multiple
+        # times
         cell.cell_contents = proxy(cell.cell_contents)
 
     return listener
