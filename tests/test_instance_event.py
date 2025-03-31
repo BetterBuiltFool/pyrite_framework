@@ -5,6 +5,16 @@ import unittest
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types.instance_event import InstanceEvent  # noqa:E402
+from src.pyrite.utils import threading  # noqa:E402
+
+
+class NonThreader(threading.BaseThreader):
+    """
+    Special test threader that doesn't actually start threads, to make testing easier.
+    """
+
+    def start_thread(self, callable_, *args, **kwds) -> None:
+        callable_(*args, **kwds)
 
 
 class OnTestEvent1(InstanceEvent):
@@ -65,5 +75,5 @@ class TestInstanceEvent(unittest.TestCase):
 
 
 if __name__ == "__main__":
-
+    threading._active_threader = NonThreader()
     unittest.main()
