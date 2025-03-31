@@ -66,7 +66,7 @@ class InstanceEvent(ABC):
         to the owning instance if needed.
         """
         self._instance = ref(instance)
-        self.listeners = WeakSet()
+        self.listeners: WeakSet[Callable] = WeakSet()
         """
         A set containing all listeners for this event instance.
 
