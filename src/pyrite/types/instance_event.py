@@ -28,9 +28,9 @@ def weaken_closures(listener: Callable) -> Callable:
 
     for cell in listener.__closure__:
         contents = cell.cell_contents
-        # Instance checks are relatively slow, but we're only doing this occaisionally.
+        # Instance checks are relatively slow, but we're only doing this occasionally.
         # ...
-        # You are only doing this occaisionally, right?
+        # You are only doing this occasionally, right?
         if isinstance(contents, ProxyTypes):
             continue
         cell.cell_contents = proxy(contents)
