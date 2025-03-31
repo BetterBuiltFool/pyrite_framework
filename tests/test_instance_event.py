@@ -42,6 +42,19 @@ class TestInstanceEvent(unittest.TestCase):
 
         self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
 
+    def test_deregister(self):
+
+        def test_dummy():
+            pass
+
+        self.test_object.OnTestEvent1._register(test_dummy)
+
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+
+        self.test_object.OnTestEvent1._deregister(test_dummy)
+
+        self.assertNotIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+
 
 if __name__ == "__main__":
 
