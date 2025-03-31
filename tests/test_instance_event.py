@@ -7,15 +7,40 @@ sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types.instance_event import InstanceEvent  # noqa:E402
 
 
-class OnTestEvent(InstanceEvent):
+class OnTestEvent1(InstanceEvent):
 
-    def __call__(self, *args: pathlib.Any, **kwds: pathlib.Any) -> None:
-        return super().__call__(*args, **kwds)
+    def __call__(self, param1: bool) -> None:
+        return super().__call__(param1)
+
+
+class OnTestEvent2(InstanceEvent):
+
+    def __call__(self, param2: int) -> None:
+        return super().__call__(param2)
+
+
+class TestObject:
+
+    def __init__(self) -> None:
+        self.OnTestEvent1 = OnTestEvent1(self)
+        self.OnTestEvent2 = OnTestEvent2(self)
+        self.param1 = True
+        self.param2 = 8
 
 
 class TestInstanceEvent(unittest.TestCase):
 
-    pass
+    def setUp(self) -> None:
+        self.test_object = TestObject()
+
+    def test_register(self):
+
+        def test_dummy():
+            pass
+
+        self.test_object.OnTestEvent1._register(test_dummy)
+
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
 
 
 if __name__ == "__main__":
