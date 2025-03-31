@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import proxy, ref, WeakKeyDictionary, WeakSet
+from weakref import proxy, ref, WeakSet
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -56,8 +56,6 @@ class InstanceEvent(ABC):
     Instance event classes should start with "On" to convey that they are events.
     """
 
-    instances: WeakKeyDictionary[T, InstanceEvent] = WeakKeyDictionary()
-
     def __init__(self, instance: T) -> None:
         """
         Creates a new instance of the Instance Event.
@@ -85,12 +83,6 @@ class InstanceEvent(ABC):
         """
         # Provides dereferenced access to the owning instance
         return self._instance()
-
-    def __init_subclass__(cls) -> None:
-        # Using a WeakKeyDictionary since we only need the instance if the
-        # HasEvents instance is still around. We don't need to keep hold on the
-        # HasEvents instance.
-        cls.instances = WeakKeyDictionary()
 
     @abstractmethod
     def __call__(self, *args: Any, **kwds: Any) -> None:
