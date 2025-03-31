@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import proxy, ref, WeakSet
+from weakref import proxy, ref, WeakSet, CallableProxyType
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -26,9 +26,10 @@ def weaken_closures(listener: Callable) -> Callable:
         return listener
 
     for cell in listener.__closure__:
-        # FIXME This will proxy the proxies if a listener is passed through multiple
-        # times
-        cell.cell_contents = proxy(cell.cell_contents)
+        contents = cell.cell_contents
+        if isinstance(contents, CallableProxyType):
+            continue
+        cell.cell_contents = proxy(contents)
 
     return listener
 
