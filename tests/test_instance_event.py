@@ -37,11 +37,21 @@ class TestObject:
         self.param1 = True
         self.param2 = 8
 
+    def call_event_1(self):
+        self.OnTestEvent1(self.param1)
+
+    def call_event_2(self):
+        self.OnTestEvent2(self.param2)
+
 
 class TestInstanceEvent(unittest.TestCase):
 
     def setUp(self) -> None:
         self.test_object = TestObject()
+
+    def tearDown(self) -> None:
+        self.test_object.OnTestEvent1.listeners = set()
+        self.test_object.OnTestEvent2.listeners = set()
 
     def test_register(self):
 
@@ -72,6 +82,48 @@ class TestInstanceEvent(unittest.TestCase):
             pass
 
         self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+
+    def test_notify(self):
+
+        self.value1 = None
+
+        @self.test_object.OnTestEvent1.add_listener
+        def test_dummy(param1: bool):
+            self.value1 = param1
+
+        self.assertIsNone(self.value1)
+
+        self.test_object.OnTestEvent1._notify(True)
+
+        self.assertTrue(self.value1)
+
+    def test_call_(self):
+
+        self.value1 = None
+        self.value2 = None
+
+        @self.test_object.OnTestEvent1.add_listener
+        def test_dummy(param1: bool):
+            self.value1 = param1
+
+        @self.test_object.OnTestEvent2.add_listener
+        def test_dummy2(param2: int):
+            self.value2 = param2
+
+        self.assertIsNone(self.value1)
+        self.assertIsNone(self.value2)
+
+        self.test_object.call_event_1()
+
+        self.assertTrue(self.value1)
+        self.assertIsNone(self.value2)
+
+        self.test_object.call_event_2()
+
+        self.value1 = None
+
+        self.assertIsNone(self.value1)
+        self.assertEqual(self.value2, 8)
 
 
 if __name__ == "__main__":
