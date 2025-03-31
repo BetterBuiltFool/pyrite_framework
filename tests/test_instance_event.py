@@ -55,6 +55,14 @@ class TestInstanceEvent(unittest.TestCase):
 
         self.assertNotIn(test_dummy, self.test_object.OnTestEvent1.listeners)
 
+    def test_add_listener(self):
+
+        @self.test_object.OnTestEvent1.add_listener
+        def test_dummy(param1: bool):
+            pass
+
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+
 
 if __name__ == "__main__":
 
