@@ -106,6 +106,7 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy(param1: bool):
             self.value1 = param1
 
+        # listeners on two seperate events
         @self.test_object.OnTestEvent2.add_listener
         def test_dummy2(param2: int):
             self.value2 = param2
@@ -124,6 +125,28 @@ class TestInstanceEvent(unittest.TestCase):
 
         self.assertIsNone(self.value1)
         self.assertEqual(self.value2, 8)
+
+    def test_multiple_listeners(self):
+
+        self.value1 = None
+        self.value2 = None
+
+        @self.test_object.OnTestEvent1.add_listener
+        def dummy1(param1):
+            self.value1 = param1
+
+        # listener of _same_ event
+        @self.test_object.OnTestEvent1.add_listener
+        def dummy2(param1):
+            self.value2 = param1
+
+        self.assertIsNone(self.value1)
+        self.assertIsNone(self.value2)
+
+        self.test_object.call_event_1()
+
+        self.assertTrue(self.value1)
+        self.assertTrue(self.value2)
 
 
 if __name__ == "__main__":
