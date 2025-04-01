@@ -27,7 +27,7 @@ class MockRenderable(Renderable):
     def __init__(
         self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
     ) -> None:
-        self.layer = layer
+        self._layer = layer
         self.draw_index = draw_index
 
     def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
