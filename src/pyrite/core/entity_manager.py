@@ -132,13 +132,19 @@ class DefaultEntityManager(EntityManager):
 
     def enable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
-            self._added_buffer.add(item)
+            if item in self._disabled_buffer:
+                self._disabled_buffer.remove(item)
+            else:
+                self._added_buffer.add(item)
             return item not in self.entities
         return False
 
     def disable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
-            self._disabled_buffer.add(item)
+            if item in self._added_buffer:
+                self._added_buffer.remove(item)
+            else:
+                self._disabled_buffer.add(item)
             return item in self.entities
         return False
 

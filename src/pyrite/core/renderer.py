@@ -143,7 +143,7 @@ class DefaultRenderManager(RenderManager):
         if layer is None:
             # No layer set, force it to midground
             layer = RenderLayers.MIDGROUND
-            item.layer = layer
+            item._layer = layer
         render_layer = self.renderables.setdefault(layer, WeakSet())
 
         # Check if this is a fresh enable
