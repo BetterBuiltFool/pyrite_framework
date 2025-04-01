@@ -42,8 +42,13 @@ class Renderable(_BaseType, ABC):
     @layer.setter
     def layer(self, new_layer: Layer):
         if self._layer is not new_layer:
-            pass
-        self._layer = new_layer
+            enabled = self.enabled
+            # This allows us to update within the renderer without firing
+            # on enable/disable events.
+            self.container.disable(self)
+            self._layer = new_layer
+            if enabled:
+                self.container.enable(self)
 
     @abstractmethod
     def render(self, delta_time: float) -> pygame.Surface:
