@@ -4,12 +4,12 @@ from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
 from ._base_type import _BaseType
-from .enums import Layer
 
 import pygame
 
 if TYPE_CHECKING:
     from . import Container
+    from .enums import Layer
 
 
 class Renderable(_BaseType, ABC):
@@ -24,7 +24,7 @@ class Renderable(_BaseType, ABC):
         layer: Layer = None,
         draw_index=0,
     ) -> None:
-        self.layer: Layer = layer
+        self._layer: Layer = layer
         self.draw_index = draw_index
         """
         (The following is only true for default renderer; Others may vary)
@@ -34,6 +34,16 @@ class Renderable(_BaseType, ABC):
         Renderables in the same layer with the same index may be drawn in any order.
         """
         _BaseType.__init__(self, container, enabled)
+
+    @property
+    def layer(self) -> Layer:
+        return self._layer
+
+    @layer.setter
+    def layer(self, new_layer: Layer):
+        if self._layer is not new_layer:
+            pass
+        self._layer = new_layer
 
     @abstractmethod
     def render(self, delta_time: float) -> pygame.Surface:
