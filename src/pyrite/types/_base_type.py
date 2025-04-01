@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 class _BaseType:
 
     def __init__(self, container: Container = None, enabled=True) -> None:
+        super().__init__()
         if container is None:
             container = defaults.get_default_container()
         self.container: Container = container
