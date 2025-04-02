@@ -53,7 +53,7 @@ class Transform:
         )
 
 
-class WorldTransform(Transform):
+class TransformComponent(Transform):
 
     def __init__(
         self,
