@@ -93,6 +93,12 @@ class TransformComponent(Transform):
         self._dirty = True
         self._scale = Vector2(new_scale)
 
+    @staticmethod
+    def from_transform(owner: Any, transform: Transform):
+        return TransformComponent(
+            owner, transform._position, transform._rotation, transform._scale
+        )
+
     def raw(self) -> Transform:
         """
         Returns a base transform equal to this WorldTransform
