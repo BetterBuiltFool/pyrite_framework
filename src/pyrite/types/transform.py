@@ -92,3 +92,10 @@ class WorldTransform(Transform):
     def scale(self, new_scale: Point):
         self._dirty = True
         self._scale = Vector2(new_scale)
+
+    def raw(self) -> Transform:
+        """
+        Returns a base transform equal to this WorldTransform
+        """
+
+        return Transform(self._position, self._rotation, self._scale)
