@@ -1,7 +1,11 @@
 from __future__ import annotations
 
-from pygame.typing import Point
+from typing import Any, TYPE_CHECKING
+
 from pygame import Vector2
+
+if TYPE_CHECKING:
+    from pygame.typing import Point
 
 
 class Transform:
@@ -47,3 +51,16 @@ class Transform:
             and value._rotation == self._rotation
             and value._scale == self._scale
         )
+
+
+class WorldTransform(Transform):
+
+    def __init__(
+        self,
+        owner: Any,
+        position: Point = (0, 0),
+        rotation: float = 0,
+        scale: Point = (1, 1),
+    ) -> None:
+        super().__init__(position, rotation, scale)
+        self.owner = owner
