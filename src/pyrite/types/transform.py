@@ -36,3 +36,14 @@ class Transform:
     @scale.setter
     def scale(self, new_scale: Point):
         self._scale = Vector2(new_scale)
+
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, Transform):
+            # Only a Transform or subclass can be equal.
+            # If it's not even a Transform, why bother comparing further?
+            return False
+        return (
+            value._position == self._position
+            and value._rotation == self._rotation
+            and value._scale == self._scale
+        )
