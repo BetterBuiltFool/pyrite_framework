@@ -64,3 +64,31 @@ class WorldTransform(Transform):
     ) -> None:
         super().__init__(position, rotation, scale)
         self.owner = owner
+        self._dirty = False
+
+    @property
+    def position(self) -> Vector2:
+        return self._position
+
+    @position.setter
+    def position(self, new_position: Point):
+        self._dirty = True
+        self._position = Vector2(new_position)
+
+    @property
+    def rotation(self) -> float:
+        return self._rotation
+
+    @rotation.setter
+    def rotation(self, angle: float):
+        self._dirty = True
+        self._rotation = angle
+
+    @property
+    def scale(self) -> Vector2:
+        return self._scale
+
+    @scale.setter
+    def scale(self, new_scale: Point):
+        self._dirty = True
+        self._scale = Vector2(new_scale)
