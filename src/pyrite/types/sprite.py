@@ -53,7 +53,12 @@ class Sprite(Renderable):
         self._reference_image = display_surface
         self.display_surface = display_surface
         if local_transform is not None:
-            self.transform = transform.from_transform(self, transform)
+            if isinstance(local_transform, transform.TransformComponent):
+                # If we're being passed something else's transform,
+                # we'll just use that instead.
+                self.transform = local_transform
+            else:
+                self.transform = transform.from_transform(self, local_transform)
         else:
             self.transform = transform.from_attributes(self, position)
         # self.position = pygame.Vector2(position)
