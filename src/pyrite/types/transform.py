@@ -75,6 +75,9 @@ class TransformComponent(Transform):
         self._dirty = True
         self._position = Vector2(new_position)
 
+    def get_world_position(self) -> Vector2:
+        return self._position
+
     @property
     def rotation(self) -> float:
         return self._rotation
@@ -84,6 +87,9 @@ class TransformComponent(Transform):
         self._dirty = True
         self._rotation = angle
 
+    def get_world_rotation(self) -> float:
+        return self._rotation
+
     @property
     def scale(self) -> Vector2:
         return self._scale
@@ -92,6 +98,9 @@ class TransformComponent(Transform):
     def scale(self, new_scale: Point):
         self._dirty = True
         self._scale = Vector2(new_scale)
+
+    def get_world_scale(self) -> Vector2:
+        return self._scale
 
     @staticmethod
     def from_transform(owner: Any, transform: Transform):
