@@ -126,15 +126,37 @@ class TransformComponent(Transform):
         """
         return self._scale
 
-    @staticmethod
-    def from_transform(owner: Any, transform: Transform):
-        return TransformComponent(
-            owner, transform._position, transform._rotation, transform._scale
-        )
-
     def raw(self) -> Transform:
         """
         Returns a base transform equal to this WorldTransform
         """
 
         return Transform(self._position, self._rotation, self._scale)
+
+
+def from_transform(owner: Any, transform: Transform) -> TransformComponent:
+    """
+    Create a transform component based on another transform.
+
+    :param owner: The owner of the new transform.
+    :param transform: The transform being copied
+    :return: The newly-created transform component
+    """
+    return TransformComponent(
+        owner, transform._position, transform._rotation, transform._scale
+    )
+
+
+def from_attributes(
+    owner: Any, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
+) -> TransformComponent:
+    """
+    Create a transform component from transform attributes.
+
+    :param owner: The owner of the new transform.
+    :param position: A Point in local space, defaults to (0, 0)
+    :param rotation: An angle in degrees in local space, defaults to 0
+    :param scale: A Point representing local scale , defaults to (1, 1)
+    :return: The newly-created transform component
+    """
+    return TransformComponent(owner, position, rotation, scale)
