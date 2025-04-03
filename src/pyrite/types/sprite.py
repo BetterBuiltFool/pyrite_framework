@@ -15,7 +15,8 @@ if typing.TYPE_CHECKING:
 
 from .renderable import Renderable
 from .enums import AnchorPoint
-from .transform import TransformComponent
+
+from . import transform
 
 
 class Sprite(Renderable):
@@ -27,7 +28,7 @@ class Sprite(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        transform: Transform = None,
+        local_transform: Transform = None,
         anchor: Anchor = AnchorPoint.CENTER,
         container: Container = None,
         enabled=True,
@@ -51,10 +52,10 @@ class Sprite(Renderable):
         super().__init__(container, enabled, layer, draw_index)
         self._reference_image = display_surface
         self.display_surface = display_surface
-        if transform is not None:
-            self.transform = TransformComponent.from_transform(self, transform)
+        if local_transform is not None:
+            self.transform = transform.from_transform(self, transform)
         else:
-            self.transform = TransformComponent(self, position)
+            self.transform = transform.from_attributes(self, position)
         # self.position = pygame.Vector2(position)
         self.anchor = anchor
 
