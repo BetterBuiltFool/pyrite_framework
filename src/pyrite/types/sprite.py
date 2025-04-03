@@ -139,9 +139,13 @@ class Sprite(Renderable):
         )
         self._is_dirty = False
 
+        # FIXME This really only works for centered renderables
+
         new_surface = pygame.transform.scale_by(new_surface, self.transform.scale)
 
         new_surface = pygame.transform.rotate(new_surface, self.transform.rotation)
+
+        self.transform._dirty = False
 
         return new_surface
 
@@ -151,6 +155,6 @@ class Sprite(Renderable):
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
-        if self._is_dirty:
+        if self._is_dirty or self.transform._dirty:
             self.display_surface = self._force_update_surface()
         return self.display_surface
