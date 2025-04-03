@@ -142,6 +142,7 @@ def from_transform(owner: Any, transform: Transform) -> TransformComponent:
     :param transform: The transform being copied
     :return: The newly-created transform component
     """
+    # This can be overridden to return a subclass of TransformComponent, if needed.
     return TransformComponent(
         owner, transform._position, transform._rotation, transform._scale
     )
@@ -159,4 +160,5 @@ def from_attributes(
     :param scale: A Point representing local scale , defaults to (1, 1)
     :return: The newly-created transform component
     """
+    # This can be overridden to return a subclass of TransformComponent, if needed.
     return TransformComponent(owner, position, rotation, scale)
