@@ -139,6 +139,10 @@ class Sprite(Renderable):
         )
         self._is_dirty = False
 
+        new_surface = pygame.transform.scale_by(new_surface, self.transform.scale)
+
+        new_surface = pygame.transform.rotate(new_surface, self.transform.rotation)
+
         return new_surface
 
     def get_rect(self) -> Rect:
