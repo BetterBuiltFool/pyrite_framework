@@ -62,6 +62,8 @@ class Sprite(Renderable):
         self._flip_x = False
         self._flip_y = False
 
+        self._is_dirty = True
+
     @property
     def position(self) -> Vector2:
         return self.transform.position
@@ -129,12 +131,13 @@ class Sprite(Renderable):
 
         self._reference_image = sprite_image
 
-        self._force_update_surface()
+        self._is_dirty = True
 
     def _force_update_surface(self):
         new_surface = pygame.transform.flip(
             self._reference_image, self.flip_x, self.flip_y
         )
+        self._is_dirty = False
 
         self.display_surface = new_surface
 
@@ -144,4 +147,6 @@ class Sprite(Renderable):
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
+        if self._is_dirty:
+            self._force_update_surface()
         return self.display_surface
