@@ -19,6 +19,9 @@ class Transform:
 
     @property
     def position(self) -> Vector2:
+        """
+        Represents the local position of the transform
+        """
         return self._position
 
     @position.setter
@@ -27,6 +30,9 @@ class Transform:
 
     @property
     def rotation(self) -> float:
+        """
+        Represents the local rotation of the transform
+        """
         return self._rotation
 
     @rotation.setter
@@ -35,6 +41,9 @@ class Transform:
 
     @property
     def scale(self) -> Vector2:
+        """
+        Represents the local scaling of the transform
+        """
         return self._scale
 
     @scale.setter
@@ -76,6 +85,11 @@ class TransformComponent(Transform):
         self._position = Vector2(new_position)
 
     def get_world_position(self) -> Vector2:
+        """
+        Gives the transform's position in world space.
+
+        TODO Make this calculate the world space, currently is just local.
+        """
         return self._position
 
     @property
@@ -88,6 +102,11 @@ class TransformComponent(Transform):
         self._rotation = angle
 
     def get_world_rotation(self) -> float:
+        """
+        Gives the transform's rotation in world space.
+
+        TODO Make this calculate the world space, currently is just local.
+        """
         return self._rotation
 
     @property
@@ -100,6 +119,11 @@ class TransformComponent(Transform):
         self._scale = Vector2(new_scale)
 
     def get_world_scale(self) -> Vector2:
+        """
+        Gives the transform's scaling in world space.
+
+        TODO Make this calculate the world space, currently is just local.
+        """
         return self._scale
 
     @staticmethod
