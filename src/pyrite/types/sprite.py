@@ -133,13 +133,13 @@ class Sprite(Renderable):
 
         self._is_dirty = True
 
-    def _force_update_surface(self):
+    def _force_update_surface(self) -> Surface:
         new_surface = pygame.transform.flip(
             self._reference_image, self.flip_x, self.flip_y
         )
         self._is_dirty = False
 
-        self.display_surface = new_surface
+        return new_surface
 
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
@@ -148,5 +148,5 @@ class Sprite(Renderable):
 
     def render(self, delta_time: float) -> pygame.Surface:
         if self._is_dirty:
-            self._force_update_surface()
+            self.display_surface = self._force_update_surface()
         return self.display_surface
