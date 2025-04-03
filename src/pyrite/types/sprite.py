@@ -141,9 +141,13 @@ class Sprite(Renderable):
 
         # FIXME This really only works for centered renderables
 
-        new_surface = pygame.transform.scale_by(new_surface, self.transform.scale)
+        new_surface = pygame.transform.scale_by(
+            new_surface, self.transform.get_world_scale()
+        )
 
-        new_surface = pygame.transform.rotate(new_surface, self.transform.rotation)
+        new_surface = pygame.transform.rotate(
+            new_surface, self.transform.get_world_rotation()
+        )
 
         self.transform._dirty = False
 
@@ -151,7 +155,7 @@ class Sprite(Renderable):
 
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
-        self.anchor.anchor_rect_ip(rect, self.transform.position)
+        self.anchor.anchor_rect_ip(rect, self.transform.get_world_position())
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
