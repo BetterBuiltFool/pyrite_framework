@@ -7,13 +7,15 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from . import Container
+    from .transform import Transform
     from .enums import Layer, Anchor
-    from pygame import Surface, Rect
+    from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
 
 
 from .renderable import Renderable
 from .enums import AnchorPoint
+from .transform import TransformComponent
 
 
 class Sprite(Renderable):
@@ -25,6 +27,7 @@ class Sprite(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
+        transform: Transform = None,
         anchor: Anchor = AnchorPoint.CENTER,
         container: Container = None,
         enabled=True,
@@ -48,12 +51,24 @@ class Sprite(Renderable):
         super().__init__(container, enabled, layer, draw_index)
         self._reference_image = display_surface
         self.display_surface = display_surface
-        self.position = pygame.Vector2(position)
+        if transform is not None:
+            self.transform = TransformComponent.from_transform(self, transform)
+        else:
+            self.transform = TransformComponent(self, position)
+        # self.position = pygame.Vector2(position)
         self.anchor = anchor
 
         # Clients can update these easily enough.
         self._flip_x = False
         self._flip_y = False
+
+    @property
+    def position(self) -> Vector2:
+        return self.transform.position
+
+    @position.setter
+    def position(self, new_position: Point):
+        self.transform.position = new_position
 
     @property
     def flip_x(self) -> bool:
@@ -125,7 +140,7 @@ class Sprite(Renderable):
 
     def get_rect(self) -> Rect:
         rect = self.display_surface.get_rect()
-        self.anchor.anchor_rect_ip(rect, self.position)
+        self.anchor.anchor_rect_ip(rect, self.transform.position)
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
