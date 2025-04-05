@@ -165,3 +165,15 @@ class DefaultSystemManager(SystemManager):
     def handle_event(self, event: Event):
         for system in self.active_systems:
             system.on_event(event)
+
+
+_default_system_manager_type = DefaultSystemManager
+
+
+def get_default_entity_manager_type() -> type[SystemManager]:
+    return _default_system_manager_type
+
+
+def set_default_entity_manager_type(manager_type: type[SystemManager]):
+    global _default_system_manager_type
+    _default_system_manager_type = manager_type
