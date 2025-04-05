@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, TypeVar
 from weakref import WeakSet, WeakValueDictionary
 
-from ..types.system import System
 
 if TYPE_CHECKING:
+    from ..types.system import System
     from pygame import Event
 
 
-SystemType = TypeVar("SystemType", bound=System)
+SystemType = TypeVar("SystemType")
 
 
 class SystemManager(ABC):
