@@ -161,3 +161,7 @@ class DefaultSystemManager(SystemManager):
     def const_update(self, timestep: float):
         for system in self.active_systems:
             system.const_update(timestep)
+
+    def handle_event(self, event: Event):
+        for system in self.active_systems:
+            system.on_event(event)
