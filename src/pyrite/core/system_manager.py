@@ -137,7 +137,7 @@ class DefaultSystemManager(SystemManager):
 
     def _capture_system(self, system: System):
         if system.__class__ not in self.systems:
-            self.systems.update({system.__class__, system})
+            self.systems.update({system.__class__: system})
 
     def get_system(self, system_type: type[SystemType]) -> SystemType:
         system = self.systems.get(system_type)
