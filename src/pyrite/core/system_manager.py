@@ -35,6 +35,17 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
+    def get_system(self, system_type: type[System]) -> System:
+        """
+        Returns the instance that matches the system type.
+
+        :param system_type: The system type whose instance we are searching for.
+        :return: The instance of the system type
+        :raises: KeyError if no such instance exists.
+        """
+        pass
+
+    @abstractmethod
     def pre_update(self, delta_time: float):
         """
         Runs the pre_update phase for active systems.
