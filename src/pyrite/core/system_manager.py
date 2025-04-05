@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, TypeVar
 
-from weakref import WeakValueDictionary
+from weakref import WeakSet, WeakValueDictionary
 
 if TYPE_CHECKING:
     from ..types.system import System
@@ -109,4 +109,39 @@ class SystemManager(ABC):
 class DefaultSystemManager(SystemManager):
 
     def __init__(self) -> None:
-        self.systems: WeakValueDictionary[type[System], System] = WeakValueDictionary()
+        self.systems: WeakValueDictionary[type[SystemType], SystemType] = (
+            WeakValueDictionary()
+        )
+        self.active_systems: WeakSet[SystemType] = WeakSet()
+
+    def enable(self, system: System) -> bool:
+        self._capture_system(system)
+        if system not in self.active_systems:
+            self.active_systems.add(system)
+            return True
+        return False
+
+    def disable(self, system: System) -> bool:
+        self._capture_system(system)
+        if system in self.active_systems:
+            self.active_systems.remove(system)
+            return True
+        return False
+
+    def _capture_system(self, system: System):
+        if system.__class__ not in self.systems:
+            self.systems.update({system.__class__, system})
+
+    def get_system(self, system_type: type[SystemType]) -> SystemType:
+        system = self.systems.get(system_type)
+        if not system:
+            raise KeyError(f"Cannot get system {system_type}, it is not being managed.")
+
+    def remove_system(self, system_type: type[SystemType]) -> SystemType:
+        system = self.systems.pop(system_type)
+        if not system:
+            raise KeyError(
+                f"Cannot remove system {system_type}, it is not being managed."
+            )
+        self.active_systems.discard(system)
+        return system
