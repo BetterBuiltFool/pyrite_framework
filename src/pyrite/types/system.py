@@ -3,11 +3,29 @@ from abc import ABC
 
 import typing
 
+from .. import get_system_manager
+
 if typing.TYPE_CHECKING:
     from pygame import Event
 
 
 class System(ABC):
+
+    def __init__(self, enabled=True) -> None:
+        self._enabled = enabled
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool):
+        self._enabled = value
+        system_manager = get_system_manager()
+        if value:
+            system_manager.enable(self)
+        else:
+            system_manager.disable(self)
 
     def pre_update(self, delta_time: float) -> None:
         """
