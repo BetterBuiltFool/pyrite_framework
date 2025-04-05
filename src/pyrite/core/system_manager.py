@@ -3,6 +3,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from weakref import WeakValueDictionary
+
 if TYPE_CHECKING:
     from ..types.system import System
     from pygame import Event
@@ -76,3 +78,9 @@ class SystemManager(ABC):
         :param event: A pygame event.
         """
         pass
+
+
+class DefaultSystemManager(SystemManager):
+
+    def __init__(self) -> None:
+        self.systems: WeakValueDictionary[type[System], System] = WeakValueDictionary()
