@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from weakref import WeakValueDictionary
 
 if TYPE_CHECKING:
     from ..types.system import System
     from pygame import Event
+
+
+SystemType = TypeVar("SystemType", bound=System)
 
 
 class SystemManager(ABC):
@@ -35,7 +38,7 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def get_system(self, system_type: type[System]) -> System:
+    def get_system(self, system_type: type[SystemType]) -> SystemType:
         """
         Returns the instance that matches the system type.
 
@@ -46,7 +49,7 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def remove_system(self, system_type: type[System]) -> System:
+    def remove_system(self, system_type: type[SystemType]) -> SystemType:
         """
         Removes a system instance from all parts of the system manager,
         based on the system type.
