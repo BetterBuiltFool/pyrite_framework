@@ -10,6 +10,7 @@ from .core.entity_manager import EntityManager
 from .core.game_data import GameData
 from .core.renderer import Renderer, RenderManager
 from .core.rate_settings import RateSettings
+from .core.system_manager import SystemManager
 
 from ._helper import defaults
 
@@ -91,6 +92,7 @@ class Game:
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.render_manager = RenderManager.get_render_manager(**kwds)
         self.renderer = Renderer.get_renderer(**kwds)
+        self.system_manager = SystemManager.get_system_manager(**kwds)
 
         # Create a placeholder for the window, and the create the actual window
         self.window: pygame.Surface = None
