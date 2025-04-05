@@ -145,3 +145,19 @@ class DefaultSystemManager(SystemManager):
             )
         self.active_systems.discard(system)
         return system
+
+    def pre_update(self, delta_time: float):
+        for system in self.active_systems:
+            system.pre_update(delta_time)
+
+    def update(self, delta_time: float):
+        for system in self.active_systems:
+            system.update(delta_time)
+
+    def post_update(self, delta_time: float):
+        for system in self.active_systems:
+            system.post_update(delta_time)
+
+    def const_update(self, timestep: float):
+        for system in self.active_systems:
+            system.const_update(timestep)
