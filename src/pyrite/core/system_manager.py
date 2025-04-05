@@ -116,10 +116,8 @@ class SystemManager(ABC):
 class DefaultSystemManager(SystemManager):
 
     def __init__(self) -> None:
-        self.systems: WeakValueDictionary[type[SystemType], SystemType] = (
-            WeakValueDictionary()
-        )
-        self.active_systems: WeakSet[SystemType] = WeakSet()
+        self.systems: WeakValueDictionary[type[System], System] = WeakValueDictionary()
+        self.active_systems: WeakSet[System] = WeakSet()
 
     def enable(self, system: System) -> bool:
         self._capture_system(system)
@@ -143,6 +141,7 @@ class DefaultSystemManager(SystemManager):
         system = self.systems.get(system_type)
         if not system:
             raise KeyError(f"Cannot get system {system_type}, it is not being managed.")
+        return system
 
     def remove_system(self, system_type: type[SystemType]) -> SystemType:
         system = self.systems.pop(system_type)
