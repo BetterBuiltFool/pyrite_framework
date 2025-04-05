@@ -46,6 +46,18 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
+    def remove_system(self, system_type: type[System]) -> System:
+        """
+        Removes a system instance from all parts of the system manager,
+        based on the system type.
+
+        :param system_type: The system type whose instance is to be removed.
+        :return: The system instance that was removed.
+        :raises: KeyError if no such instance exists.
+        """
+        pass
+
+    @abstractmethod
     def pre_update(self, delta_time: float):
         """
         Runs the pre_update phase for active systems.
