@@ -3,7 +3,7 @@ from abc import ABC
 
 import typing
 
-from .. import get_system_manager
+from .. import game
 
 if typing.TYPE_CHECKING:
     from pygame import Event
@@ -21,7 +21,7 @@ class System(ABC):
     @enabled.setter
     def enabled(self, value: bool):
         self._enabled = value
-        system_manager = get_system_manager()
+        system_manager = game.get_system_manager()
         if value:
             system_manager.enable(self)
         else:

@@ -37,6 +37,10 @@ def set_game_instance(instance: Game):
     _active_instance = instance
 
 
+def get_system_manager() -> SystemManager:
+    return _active_instance.system_manager
+
+
 defaults._default_container_getter = get_game_instance
 
 
