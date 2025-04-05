@@ -105,6 +105,13 @@ class SystemManager(ABC):
         """
         pass
 
+    @staticmethod
+    def get_system_manager(**kwds) -> SystemManager:
+        if (system_manager := kwds.get("system_manager", None)) is None:
+            manager_type = get_default_system_manager_type()
+            system_manager = manager_type()
+        return system_manager
+
 
 class DefaultSystemManager(SystemManager):
 
@@ -170,10 +177,10 @@ class DefaultSystemManager(SystemManager):
 _default_system_manager_type = DefaultSystemManager
 
 
-def get_default_entity_manager_type() -> type[SystemManager]:
+def get_default_system_manager_type() -> type[SystemManager]:
     return _default_system_manager_type
 
 
-def set_default_entity_manager_type(manager_type: type[SystemManager]):
+def set_default_system_manager_type(manager_type: type[SystemManager]):
     global _default_system_manager_type
     _default_system_manager_type = manager_type
