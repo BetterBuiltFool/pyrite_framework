@@ -12,7 +12,8 @@ if typing.TYPE_CHECKING:
 class System(ABC):
 
     def __init__(self, enabled=True) -> None:
-        self._enabled = enabled
+        self._enabled = None
+        self.enabled = enabled
 
     @property
     def enabled(self) -> bool:
