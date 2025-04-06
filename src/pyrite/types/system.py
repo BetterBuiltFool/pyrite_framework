@@ -11,9 +11,10 @@ if typing.TYPE_CHECKING:
 
 class System(ABC):
 
-    def __init__(self, enabled=True) -> None:
+    def __init__(self, enabled=True, order_index=0) -> None:
         self._enabled = None
         self.enabled = enabled
+        self.order_index = order_index
 
     @property
     def enabled(self) -> bool:
