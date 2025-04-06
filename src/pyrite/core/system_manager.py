@@ -125,6 +125,7 @@ class DefaultSystemManager(SystemManager):
     def __init__(self) -> None:
         self.systems: WeakValueDictionary[type[System], System] = WeakValueDictionary()
         self.active_systems: WeakSet[System] = WeakSet()
+        self.current_systems: list[System] = []
 
     def enable(self, system: System) -> bool:
         self._capture_system(system)
@@ -141,7 +142,7 @@ class DefaultSystemManager(SystemManager):
         return False
 
     def _capture_system(self, system: System):
-        if system.__class__ not in self.systems:
+        if system.__class__ not in self.systems:  # I don't this is needed?
             self.systems.update({system.__class__: system})
 
     def get_system(self, system_type: type[SystemType]) -> SystemType:
@@ -159,24 +160,29 @@ class DefaultSystemManager(SystemManager):
         self.active_systems.discard(system)
         return system
 
+    def prepare_systems(self):
+        # TODO Make sorting behavior match DefaultRenderManager,
+        # where negatives indicate distance from last.
+        self.current_systems = sorted(self.active_systems)
+
     def pre_update(self, delta_time: float):
-        for system in self.active_systems:
+        for system in self.current_systems:
             system.pre_update(delta_time)
 
     def update(self, delta_time: float):
-        for system in self.active_systems:
+        for system in self.current_systems:
             system.update(delta_time)
 
     def post_update(self, delta_time: float):
-        for system in self.active_systems:
+        for system in self.current_systems:
             system.post_update(delta_time)
 
     def const_update(self, timestep: float):
-        for system in self.active_systems:
+        for system in self.current_systems:
             system.const_update(timestep)
 
     def handle_event(self, event: Event):
-        for system in self.active_systems:
+        for system in self.current_systems:
             system.on_event(event)
 
 
