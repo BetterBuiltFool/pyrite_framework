@@ -105,6 +105,13 @@ class SystemManager(ABC):
         """
         pass
 
+    def prepare_systems(self):
+        """
+        Signals to the system manager that a frame is beginning, and to do whatever it
+        needs to in order to prepare for the new frame.
+        """
+        pass
+
     @staticmethod
     def get_system_manager(**kwds) -> SystemManager:
         if (system_manager := kwds.get("system_manager", None)) is None:
