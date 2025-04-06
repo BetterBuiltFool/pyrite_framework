@@ -71,6 +71,15 @@ class System(ABC):
         """
         pass
 
+    def pre_render(self, delta_time: float) -> None:
+        """
+        A method that is called immediately before the render phase.
+        Used by TransformServices to ensure transforms are properly updated just prior
+        to being used to display them.
+
+        :param delta_time: Time passed since last frame.
+        """
+
     def on_event(self, event: Event):
         """
         An event hook. Events will be passed to the entity when it's enabled, and can

@@ -97,6 +97,14 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
+    def pre_render(self, delta_time: float):
+        """
+        Runs the pre_render phase for active systems.
+
+        :param delta_time: Time passed since last frame
+        """
+
+    @abstractmethod
     def handle_event(self, event: Event):
         """
         Passes the event down to all active systems.
@@ -180,6 +188,10 @@ class DefaultSystemManager(SystemManager):
     def const_update(self, timestep: float):
         for system in self.current_systems:
             system.const_update(timestep)
+
+    def pre_render(self, delta_time: float):
+        for system in self.current_systems:
+            system.pre_render(delta_time)
 
     def handle_event(self, event: Event):
         for system in self.current_systems:

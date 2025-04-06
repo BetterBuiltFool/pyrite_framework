@@ -311,8 +311,11 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
+        # Finalize any systems
+        self.system_manager.pre_render(delta_time)
+
         # Redundant if no cameras, but cameras could cause this to be needed.
-        window.fill(pygame.Color("black"))
+        window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
         self.renderer.render(window, delta_time, render_queue)
