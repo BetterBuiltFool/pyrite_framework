@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+import bisect
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
@@ -169,9 +171,7 @@ class DefaultSystemManager(SystemManager):
         return system
 
     def prepare_systems(self):
-        # TODO Make sorting behavior match DefaultRenderManager,
-        # where negatives indicate distance from last.
-        self.current_systems = sorted(self.active_systems)
+        self.current_systems = self.sort_systems(self.active_systems)
 
     def pre_update(self, delta_time: float):
         for system in self.current_systems:
@@ -196,6 +196,20 @@ class DefaultSystemManager(SystemManager):
     def handle_event(self, event: Event):
         for system in self.current_systems:
             system.on_event(event)
+
+    def sort_systems(self, systems: Sequence[System]) -> list[System]:
+        systems = sorted(systems, key=_get_system_index)
+        pivot = bisect.bisect_left(systems, 0, key=_get_system_index)
+        negatives = systems[:pivot]
+        del systems[:pivot]
+
+        negatives.reverse()
+
+        return systems + negatives
+
+
+def _get_system_index(system: System) -> int:
+    return system.order_index
 
 
 _default_system_manager_type = DefaultSystemManager
