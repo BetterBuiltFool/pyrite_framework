@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, TypeVar
-from weakref import WeakSet, WeakValueDictionary
+from weakref import WeakSet
 
 
 if TYPE_CHECKING:
@@ -131,7 +131,7 @@ class SystemManager(ABC):
 class DefaultSystemManager(SystemManager):
 
     def __init__(self) -> None:
-        self.systems: WeakValueDictionary[type[System], System] = WeakValueDictionary()
+        self.systems: dict[type[System], System] = {}
         self.active_systems: WeakSet[System] = WeakSet()
         self.current_systems: list[System] = []
 
