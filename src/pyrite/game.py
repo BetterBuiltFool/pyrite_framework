@@ -19,6 +19,7 @@ from .utils import threading
 if TYPE_CHECKING:
     from .types.entity import Entity
     from .types.renderable import Renderable
+    from .types.system import System
 
 
 import pygame
@@ -98,6 +99,8 @@ class Game:
         self.renderer = Renderer.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
+        self.starting_systems: list[type[System]] = []
+
         # Create a placeholder for the window, and the create the actual window
         self.window: pygame.Surface = None
         self.create_window()
@@ -146,6 +149,13 @@ class Game:
             self.display_settings
         )
 
+    def add_system(self, system_type: type[System]):
+        self.starting_systems.append(system_type)
+
+    def start_systems(self):
+        for system in self.starting_systems:
+            system()
+
     def main(self):
         """
         The main entry point for the game. By default, calls start_game(), but can be
@@ -161,6 +171,8 @@ class Game:
         """
         Begins the main game loop, calling the update methods and the render methods.
         """
+
+        self.start_systems()
 
         accumulated_time: float = 0.0
 
