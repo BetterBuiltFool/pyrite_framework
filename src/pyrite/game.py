@@ -39,6 +39,16 @@ def set_game_instance(instance: Game):
 
 
 def get_system_manager() -> SystemManager:
+    if _active_instance is None:
+        raise RuntimeError("Cannot get system manager without a game instance running.")
+
+    # Ensures the starting systems have been instantiated so other objects can use them.
+    _active_instance.start_systems()
+
+    return _retrieve_system_manager()
+
+
+def _retrieve_system_manager() -> SystemManager:
     return _active_instance.system_manager
 
 
@@ -153,6 +163,8 @@ class Game:
         self.starting_systems.append(system_type)
 
     def start_systems(self):
+        global get_system_manager
+        get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
             system()
 
