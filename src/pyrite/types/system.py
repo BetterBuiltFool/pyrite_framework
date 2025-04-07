@@ -12,6 +12,15 @@ if typing.TYPE_CHECKING:
 class System(ABC):
 
     def __init__(self, enabled=True, order_index=0) -> None:
+        """
+        Base class for all systems.
+
+        :param enabled: Whether the system should be running at instantiation,
+            defaults to True
+        :param order_index: Relative order in which the system should be run, with
+            priority going down as value increases, but negative numbers are
+            approximately distance from last, defaults to 0 (Tie for first)
+        """
         self._enabled = None
         self.enabled = enabled
         self.order_index = order_index

@@ -198,6 +198,15 @@ class DefaultSystemManager(SystemManager):
             system.on_event(event)
 
     def sort_systems(self, systems: Sequence[System]) -> list[System]:
+        """
+        Converts the incoming sequence to a sorted list, where the order goes as
+        follows:
+
+        0 --> Infinity, -Infinity --> -1
+
+        :param systems: A sequence of systems, to be sorted
+        :return: A sorted list of the same systems
+        """
         systems = sorted(systems, key=_get_system_index)
         pivot = bisect.bisect_left(systems, 0, key=_get_system_index)
         negatives = systems[:pivot]

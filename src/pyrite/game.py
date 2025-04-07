@@ -30,15 +30,28 @@ _active_instance = None
 
 
 def get_game_instance() -> Game | None:
+    """
+    Gets the running game instance, if it exists.
+    """
     return _active_instance
 
 
 def set_game_instance(instance: Game):
+    """
+    Sets the game instance to the one passed.
+    """
     global _active_instance
     _active_instance = instance
 
 
 def get_system_manager() -> SystemManager:
+    """
+    Returns the current game/s system manager.
+
+    Will create and starting systems the first time this is run.
+
+    :raises RuntimeError: If not valid game is running
+    """
     if _active_instance is None:
         raise RuntimeError("Cannot get system manager without a game instance running.")
 
@@ -163,6 +176,9 @@ class Game:
         self.starting_systems.append(system_type)
 
     def start_systems(self):
+        """
+        Initializes any systems that are indicated to be required when the game starts.
+        """
         global get_system_manager
         get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
