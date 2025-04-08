@@ -12,7 +12,8 @@ from .surface_sector import SurfaceSector  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401
 
-# from .. import game
+# TODO Shift most of these out into core, and keep these references for typechecking
+# only
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType
