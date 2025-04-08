@@ -6,7 +6,7 @@ import typing
 from .. import game
 
 if typing.TYPE_CHECKING:
-    from . import SystemManagable
+    from .system_manageable import SystemManagable
     from pygame import Event
 
 
