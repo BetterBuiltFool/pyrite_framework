@@ -3,18 +3,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._helper import defaults
-
-from .. import game
+from .system_manageable import SystemManagable
 
 if TYPE_CHECKING:
     from . import Container
-    from . import System
 
 
-class _BaseType:
+class _BaseType(SystemManagable):
 
     def __init__(self, container: Container = None, enabled=True) -> None:
-        # super().__init__()
         if container is None:
             container = defaults.get_default_container()
         self.container: Container = container
@@ -27,7 +24,6 @@ class _BaseType:
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
-        # if self.container is None:
         if self.container is None:
             return
         if value:
@@ -38,18 +34,6 @@ class _BaseType:
             self.on_predisable()
             if self.container.disable(self):
                 self.on_disable()
-
-    def add_to_system(self, system_type: type[System]):
-        if system := self.get_system(system_type):
-            system.register(self)
-
-    def remove_from_system(self, system_type: type[System]):
-        if system := self.get_system(system_type):
-            system.deregister(self)
-
-    def get_system(self, system_type: type[System]) -> System | None:
-        system_manager = game.get_system_manager()
-        return system_manager.get_system(system_type)
 
     def on_preenable(self):
         """
