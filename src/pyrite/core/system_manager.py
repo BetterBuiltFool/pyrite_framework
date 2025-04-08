@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from collections.abc import Sequence
 from typing import TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from ..types.system import System
     from pygame import Event
 

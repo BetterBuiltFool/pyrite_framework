@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from types import TracebackType
 from typing import Self, TYPE_CHECKING
 
 from .core.display_settings import DisplaySettings
@@ -17,6 +16,7 @@ from ._helper import defaults
 from .utils import threading
 
 if TYPE_CHECKING:
+    from types import TracebackType
     from .types.entity import Entity
     from .types.renderable import Renderable
     from .types.system import System
