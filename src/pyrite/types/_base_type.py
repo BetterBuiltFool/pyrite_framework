@@ -4,14 +4,17 @@ from typing import TYPE_CHECKING
 
 from .._helper import defaults
 
+from .. import game
+
 if TYPE_CHECKING:
     from . import Container
+    from . import System
 
 
 class _BaseType:
 
     def __init__(self, container: Container = None, enabled=True) -> None:
-        super().__init__()
+        # super().__init__()
         if container is None:
             container = defaults.get_default_container()
         self.container: Container = container
@@ -35,6 +38,18 @@ class _BaseType:
             self.on_predisable()
             if self.container.disable(self):
                 self.on_disable()
+
+    def add_to_system(self, system_type: type[System]):
+        if system := self.get_system(system_type):
+            system.register(self)
+
+    def remove_from_system(self, system_type: type[System]):
+        if system := self.get_system(system_type):
+            system.deregister(self)
+
+    def get_system(self, system_type: type[System]) -> System | None:
+        system_manager = game.get_system_manager()
+        return system_manager.get_system(system_type)
 
     def on_preenable(self):
         """
