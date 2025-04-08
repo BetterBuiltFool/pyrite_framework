@@ -145,7 +145,6 @@ class DefaultSystemManager(SystemManager):
         return False
 
     def disable(self, system: System) -> bool:
-        self._capture_system(system)
         if system in self.active_systems:
             self.active_systems.remove(system)
             return True
