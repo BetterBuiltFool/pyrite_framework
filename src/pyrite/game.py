@@ -46,9 +46,9 @@ def set_game_instance(instance: Game):
 
 def get_system_manager() -> SystemManager:
     """
-    Returns the current game/s system manager.
+    Returns the current game's system manager.
 
-    Will create and starting systems the first time this is run.
+    Will create any starting systems the first time this is run.
 
     :raises RuntimeError: If not valid game is running
     """
