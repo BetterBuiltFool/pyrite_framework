@@ -1,11 +1,12 @@
 from __future__ import annotations
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import typing
 
 from .. import game
 
 if typing.TYPE_CHECKING:
+    from . import SystemManagable
     from pygame import Event
 
 
@@ -37,6 +38,24 @@ class System(ABC):
             system_manager.enable(self)
         else:
             system_manager.disable(self)
+
+    @abstractmethod
+    def register(self, subject: SystemManagable):
+        """
+        Registers the manageable subject to the system.
+
+        :param subject: The object being registered.
+        """
+        pass
+
+    @abstractmethod
+    def deregister(self, subject: SystemManagable):
+        """
+        Removes the manageable subject from the system's records.
+
+        :param subject: The object being unregistered.
+        """
+        pass
 
     def pre_update(self, delta_time: float) -> None:
         """
