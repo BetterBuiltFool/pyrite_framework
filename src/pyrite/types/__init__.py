@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 from typing import Protocol, runtime_checkable, TYPE_CHECKING
 
 from .camera import CameraBase, Camera, ChaseCamera  # noqa: F401
@@ -11,6 +12,7 @@ from .spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .surface_sector import SurfaceSector  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401
+from .. import game
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType
@@ -44,6 +46,21 @@ class HasPosition(Protocol):
     """
     The location of the item, either in world space or local space.
     """
+
+
+class SystemManagable(ABC):
+
+    def add_to_system(self, system_type: type[System]):
+        if system := self.get_system(system_type):
+            system.register(self)
+
+    def remove_from_system(self, system_type: type[System]):
+        if system := self.get_system(system_type):
+            system.deregister(self)
+
+    def get_system(self, system_type: type[System]) -> System | None:
+        system_manager = game.get_system_manager()
+        return system_manager.get_system(system_type)
 
 
 class CanUpdate(Protocol):
