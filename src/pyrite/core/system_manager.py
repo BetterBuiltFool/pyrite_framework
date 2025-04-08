@@ -40,13 +40,12 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def get_system(self, system_type: type[SystemType]) -> SystemType:
+    def get_system(self, system_type: type[SystemType]) -> SystemType | None:
         """
         Returns the instance that matches the system type.
 
         :param system_type: The system type whose instance we are searching for.
-        :return: The instance of the system type
-        :raises: KeyError if no such instance exists.
+        :return: The instance of the system type, if it exists, else None
         """
         pass
 
@@ -58,7 +57,6 @@ class SystemManager(ABC):
 
         :param system_type: The system type whose instance is to be removed.
         :return: The system instance that was removed.
-        :raises: KeyError if no such instance exists.
         """
         pass
 
@@ -154,18 +152,11 @@ class DefaultSystemManager(SystemManager):
         if system.__class__ not in self.systems:  # I don't this is needed?
             self.systems.update({system.__class__: system})
 
-    def get_system(self, system_type: type[SystemType]) -> SystemType:
-        system = self.systems.get(system_type)
-        if not system:
-            raise KeyError(f"Cannot get system {system_type}, it is not being managed.")
-        return system
+    def get_system(self, system_type: type[SystemType]) -> SystemType | None:
+        return self.systems.get(system_type)
 
     def remove_system(self, system_type: type[SystemType]) -> SystemType:
         system = self.systems.pop(system_type)
-        if not system:
-            raise KeyError(
-                f"Cannot remove system {system_type}, it is not being managed."
-            )
         self.active_systems.discard(system)
         return system
 
