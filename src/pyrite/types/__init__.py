@@ -49,24 +49,6 @@ class HasPosition(Protocol):
     """
 
 
-class SystemManagable(Protocol):
-
-    def add_to_system(self, system_type: type[System]): ...
-
-    # if system := self.get_system(system_type):
-    #     system.register(self)
-
-    def remove_from_system(self, system_type: type[System]): ...
-
-    # if system := self.get_system(system_type):
-    #     system.deregister(self)
-
-    def get_system(self, system_type: type[System]) -> System | None: ...
-
-    # system_manager = game.get_system_manager()
-    # return system_manager.get_system(system_type)
-
-
 class CanUpdate(Protocol):
 
     def update(self, delta_time: float) -> None: ...
