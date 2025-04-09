@@ -11,6 +11,7 @@ from .spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .surface_sector import SurfaceSector  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401
+from .system_manageable import SystemManagable  # noqa: F401
 
 # TODO Shift most of these out into core, and keep these references for typechecking
 # only
