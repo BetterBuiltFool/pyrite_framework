@@ -3,13 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._helper import defaults
-from .system_manageable import SystemManagable
 
 if TYPE_CHECKING:
     from . import Container
 
 
-class _BaseType(SystemManagable):
+class _BaseType:
 
     def __init__(self, container: Container = None, enabled=True) -> None:
         if container is None:
