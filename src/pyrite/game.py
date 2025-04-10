@@ -85,6 +85,18 @@ def get_render_manager() -> RenderManager:
     return _active_instance.render_manager
 
 
+def get_renderer() -> Renderer:
+    """
+    Gets the Renderer from the current game instance.
+
+    :raises RuntimeError: If no valid game is running
+    """
+    if _active_instance is None:
+        raise RuntimeError("Cannot get system manager without a game instance running.")
+
+    return _active_instance.renderer
+
+
 def _retrieve_system_manager() -> SystemManager:
     return _active_instance.system_manager
 
