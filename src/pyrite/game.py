@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from types import TracebackType
 from typing import Self, TYPE_CHECKING
 
 from .core.display_settings import DisplaySettings
@@ -10,14 +9,17 @@ from .core.entity_manager import EntityManager
 from .core.game_data import GameData
 from .core.renderer import Renderer, RenderManager
 from .core.rate_settings import RateSettings
+from .core.system_manager import SystemManager
 
 from ._helper import defaults
 
 from .utils import threading
 
 if TYPE_CHECKING:
+    from types import TracebackType
     from .types.entity import Entity
     from .types.renderable import Renderable
+    from .types.system import System
 
 
 import pygame
@@ -28,12 +30,39 @@ _active_instance = None
 
 
 def get_game_instance() -> Game | None:
+    """
+    Gets the running game instance, if it exists.
+    """
     return _active_instance
 
 
 def set_game_instance(instance: Game):
+    """
+    Sets the game instance to the one passed.
+    """
     global _active_instance
     _active_instance = instance
+
+
+def get_system_manager() -> SystemManager:
+    """
+    Returns the current game's system manager.
+
+    Will create any starting systems the first time this is run.
+
+    :raises RuntimeError: If not valid game is running
+    """
+    if _active_instance is None:
+        raise RuntimeError("Cannot get system manager without a game instance running.")
+
+    # Ensures the starting systems have been instantiated so other objects can use them.
+    _active_instance.start_systems()
+
+    return _retrieve_system_manager()
+
+
+def _retrieve_system_manager() -> SystemManager:
+    return _active_instance.system_manager
 
 
 defaults._default_container_getter = get_game_instance
@@ -91,6 +120,9 @@ class Game:
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.render_manager = RenderManager.get_render_manager(**kwds)
         self.renderer = Renderer.get_renderer(**kwds)
+        self.system_manager = SystemManager.get_system_manager(**kwds)
+
+        self.starting_systems: list[type[System]] = []
 
         # Create a placeholder for the window, and the create the actual window
         self.window: pygame.Surface = None
@@ -140,6 +172,18 @@ class Game:
             self.display_settings
         )
 
+    def add_system(self, system_type: type[System]):
+        self.starting_systems.append(system_type)
+
+    def start_systems(self):
+        """
+        Initializes any systems that are indicated to be required when the game starts.
+        """
+        global get_system_manager
+        get_system_manager = _retrieve_system_manager
+        for system in self.starting_systems:
+            system()
+
     def main(self):
         """
         The main entry point for the game. By default, calls start_game(), but can be
@@ -155,6 +199,8 @@ class Game:
         """
         Begins the main game loop, calling the update methods and the render methods.
         """
+
+        self.start_systems()
 
         accumulated_time: float = 0.0
 
@@ -175,6 +221,7 @@ class Game:
 
         # This will ensure new entities are processed properly for the new frame.
         self.entity_manager.flush_buffer()
+        self.system_manager.prepare_systems()
 
         self.process_events(pygame.event.get())
 
@@ -258,10 +305,13 @@ class Game:
         """
 
         self.pre_update(delta_time)
+        self.system_manager.pre_update(delta_time)
         self.entity_manager.pre_update(delta_time)
         self.update(delta_time)
+        self.system_manager.update(delta_time)
         self.entity_manager.update(delta_time)
         self.post_update(delta_time)
+        self.system_manager.post_update(delta_time)
         self.entity_manager.post_update(delta_time)
 
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
@@ -280,6 +330,7 @@ class Game:
         """
         while accumulated_time > timestep:
             self.const_update(timestep)
+            self.system_manager.const_update(timestep)
             self.entity_manager.const_update(timestep)
             accumulated_time -= timestep
         return accumulated_time
@@ -300,8 +351,11 @@ class Game:
         :param window: The main display window.
         :param delta_time: Time passed since last frame, in seconds.
         """
+        # Finalize any systems
+        self.system_manager.pre_render(delta_time)
+
         # Redundant if no cameras, but cameras could cause this to be needed.
-        window.fill(pygame.Color("black"))
+        window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
         self.renderer.render(window, delta_time, render_queue)
