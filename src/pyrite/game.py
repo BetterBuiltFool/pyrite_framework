@@ -50,7 +50,7 @@ def get_system_manager() -> SystemManager:
 
     Will create any starting systems the first time this is run.
 
-    :raises RuntimeError: If not valid game is running
+    :raises RuntimeError: If no valid game is running
     """
     if _active_instance is None:
         raise RuntimeError("Cannot get system manager without a game instance running.")
@@ -59,6 +59,18 @@ def get_system_manager() -> SystemManager:
     _active_instance.start_systems()
 
     return _retrieve_system_manager()
+
+
+def get_entity_manager() -> EntityManager:
+    """
+    Gets the EntityManager from the current game instance.
+
+    :raises RuntimeError: If no valid game is running
+    """
+    if _active_instance is None:
+        raise RuntimeError("Cannot get system manager without a game instance running.")
+
+    return _active_instance.entity_manager
 
 
 def _retrieve_system_manager() -> SystemManager:
