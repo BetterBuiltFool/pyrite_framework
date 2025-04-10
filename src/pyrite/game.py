@@ -68,7 +68,7 @@ def get_entity_manager() -> EntityManager:
     :raises RuntimeError: If no valid game is running
     """
     if _active_instance is None:
-        raise RuntimeError("Cannot get system manager without a game instance running.")
+        raise RuntimeError("Cannot get entity manager without a game instance running.")
 
     return _active_instance.entity_manager
 
@@ -80,7 +80,7 @@ def get_render_manager() -> RenderManager:
     :raises RuntimeError: If no valid game is running
     """
     if _active_instance is None:
-        raise RuntimeError("Cannot get system manager without a game instance running.")
+        raise RuntimeError("Cannot get render manager without a game instance running.")
 
     return _active_instance.render_manager
 
@@ -92,8 +92,9 @@ def get_renderer() -> Renderer:
     :raises RuntimeError: If no valid game is running
     """
     if _active_instance is None:
-        raise RuntimeError("Cannot get system manager without a game instance running.")
+        raise RuntimeError("Cannot get renderer without a game instance running.")
 
+    # Honestly can't see much use for this, but it won't hurt to include it.
     return _active_instance.renderer
 
 
