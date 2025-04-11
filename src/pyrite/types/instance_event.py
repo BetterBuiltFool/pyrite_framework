@@ -46,7 +46,7 @@ class InstanceEvent(ABC):
         to the owning instance if needed.
         """
         self._instance = ref(instance)
-        self.listeners: WeakKeyDictionary[Any, Callable] = WeakKeyDictionary()
+        self.listeners: WeakKeyDictionary[Any, list[Callable]] = WeakKeyDictionary()
         """
         A set containing all listeners for this event instance.
 
@@ -118,16 +118,21 @@ class InstanceEvent(ABC):
         return inner
 
     def _register(self, caller, listener: Callable):
-        self.listeners.update({caller: listener})
+        listeners = self.listeners.setdefault(caller, [])
+        listeners.append(listener)
+        # self.listeners.update({caller: listener})
 
     def _deregister(self, listener: Callable):
-        to_remove = None
-        for key, value in self.listeners.items():
-            if value is listener:
-                to_remove = key
+        # to_remove = None
+        for caller, listeners in self.listeners.items():
+            if listener in listeners:
+                listeners.remove(listener)
                 break
-        if to_remove:
-            self.listeners.pop(to_remove)
+        #     if value is listener:
+        #         to_remove = key
+        #         break
+        # if to_remove:
+        #     self.listeners.pop(to_remove)
 
     def _notify(self, *args, **kwds):
         """
@@ -148,8 +153,9 @@ class InstanceEvent(ABC):
 
         # TODO If there is demand for sync listeners, make them the exception, not the
         # rule. Add a seperate list and registration method for those.
-        for caller, listener in self.listeners.items():
+        for caller, listeners in self.listeners.items():
             # The pyrite threading module can be set to run regular threads or asyncio
             # threads.
-            threading.start_thread(listener, *(caller, *args))
+            for listener in listeners:
+                threading.start_thread(listener, *(caller, *args))
             # listener(*args, **kwds)
