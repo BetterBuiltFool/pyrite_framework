@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import proxy, ref, WeakKeyDictionary, ProxyTypes
+from weakref import ref, WeakKeyDictionary
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -11,31 +11,6 @@ from ..utils import threading
 
 T = TypeVar("T")
 E = TypeVar("E", bound="InstanceEvent")
-
-
-def weaken_closures(listener: Callable) -> Callable:
-    """
-    Converts a callable's closures to proxies, so the callable doesn't prevent garbage
-    collection on the enclosed objects.
-
-    Makes no changes if the callable has no closures, or if the closures are already
-    proxied.
-
-    :return: The listener, without strong references.
-    """
-    if listener.__closure__ is None:
-        return listener
-
-    for cell in listener.__closure__:
-        contents = cell.cell_contents
-        # Instance checks are relatively slow, but we're only doing this occasionally.
-        # ...
-        # You are only doing this occasionally, right?
-        if isinstance(contents, ProxyTypes):
-            continue
-        cell.cell_contents = proxy(contents)
-
-    return listener
 
 
 class InstanceEvent(ABC):
@@ -137,7 +112,7 @@ class InstanceEvent(ABC):
         """
 
         def inner(listener: Callable):
-            self._register(caller, weaken_closures(listener))
+            self._register(caller, listener)
             return listener
 
         return inner
