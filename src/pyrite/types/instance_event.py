@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Any, TypeVar
-from weakref import proxy, ref, WeakSet, ProxyTypes
+from weakref import proxy, ref, WeakKeyDictionary, ProxyTypes
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -71,7 +71,7 @@ class InstanceEvent(ABC):
         to the owning instance if needed.
         """
         self._instance = ref(instance)
-        self.listeners: WeakSet[Callable] = WeakSet()
+        self.listeners: WeakKeyDictionary[Any, Callable] = WeakKeyDictionary()
         """
         A set containing all listeners for this event instance.
 
@@ -95,7 +95,7 @@ class InstanceEvent(ABC):
     def __call__(self, *args: Any, **kwds: Any) -> None:
         self._notify(*args, **kwds)
 
-    def add_listener(self, listener: Callable) -> Callable:
+    def add_listener(self, caller: Any) -> Callable:
         """
         Adds a function, method, or other callable to this InstanceEvent's listeners.
         That listener will be called whenever the event is fired.
@@ -117,7 +117,7 @@ class InstanceEvent(ABC):
             def __init__(self):
                 self.event_haver = SomeEntity()
 
-                @self.event_haver.OnSomeEvent.add_listener
+                @self.event_haver.OnSomeEvent.add_listener(self)
                 def listener_name(event_param1, event_param2):
                     print(self)
                     # Do something
@@ -135,11 +135,15 @@ class InstanceEvent(ABC):
 
         :return: The original listener, to be available for reuse and access.
         """
-        self._register(weaken_closures(listener))
-        return listener
 
-    def _register(self, listener: Callable):
-        self.listeners.add(listener)
+        def inner(listener: Callable):
+            self._register(caller, weaken_closures(listener))
+            return listener
+
+        return inner
+
+    def _register(self, caller, listener: Callable):
+        self.listeners.update({caller: listener})
 
     def _deregister(self, listener: Callable):
         self.listeners.discard(listener)
@@ -163,8 +167,8 @@ class InstanceEvent(ABC):
 
         # TODO If there is demand for sync listeners, make them the exception, not the
         # rule. Add a seperate list and registration method for those.
-        for listener in self.listeners:
+        for caller, listener in self.listeners.items():
             # The pyrite threading module can be set to run regular threads or asyncio
             # threads.
-            threading.start_thread(listener, *args)
+            threading.start_thread(listener, *(caller, *args))
             # listener(*args, **kwds)
