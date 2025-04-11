@@ -146,7 +146,13 @@ class InstanceEvent(ABC):
         self.listeners.update({caller: listener})
 
     def _deregister(self, listener: Callable):
-        self.listeners.discard(listener)
+        to_remove = None
+        for key, value in self.listeners.items():
+            if value is listener:
+                to_remove = key
+                break
+        if to_remove:
+            self.listeners.pop(to_remove)
 
     def _notify(self, *args, **kwds):
         """
