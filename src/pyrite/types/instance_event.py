@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from functools import singledispatchmethod
 from typing import Any, TypeVar
 from weakref import ref, WeakKeyDictionary
 
@@ -11,6 +12,14 @@ from ..utils import threading
 
 T = TypeVar("T")
 E = TypeVar("E", bound="InstanceEvent")
+
+
+class _Sentinel:
+
+    pass
+
+
+SENTINEL = _Sentinel()
 
 
 class InstanceEvent(ABC):
@@ -70,7 +79,8 @@ class InstanceEvent(ABC):
     def __call__(self, *args: Any, **kwds: Any) -> None:
         self._notify(*args, **kwds)
 
-    def add_listener(self, caller: Any) -> Callable:
+    @singledispatchmethod
+    def add_listener(self, arg) -> Callable:
         """
         Adds a function, method, or other callable to this InstanceEvent's listeners.
         That listener will be called whenever the event is fired.
@@ -93,11 +103,9 @@ class InstanceEvent(ABC):
                 self.event_haver = SomeEntity()
 
                 @self.event_haver.OnSomeEvent.add_listener(self)
-                def listener_name(event_param1, event_param2):
+                def _(self, event_param1, event_param2):
                     print(self)
                     # Do something
-
-                self.event_listeners = [listener_name]
         ____________________________________________________________________________________________
 
         Every instance of A will create its own listener, which can reference "self" to
@@ -110,6 +118,15 @@ class InstanceEvent(ABC):
 
         :return: The original listener, to be available for reuse and access.
         """
+        raise NotImplementedError("Argument type not supported")
+
+    @add_listener.register(Callable)
+    def _(self, listener: Callable) -> Callable:
+        self._register(SENTINEL, listener)
+        return listener
+
+    @add_listener.register(object)
+    def _(self, caller: object) -> Callable:
 
         def inner(listener: Callable):
             self._register(caller, listener)
@@ -119,6 +136,8 @@ class InstanceEvent(ABC):
 
     def _register(self, caller, listener: Callable):
         listeners = self.listeners.setdefault(caller, [])
+        # print(listener.__repr__.__self__)
+        # TODO Test if method, keep methods and function in two different sets?
         listeners.append(listener)
         # self.listeners.update({caller: listener})
 
@@ -156,6 +175,9 @@ class InstanceEvent(ABC):
         for caller, listeners in self.listeners.items():
             # The pyrite threading module can be set to run regular threads or asyncio
             # threads.
+            if caller is not SENTINEL:
+                for listener in listeners:
+                    threading.start_thread(listener, *(caller, *args))
+                continue
             for listener in listeners:
-                threading.start_thread(listener, *(caller, *args))
-            # listener(*args, **kwds)
+                threading.start_thread(listener, *args)
