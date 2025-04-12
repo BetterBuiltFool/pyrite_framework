@@ -96,25 +96,50 @@ class InstanceEvent(ABC):
 
         Example:
         ____________________________________________________________________________________________
-
+        ```
         class A:
 
             def __init__(self):
                 self.event_haver = SomeEntity()
 
+                # Does not have to be an attribute's event, can be any event.
                 @self.event_haver.OnSomeEvent.add_listener(self)
                 def _(self, event_param1, event_param2):
                     print(self)
                     # Do something
+        ```
         ____________________________________________________________________________________________
 
         Every instance of A will create its own listener, which can reference "self" to
         refer to that instance, while also allowing access to the event's
-        parameters.
+        parameters. Please not that any closures in the listener can tie those objects
+        to the lifetimes of the event and/or the caller.
 
-        Note: This method will remove strong references in any closures in the listener.
-        This means the listener function will not prevent the creating object from
-        being garbage collected.
+        Can also be used as a non-decorator on regular functions and bound methods.
+        This will create a hard reference to the object of the bound method, though,
+        and tie it to the lifetime of the event instance.
+
+        Example:
+        ____________________________________________________________________________________________
+        ```
+        class A:
+
+            def some_method(self, event_param1, event_param2):
+                print(self)
+                # Do something
+
+        foo = A()
+
+        some_event.add_listener(foo.some_method)
+        # Remember to pass the method, not call it
+
+        # Or:
+        def bar(event_param1, event_param2):
+            # Do something else
+
+        some_event.add_listener(bar)
+        ```
+        ____________________________________________________________________________________________
 
         :return: The original listener, to be available for reuse and access.
         """
