@@ -4,7 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.types.instance_event import InstanceEvent  # noqa:E402
+from src.pyrite.types.instance_event import InstanceEvent, SENTINEL  # noqa:E402
 from src.pyrite.utils import threading  # noqa:E402
 
 
@@ -58,22 +58,24 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy():
             pass
 
-        self.test_object.OnTestEvent1._register(test_dummy)
+        self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
 
     def test_deregister(self):
 
         def test_dummy():
             pass
 
-        self.test_object.OnTestEvent1._register(test_dummy)
+        self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
 
         self.test_object.OnTestEvent1._deregister(test_dummy)
 
-        self.assertNotIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertNotIn(
+            test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+        )
 
     def test_add_listener(self):
 
@@ -81,7 +83,7 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy(param1: bool):
             pass
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
 
     def test_notify(self):
 
