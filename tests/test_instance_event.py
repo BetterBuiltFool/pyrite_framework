@@ -4,7 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.types.instance_event import InstanceEvent  # noqa:E402
+from src.pyrite.types.instance_event import InstanceEvent, SENTINEL  # noqa:E402
 from src.pyrite.utils import threading  # noqa:E402
 
 
@@ -50,30 +50,32 @@ class TestInstanceEvent(unittest.TestCase):
         self.test_object = TestObject()
 
     def tearDown(self) -> None:
-        self.test_object.OnTestEvent1.listeners = set()
-        self.test_object.OnTestEvent2.listeners = set()
+        self.test_object.OnTestEvent1.listeners = dict()
+        self.test_object.OnTestEvent2.listeners = dict()
 
     def test_register(self):
 
         def test_dummy():
             pass
 
-        self.test_object.OnTestEvent1._register(test_dummy)
+        self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
 
     def test_deregister(self):
 
         def test_dummy():
             pass
 
-        self.test_object.OnTestEvent1._register(test_dummy)
+        self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
 
         self.test_object.OnTestEvent1._deregister(test_dummy)
 
-        self.assertNotIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertNotIn(
+            test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+        )
 
     def test_add_listener(self):
 
@@ -81,7 +83,39 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy(param1: bool):
             pass
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners)
+        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
+
+        event1 = self.test_object.OnTestEvent1
+
+        class TestItem:
+            def __init__(self) -> None:
+                @event1.add_listener(self)
+                def _(self):
+                    pass
+
+        test_item = TestItem()
+
+        self.assertTrue(event1.listeners.get(test_item))
+
+        class TestItem2:
+
+            def test_method(self):
+                pass
+
+        test_item_2 = TestItem2()
+        test_item_3 = TestItem2()
+
+        event1.add_listener(test_item_2.test_method)
+
+        self.assertIn(
+            test_item_2.test_method,
+            self.test_object.OnTestEvent1.listeners.get(SENTINEL),
+            # Bound methods go under SENTINEL
+        )
+        self.assertNotIn(
+            test_item_3.test_method,
+            self.test_object.OnTestEvent1.listeners.get(SENTINEL),
+        )
 
     def test_notify(self):
 

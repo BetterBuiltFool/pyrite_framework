@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from functools import singledispatchmethod
 from typing import Any, TypeVar
-from weakref import proxy, ref, WeakSet, ProxyTypes
+from weakref import ref, WeakKeyDictionary
 
 # This is NOT the standard library threading module.
 from ..utils import threading
@@ -13,29 +14,12 @@ T = TypeVar("T")
 E = TypeVar("E", bound="InstanceEvent")
 
 
-def weaken_closures(listener: Callable) -> Callable:
-    """
-    Converts a callable's closures to proxies, so the callable doesn't prevent garbage
-    collection on the enclosed objects.
+class _Sentinel:
 
-    Makes no changes if the callable has no closures, or if the closures are already
-    proxied.
+    pass
 
-    :return: The listener, without strong references.
-    """
-    if listener.__closure__ is None:
-        return listener
 
-    for cell in listener.__closure__:
-        contents = cell.cell_contents
-        # Instance checks are relatively slow, but we're only doing this occasionally.
-        # ...
-        # You are only doing this occasionally, right?
-        if isinstance(contents, ProxyTypes):
-            continue
-        cell.cell_contents = proxy(contents)
-
-    return listener
+SENTINEL = _Sentinel()
 
 
 class InstanceEvent(ABC):
@@ -71,7 +55,7 @@ class InstanceEvent(ABC):
         to the owning instance if needed.
         """
         self._instance = ref(instance)
-        self.listeners: WeakSet[Callable] = WeakSet()
+        self.listeners: WeakKeyDictionary[Any, list[Callable]] = WeakKeyDictionary()
         """
         A set containing all listeners for this event instance.
 
@@ -95,7 +79,8 @@ class InstanceEvent(ABC):
     def __call__(self, *args: Any, **kwds: Any) -> None:
         self._notify(*args, **kwds)
 
-    def add_listener(self, listener: Callable) -> Callable:
+    @singledispatchmethod
+    def add_listener(self, arg) -> Callable:
         """
         Adds a function, method, or other callable to this InstanceEvent's listeners.
         That listener will be called whenever the event is fired.
@@ -111,38 +96,83 @@ class InstanceEvent(ABC):
 
         Example:
         ____________________________________________________________________________________________
-
+        ```
         class A:
 
             def __init__(self):
                 self.event_haver = SomeEntity()
 
-                @self.event_haver.OnSomeEvent.add_listener
-                def listener_name(event_param1, event_param2):
+                # Does not have to be an attribute's event, can be any event.
+                @self.event_haver.OnSomeEvent.add_listener(self)
+                def _(self, event_param1, event_param2):
                     print(self)
                     # Do something
-
-                self.event_listeners = [listener_name]
+        ```
         ____________________________________________________________________________________________
 
         Every instance of A will create its own listener, which can reference "self" to
         refer to that instance, while also allowing access to the event's
-        parameters.
+        parameters. Please not that any closures in the listener can tie those objects
+        to the lifetimes of the event and/or the caller.
 
-        Note: This method will remove strong references in any closures in the listener.
-        This means the listener function will not prevent the creating object from
-        being garbage collected.
+        Can also be used as a non-decorator on regular functions and bound methods.
+        This will create a hard reference to the object of the bound method, though,
+        and tie it to the lifetime of the event instance.
+
+        Example:
+        ____________________________________________________________________________________________
+        ```
+        class A:
+
+            def some_method(self, event_param1, event_param2):
+                print(self)
+                # Do something
+
+        foo = A()
+
+        some_event.add_listener(foo.some_method)
+        # Remember to pass the method, not call it
+
+        # Or:
+        def bar(event_param1, event_param2):
+            # Do something else
+
+        some_event.add_listener(bar)
+        ```
+        ____________________________________________________________________________________________
 
         :return: The original listener, to be available for reuse and access.
         """
-        self._register(weaken_closures(listener))
+        raise NotImplementedError("Argument type not supported")
+
+    @add_listener.register(Callable)
+    def _(self, listener: Callable) -> Callable:
+        self._register(SENTINEL, listener)
         return listener
 
-    def _register(self, listener: Callable):
-        self.listeners.add(listener)
+    @add_listener.register(object)
+    def _(self, caller: object) -> Callable:
+
+        def inner(listener: Callable):
+            self._register(caller, listener)
+            return listener
+
+        return inner
+
+    def _register(self, caller, listener: Callable):
+        listeners = self.listeners.setdefault(caller, [])
+        # TODO Test if method, keep methods and function in two different sets?
+        listeners.append(listener)
 
     def _deregister(self, listener: Callable):
-        self.listeners.discard(listener)
+        for caller, listeners in self.listeners.items():
+            if listener in listeners:
+                listeners.remove(listener)
+                # Note: if a listener managed to get in there multiple times,
+                # this will only remove one occurence.
+                # If that happens, though, something went horribly wrong.
+                # See you in 2 years!
+                break
 
     def _notify(self, *args, **kwds):
         """
@@ -163,8 +193,12 @@ class InstanceEvent(ABC):
 
         # TODO If there is demand for sync listeners, make them the exception, not the
         # rule. Add a seperate list and registration method for those.
-        for listener in self.listeners:
+        for caller, listeners in self.listeners.items():
             # The pyrite threading module can be set to run regular threads or asyncio
             # threads.
-            threading.start_thread(listener, *args)
-            # listener(*args, **kwds)
+            if caller is not SENTINEL:
+                for listener in listeners:
+                    threading.start_thread(listener, *(caller, *args))
+                continue
+            for listener in listeners:
+                threading.start_thread(listener, *args)
