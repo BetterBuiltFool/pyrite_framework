@@ -136,22 +136,18 @@ class InstanceEvent(ABC):
 
     def _register(self, caller, listener: Callable):
         listeners = self.listeners.setdefault(caller, [])
-        # print(listener.__repr__.__self__)
         # TODO Test if method, keep methods and function in two different sets?
         listeners.append(listener)
-        # self.listeners.update({caller: listener})
 
     def _deregister(self, listener: Callable):
-        # to_remove = None
         for caller, listeners in self.listeners.items():
             if listener in listeners:
                 listeners.remove(listener)
+                # Note: if a listener managed to get in there multiple times,
+                # this will only remove one occurence.
+                # If that happens, though, something went horribly wrong.
+                # See you in 2 years!
                 break
-        #     if value is listener:
-        #         to_remove = key
-        #         break
-        # if to_remove:
-        #     self.listeners.pop(to_remove)
 
     def _notify(self, *args, **kwds):
         """
