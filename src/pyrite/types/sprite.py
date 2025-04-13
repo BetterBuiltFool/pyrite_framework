@@ -7,7 +7,7 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from . import Container
-    from .transform import Transform
+    from ..transform.transform import Transform
     from .enums import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
 from .renderable import Renderable
 from .enums import AnchorPoint
 
-from . import transform
+from ..transform import transform
 
 
 class Sprite(Renderable):
