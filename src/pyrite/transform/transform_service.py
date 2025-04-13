@@ -38,6 +38,10 @@ def is_dirty(component: TransformComponent) -> bool:
     return component in dirty_components
 
 
+def get_dirty() -> set[TransformComponent]:
+    return set(dirty_components)
+
+
 def initialize_component(component: TransformComponent, value: Transform):
     local_transforms.update({component: value})
     world_transforms.update({component: value})  # Defaulting, will update
