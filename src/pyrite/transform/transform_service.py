@@ -46,4 +46,4 @@ def get_dirty() -> set[TransformComponent]:
 
 def initialize_component(component: TransformComponent, value: Transform):
     local_transforms.update({component: value})
-    world_transforms.update({component: value})  # Defaulting, will update
+    world_transforms.update({component: value.copy()})  # Defaulting, will update
