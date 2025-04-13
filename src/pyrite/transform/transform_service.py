@@ -18,7 +18,7 @@ def get_local(component: TransformComponent) -> Transform:
 
 
 def set_local(component: TransformComponent, value: Transform):
-    world_transforms.update({component: value})
+    local_transforms.update({component: value})
 
 
 def get_world(component: TransformComponent) -> Transform:
@@ -27,3 +27,8 @@ def get_world(component: TransformComponent) -> Transform:
 
 def set_world(component: TransformComponent, value: Transform):
     world_transforms.update({component: value})
+
+
+def initialize_component(component: TransformComponent, value: Transform):
+    local_transforms.update({component: value})
+    world_transforms.update({component: value})  # Defaulting, will update
