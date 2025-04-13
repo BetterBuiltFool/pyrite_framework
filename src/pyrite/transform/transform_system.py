@@ -31,3 +31,15 @@ class DefaultTransformSystem(TransformSystem):
             transform = transform_service.get_local(component)
             transform_service.set_world(component, transform)
             transform_service.clean(component)
+
+
+_default_transform_system: type[TransformSystem] = DefaultTransformSystem
+
+
+def get_default_transform_system_type() -> type[TransformSystem]:
+    return _default_transform_system
+
+
+def set_default_transform_system_type(system_type: type[TransformSystem]):
+    global _default_transform_system
+    _default_transform_system = system_type
