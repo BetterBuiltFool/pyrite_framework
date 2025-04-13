@@ -104,10 +104,16 @@ class TransformComponent:
 
     def raw(self) -> Transform:
         """
-        Returns a base transform equal to this WorldTransform
+        Returns a transform object representing this component in local space.
         """
 
-        return Transform(self._position, self._rotation, self._scale)
+        return transform_service.get_local(self)
+
+    def world(self) -> Transform:
+        """
+        Returns a transform object representing this component in world space.
+        """
+        return transform_service.get_world(self)
 
 
 def from_transform(owner: Any, transform: Transform) -> TransformComponent:
