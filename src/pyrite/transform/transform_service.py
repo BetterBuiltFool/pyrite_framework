@@ -98,35 +98,80 @@ def set_local_scale(component: TransformComponent, scale: Point):
 
 
 def get_world(component: TransformComponent) -> Transform:
+    """
+    :param component: Any transform component.
+    :return: A Transform object representing _component_ in world space.
+    """
     return world_transforms.get(component)
 
 
 def get_world_position(component: TransformComponent) -> Point:
+    """
+    :param component: Any transform component.
+    :return: The current position of _component_, in world space.
+    """
     return world_transforms.get(component).position
 
 
 def get_world_rotation(component: TransformComponent) -> float:
+    """
+    :param component: Any transform component.
+    :return: The current rotation of _component_, in world space.
+    """
     return world_transforms.get(component).rotation
 
 
 def get_world_scale(component: TransformComponent) -> Point:
+    """
+    :param component: Any transform component.
+    :return: The current scaling factor of _component_, in world space.
+    """
     return world_transforms.get(component).scale
 
 
 def set_world(component: TransformComponent, value: Transform):
+    """
+    Forces the world transform value of a transform component to a new value.
+
+
+    :param component: Any transform component.
+    :param value: A Transform value, in world space.
+    """
+    # TODO Force update local
     world_transforms.update({component: value})
 
 
 def set_world_position(component: TransformComponent, position: Point):
+    """
+    Sets the position of the transform component to the new position.
+    The component will be marked for updating.
+
+    :param component: Any transform component.
+    :param position: A point in world space.
+    """
     # TODO Force update local values
     world_transforms.get(component).position = Vector2(position)
 
 
 def set_world_rotation(component: TransformComponent, angle: Point):
+    """
+    Sets the rotation of the transform component to the new rotation.
+    The component will be marked for updating.
+
+    :param component: Any transform component.
+    :param angle: An angle in world space.
+    """
     world_transforms.get(component).rotation = angle
 
 
 def set_world_scale(component: TransformComponent, scale: Point):
+    """
+    Sets the scale of the transform component to the new scaling factor.
+    The component will be marked for updating.
+
+    :param component: Any transform component.
+    :param position: A tuple with scaling factors for each dimension, in world space.
+    """
     world_transforms.get(component).scale = Vector2(scale)
 
 
