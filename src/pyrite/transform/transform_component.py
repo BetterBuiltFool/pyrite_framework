@@ -29,78 +29,60 @@ class TransformComponent:
 
     @property
     def position(self) -> Vector2:
-        return transform_service.get_local(self).position
+        return transform_service.get_local_position(self)
 
     @position.setter
     def position(self, new_position: Point):
-        transform = transform_service.get_local(self)
-        transform.position = Vector2(new_position)
-        transform_service.set_local(self, transform)
+        transform_service.set_local_position(self, new_position)
 
     @property
     def world_position(self) -> Vector2:
         """
         Gives the transform's position in world space.
-
-        TODO Make this calculate the world space, currently is just local.
         """
-        return transform_service.get_world(self).position
+        return transform_service.get_world_position(self)
 
     @world_position.setter
     def world_position(self, new_position: Point):
-        transform = transform_service.get_world(self)
-        transform.position = Vector2(new_position)
-        transform_service.set_world(self, transform)
+        transform_service.set_world_position(self, new_position)
 
     @property
     def rotation(self) -> float:
-        return transform_service.get_local(self).rotation
+        return transform_service.get_local_rotation(self)
 
     @rotation.setter
     def rotation(self, angle: float):
-        transform = transform_service.get_local(self)
-        transform.rotation = angle
-        transform_service.set_local(self, transform)
+        transform_service.set_local_rotation(self, angle)
 
     @property
     def world_rotation(self) -> float:
         """
         Gives the transform's rotation in world space.
-
-        TODO Make this calculate the world space, currently is just local.
         """
-        return transform_service.get_world(self).rotation
+        return transform_service.get_world_rotation(self)
 
     @world_rotation.setter
     def world_rotation(self, angle: float):
-        transform = transform_service.get_world(self)
-        transform.rotation = angle
-        transform_service.set_world(self, transform)
+        transform_service.set_world_rotation(self, angle)
 
     @property
     def scale(self) -> Vector2:
-        return transform_service.get_local(self).scale
+        return transform_service.get_local_scale(self)
 
     @scale.setter
     def scale(self, new_scale: Point):
-        transform = transform_service.get_local(self)
-        transform.scale = Vector2(new_scale)
-        transform_service.set_local(self, transform)
+        transform_service.set_local_scale(self, new_scale)
 
     @property
     def world_scale(self) -> Vector2:
         """
         Gives the transform's scaling in world space.
-
-        TODO Make this calculate the world space, currently is just local.
         """
-        return transform_service.get_world(self).scale
+        return transform_service.get_world_scale(self)
 
     @world_scale.setter
     def world_scale(self, new_scale: Point):
-        transform = transform_service.get_world(self)
-        transform.scale = Vector2(new_scale)
-        transform_service.set_world(self, transform)
+        transform_service.set_world_scale(self, new_scale)
 
     def is_dirty(self) -> bool:
         return transform_service.is_dirty(self)
