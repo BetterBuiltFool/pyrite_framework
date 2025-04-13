@@ -5,12 +5,13 @@ from typing import Any, TYPE_CHECKING
 from pygame import Vector2
 
 from .transform import Transform
+from . import transform_service
 
 if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class TransformComponent(Transform):
+class TransformComponent:
 
     def __init__(
         self,
@@ -19,13 +20,16 @@ class TransformComponent(Transform):
         rotation: float = 0,
         scale: Point = (1, 1),
     ) -> None:
-        super().__init__(position, rotation, scale)
+        # super().__init__(position, rotation, scale)
+        transform_service.initialize_component(
+            self, Transform(position, rotation, scale)
+        )
         self.owner = owner
         self._dirty = False
 
     @property
     def position(self) -> Vector2:
-        return self._position
+        return transform_service.get_local(self).position
 
     @position.setter
     def position(self, new_position: Point):
@@ -39,7 +43,7 @@ class TransformComponent(Transform):
 
         TODO Make this calculate the world space, currently is just local.
         """
-        return self._position
+        return transform_service.get_world(self).position
 
     @world_position.setter
     def world_position(self, new_position: Point):
@@ -48,7 +52,7 @@ class TransformComponent(Transform):
 
     @property
     def rotation(self) -> float:
-        return self._rotation
+        return transform_service.get_local(self).rotation
 
     @rotation.setter
     def rotation(self, angle: float):
@@ -62,7 +66,7 @@ class TransformComponent(Transform):
 
         TODO Make this calculate the world space, currently is just local.
         """
-        return self._rotation
+        return transform_service.get_world(self).rotation
 
     @world_rotation.setter
     def world_rotation(self, angle: float):
@@ -71,7 +75,7 @@ class TransformComponent(Transform):
 
     @property
     def scale(self) -> Vector2:
-        return self._scale
+        return transform_service.get_local(self).scale
 
     @scale.setter
     def scale(self, new_scale: Point):
@@ -85,7 +89,7 @@ class TransformComponent(Transform):
 
         TODO Make this calculate the world space, currently is just local.
         """
-        return self._scale
+        return transform_service.get_world(self).scale
 
     @world_scale.setter
     def world_scale(self, new_scale: Point):
