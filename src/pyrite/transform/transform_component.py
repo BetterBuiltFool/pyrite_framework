@@ -33,8 +33,9 @@ class TransformComponent:
 
     @position.setter
     def position(self, new_position: Point):
-        self._dirty = True
-        self._position = Vector2(new_position)
+        transform = transform_service.get_local(self)
+        transform.position = Vector2(new_position)
+        transform_service.set_local(self, transform)
 
     @property
     def world_position(self) -> Vector2:
@@ -47,8 +48,9 @@ class TransformComponent:
 
     @world_position.setter
     def world_position(self, new_position: Point):
-        self._dirty = True
-        self._position = Vector2(new_position)
+        transform = transform_service.get_world(self)
+        transform.position = Vector2(new_position)
+        transform_service.set_world(self, transform)
 
     @property
     def rotation(self) -> float:
@@ -56,8 +58,9 @@ class TransformComponent:
 
     @rotation.setter
     def rotation(self, angle: float):
-        self._dirty = True
-        self._rotation = angle
+        transform = transform_service.get_local(self)
+        transform.rotation = angle
+        transform_service.set_local(self, transform)
 
     @property
     def world_rotation(self) -> float:
@@ -70,8 +73,9 @@ class TransformComponent:
 
     @world_rotation.setter
     def world_rotation(self, angle: float):
-        self._dirty = True
-        self._rotation = angle
+        transform = transform_service.get_world(self)
+        transform.rotation = angle
+        transform_service.set_world(self, transform)
 
     @property
     def scale(self) -> Vector2:
@@ -79,8 +83,9 @@ class TransformComponent:
 
     @scale.setter
     def scale(self, new_scale: Point):
-        self._dirty = True
-        self._scale = Vector2(new_scale)
+        transform = transform_service.get_local(self)
+        transform.scale = Vector2(new_scale)
+        transform_service.set_local(self, transform)
 
     @property
     def world_scale(self) -> Vector2:
@@ -93,8 +98,9 @@ class TransformComponent:
 
     @world_scale.setter
     def world_scale(self, new_scale: Point):
-        self._dirty = True
-        self._scale = Vector2(new_scale)
+        transform = transform_service.get_world(self)
+        transform.scale = Vector2(new_scale)
+        transform_service.set_world(self, transform)
 
     def raw(self) -> Transform:
         """
