@@ -176,17 +176,38 @@ def set_world_scale(component: TransformComponent, scale: Point):
 
 
 def is_dirty(component: TransformComponent) -> bool:
+    """
+    Checks if a transform component is in need of updating.
+
+    :param component: Any transform component.
+    :return: True if _component_ needs cleaning, False otherwise or if _component_ is
+    invalid.
+    """
     return component in dirty_components
 
 
 def clean(component: TransformComponent):
+    """
+    Removes the mark from the component needing to be updated.
+
+    :param component: Any transform component.
+    """
     dirty_components.discard(component)
 
 
 def get_dirty() -> set[TransformComponent]:
+    """
+    :return: A set containing all transform components in need of updates.
+    """
     return set(dirty_components)
 
 
 def initialize_component(component: TransformComponent, value: Transform):
+    """
+    Ensures that the transform component is recognized by the service.
+
+    :param component: Any transform component.
+    :param value: The starting transform of _component_, in local space.
+    """
     local_transforms.update({component: value})
     world_transforms.update({component: value.copy()})  # Defaulting, will update
