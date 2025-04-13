@@ -163,6 +163,6 @@ class Sprite(Renderable):
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
-        if self._is_dirty or self.transform._dirty:
+        if self._is_dirty or self.transform.is_dirty():
             self.display_surface = self._force_update_surface()
         return self.display_surface
