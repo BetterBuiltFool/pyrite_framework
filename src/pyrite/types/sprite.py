@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
 from .renderable import Renderable
 from .enums import AnchorPoint
 
-from ..transform import transform
+from ..transform import transform_component as transform
 
 
 class Sprite(Renderable):
