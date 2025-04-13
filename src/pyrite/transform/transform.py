@@ -60,3 +60,6 @@ class Transform:
             and value._rotation == self._rotation
             and value._scale == self._scale
         )
+
+    def copy(self) -> Transform:
+        return Transform(self._position, self._rotation, self._scale)
