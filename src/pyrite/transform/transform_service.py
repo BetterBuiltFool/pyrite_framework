@@ -38,6 +38,10 @@ def is_dirty(component: TransformComponent) -> bool:
     return component in dirty_components
 
 
+def clean(component: TransformComponent):
+    dirty_components.discard(component)
+
+
 def get_dirty() -> set[TransformComponent]:
     return set(dirty_components)
 
