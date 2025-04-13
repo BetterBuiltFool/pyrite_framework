@@ -9,21 +9,25 @@ from . import transform_service
 
 class TransformSystem(System):
 
+    @staticmethod
     @abstractmethod
-    def to_world(self, transform: Transform, context: Transform) -> Transform:
+    def to_world(transform: Transform, context: Transform) -> Transform:
         pass
 
+    @staticmethod
     @abstractmethod
-    def to_local(self, transform: Transform, context: Transform) -> Transform:
+    def to_local(transform: Transform, context: Transform) -> Transform:
         pass
 
 
 class DefaultTransformSystem(TransformSystem):
 
-    def to_world(self, transform: Transform, context: Transform) -> Transform:
+    @staticmethod
+    def to_world(transform: Transform, context: Transform) -> Transform:
         return transform
 
-    def to_local(self, transform: Transform, context: Transform) -> Transform:
+    @staticmethod
+    def to_local(transform: Transform, context: Transform) -> Transform:
         return transform
 
     def pre_render(self, delta_time: float) -> None:
