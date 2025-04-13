@@ -25,13 +25,11 @@ def set_local(component: TransformComponent, value: Transform):
 
 
 def get_world(component: TransformComponent) -> Transform:
-    # TODO Make a system to update world transforms, using local only for now.
-    return local_transforms.get(component)
+    return world_transforms.get(component)
 
 
 def set_world(component: TransformComponent, value: Transform):
-    # TODO Make a system to update world transforms, using local only for now.
-    local_transforms.update({component: value})
+    world_transforms.update({component: value})
 
 
 def is_dirty(component: TransformComponent) -> bool:
