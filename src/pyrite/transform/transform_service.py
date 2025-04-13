@@ -209,5 +209,6 @@ def initialize_component(component: TransformComponent, value: Transform):
     :param component: Any transform component.
     :param value: The starting transform of _component_, in local space.
     """
+    dirty_components.add(component)
     local_transforms.update({component: value})
     world_transforms.update({component: value.copy()})  # Defaulting, will update
