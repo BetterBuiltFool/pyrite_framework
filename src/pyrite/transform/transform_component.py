@@ -102,6 +102,9 @@ class TransformComponent:
         transform.scale = Vector2(new_scale)
         transform_service.set_world(self, transform)
 
+    def is_dirty(self) -> bool:
+        return transform_service.is_dirty(self)
+
     def raw(self) -> Transform:
         """
         Returns a transform object representing this component in local space.
