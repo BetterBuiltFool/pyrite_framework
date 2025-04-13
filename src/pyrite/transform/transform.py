@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
 from pygame import Vector2
 
@@ -51,14 +51,23 @@ class Transform:
         self._scale = Vector2(new_scale)
 
     def __eq__(self, value: object) -> bool:
-        if not isinstance(value, Transform):
+        if not all(
+            [
+                hasattr(value, "position"),
+                hasattr(value, "rotation"),
+                hasattr(value, "scale"),
+            ]
+        ):
             # Only a Transform or subclass can be equal.
             # If it's not even a Transform, why bother comparing further?
             return False
+        value = cast(
+            Transform, value
+        )  # For the type checker, the above does the same thing
         return (
-            value._position == self._position
-            and value._rotation == self._rotation
-            and value._scale == self._scale
+            value.position == self._position
+            and value.rotation == self._rotation
+            and value.scale == self._scale
         )
 
     def copy(self) -> Transform:
