@@ -13,6 +13,8 @@ from .core.system_manager import SystemManager
 
 from ._helper import defaults
 
+from .transform import transform_system
+
 from .utils import threading
 
 if TYPE_CHECKING:
@@ -159,7 +161,9 @@ class Game:
         self.renderer = Renderer.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
-        self.starting_systems: list[type[System]] = []
+        self.starting_systems: list[type[System]] = [
+            transform_system.get_default_transform_system_type()
+        ]
 
         # Create a placeholder for the window, and the create the actual window
         self.window: pygame.Surface = None
