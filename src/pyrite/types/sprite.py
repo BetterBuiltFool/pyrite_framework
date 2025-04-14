@@ -7,7 +7,7 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from . import Container
-    from .transform import Transform
+    from ..transform.transform import Transform
     from .enums import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
 from .renderable import Renderable
 from .enums import AnchorPoint
 
-from . import transform
+from ..transform import transform_component as transform
 
 
 class Sprite(Renderable):
@@ -163,6 +163,6 @@ class Sprite(Renderable):
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
-        if self._is_dirty or self.transform._dirty:
+        if self._is_dirty or self.transform.is_dirty():
             self.display_surface = self._force_update_surface()
         return self.display_surface
