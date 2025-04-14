@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from types import ModuleType
 
 from ..types import System
 from .transform import Transform
-from . import transform_service
+from . import transform_service as ts
+
+
+transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
 
 class TransformSystem(System):
@@ -93,3 +97,8 @@ def set_default_transform_system_type(system_type: type[TransformSystem]):
     """
     global _default_transform_system
     _default_transform_system = system_type
+
+
+def set_transform_service(module: ModuleType):
+    global transform_service
+    transform_service = module
