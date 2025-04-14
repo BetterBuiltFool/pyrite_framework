@@ -6,10 +6,14 @@ from weakref import WeakKeyDictionary
 from pygame import Vector2
 
 from .transform import Transform
-from . import transform_service
+from . import transform_service as ts
+
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from types import ModuleType
+
+transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
 
 class TransformComponent:
@@ -148,3 +152,8 @@ def from_attributes(
     """
     # This can be overridden to return a subclass of TransformComponent, if needed.
     return TransformComponent(owner, position, rotation, scale)
+
+
+def set_transform_service(module: ModuleType):
+    global transform_service
+    transform_service = module
