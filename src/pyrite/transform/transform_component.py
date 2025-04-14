@@ -29,6 +29,9 @@ class TransformComponent:
 
     @property
     def position(self) -> Vector2:
+        """
+        :return: Position in local space
+        """
         return transform_service.get_local_position(self)
 
     @position.setter
@@ -38,7 +41,7 @@ class TransformComponent:
     @property
     def world_position(self) -> Vector2:
         """
-        Gives the transform's position in world space.
+        :return: Position in world space.
         """
         return transform_service.get_world_position(self)
 
@@ -48,6 +51,9 @@ class TransformComponent:
 
     @property
     def rotation(self) -> float:
+        """
+        :return: Rotation in local space, in degrees.
+        """
         return transform_service.get_local_rotation(self)
 
     @rotation.setter
@@ -57,7 +63,7 @@ class TransformComponent:
     @property
     def world_rotation(self) -> float:
         """
-        Gives the transform's rotation in world space.
+        :Return: Rotation in world space, in degrees.
         """
         return transform_service.get_world_rotation(self)
 
@@ -67,6 +73,9 @@ class TransformComponent:
 
     @property
     def scale(self) -> Vector2:
+        """
+        :return: Local scaling factor.
+        """
         return transform_service.get_local_scale(self)
 
     @scale.setter
@@ -76,7 +85,7 @@ class TransformComponent:
     @property
     def world_scale(self) -> Vector2:
         """
-        Gives the transform's scaling in world space.
+        :return: World scaling factor.
         """
         return transform_service.get_world_scale(self)
 
@@ -85,6 +94,9 @@ class TransformComponent:
         transform_service.set_world_scale(self, new_scale)
 
     def is_dirty(self) -> bool:
+        """
+        :return: True if the component is in need of updates.
+        """
         return transform_service.is_dirty(self)
 
     def raw(self) -> Transform:
