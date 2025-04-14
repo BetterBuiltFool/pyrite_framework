@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Self, TYPE_CHECKING
+from weakref import WeakKeyDictionary
 
 from pygame import Vector2
 
@@ -12,6 +13,12 @@ if TYPE_CHECKING:
 
 
 class TransformComponent:
+    instances: WeakKeyDictionary[Any, TransformComponent] = WeakKeyDictionary()
+
+    def __new__(cls, owner: Any, *args, **kwds) -> Self:
+        new_component = super().__new__(cls)
+        cls.instances.update({owner: new_component})
+        return new_component
 
     def __init__(
         self,
