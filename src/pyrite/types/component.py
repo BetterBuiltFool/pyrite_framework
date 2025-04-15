@@ -20,3 +20,7 @@ class Component(ABC):
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
         return new_component
+
+    @classmethod
+    def get_instances(cls: type[T]) -> dict[Any, T]:
+        return cls.instances
