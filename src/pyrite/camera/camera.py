@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from ..types.camera import CameraBase
 from ..enum import Layer, RenderLayers
 from ..types.renderable import Renderable
-from ..types.surface_sector import SurfaceSector
+from .surface_sector import SurfaceSector
 
 import pygame
 from pygame import Vector2

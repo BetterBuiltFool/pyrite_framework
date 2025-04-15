@@ -5,13 +5,9 @@ from typing import Protocol, runtime_checkable, TYPE_CHECKING
 from .camera import CameraBase  # noqa: F401
 from .entity import Entity  # noqa: F401
 from .renderable import Renderable  # noqa: F401
-from .surface_sector import SurfaceSector  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401
 from .transform import TransformProtocol  # noqa:F401
-
-# TODO Shift most of these out into core, and keep these references for typechecking
-# only
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType
