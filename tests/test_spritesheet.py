@@ -6,7 +6,7 @@ import pygame
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.types.spritesheet import (  # noqa:E402
+from src.pyrite.sprite.spritesheet import (  # noqa:E402
     SimpleSpriteMap,
     SpriteSheet,
 )

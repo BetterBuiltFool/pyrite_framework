@@ -8,13 +8,13 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from . import Container
-    from .enums import Layer, Anchor
+    from ..enum import Layer, Anchor
     from pygame import Surface, Rect
     from pygame.typing import Point
 
 
 from .renderable import Renderable
-from .enums import AnchorPoint
+from ..enum import AnchorPoint
 
 first_creation = True
 

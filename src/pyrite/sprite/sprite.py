@@ -6,15 +6,15 @@ import pygame
 
 
 if typing.TYPE_CHECKING:
-    from . import Container
+    from ..types import Container
     from ..transform.transform import Transform
-    from .enums import Layer, Anchor
+    from ..enum import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
 
 
-from .renderable import Renderable
-from .enums import AnchorPoint
+from ..types.renderable import Renderable
+from ..enum import AnchorPoint
 
 from ..transform import transform_component as transform
 

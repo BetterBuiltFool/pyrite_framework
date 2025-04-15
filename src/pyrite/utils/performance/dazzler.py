@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from ...types.entity import Entity
 from ...types.renderable import Renderable
 
-from ...types.enums import RenderLayers
+from ...enum import RenderLayers
 
 import pygame
 from pygame import Surface, Rect

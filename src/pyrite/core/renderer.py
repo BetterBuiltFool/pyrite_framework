@@ -8,13 +8,14 @@ from weakref import WeakSet
 
 # from pygame.typing import Point
 
-from ..types.camera import CameraBase, Camera
+from ..types.camera import CameraBase
 from ..types.renderable import Renderable
-from ..types.enums import RenderLayers
+from ..enum import RenderLayers
 
 if TYPE_CHECKING:
+    from ..camera import Camera
     from ..types._base_type import _BaseType
-    from ..types.enums import Layer
+    from ..enum import Layer
     from pygame import Rect
 
 import pygame
