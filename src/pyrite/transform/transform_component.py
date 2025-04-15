@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Self, TYPE_CHECKING
-from weakref import WeakKeyDictionary
+from typing import Any, TYPE_CHECKING
 
 from pygame import Vector2
 
 from .transform import Transform
 from . import transform_service as ts
+from ..types import Component
 
 
 if TYPE_CHECKING:
@@ -16,13 +16,7 @@ if TYPE_CHECKING:
 transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
 
-class TransformComponent:
-    instances: WeakKeyDictionary[Any, TransformComponent] = WeakKeyDictionary()
-
-    def __new__(cls, owner: Any, *args, **kwds) -> Self:
-        new_component = super().__new__(cls)
-        cls.instances.update({owner: new_component})
-        return new_component
+class TransformComponent(Component):
 
     def __init__(
         self,
