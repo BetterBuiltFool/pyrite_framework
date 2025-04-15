@@ -6,8 +6,6 @@ from .camera import CameraBase  # noqa: F401
 from .entity import Entity  # noqa: F401
 from .enums import RenderLayers, AnchorPoint, Layer, Anchor  # noqa: F401
 from .renderable import Renderable  # noqa: F401
-from .sprite import Sprite  # noqa: F401
-from .spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .surface_sector import SurfaceSector  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401

@@ -17,8 +17,8 @@ from .camera import Camera, ChaseCamera  # noqa:F401
 from .types.entity import Entity  # noqa:F401
 from .types.renderable import Renderable  # noqa:F401
 from .types.enums import RenderLayers, AnchorPoint  # noqa: F401
-from .types.sprite import Sprite  # noqa: F401
-from .types.spritesheet import SpriteSheet, SpriteMap  # noqa: F401
+from .sprite.sprite import Sprite  # noqa: F401
+from .sprite.spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .types.system import System  # noqa: F401
 
 
