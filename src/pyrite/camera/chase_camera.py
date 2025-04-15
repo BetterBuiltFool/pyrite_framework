@@ -10,8 +10,10 @@ from .surface_sector import SurfaceSector
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from ..types import HasPosition
+    from ..types import HasTransform
     from pygame.typing import Point
+
+    # from ..transform import TransformComponent
 
 
 class ChaseCamera(Camera, Entity):
@@ -29,7 +31,7 @@ class ChaseCamera(Camera, Entity):
         smooth_scale: bool = False,
         enabled=True,
         draw_index=0,
-        target: HasPosition = None,
+        target: HasTransform = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
@@ -63,7 +65,7 @@ class ChaseCamera(Camera, Entity):
         level. If true, the max distance will be consistent within screen space.
         """
         if target and position is None:
-            position = target.position
+            position = target.transform.position
         Camera.__init__(
             self,
             max_size=max_size,
@@ -90,10 +92,12 @@ class ChaseCamera(Camera, Entity):
     def post_update(self, delta_time: float) -> None:
         if not self.target:
             return
-        delta = self.calculate_ease(self.position - self.target.position, delta_time)
+        delta = self.calculate_ease(
+            self.position - self.target.transform.position, delta_time
+        )
         if self.max_distance >= 0:
             delta = self.clamp_magnitude(delta)
-        self.position: Vector2 = self.target.position + delta
+        self.position: Vector2 = self.target.transform.position + delta
 
     def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
         distance = delta.magnitude()
