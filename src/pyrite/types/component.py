@@ -22,5 +22,20 @@ class Component(ABC):
         return new_component
 
     @classmethod
+    def intersection(cls, *component_types: type[T]) -> dict[Any, tuple[type[T], ...]]:
+        intersection = {
+            key: tuple(component[key] for component in component_types)
+            for key in cls.get_shared_keys(*component_types)
+        }
+        return intersection
+
+    @classmethod
+    def get_shared_keys(cls, *component_types: type[T]) -> set[Any]:
+        key_sets = (
+            set(component_type.instances.keys()) for component_type in component_types
+        )
+        return set(cls.instances.keys()).intersection(key_sets)
+
+    @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
         return cls.instances
