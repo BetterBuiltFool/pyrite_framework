@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from .camera import Camera
 from ..types.entity import Entity
-from ..types.surface_sector import SurfaceSector
+from .surface_sector import SurfaceSector
 
 from pygame import Vector2
 
