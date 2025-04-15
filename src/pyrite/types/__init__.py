@@ -11,6 +11,7 @@ from .transform import TransformProtocol  # noqa:F401
 
 if TYPE_CHECKING:
     from ._base_type import _BaseType
+    from ..transform import Transform
 
 import pygame
 
@@ -41,6 +42,10 @@ class HasPosition(Protocol):
     """
     The location of the item, either in world space or local space.
     """
+
+
+class HasTransform(Protocol):
+    transform: Transform
 
 
 class CanUpdate(Protocol):
