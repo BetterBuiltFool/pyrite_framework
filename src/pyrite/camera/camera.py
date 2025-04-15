@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from ..types.camera import CameraBase
-from ..types.enums import Layer, RenderLayers
+from ..enum import Layer, RenderLayers
 from ..types.renderable import Renderable
 from ..types.surface_sector import SurfaceSector
 

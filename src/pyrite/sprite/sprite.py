@@ -8,13 +8,13 @@ import pygame
 if typing.TYPE_CHECKING:
     from ..types import Container
     from ..transform.transform import Transform
-    from ..types.enums import Layer, Anchor
+    from ..enum import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
 
 
 from ..types.renderable import Renderable
-from ..types.enums import AnchorPoint
+from ..enum import AnchorPoint
 
 from ..transform import transform_component as transform
 

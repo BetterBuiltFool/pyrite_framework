@@ -9,7 +9,7 @@ import pygame
 
 if TYPE_CHECKING:
     from . import Container
-    from .enums import Layer
+    from ..enum import Layer
 
 
 class Renderable(_BaseType, ABC):

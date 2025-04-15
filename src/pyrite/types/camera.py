@@ -4,14 +4,13 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 
-from .enums import Layer
-from .renderable import Renderable
-
 import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from ..enum import Layer
+    from .renderable import Renderable
 
 
 class CameraBase:
