@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Protocol, runtime_checkable, TYPE_CHECKING
 
 from .camera import CameraBase  # noqa: F401
+from .component import Component  # noqa: F401
 from .entity import Entity  # noqa: F401
 from .renderable import Renderable  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
