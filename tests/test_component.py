@@ -47,6 +47,9 @@ class TestComponent(unittest.TestCase):
         shared_keys = ComponentA.get_shared_keys(ComponentB)
         self.assertSetEqual(shared_keys, {self.object5, self.object8})
 
+        shared_keys = ComponentA.get_shared_keys(ComponentB, ComponentC)
+        self.assertSetEqual(shared_keys, {self.object8})
+
     def test_intersection(self):
         pass
 
