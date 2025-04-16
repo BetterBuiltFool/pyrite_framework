@@ -62,6 +62,10 @@ class Component(ABC):
         return local_keys.intersection(*key_sets)
 
     @classmethod
+    def get(cls: type[T], key: Any) -> T:
+        return cls.get_instances().get(key)
+
+    @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
         """
         Gives a dictionary of all component instances and their owners.
