@@ -51,6 +51,14 @@ class Component(ABC):
         return cls.get_instances().get(key)
 
     @classmethod
+    def pop(cls: type[T], key: Any) -> T:
+        return cls.get_instances().pop(key)
+
+    @classmethod
+    def remove(cls: type[T], key: Any) -> T:
+        return cls.get_instances().pop(key, None)
+
+    @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
         """
         Gives a dictionary of all component instances and their owners.
