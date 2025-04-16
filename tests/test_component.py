@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pathlib
 import sys
 import unittest
@@ -20,7 +21,24 @@ class ComponentB(Component):
 
 
 class ComponentC(Component):
-    pass
+    component_data: dict[ComponentC, str] = {}
+
+    def __init__(self, data: str = "") -> None:
+        # Super simple test data
+        self.component_data.update({self: data})
+
+    @property
+    def data(self) -> str:
+        return self.component_data.get(self)
+
+    @data.setter
+    def data(self, value: str):
+        self.component_data.update({self: value})
+
+    @classmethod
+    def _remove_component(cls, component: ComponentC):
+        # This will raise without a valid component
+        cls.component_data.pop(component)
 
 
 class TestOwner:
