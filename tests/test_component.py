@@ -54,6 +54,16 @@ class TestComponent(unittest.TestCase):
         shared_keys = ComponentA.intersect(ComponentB, ComponentC)
         self.assertSetEqual(shared_keys, {self.object8})
 
+    def test_remove_from(self):
+        self.assertIn(self.object8, ComponentA.get_instances())
+
+        ComponentA.remove_from(self.object8)
+
+        self.assertNotIn(self.object8, ComponentA.get_instances())
+
+        # See if we error removing an object not in A
+        ComponentA.remove_from(self.object1)
+
 
 if __name__ == "__main__":
 
