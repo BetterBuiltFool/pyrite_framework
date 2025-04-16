@@ -39,9 +39,14 @@ class Component(ABC):
         """
         # Outputs a dictionary with a key and tuple of component instances,
         # such that for each component within, component.owner = key
+        shared_keys = cls.get_shared_keys(*component_types)
+        component_types = (
+            cls,
+            *component_types,
+        )  # Pack the current component into the types
         intersection = {
             key: tuple(component[key] for component in component_types)
-            for key in cls.get_shared_keys(*component_types)
+            for key in shared_keys
         }
         return intersection
 
