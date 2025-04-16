@@ -54,10 +54,12 @@ class Component(ABC):
         :component_types: Any number of component classes.
         :return: A set of objects that exist as keys for all involved components.
         """
+
         key_sets = (
             set(component_type.instances.keys()) for component_type in component_types
         )
-        return set(cls.instances.keys()).intersection(key_sets)
+        local_keys = set(cls.instances.keys())
+        return local_keys.intersection(*key_sets)
 
     @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
