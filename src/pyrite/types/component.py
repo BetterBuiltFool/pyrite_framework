@@ -24,6 +24,10 @@ class Component(ABC):
 
     @property
     def owner(self) -> Any:
+        """
+        The owning object for the component.
+        Property returns a strong reference.
+        """
         return self._owner()
 
     @classmethod
