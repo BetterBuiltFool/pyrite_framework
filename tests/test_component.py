@@ -8,11 +8,15 @@ from src.pyrite.types import Component  # noqa:E402
 
 
 class ComponentA(Component):
-    pass
+
+    def foo(self):
+        pass
 
 
 class ComponentB(Component):
-    pass
+
+    def bar(self):
+        pass
 
 
 class ComponentC(Component):
@@ -51,7 +55,9 @@ class TestComponent(unittest.TestCase):
         self.assertSetEqual(shared_keys, {self.object8})
 
     def test_intersection(self):
-        pass
+        intersection = ComponentA.intersection(ComponentC)
+        self.assertIn(self.object6, intersection)
+        self.assertIn(self.object8, intersection)
 
 
 if __name__ == "__main__":
