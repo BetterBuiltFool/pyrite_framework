@@ -45,7 +45,7 @@ class Component(ABC):
             *component_types,
         )  # Pack the current component into the types
         intersection = {
-            key: tuple(component[key] for component in component_types)
+            key: tuple(component.get(key) for component in component_types)
             for key in shared_keys
         }
         return intersection
@@ -69,10 +69,6 @@ class Component(ABC):
     @classmethod
     def get(cls: type[T], key: Any) -> T:
         return cls.get_instances().get(key)
-
-    @classmethod
-    def __getitem__(cls: type[T], key: Any) -> T:
-        return cls.get(key)
 
     @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
