@@ -31,7 +31,7 @@ class Component(ABC):
         return self._owner()
 
     @classmethod
-    def intersection(cls, *component_types: type[T]) -> dict[Any, tuple[type[T], ...]]:
+    def intersection(cls, *component_types: type[T]) -> dict[Any, tuple[T, ...]]:
         """
         Creates a dictionary of all components with shared owners.
 
