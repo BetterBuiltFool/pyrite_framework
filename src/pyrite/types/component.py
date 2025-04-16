@@ -55,7 +55,7 @@ class Component(ABC):
         """
         Removes the component instance belonging to _key_, if it exists.
 
-        :param key: _description_
+        :param key: The owning object of a component.
         """
         component = cls.instances.pop(key, None)
         if component is not None:
