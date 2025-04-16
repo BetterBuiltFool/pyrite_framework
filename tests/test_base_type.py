@@ -4,7 +4,7 @@ import unittest
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from pyrite.types import Container  # noqa:E402
+from src.pyrite.types import Container  # noqa:E402
 from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
 
