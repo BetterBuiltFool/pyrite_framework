@@ -61,8 +61,8 @@ class Component(ABC):
         if component is not None:
             cls._remove_component(component)
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def _remove_component(cls, component: T):
         pass
 
