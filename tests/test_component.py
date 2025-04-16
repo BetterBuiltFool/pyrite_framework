@@ -60,10 +60,14 @@ class TestComponent(unittest.TestCase):
         self.object2 = TestOwner(True, False, False)  # A
         self.object3 = TestOwner(False, True, False)  # B
         self.object4 = TestOwner(False, False, True)  # C
+        ComponentC.get(self.object4).data = "foo"
         self.object5 = TestOwner(True, True, False)  # A, B
         self.object6 = TestOwner(True, False, True)  # A, C
+        ComponentC.get(self.object6).data = "bar"
         self.object7 = TestOwner(False, True, True)  # B, C
+        ComponentC.get(self.object7).data = "baz"
         self.object8 = TestOwner(True, True, True)  # A, B, C
+        ComponentC.get(self.object8).data = "qux"
 
     def test_intersect(self):
         shared_keys = ComponentA.intersect(ComponentB)
