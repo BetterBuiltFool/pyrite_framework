@@ -47,11 +47,11 @@ class TestComponent(unittest.TestCase):
         self.object7 = TestOwner(False, True, True)  # B, C
         self.object8 = TestOwner(True, True, True)  # A, B, C
 
-    def test_get_shared_keys(self):
-        shared_keys = ComponentA.get_shared_keys(ComponentB)
+    def test_intersect(self):
+        shared_keys = ComponentA.intersect(ComponentB)
         self.assertSetEqual(shared_keys, {self.object5, self.object8})
 
-        shared_keys = ComponentA.get_shared_keys(ComponentB, ComponentC)
+        shared_keys = ComponentA.intersect(ComponentB, ComponentC)
         self.assertSetEqual(shared_keys, {self.object8})
 
 
