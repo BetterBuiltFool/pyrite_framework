@@ -69,6 +69,9 @@ class TestComponent(unittest.TestCase):
         self.object8 = TestOwner(True, True, True)  # A, B, C
         ComponentC.get(self.object8).data = "qux"
 
+    def tearDown(self) -> None:
+        ComponentC.component_data = {}
+
     def test_intersect(self):
         shared_keys = ComponentA.intersect(ComponentB)
         self.assertSetEqual(shared_keys, {self.object5, self.object8})
@@ -85,6 +88,18 @@ class TestComponent(unittest.TestCase):
 
         # See if we error removing an object not in A
         ComponentA.remove_from(self.object1)
+
+    def test_remove_component(self):
+
+        data = [data for data in ComponentC.component_data.values()]
+
+        self.assertIn("qux", data)
+
+        ComponentC.remove_from(self.object8)
+
+        data = [data for data in ComponentC.component_data.values()]
+
+        self.assertNotIn("qux", data)
 
 
 if __name__ == "__main__":
