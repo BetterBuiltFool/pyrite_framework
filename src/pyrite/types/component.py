@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
@@ -62,8 +62,15 @@ class Component(ABC):
             cls._remove_component(component)
 
     @classmethod
-    @abstractmethod
     def _remove_component(cls, component: T):
+        """
+        Method for cleaning up a component's data when the component is used.
+        If the data is simple, a weak key dictionary with the components as keys may be
+        sufficient, but for complex data storage (i.e. numpy arrays as storage), it may
+        be necessary to implement this for a subclass.
+
+        :param component: _description_
+        """
         pass
 
     @classmethod
