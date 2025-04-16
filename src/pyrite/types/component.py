@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
@@ -51,12 +51,20 @@ class Component(ABC):
         return cls.get_instances().get(key)
 
     @classmethod
-    def pop(cls: type[T], key: Any) -> T:
-        return cls.get_instances().pop(key)
+    def remove_from(cls, key: Any):
+        """
+        Removes the component instance belonging to _key_, if it exists.
 
+        :param key: _description_
+        """
+        component = cls.instances.pop(key, None)
+        if component is not None:
+            cls._remove_component(component)
+
+    @abstractmethod
     @classmethod
-    def remove(cls: type[T], key: Any) -> T:
-        return cls.get_instances().pop(key, None)
+    def _remove_component(cls, component: T):
+        pass
 
     @classmethod
     def get_instances(cls: type[T]) -> dict[Any, T]:
