@@ -31,7 +31,7 @@ class Component(ABC):
         return self._owner()
 
     @classmethod
-    def get_shared_keys(cls, *component_types: type[T]) -> set[Any]:
+    def intersect(cls, *component_types: type[T]) -> set[Any]:
         """
         Generates a set of keys that are shared between the component and the supplied
         component types. Can take any number of component types.
