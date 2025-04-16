@@ -31,14 +31,16 @@ class Component(ABC):
         return self._owner()
 
     @classmethod
-    def intersection(cls, *component_types: type[T]) -> dict[Any, tuple[T, ...]]:
+    def intersection(
+        cls, *component_types: type[Component]
+    ) -> dict[Any, tuple[Component, ...]]:
         """
         Creates a dictionary of all components with shared owners.
+        Output has the form of {key: (components,)} such that _components_ is all
+        involved components, in order.
 
-        :return: _description_
+        Typehinting limitations means that the outputs are represented by Component.
         """
-        # Outputs a dictionary with a key and tuple of component instances,
-        # such that for each component within, component.owner = key
         shared_keys = cls.get_shared_keys(*component_types)
         component_types = (
             cls,
