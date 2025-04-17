@@ -6,7 +6,6 @@ from .core.rate_settings import RateSettings  # noqa:F401
 from .game import (  # noqa:F401
     Game,
     AsyncGame,
-    get_system_manager,
     get_game_instance,
 )
 

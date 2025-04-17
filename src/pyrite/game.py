@@ -46,27 +46,6 @@ def set_game_instance(instance: Game):
     _active_instance = instance
 
 
-def get_system_manager() -> SystemManager:
-    """
-    Returns the current game's system manager.
-
-    Will create any starting systems the first time this is run.
-
-    :raises RuntimeError: If no valid game is running
-    """
-    if _active_instance is None:
-        raise RuntimeError("Cannot get system manager without a game instance running.")
-
-    # Ensures the starting systems have been instantiated so other objects can use them.
-    _active_instance.start_systems()
-
-    return _retrieve_system_manager()
-
-
-def _retrieve_system_manager() -> SystemManager:
-    return _active_instance.system_manager
-
-
 defaults._default_container_getter = get_game_instance
 
 
@@ -183,10 +162,10 @@ class Game:
         """
         Initializes any systems that are indicated to be required when the game starts.
         """
-        global get_system_manager
-        get_system_manager = _retrieve_system_manager
+        # global get_system_manager
+        # get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
-            system()
+            system(system_manager=self.system_manager)
 
     def main(self):
         """
