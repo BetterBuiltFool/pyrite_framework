@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Sequence
-from typing import Any, TYPE_CHECKING
+from typing import Any, Self, TYPE_CHECKING
 from weakref import WeakSet
 
 # from pygame.typing import Point
@@ -21,11 +21,24 @@ if TYPE_CHECKING:
 import pygame
 
 
+active_render_manager: Renderer = None
+
+
+def get_render_manager() -> Renderer:
+    return active_render_manager
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
     render queue for the renderer.
     """
+
+    def __new__(cls, *args, **kwds) -> Self:
+        new_manager = super().__new__(cls)
+        global active_render_manager
+        active_render_manager = new_manager
+        return new_manager
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
