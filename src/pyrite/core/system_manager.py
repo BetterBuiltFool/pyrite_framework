@@ -27,7 +27,29 @@ def set_system_manager(manager: SystemManager):
     _active_system_manager = manager
 
 
+_deferred_enables: set[System] = set()
+
+
+def enable(system: System):
+    if _active_system_manager:
+        _active_system_manager.enable(system)
+        return
+    _deferred_enables.add(system)
+
+
+def disable(system: System):
+    if _active_system_manager:
+        _active_system_manager.disable(system)
+        return
+    _deferred_enables.discard(system)
+
+
 class SystemManager(ABC):
+
+    def __init__(self) -> None:
+        # Subclasses must call super().__init__ at the END of initialization
+        for system in _deferred_enables:
+            self.enable(system)
 
     @abstractmethod
     def enable(self, system: System) -> bool:
@@ -146,6 +168,7 @@ class DefaultSystemManager(SystemManager):
         self.systems: dict[type[System], System] = {}
         self.active_systems: WeakSet[System] = WeakSet()
         self.current_systems: list[System] = []
+        super().__init__()
 
     def enable(self, system: System) -> bool:
         self._capture_system(system)
