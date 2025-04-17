@@ -18,7 +18,7 @@ SystemType = TypeVar("SystemType")
 _active_system_manager: SystemManager = None
 
 
-def get_system_maanger() -> SystemManager:
+def get_system_manager() -> SystemManager:
     return _active_system_manager
 
 
