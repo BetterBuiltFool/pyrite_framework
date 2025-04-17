@@ -25,11 +25,9 @@ class TransformComponent(Component):
         rotation: float = 0,
         scale: Point = (1, 1),
     ) -> None:
-        # super().__init__(position, rotation, scale)
         transform_service.initialize_component(
             self, Transform(position, rotation, scale)
         )
-        self.owner = owner
         self._dirty = False
 
     @property
