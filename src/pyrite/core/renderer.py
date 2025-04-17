@@ -28,6 +28,11 @@ def get_render_manager() -> RenderManager:
     return active_render_manager
 
 
+def set_render_manager(manager: RenderManager):
+    global active_render_manager
+    active_render_manager = manager
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
@@ -36,8 +41,7 @@ class RenderManager(ABC):
 
     def __new__(cls, *args, **kwds) -> Self:
         new_manager = super().__new__(cls)
-        global active_render_manager
-        active_render_manager = new_manager
+        set_render_manager(new_manager)
         return new_manager
 
     @abstractmethod
