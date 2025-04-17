@@ -21,28 +21,28 @@ if TYPE_CHECKING:
 import pygame
 
 
-active_render_manager: RenderManager = None
+_active_render_manager: RenderManager = None
 
 
 def get_render_manager() -> RenderManager:
-    return active_render_manager
+    return _active_render_manager
 
 
 def set_render_manager(manager: RenderManager):
-    global active_render_manager
-    active_render_manager = manager
+    global _active_render_manager
+    _active_render_manager = manager
 
 
-active_renderer: Renderer = None
+_active_renderer: Renderer = None
 
 
 def get_renderer() -> Renderer:
-    return active_renderer
+    return _active_renderer
 
 
 def set_renderer(renderer: Renderer):
-    global active_renderer
-    active_renderer = renderer
+    global _active_renderer
+    _active_renderer = renderer
 
 
 class RenderManager(ABC):
