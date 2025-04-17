@@ -116,6 +116,11 @@ class Renderer(ABC):
     Class responsible for drawing renderables to the screen.
     """
 
+    def __new__(cls) -> Self:
+        new_renderer = super().__new__(cls)
+        set_renderer(new_renderer)
+        return new_renderer
+
     @abstractmethod
     def render(
         self,
