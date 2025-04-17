@@ -59,17 +59,17 @@ class Component(ABC):
         """
         component = cls.instances.pop(key, None)
         if component is not None:
-            cls._remove_component(component)
+            cls._purge_component(component)
 
     @classmethod
-    def _remove_component(cls, component: T):
+    def _purge_component(cls, component: T):
         """
         Method for cleaning up a component's data when the component is used.
         If the data is simple, a weak key dictionary with the components as keys may be
         sufficient, but for complex data storage (i.e. numpy arrays as storage), it may
         be necessary to implement this for a subclass.
 
-        :param component: _description_
+        :param component: The component instance to be purged.
         """
         pass
 

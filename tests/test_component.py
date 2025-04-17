@@ -36,7 +36,7 @@ class ComponentC(Component):
         self.component_data.update({self: value})
 
     @classmethod
-    def _remove_component(cls, component: ComponentC):
+    def _purge_component(cls, component: ComponentC):
         # This will raise without a valid component
         cls.component_data.pop(component)
 
