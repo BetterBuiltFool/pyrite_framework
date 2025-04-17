@@ -33,6 +33,18 @@ def set_render_manager(manager: RenderManager):
     active_render_manager = manager
 
 
+active_renderer: Renderer = None
+
+
+def get_renderer() -> Renderer:
+    return active_renderer
+
+
+def set_renderer(renderer: Renderer):
+    global active_renderer
+    active_renderer = renderer
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
