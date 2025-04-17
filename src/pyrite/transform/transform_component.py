@@ -25,6 +25,7 @@ class TransformComponent(Component):
         rotation: float = 0,
         scale: Point = (1, 1),
     ) -> None:
+        super().__init__(owner)
         transform_service.initialize_component(
             self, Transform(position, rotation, scale)
         )
