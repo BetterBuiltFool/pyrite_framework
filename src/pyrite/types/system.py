@@ -3,7 +3,7 @@ from abc import ABC
 
 import typing
 
-from .. import game
+from ..core import system_manager as sm
 
 if typing.TYPE_CHECKING:
     from ..core.system_manager import SystemManager
@@ -25,7 +25,7 @@ class System(ABC):
             approximately distance from last, defaults to 0 (Tie for first)
         """
         if system_manager is None:
-            system_manager = game.get_system_manager()
+            system_manager = sm.get_system_manager()
         self.system_manager = system_manager
         self._enabled = None
         self.enabled = enabled
@@ -38,7 +38,6 @@ class System(ABC):
     @enabled.setter
     def enabled(self, value: bool):
         self._enabled = value
-        # system_manager = game.get_system_manager()
         if value:
             self.system_manager.enable(self)
         else:
