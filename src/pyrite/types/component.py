@@ -19,8 +19,10 @@ class Component(ABC):
     def __new__(cls: type[T], owner: Any, *args, **kwds) -> Self:
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
-        new_component._owner = ref(owner)
         return new_component
+
+    def __init__(self, owner: Any) -> None:
+        self._owner = ref(owner)
 
     @property
     def owner(self) -> Any:
