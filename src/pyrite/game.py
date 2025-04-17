@@ -63,18 +63,6 @@ def get_system_manager() -> SystemManager:
     return _retrieve_system_manager()
 
 
-def get_entity_manager() -> EntityManager:
-    """
-    Gets the EntityManager from the current game instance.
-
-    :raises RuntimeError: If no valid game is running
-    """
-    if _active_instance is None:
-        raise RuntimeError("Cannot get entity manager without a game instance running.")
-
-    return _active_instance.entity_manager
-
-
 def _retrieve_system_manager() -> SystemManager:
     return _active_instance.system_manager
 

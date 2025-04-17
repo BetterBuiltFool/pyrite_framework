@@ -8,7 +8,6 @@ from .game import (  # noqa:F401
     AsyncGame,
     get_system_manager,
     get_game_instance,
-    get_entity_manager,
 )
 
 from .camera import Camera, ChaseCamera  # noqa:F401
