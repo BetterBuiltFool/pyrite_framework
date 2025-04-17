@@ -84,6 +84,15 @@ class TestComponent(unittest.TestCase):
             shared_keys, {self.object2, self.object5, self.object6, self.object8}
         )
 
+    def test_get(self):
+        object2_component_a = ComponentA.get(self.object2)
+
+        self.assertIsNotNone(object2_component_a)
+
+        object1_component_a = ComponentA.get(self.object1)  # No such thing
+
+        self.assertIsNone(object1_component_a)
+
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())
 
