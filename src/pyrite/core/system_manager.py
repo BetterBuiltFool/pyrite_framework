@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from typing import TYPE_CHECKING, TypeVar
+from typing import Self, TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
 
@@ -45,6 +45,11 @@ def disable(system: System):
 
 
 class SystemManager(ABC):
+
+    def __new__(cls) -> Self:
+        new_manager = super().__new__(cls)
+        set_system_manager(new_manager)
+        return new_manager
 
     def __init__(self) -> None:
         # Subclasses must call super().__init__ at the END of initialization
