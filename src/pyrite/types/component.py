@@ -11,6 +11,11 @@ T = TypeVar("T", bound="Component")
 
 
 class Component(ABC):
+    """
+    Components are objects that mark other object with attributes. Components can be
+    intersected with other components to get a set of shared key objects.
+    """
+
     instances: WeakKeyDictionary[Any, Component] = WeakKeyDictionary()
 
     def __init_subclass__(cls: type[T]) -> None:
@@ -50,6 +55,12 @@ class Component(ABC):
 
     @classmethod
     def get(cls: type[T], key: Any) -> T:
+        """
+        Returns the component instance belonging to the key.
+
+        :param key: The owning object of a component.
+        :return: The component instance belonging to _key_, if extantit exists
+        """
         return cls.get_instances().get(key)
 
     @classmethod
