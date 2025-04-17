@@ -15,6 +15,18 @@ if TYPE_CHECKING:
 SystemType = TypeVar("SystemType")
 
 
+_active_system_manager: SystemManager = None
+
+
+def get_system_maanger() -> SystemManager:
+    return _active_system_manager
+
+
+def set_system_manager(manager: SystemManager):
+    global _active_system_manager
+    _active_system_manager = manager
+
+
 class SystemManager(ABC):
 
     @abstractmethod
