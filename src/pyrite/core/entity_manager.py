@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 
 from weakref import WeakSet
 
@@ -13,7 +13,24 @@ if TYPE_CHECKING:
 import pygame
 
 
+_active_entity_manager: EntityManager = None
+
+
+def get_entity_manager() -> EntityManager:
+    return _active_entity_manager
+
+
+def set_entity_manager(manager: EntityManager):
+    global _active_entity_manager
+    _active_entity_manager = manager
+
+
 class EntityManager(ABC):
+
+    def __new__(cls) -> Self:
+        new_manager = super().__new__(cls)
+        set_entity_manager(new_manager)
+        return new_manager
 
     @abstractmethod
     def enable(self, item: _BaseType) -> bool:
