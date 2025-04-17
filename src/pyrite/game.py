@@ -165,7 +165,7 @@ class Game:
         # global get_system_manager
         # get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
-            system(system_manager=self.system_manager)
+            system()
 
     def main(self):
         """
