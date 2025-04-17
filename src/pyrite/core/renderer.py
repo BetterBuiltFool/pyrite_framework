@@ -21,10 +21,10 @@ if TYPE_CHECKING:
 import pygame
 
 
-active_render_manager: Renderer = None
+active_render_manager: RenderManager = None
 
 
-def get_render_manager() -> Renderer:
+def get_render_manager() -> RenderManager:
     return active_render_manager
 
 
