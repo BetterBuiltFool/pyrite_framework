@@ -67,10 +67,10 @@ class Renderable(ABC):
             enabled = self.enabled
             # This allows us to update within the renderer without firing
             # on enable/disable events.
-            self.container.disable(self)
+            renderer.disable(self)
             self._layer = new_layer
             if enabled:
-                self.container.enable(self)
+                renderer.enable(self)
 
     def on_preenable(self):
         """
