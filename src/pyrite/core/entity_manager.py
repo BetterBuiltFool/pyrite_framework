@@ -29,6 +29,12 @@ _deferred_enables: set[Entity] = set()
 
 
 def enable(entity: Entity):
+    """
+    Enables an entity with the active entity manager.
+    If no active entity manager exists, the entity is stored until one is created.
+
+    :param entity: An entity to be enabled.
+    """
     if _active_entity_manager:
         _active_entity_manager.enable(entity)
         return
@@ -36,6 +42,13 @@ def enable(entity: Entity):
 
 
 def disable(entity: Entity):
+    """
+    Disables an entity in the active entity manager,
+    If no active entity manager exists and the entity is queued for enabling,
+    it is removed from the queue.
+
+    :param entity: An entity to be disabled.
+    """
     if _active_entity_manager:
         _active_entity_manager.disable(entity)
         return

@@ -49,7 +49,12 @@ _deferred_enables: set[Renderable] = set()
 
 
 def enable(renderable: Renderable):
+    """
+    Enables the renderable with the active render manager.
+    If no active render manager exists, the renderable is stored until one is created.
 
+    :param renderable: A renderable to be enabled.
+    """
     if _active_render_manager:
         _active_render_manager.enable(renderable)
         return
@@ -57,6 +62,13 @@ def enable(renderable: Renderable):
 
 
 def disable(renderable: Renderable):
+    """
+    Disables the renderable in the active render manager.
+    If not active render manager exists and the renderable is queued for enabling,
+    it is removed from the queue.
+
+    :param renderable: A renderable to be disabled.
+    """
     if _active_render_manager:
         _active_render_manager.disable(renderable)
         return

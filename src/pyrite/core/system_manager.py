@@ -31,6 +31,12 @@ _deferred_enables: set[System] = set()
 
 
 def enable(system: System):
+    """
+    Enables a system with the active system manager.
+    If no active system manager exists, the system is stored until one is created.
+
+    :param system: A system to be enabled.
+    """
     if _active_system_manager:
         _active_system_manager.enable(system)
         return
@@ -38,6 +44,13 @@ def enable(system: System):
 
 
 def disable(system: System):
+    """
+    Disables a system in the active system maanger,
+    If no active system manager exists and the system is queued for enabling,
+    it is removed from the queue.
+
+    :param system: A system to be disabled.
+    """
     if _active_system_manager:
         _active_system_manager.disable(system)
         return
