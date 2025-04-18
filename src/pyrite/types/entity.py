@@ -1,3 +1,4 @@
+from pyrite.types import Container
 from ._base_type import _BaseType
 
 import pygame
@@ -7,6 +8,9 @@ class Entity(_BaseType):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
     """
+
+    def __init__(self, container: Container = None, enabled=True) -> None:
+        _BaseType.__init__(self, container, enabled)
 
     def pre_update(self, delta_time: float) -> None:
         """
