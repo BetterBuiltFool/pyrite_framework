@@ -54,6 +54,18 @@ def disable(entity: Entity):
     _deferred_enables.discard(entity)
 
 
+def is_enabled(entity: Entity) -> bool:
+    """
+    Determines if the passed entity is currently considered enabled by the manager.
+
+    :param item: Any entity
+    :return: True if currently enabled, False if disabled
+    """
+    if not _active_entity_manager:
+        return False
+    return _active_entity_manager.is_enabled(entity)
+
+
 class EntityManager(ABC):
 
     def __new__(cls) -> Self:
