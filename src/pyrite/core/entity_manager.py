@@ -25,12 +25,34 @@ def set_entity_manager(manager: EntityManager):
     _active_entity_manager = manager
 
 
+_deferred_enables: set[Entity] = set()
+
+
+def enable(system: Entity):
+    if _active_entity_manager:
+        _active_entity_manager.enable(system)
+        return
+    _deferred_enables.add(system)
+
+
+def disable(system: Entity):
+    if _active_entity_manager:
+        _active_entity_manager.disable(system)
+        return
+    _deferred_enables.discard(system)
+
+
 class EntityManager(ABC):
 
     def __new__(cls) -> Self:
         new_manager = super().__new__(cls)
         set_entity_manager(new_manager)
         return new_manager
+
+    def __init__(self) -> None:
+        # Subclasses must call super().__init__ at the END of initialization
+        for entity in _deferred_enables:
+            self.enable(entity)
 
     @abstractmethod
     def enable(self, item: _BaseType) -> bool:
@@ -146,6 +168,8 @@ class DefaultEntityManager(EntityManager):
         self.entities: WeakSet[Entity] = WeakSet()
         self._added_buffer: set[Entity] = set()
         self._disabled_buffer: set[Entity] = set()
+
+        super().__init__()
 
     def enable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):
