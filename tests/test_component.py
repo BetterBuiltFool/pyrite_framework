@@ -2,7 +2,7 @@ from __future__ import annotations
 import pathlib
 import sys
 import unittest
-
+from weakref import WeakKeyDictionary
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.types import Component  # noqa:E402
@@ -70,19 +70,10 @@ class TestComponent(unittest.TestCase):
         self.object8.components[2].data = "qux"
 
     def tearDown(self) -> None:
+        ComponentA.instances = WeakKeyDictionary()
+        ComponentB.instances = WeakKeyDictionary()
+        ComponentC.instances = WeakKeyDictionary()
         ComponentC.component_data = {}
-
-    def test_intersect(self):
-        shared_keys = ComponentA.intersect(ComponentB)
-        self.assertSetEqual(shared_keys, {self.object5, self.object8})
-
-        shared_keys = ComponentA.intersect(ComponentB, ComponentC)
-        self.assertSetEqual(shared_keys, {self.object8})
-
-        shared_keys = ComponentA.intersect()
-        self.assertSetEqual(
-            shared_keys, {self.object2, self.object5, self.object6, self.object8}
-        )
 
     def test_get(self):
         object2_component_a = ComponentA.get(self.object2)
@@ -92,6 +83,19 @@ class TestComponent(unittest.TestCase):
         object1_component_a = ComponentA.get(self.object1)  # No such thing
 
         self.assertIsNone(object1_component_a)
+
+    def test_intersect(self):
+        shared_keys = ComponentA.intersect(ComponentB)
+        goal_keys = {self.object5, self.object8}
+        self.assertSetEqual(shared_keys, goal_keys)
+
+        shared_keys = ComponentA.intersect(ComponentB, ComponentC)
+        goal_keys = {self.object8}
+        self.assertSetEqual(shared_keys, goal_keys)
+
+        shared_keys = ComponentA.intersect()
+        goal_keys = {self.object2, self.object5, self.object6, self.object8}
+        self.assertSetEqual(shared_keys, goal_keys)
 
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())

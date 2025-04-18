@@ -3,18 +3,15 @@ from abc import ABC
 
 import typing
 
-from .. import game
+from ..core import system_manager
 
 if typing.TYPE_CHECKING:
-    from ..core.system_manager import SystemManager
     from pygame import Event
 
 
 class System(ABC):
 
-    def __init__(
-        self, enabled=True, order_index=0, system_manager: SystemManager = None
-    ) -> None:
+    def __init__(self, enabled=True, order_index=0) -> None:
         """
         Base class for all systems.
 
@@ -24,9 +21,6 @@ class System(ABC):
             priority going down as value increases, but negative numbers are
             approximately distance from last, defaults to 0 (Tie for first)
         """
-        if system_manager is None:
-            system_manager = game.get_system_manager()
-        self.system_manager = system_manager
         self._enabled = None
         self.enabled = enabled
         self.order_index = order_index
@@ -38,11 +32,10 @@ class System(ABC):
     @enabled.setter
     def enabled(self, value: bool):
         self._enabled = value
-        # system_manager = game.get_system_manager()
         if value:
-            self.system_manager.enable(self)
+            system_manager.enable(self)
         else:
-            self.system_manager.disable(self)
+            system_manager.disable(self)
 
     def pre_update(self, delta_time: float) -> None:
         """

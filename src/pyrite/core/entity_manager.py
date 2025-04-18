@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 
 from weakref import WeakSet
 
@@ -13,7 +13,59 @@ if TYPE_CHECKING:
 import pygame
 
 
+_active_entity_manager: EntityManager = None
+
+
+def get_entity_manager() -> EntityManager:
+    return _active_entity_manager
+
+
+def set_entity_manager(manager: EntityManager):
+    global _active_entity_manager
+    _active_entity_manager = manager
+
+
+_deferred_enables: set[Entity] = set()
+
+
+def enable(entity: Entity):
+    """
+    Enables an entity with the active entity manager.
+    If no active entity manager exists, the entity is stored until one is created.
+
+    :param entity: An entity to be enabled.
+    """
+    if _active_entity_manager:
+        _active_entity_manager.enable(entity)
+        return
+    _deferred_enables.add(entity)
+
+
+def disable(entity: Entity):
+    """
+    Disables an entity in the active entity manager,
+    If no active entity manager exists and the entity is queued for enabling,
+    it is removed from the queue.
+
+    :param entity: An entity to be disabled.
+    """
+    if _active_entity_manager:
+        _active_entity_manager.disable(entity)
+        return
+    _deferred_enables.discard(entity)
+
+
 class EntityManager(ABC):
+
+    def __new__(cls) -> Self:
+        new_manager = super().__new__(cls)
+        set_entity_manager(new_manager)
+        return new_manager
+
+    def __init__(self) -> None:
+        # Subclasses must call super().__init__ at the END of initialization
+        for entity in _deferred_enables:
+            self.enable(entity)
 
     @abstractmethod
     def enable(self, item: _BaseType) -> bool:
@@ -129,6 +181,8 @@ class DefaultEntityManager(EntityManager):
         self.entities: WeakSet[Entity] = WeakSet()
         self._added_buffer: set[Entity] = set()
         self._disabled_buffer: set[Entity] = set()
+
+        super().__init__()
 
     def enable(self, item: _BaseType) -> bool:
         if isinstance(item, Entity):

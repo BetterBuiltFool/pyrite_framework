@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Sequence
-from typing import Any, TYPE_CHECKING
+from typing import Any, Self, TYPE_CHECKING
 from weakref import WeakSet
 
 # from pygame.typing import Point
@@ -21,11 +21,74 @@ if TYPE_CHECKING:
 import pygame
 
 
+_active_render_manager: RenderManager = None
+
+
+def get_render_manager() -> RenderManager:
+    return _active_render_manager
+
+
+def set_render_manager(manager: RenderManager):
+    global _active_render_manager
+    _active_render_manager = manager
+
+
+_active_renderer: Renderer = None
+
+
+def get_renderer() -> Renderer:
+    return _active_renderer
+
+
+def set_renderer(renderer: Renderer):
+    global _active_renderer
+    _active_renderer = renderer
+
+
+_deferred_enables: set[Renderable] = set()
+
+
+def enable(renderable: Renderable):
+    """
+    Enables the renderable with the active render manager.
+    If no active render manager exists, the renderable is stored until one is created.
+
+    :param renderable: A renderable to be enabled.
+    """
+    if _active_render_manager:
+        _active_render_manager.enable(renderable)
+        return
+    _deferred_enables.add(renderable)
+
+
+def disable(renderable: Renderable):
+    """
+    Disables the renderable in the active render manager.
+    If not active render manager exists and the renderable is queued for enabling,
+    it is removed from the queue.
+
+    :param renderable: A renderable to be disabled.
+    """
+    if _active_render_manager:
+        _active_render_manager.disable(renderable)
+        return
+    _deferred_enables.discard(renderable)
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
     render queue for the renderer.
     """
+
+    def __new__(cls, *args, **kwds) -> Self:
+        new_manager = super().__new__(cls)
+        set_render_manager(new_manager)
+        return new_manager
+
+    def __init__(self) -> None:
+        for renderable in _deferred_enables:
+            self.enable(renderable)
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -87,6 +150,11 @@ class Renderer(ABC):
     Class responsible for drawing renderables to the screen.
     """
 
+    def __new__(cls) -> Self:
+        new_renderer = super().__new__(cls)
+        set_renderer(new_renderer)
+        return new_renderer
+
     @abstractmethod
     def render(
         self,
@@ -133,6 +201,8 @@ class DefaultRenderManager(RenderManager):
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
         self._rendered_last_frame: int = 0
+
+        super().__init__()
 
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.

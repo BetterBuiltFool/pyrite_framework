@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from typing import TYPE_CHECKING, TypeVar
+from typing import Self, TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
 
@@ -15,7 +15,59 @@ if TYPE_CHECKING:
 SystemType = TypeVar("SystemType")
 
 
+_active_system_manager: SystemManager = None
+
+
+def get_system_manager() -> SystemManager:
+    return _active_system_manager
+
+
+def set_system_manager(manager: SystemManager):
+    global _active_system_manager
+    _active_system_manager = manager
+
+
+_deferred_enables: set[System] = set()
+
+
+def enable(system: System):
+    """
+    Enables a system with the active system manager.
+    If no active system manager exists, the system is stored until one is created.
+
+    :param system: A system to be enabled.
+    """
+    if _active_system_manager:
+        _active_system_manager.enable(system)
+        return
+    _deferred_enables.add(system)
+
+
+def disable(system: System):
+    """
+    Disables a system in the active system maanger,
+    If no active system manager exists and the system is queued for enabling,
+    it is removed from the queue.
+
+    :param system: A system to be disabled.
+    """
+    if _active_system_manager:
+        _active_system_manager.disable(system)
+        return
+    _deferred_enables.discard(system)
+
+
 class SystemManager(ABC):
+
+    def __new__(cls) -> Self:
+        new_manager = super().__new__(cls)
+        set_system_manager(new_manager)
+        return new_manager
+
+    def __init__(self) -> None:
+        # Subclasses must call super().__init__ at the END of initialization
+        for system in _deferred_enables:
+            self.enable(system)
 
     @abstractmethod
     def enable(self, system: System) -> bool:
@@ -134,6 +186,7 @@ class DefaultSystemManager(SystemManager):
         self.systems: dict[type[System], System] = {}
         self.active_systems: WeakSet[System] = WeakSet()
         self.current_systems: list[System] = []
+        super().__init__()
 
     def enable(self, system: System) -> bool:
         self._capture_system(system)
