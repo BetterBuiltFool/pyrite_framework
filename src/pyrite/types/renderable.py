@@ -41,7 +41,7 @@ class Renderable(ABC):
 
     @property
     def enabled(self) -> bool:
-        return self._enabled
+        return renderer.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
