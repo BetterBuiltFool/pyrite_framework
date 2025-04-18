@@ -74,6 +74,18 @@ def disable(renderable: Renderable):
     _deferred_enables.discard(renderable)
 
 
+def is_enabled(renderable: Renderable) -> bool:
+    """
+    Determines if the passed renderable is currently considered enabled by the manager.
+
+    :param item: Any renderable
+    :return: True if currently enabled, False if disabled
+    """
+    if not _active_render_manager:
+        return False
+    return _active_render_manager.is_enabled(renderable)
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
@@ -122,6 +134,17 @@ class RenderManager(ABC):
         :param item: Renderable being removed.
         :return: True if disable is successful, False if not, such as object already
         disabled.
+        """
+        pass
+
+    @abstractmethod
+    def is_enabled(self, item: Renderable) -> bool:
+        """
+        Determines if the passed renderable is currently considered enabled by the
+        manager.
+
+        :param item: Any renderable
+        :return: True if currently enabled, False if disabled
         """
         pass
 
@@ -235,6 +258,9 @@ class DefaultRenderManager(RenderManager):
             render_layer.remove(item)
 
         return newly_disabled
+
+    def is_enabled(self, item: Renderable) -> bool:
+        return any((item in render_layer) for render_layer in self.renderables.values())
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue: dict[Layer, Sequence[Renderable]] = {}
