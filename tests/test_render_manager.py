@@ -19,7 +19,9 @@ from src.pyrite.core.renderer import (  # noqa:E402
     _get_draw_index,
 )
 from src.pyrite.types.renderable import Renderable  # noqa:E402
-from src.pyrite.types._base_type import _BaseType  # noqa:E402
+from src.pyrite.types.entity import Entity  # noqa:E402
+
+# from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
 
 class MockRenderable(Renderable):
@@ -37,10 +39,9 @@ class MockRenderable(Renderable):
         return super().get_rect()
 
 
-class MockEntity(_BaseType):
+class MockEntity(Entity):
 
-    def __init__(self, game_instance=None, enabled=True) -> None:
-        pass
+    pass
 
 
 @contextmanager
@@ -115,17 +116,6 @@ class TestDefaultRenderManager(unittest.TestCase):
             )
             self.render_manager.renderables = {}
 
-        # Not renderable
-        with make_entity() as item:
-
-            self.render_manager.enable(item)
-
-            self.assertNotIn(
-                item,
-                self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
-            )
-            self.render_manager.renderables = {}
-
     def test_disable(self):
         renderables = [MockRenderable() for _ in range(5)]
 
@@ -153,11 +143,6 @@ class TestDefaultRenderManager(unittest.TestCase):
             disabled_renderable,
             self.render_manager.renderables.get(RenderLayers.MIDGROUND, WeakSet()),
         )
-
-        # Try removing a mock entity
-        entity = MockEntity()
-
-        self.render_manager.disable(entity)
 
         # Try removing a renderable not in the collection
         self.render_manager.disable(disabled_renderable)

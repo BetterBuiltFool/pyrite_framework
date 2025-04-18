@@ -19,8 +19,9 @@ from .utils import threading
 
 if TYPE_CHECKING:
     from types import TracebackType
-    from .types.entity import Entity
-    from .types.renderable import Renderable
+
+    # from .types.entity import Entity
+    # from .types.renderable import Renderable
     from .types.system import System
 
 
@@ -131,14 +132,6 @@ class Game:
             # and hides them from the output.
             self.main()
         return self.suppress_context_errors
-
-    def enable(self, item: Entity | Renderable) -> bool:
-        return any([self.entity_manager.enable(item), self.render_manager.enable(item)])
-
-    def disable(self, item: Entity | Renderable) -> bool:
-        return any(
-            [self.entity_manager.disable(item), self.render_manager.disable(item)]
-        )
 
     def init_threader(self):
         threading._set_regular_mode()

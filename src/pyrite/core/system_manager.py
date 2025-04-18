@@ -57,6 +57,18 @@ def disable(system: System):
     _deferred_enables.discard(system)
 
 
+def is_enabled(system: System) -> bool:
+    """
+    Determines if the passed system is currently considered enabled by the manager.
+
+    :param system: Any system
+    :return: True if currently enabled, False if disabled
+    """
+    if not _active_system_manager:
+        return False
+    return _active_system_manager.is_enabled(system)
+
+
 class SystemManager(ABC):
 
     def __new__(cls) -> Self:
@@ -88,6 +100,16 @@ class SystemManager(ABC):
         :param item: System being enabled.
         :return: True if disable is successful, False if not, such as system already
         disabled.
+        """
+        pass
+
+    @abstractmethod
+    def is_enabled(self, system: System) -> bool:
+        """
+        Determines if the passed system is currently considered enabled by the manager.
+
+        :param system: Any system
+        :return: True if currently enabled, False if disabled
         """
         pass
 
@@ -200,6 +222,9 @@ class DefaultSystemManager(SystemManager):
             self.active_systems.remove(system)
             return True
         return False
+
+    def is_enabled(self, system: System) -> bool:
+        return system in self.active_systems
 
     def _capture_system(self, system: System):
         if system.__class__ not in self.systems:  # I don't this is needed?

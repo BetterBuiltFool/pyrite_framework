@@ -9,12 +9,11 @@ from weakref import WeakSet
 # from pygame.typing import Point
 
 from ..types.camera import CameraBase
-from ..types.renderable import Renderable
 from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from ..camera import Camera
-    from ..types._base_type import _BaseType
+    from ..types.renderable import Renderable
     from ..enum import Layer
     from pygame import Rect
 
@@ -56,8 +55,8 @@ def enable(renderable: Renderable):
     :param renderable: A renderable to be enabled.
     """
     if _active_render_manager:
-        _active_render_manager.enable(renderable)
-        return
+
+        return _active_render_manager.enable(renderable)
     _deferred_enables.add(renderable)
 
 
@@ -73,6 +72,18 @@ def disable(renderable: Renderable):
         _active_render_manager.disable(renderable)
         return
     _deferred_enables.discard(renderable)
+
+
+def is_enabled(renderable: Renderable) -> bool:
+    """
+    Determines if the passed renderable is currently considered enabled by the manager.
+
+    :param item: Any renderable
+    :return: True if currently enabled, False if disabled
+    """
+    if not _active_render_manager:
+        return False
+    return _active_render_manager.is_enabled(renderable)
 
 
 class RenderManager(ABC):
@@ -102,7 +113,7 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def enable(self, item: _BaseType) -> bool:
+    def enable(self, item: Renderable) -> bool:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -116,13 +127,24 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType) -> bool:
+    def disable(self, item: Renderable) -> bool:
         """
         Removes the item from the collection of renderables.
 
         :param item: Renderable being removed.
         :return: True if disable is successful, False if not, such as object already
         disabled.
+        """
+        pass
+
+    @abstractmethod
+    def is_enabled(self, item: Renderable) -> bool:
+        """
+        Determines if the passed renderable is currently considered enabled by the
+        manager.
+
+        :param item: Any renderable
+        :return: True if currently enabled, False if disabled
         """
         pass
 
@@ -207,9 +229,7 @@ class DefaultRenderManager(RenderManager):
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.
 
-    def enable(self, item: _BaseType) -> bool:
-        if not isinstance(item, Renderable):
-            return False
+    def enable(self, item: Renderable) -> bool:
         layer = item.layer
         if layer is None:
             # No layer set, force it to midground
@@ -224,9 +244,7 @@ class DefaultRenderManager(RenderManager):
 
         return newly_added
 
-    def disable(self, item: _BaseType):
-        if not isinstance(item, Renderable):
-            return False
+    def disable(self, item: Renderable):
         layer = item.layer
 
         render_layer = self.renderables.get(layer, WeakSet())
@@ -240,6 +258,9 @@ class DefaultRenderManager(RenderManager):
             render_layer.remove(item)
 
         return newly_disabled
+
+    def is_enabled(self, item: Renderable) -> bool:
+        return any((item in render_layer) for render_layer in self.renderables.values())
 
     def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
         render_queue: dict[Layer, Sequence[Renderable]] = {}

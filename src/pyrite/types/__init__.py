@@ -11,7 +11,6 @@ from .system import System  # noqa: F401
 from .transform import TransformProtocol  # noqa:F401
 
 if TYPE_CHECKING:
-    from ._base_type import _BaseType
     from ..transform import Transform
 
 import pygame
@@ -28,10 +27,6 @@ class Container(Protocol):
     """
     A Container for the container. Needs to loop back into the game class eventually.
     """
-
-    def enable(self, item: _BaseType) -> bool: ...
-
-    def disable(self, item: _BaseType) -> bool: ...
 
 
 class HasPosition(Protocol):
