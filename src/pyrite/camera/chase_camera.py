@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     # from ..transform import TransformComponent
 
 
-class ChaseCamera(Camera, Entity):
+class ChaseCamera(Entity):
     """
     A camera sub-type that can chase a target with a controllable easing factor and
     maximum distance.
@@ -66,8 +66,7 @@ class ChaseCamera(Camera, Entity):
         """
         if target and position is None:
             position = target.transform.position
-        Camera.__init__(
-            self,
+        self.camera = Camera(
             max_size=max_size,
             position=position,
             surface_sectors=surface_sectors,
@@ -76,6 +75,7 @@ class ChaseCamera(Camera, Entity):
             enabled=enabled,
             draw_index=draw_index,
         )
+        super().__init__(container, enabled)
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
@@ -88,6 +88,14 @@ class ChaseCamera(Camera, Entity):
             if not relative_lag
             else self._clamp_magnitude_scaled
         )
+
+    @property
+    def position(self) -> Point:
+        return self.camera.position
+
+    @position.setter
+    def position(self, position: Point):
+        self.camera.position = Vector2(position)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
@@ -117,4 +125,7 @@ class ChaseCamera(Camera, Entity):
         return delta.clamp_magnitude(0, self.max_distance)
 
     def _clamp_magnitude_scaled(self, delta: Vector2) -> Vector2:
-        return delta.clamp_magnitude(0, self.max_distance / self._zoom_level)
+        return delta.clamp_magnitude(0, self.max_distance / self.camera._zoom_level)
+
+    def zoom(self, zoom_level: float):
+        self.camera.zoom(zoom_level)
