@@ -95,6 +95,16 @@ class EntityManager(ABC):
         pass
 
     @abstractmethod
+    def is_enabled(self, item: Entity) -> bool:
+        """
+        Determines if the passed entity is currently considered enabled by the manager.
+
+        :param item: Any entity
+        :return: True if currently enabled, False if disabled
+        """
+        pass
+
+    @abstractmethod
     def flush_buffer(self):
         """
         Used to allow the entity manager to update its entity collection safely,
@@ -196,6 +206,11 @@ class DefaultEntityManager(EntityManager):
         else:
             self._disabled_buffer.add(item)
         return item in self.entities
+
+    def is_enabled(self, item: Entity) -> bool:
+        return item in self._added_buffer or (
+            item in self.entities and item not in self._disabled_buffer
+        )
 
     def flush_buffer(self):
         self.entities |= self._added_buffer
