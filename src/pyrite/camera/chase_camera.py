@@ -8,6 +8,7 @@ from ..types.entity import Entity
 from .surface_sector import SurfaceSector
 
 from pygame import Vector2
+import pygame
 
 if TYPE_CHECKING:
     from ..types import HasTransform
@@ -96,6 +97,79 @@ class ChaseCamera(Entity):
     @position.setter
     def position(self, position: Point):
         self.camera.position = Vector2(position)
+
+    @property
+    def smooth_scale(self) -> bool:
+        return self.camera.smooth_scale
+
+    @smooth_scale.setter
+    def smooth_scale(self, flag: bool):
+        self.camera.smooth_scale = flag
+
+    def clear(self):
+        """
+        Overwrite the surface to allow new drawing on top.
+        Basic camera fills with transparent black.
+        """
+        self.camera.clear()
+
+    def get_surface_rect(self) -> pygame.Rect:
+        """
+        Gets the rect of the camera's surface, in worldspace, centered on the position.
+
+        :return: A Rectangle matching the size of the camera surface, in worldspace.
+        """
+        return self.camera.get_surface_rect()
+
+    def get_viewport_rect(self) -> pygame.Rect:
+        """
+        Gives the viewport converted to worldspace.
+
+        :return: A Rectangle matching the size of the viewport, with worldspace
+        coordinates.
+        """
+        return self.camera.get_viewport_rect()
+
+    def to_local(self, point: Point) -> Vector2:
+        return self.camera.to_local(point)
+
+    def to_world(self, point: Point) -> Vector2:
+        return self.camera.to_world(point)
+
+    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+        """
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface sector, it will extrapolate to
+        find the equivalent space.
+
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param sector_index: Index of the sector to compare against, defaults to 0.
+        :raises IndexError: If the sector_index is larger than the camera's
+        number of sectors.
+        :return: The screen position, in world space relative to the camera
+        """
+        return self.camera.screen_to_world(point, sector_index)
+
+    def screen_to_world_clamped(
+        self, point: Point, sector_index: int = 0
+    ) -> Vector2 | None:
+        """
+        Variant of screen_to_world.
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface sector, it will instead return
+        None.
+
+        Use this when it needs to be clear that the mouse is outside the camera
+        view.
+
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param sector_index: Index of the sector to compare against, defaults to 0.
+        :raises IndexError: If the sector_index is larger than the camera's
+        number of sectors.
+        :return: The screen position, in world space relative to the camera
+        """
+
+        return self.camera.screen_to_world_clamped(point, sector_index)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
