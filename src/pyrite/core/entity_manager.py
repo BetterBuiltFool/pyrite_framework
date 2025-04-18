@@ -5,10 +5,9 @@ from typing import Self, TYPE_CHECKING
 
 from weakref import WeakSet
 
-from ..types.entity import Entity
 
 if TYPE_CHECKING:
-    from ..types._base_type import _BaseType
+    from ..types.entity import Entity
 
 import pygame
 
@@ -36,8 +35,8 @@ def enable(entity: Entity):
     :param entity: An entity to be enabled.
     """
     if _active_entity_manager:
-        _active_entity_manager.enable(entity)
-        return
+
+        return _active_entity_manager.enable(entity)
     _deferred_enables.add(entity)
 
 
@@ -68,7 +67,7 @@ class EntityManager(ABC):
             self.enable(entity)
 
     @abstractmethod
-    def enable(self, item: _BaseType) -> bool:
+    def enable(self, item: Entity) -> bool:
         """
         Adds an entity to the collection of active entities.
 
@@ -82,7 +81,7 @@ class EntityManager(ABC):
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType) -> bool:
+    def disable(self, item: Entity) -> bool:
         """
         Removes an entity from the collection of active entities.
 
@@ -184,23 +183,19 @@ class DefaultEntityManager(EntityManager):
 
         super().__init__()
 
-    def enable(self, item: _BaseType) -> bool:
-        if isinstance(item, Entity):
-            if item in self._disabled_buffer:
-                self._disabled_buffer.remove(item)
-            else:
-                self._added_buffer.add(item)
-            return item not in self.entities
-        return False
+    def enable(self, item: Entity) -> bool:
+        if item in self._disabled_buffer:
+            self._disabled_buffer.remove(item)
+        else:
+            self._added_buffer.add(item)
+        return item not in self.entities
 
-    def disable(self, item: _BaseType) -> bool:
-        if isinstance(item, Entity):
-            if item in self._added_buffer:
-                self._added_buffer.remove(item)
-            else:
-                self._disabled_buffer.add(item)
-            return item in self.entities
-        return False
+    def disable(self, item: Entity) -> bool:
+        if item in self._added_buffer:
+            self._added_buffer.remove(item)
+        else:
+            self._disabled_buffer.add(item)
+        return item in self.entities
 
     def flush_buffer(self):
         self.entities |= self._added_buffer

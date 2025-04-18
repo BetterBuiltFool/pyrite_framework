@@ -3,7 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
-from ._base_type import _BaseType
+from ..core import renderer
+from .._helper import defaults
 
 import pygame
 
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
     from ..enum import Layer
 
 
-class Renderable(_BaseType, ABC):
+class Renderable(ABC):
     """
     Base class for any renderable object in pyrite.
     """
@@ -33,7 +34,28 @@ class Renderable(_BaseType, ABC):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
-        _BaseType.__init__(self, container, enabled)
+        if container is None:
+            container = defaults.get_default_container()
+        self.container: Container = container
+        self.enabled = enabled
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        self._enabled = value
+        if self.container is None:
+            return
+        if value:
+            self.on_preenable()
+            if renderer.enable(self):
+                self.on_enable()
+        else:
+            self.on_predisable()
+            if renderer.disable(self):
+                self.on_disable()
 
     @property
     def layer(self) -> Layer:
@@ -49,6 +71,41 @@ class Renderable(_BaseType, ABC):
             self._layer = new_layer
             if enabled:
                 self.container.enable(self)
+
+    def on_preenable(self):
+        """
+        Event called just before the object is enabled.
+        Useful if the object needs to be modified before going through the enabling
+        process.
+        Does NOT guarantee the object is not already enabled.
+
+        """
+
+    def on_enable(self):
+        """
+        Event called just after the object has been enabled.
+        Useful for when an object needs to perform actions on other objects immediately
+        after being enabled.
+        Guarantees the object is now enabled, and only runs when the object was
+        previously disabled.
+        """
+
+    def on_predisable(self):
+        """
+        Event called just before the object is disabled.
+        Useful if the object needs to perform some kind of cleanup action before
+        disabling.
+        Does NOT guarantee the object has not already been disabled.
+        """
+
+    def on_disable(self):
+        """
+        Event called just after the object has been disabled.
+        Useful if the object needs to perform and action, like cleanup, only after it
+        has been disabled.
+        Guarantees the object is now disabled, and that the object was previously
+        disabled.
+        """
 
     @abstractmethod
     def render(self, delta_time: float) -> pygame.Surface:

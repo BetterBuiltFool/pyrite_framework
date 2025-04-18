@@ -9,12 +9,11 @@ from weakref import WeakSet
 # from pygame.typing import Point
 
 from ..types.camera import CameraBase
-from ..types.renderable import Renderable
 from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from ..camera import Camera
-    from ..types._base_type import _BaseType
+    from ..types.renderable import Renderable
     from ..enum import Layer
     from pygame import Rect
 
@@ -56,8 +55,8 @@ def enable(renderable: Renderable):
     :param renderable: A renderable to be enabled.
     """
     if _active_render_manager:
-        _active_render_manager.enable(renderable)
-        return
+
+        return _active_render_manager.enable(renderable)
     _deferred_enables.add(renderable)
 
 
@@ -102,7 +101,7 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def enable(self, item: _BaseType) -> bool:
+    def enable(self, item: Renderable) -> bool:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -116,7 +115,7 @@ class RenderManager(ABC):
         pass
 
     @abstractmethod
-    def disable(self, item: _BaseType) -> bool:
+    def disable(self, item: Renderable) -> bool:
         """
         Removes the item from the collection of renderables.
 
@@ -207,9 +206,7 @@ class DefaultRenderManager(RenderManager):
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.
 
-    def enable(self, item: _BaseType) -> bool:
-        if not isinstance(item, Renderable):
-            return False
+    def enable(self, item: Renderable) -> bool:
         layer = item.layer
         if layer is None:
             # No layer set, force it to midground
@@ -224,9 +221,7 @@ class DefaultRenderManager(RenderManager):
 
         return newly_added
 
-    def disable(self, item: _BaseType):
-        if not isinstance(item, Renderable):
-            return False
+    def disable(self, item: Renderable):
         layer = item.layer
 
         render_layer = self.renderables.get(layer, WeakSet())
