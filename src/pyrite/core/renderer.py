@@ -45,6 +45,23 @@ def set_renderer(renderer: Renderer):
     _active_renderer = renderer
 
 
+_deferred_enables: set[Renderable] = set()
+
+
+def enable(system: Renderable):
+    if _active_render_manager:
+        _active_render_manager.enable(system)
+        return
+    _deferred_enables.add(system)
+
+
+def disable(system: Renderable):
+    if _active_render_manager:
+        _active_render_manager.disable(system)
+        return
+    _deferred_enables.discard(system)
+
+
 class RenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
@@ -55,6 +72,10 @@ class RenderManager(ABC):
         new_manager = super().__new__(cls)
         set_render_manager(new_manager)
         return new_manager
+
+    def __init__(self) -> None:
+        for renderable in _deferred_enables:
+            self.enable(renderable)
 
     @abstractmethod
     def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
@@ -167,6 +188,8 @@ class DefaultRenderManager(RenderManager):
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
         self._rendered_last_frame: int = 0
+
+        super().__init__()
 
     # Does not need a buffer for renderables, they should *NOT* be generated during the
     # render phase.
