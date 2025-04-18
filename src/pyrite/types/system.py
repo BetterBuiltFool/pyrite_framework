@@ -27,7 +27,7 @@ class System(ABC):
 
     @property
     def enabled(self) -> bool:
-        return self._enabled
+        return system_manager.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool):
