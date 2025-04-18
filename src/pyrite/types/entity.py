@@ -24,7 +24,7 @@ class Entity:
 
     @property
     def enabled(self) -> bool:
-        return self._enabled
+        return entity_manager.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
