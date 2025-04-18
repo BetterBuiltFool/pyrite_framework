@@ -28,18 +28,18 @@ def set_entity_manager(manager: EntityManager):
 _deferred_enables: set[Entity] = set()
 
 
-def enable(system: Entity):
+def enable(entity: Entity):
     if _active_entity_manager:
-        _active_entity_manager.enable(system)
+        _active_entity_manager.enable(entity)
         return
-    _deferred_enables.add(system)
+    _deferred_enables.add(entity)
 
 
-def disable(system: Entity):
+def disable(entity: Entity):
     if _active_entity_manager:
-        _active_entity_manager.disable(system)
+        _active_entity_manager.disable(entity)
         return
-    _deferred_enables.discard(system)
+    _deferred_enables.discard(entity)
 
 
 class EntityManager(ABC):

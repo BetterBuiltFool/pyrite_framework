@@ -48,18 +48,19 @@ def set_renderer(renderer: Renderer):
 _deferred_enables: set[Renderable] = set()
 
 
-def enable(system: Renderable):
+def enable(renderable: Renderable):
+
     if _active_render_manager:
-        _active_render_manager.enable(system)
+        _active_render_manager.enable(renderable)
         return
-    _deferred_enables.add(system)
+    _deferred_enables.add(renderable)
 
 
-def disable(system: Renderable):
+def disable(renderable: Renderable):
     if _active_render_manager:
-        _active_render_manager.disable(system)
+        _active_render_manager.disable(renderable)
         return
-    _deferred_enables.discard(system)
+    _deferred_enables.discard(renderable)
 
 
 class RenderManager(ABC):
