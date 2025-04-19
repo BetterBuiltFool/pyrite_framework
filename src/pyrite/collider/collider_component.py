@@ -21,3 +21,7 @@ class ColliderComponent(Component):
         self.colliders.update({self: collider})
         self.layers.update({self: layers})
         self.collision_masks.update({self: collision_mask})
+
+    @property
+    def collider(self) -> Collider:
+        return self.colliders[self]
