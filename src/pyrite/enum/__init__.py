@@ -175,3 +175,27 @@ class AnchorPoint:
     BOTTOMLEFT = Anchor((0, 1))
     MIDBOTTOM = Anchor((0.5, 1))
     BOTTOMRIGHT = Anchor((1, 1))
+
+
+class CLayer:
+
+    def __init__(self, name: str = "") -> None:
+        self.name = name
+        self._index = 0
+
+    @property
+    def index(self) -> int:
+        return self._index
+
+    @index.setter
+    def index(self, bit_value: int):
+        self._index = bit_value
+
+
+class CollisionLayers:
+    _layers = []
+
+    @classmethod
+    def add_layer(cls, layer: CLayer):
+        cls._layers.append(layer)
+        layer.index = 2 ** len(cls._layers)
