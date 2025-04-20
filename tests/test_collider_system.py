@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+# import math
+import pathlib
+import sys
+import unittest
+
+from pygame import Vector2
+
+sys.path.append(str(pathlib.Path.cwd()))
+from src.pyrite.collider.ellipse import EllipseCollider  # noqa:E402
+from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
+from src.pyrite.transform import Transform  # noqa:E402
+
+
+class TestColliserSystem(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.collider1 = EllipseCollider(5)
+        self.collider2 = EllipseCollider(4)
+
+    def test_minkowski_difference(self):
+        direction = Vector2(1, 0)
+
+        transform1 = Transform((5, 5))
+        transform2 = Transform((-4, -4))
+
+        sp1 = ColliderSystem.minkowski_difference(
+            direction, self.collider1, self.collider2, transform1, transform2
+        )
+
+        self.assertEqual(sp1, Vector2(18, 9))
+
+
+if __name__ == "__main__":
+
+    unittest.main()
