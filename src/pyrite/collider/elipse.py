@@ -10,7 +10,7 @@ from ..types.collider import Collider
 class ElipseCollider(Collider):
 
     def __init__(self, radius: float) -> None:
-        self.radius = radius
+        self.radius = Vector2(radius)
 
     def get_aabb(self, transform: Transform) -> Rect:
         diameter = self.radius * 2
@@ -26,7 +26,7 @@ class ElipseCollider(Collider):
         # normalize vector
         vector = self._prescale_vector(vector, transform)
         # Find the farthest point of the shape (In this case, it's now a circle)
-        point = vector * self.radius
+        point = vector.elementwise() * self.radius
         # Add the position component of transform
         point += transform.position
         # return position
