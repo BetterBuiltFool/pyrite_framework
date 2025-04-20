@@ -7,6 +7,7 @@ from .collider_component import ColliderComponent
 from ..transform import TransformComponent
 
 if TYPE_CHECKING:
+    from pygame import Vector2
     from ..types.collider import Collider
     from ..transform import Transform
 
@@ -68,3 +69,16 @@ class ColliderSystem(System):
             )
 
         return first_pass_candidates
+
+    @staticmethod
+    def minkowski_difference(
+        direction: Vector2,
+        collider_a: Collider,
+        collider_b: Collider,
+        transform_a: Transform,
+        transform_b: Transform,
+    ) -> Vector2:
+        point_a = collider_a._gjk_support_function(direction, transform_a)
+        point_b = collider_b._gjk_support_function(-direction, transform_b)
+
+        return point_a - point_b
