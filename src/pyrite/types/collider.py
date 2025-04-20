@@ -47,3 +47,15 @@ class Collider(ABC):
             direction.
         """
         pass
+
+    def _prescale_vector(self, vector: Vector2, transform: Transform) -> Vector2:
+        """
+        Performs a standard translation of a vector into local space of the transform.
+
+        :param vector: A direction vector
+        :param transform: A transform representing localization data for the vector
+        :return: The corrected vector, normalized
+        """
+        vector = vector.elementwise() * transform.scale
+        vector = vector.rotate(transform.rotation)
+        return vector.normalize()
