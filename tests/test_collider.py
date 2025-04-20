@@ -7,15 +7,15 @@ import unittest
 from pygame import Vector2
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.collider.elipse import ElipseCollider  # noqa:E402
+from src.pyrite.collider.ellipse import EllipseCollider  # noqa:E402
 from src.pyrite.transform import Transform  # noqa:E402
 
 
 class TestCollider(unittest.TestCase):
 
     def setUp(self):
-        self.circle1 = ElipseCollider(5)
-        self.circle2 = ElipseCollider(4)
+        self.circle1 = EllipseCollider(5)
+        self.circle2 = EllipseCollider(4)
         self.transform1 = Transform((1, 2))
         self.transform2 = Transform((5, 5))
 
