@@ -56,6 +56,6 @@ class Collider(ABC):
         :param transform: A transform representing localization data for the vector
         :return: The corrected vector, normalized
         """
-        vector = vector.elementwise() * transform.scale
-        vector = vector.rotate(transform.rotation)
+        vector = vector.elementwise() / transform.scale
+        vector = vector.rotate(-transform.rotation)
         return vector.normalize()
