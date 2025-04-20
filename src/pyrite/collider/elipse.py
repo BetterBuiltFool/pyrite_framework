@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pygame import Rect, Vector2
 
-from pyrite.transform.transform import Transform
+from ..transform import Transform
 
 from ..types.collider import Collider
 
