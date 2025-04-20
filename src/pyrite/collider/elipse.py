@@ -22,4 +22,12 @@ class ElipseCollider(Collider):
         return super().collide(collide_with, delta_transform)
 
     def _gjk_support_function(self, vector: Vector2, transform: Transform) -> Vector2:
-        return super()._gjk_support_function(vector, transform)
+        # Rotate and scale vector by transform data
+        # normalize vector
+        vector = self._prescale_vector(vector, transform)
+        # Find the farthest point of the shape (In this case, it's now a circle)
+        point = vector * self.radius
+        # Add the position component of transform
+        point += transform.position
+        # return position
+        return point
