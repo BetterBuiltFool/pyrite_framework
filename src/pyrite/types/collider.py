@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pygame import Rect
+    from pygame import Rect, Vector2
     from ..transform import Transform
 
 
@@ -33,5 +33,17 @@ class Collider(ABC):
         :param delta_transform: A Transform representing the difference in transform
             values between the two colliders' centers.
         :return: True if the colliders intersect, False otherwise.
+        """
+        pass
+
+    @abstractmethod
+    def _gjk_support_function(self, vector: Vector2, transform: Transform) -> Vector2:
+        """
+        Gets the furthest point of the shape in the direction provided by the vector
+
+        :param vector: A normalized vector indicating a direction
+        :param transform: A transform indicating the world-space center of the collider.
+        :return: A position, in world space, representing the furthest point in that
+            direction.
         """
         pass
