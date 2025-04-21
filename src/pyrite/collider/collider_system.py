@@ -6,8 +6,9 @@ from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
 
+from pygame import Vector2
+
 if TYPE_CHECKING:
-    from pygame import Vector2
     from ..types.collider import Collider
     from ..transform import Transform
 
@@ -82,3 +83,17 @@ class ColliderSystem(System):
         point_b = collider_b._gjk_support_function(-direction, transform_b)
 
         return point_a - point_b
+
+    @staticmethod
+    def get_normal(start: Vector2, end: Vector2) -> Vector2:
+        """
+        Finds the normal 90 degrees clockwise (in display directions) between the two
+        points
+
+        :param start: A Vector2 representing the starting position of the vector
+        :param end: A Vector2 representing the end position of the vector
+        :return: A Vector2 representing the normal direction of the vector
+        """
+        # Creates a normal 90 degrees clockwise from from the origin
+        edge = end - start
+        return Vector2(-edge.y, edge.x).normalize()
