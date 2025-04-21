@@ -28,6 +28,8 @@ class EllipseCollider(Collider):
         # Find the farthest point of the shape (In this case, it's now a circle)
         point = vector.elementwise() * self.radius
         # Add the position component of transform
+        point = point.elementwise() * transform.scale
+        point = point.rotate(transform.rotation)
         point += transform.position
         # return position
         return point

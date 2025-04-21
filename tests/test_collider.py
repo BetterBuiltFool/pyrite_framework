@@ -52,18 +52,14 @@ class TestCollider(unittest.TestCase):
         self.assertAlmostEqual(result.y, expected.y)
 
         # Cardinal direction, rotation of transform
-        # Rotating by given amount should be equivalent to rotating vector opposite way
+        # Ellipse is circular, so rotation of ellipse doesn't matter
         transform3 = Transform((1, 2), -45)
         direction = Vector2(1, 0)
 
         result = self.circle1.get_furthest_vertex(direction, transform3)
         angle = math.cos(math.radians(45))
-        expected = Vector2(
-            (angle * 5) + self.transform1.position.x,
-            (angle * 5) + self.transform1.position.y,
-        )
-        self.assertAlmostEqual(result.x, expected.x)
-        self.assertAlmostEqual(result.y, expected.y)
+        expected = Vector2(6, 2)
+        self.assertEqual(result, expected)
 
 
 if __name__ == "__main__":
