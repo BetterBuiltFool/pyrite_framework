@@ -79,8 +79,8 @@ class ColliderSystem(System):
         transform_a: Transform,
         transform_b: Transform,
     ) -> Vector2:
-        point_a = collider_a._gjk_support_function(direction, transform_a)
-        point_b = collider_b._gjk_support_function(-direction, transform_b)
+        point_a = collider_a.get_furthest_vertex(direction, transform_a)
+        point_b = collider_b.get_furthest_vertex(-direction, transform_b)
 
         return point_a - point_b
 

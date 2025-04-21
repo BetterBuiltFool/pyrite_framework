@@ -21,7 +21,7 @@ class EllipseCollider(Collider):
     def collide(self, collide_with: Collider, delta_transform: Transform) -> bool:
         return super().collide(collide_with, delta_transform)
 
-    def _gjk_support_function(self, vector: Vector2, transform: Transform) -> Vector2:
+    def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
         # Rotate and scale vector by transform data
         # normalize vector
         vector = self._prescale_vector(vector, transform)

@@ -37,7 +37,7 @@ class Collider(ABC):
         pass
 
     @abstractmethod
-    def _gjk_support_function(self, vector: Vector2, transform: Transform) -> Vector2:
+    def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
         """
         Gets the furthest point of the shape in the direction provided by the vector
 

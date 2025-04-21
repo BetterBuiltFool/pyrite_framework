@@ -24,25 +24,25 @@ class TestCollider(unittest.TestCase):
         # Cardinal direction, no rotation
         direction = Vector2(1, 0)
 
-        result = self.circle1._gjk_support_function(direction, self.transform1)
+        result = self.circle1.get_furthest_vertex(direction, self.transform1)
         self.assertEqual(result, Vector2(6, 2))
 
-        result = self.circle2._gjk_support_function(direction, self.transform2)
+        result = self.circle2.get_furthest_vertex(direction, self.transform2)
         self.assertEqual(result, Vector2(9, 5))
 
         # Orthoginal from past, no rotation
         direction = Vector2(0, 1)
 
-        result = self.circle1._gjk_support_function(direction, self.transform1)
+        result = self.circle1.get_furthest_vertex(direction, self.transform1)
         self.assertEqual(result, Vector2(1, 7))
 
-        result = self.circle2._gjk_support_function(direction, self.transform2)
+        result = self.circle2.get_furthest_vertex(direction, self.transform2)
         self.assertEqual(result, Vector2(5, 9))
 
         # Rotated direction vector, no transform rotation
         direction = Vector2(1, 0).rotate(45)
 
-        result = self.circle1._gjk_support_function(direction, self.transform1)
+        result = self.circle1.get_furthest_vertex(direction, self.transform1)
         angle = math.cos(math.radians(45))
         expected = Vector2(
             (angle * 5) + self.transform1.position.x,
@@ -56,7 +56,7 @@ class TestCollider(unittest.TestCase):
         transform3 = Transform((1, 2), -45)
         direction = Vector2(1, 0)
 
-        result = self.circle1._gjk_support_function(direction, transform3)
+        result = self.circle1.get_furthest_vertex(direction, transform3)
         angle = math.cos(math.radians(45))
         expected = Vector2(
             (angle * 5) + self.transform1.position.x,
