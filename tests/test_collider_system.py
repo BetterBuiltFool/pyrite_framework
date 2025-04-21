@@ -31,6 +31,13 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertEqual(sp1, Vector2(18, 9))
 
+    def test_normal(self):
+        point_a = Vector2(-3, -4)
+        point_b = Vector2(3, -2)
+        normal = ColliderSystem.get_normal(point_a, point_b)
+
+        self.assertEqual(normal, Vector2(-2, 6).normalize())
+
 
 if __name__ == "__main__":
 
