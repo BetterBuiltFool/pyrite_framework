@@ -72,7 +72,7 @@ class ColliderSystem(System):
         return first_pass_candidates
 
     @staticmethod
-    def minkowski_difference(
+    def support_function(
         direction: Vector2,
         collider_a: Collider,
         collider_b: Collider,

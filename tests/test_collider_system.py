@@ -19,13 +19,13 @@ class TestColliserSystem(unittest.TestCase):
         self.collider1 = EllipseCollider(5)
         self.collider2 = EllipseCollider(4)
 
-    def test_minkowski_difference(self):
+    def test_support_function(self):
         direction = Vector2(1, 0)
 
         transform1 = Transform((5, 5))
         transform2 = Transform((-4, -4))
 
-        sp1 = ColliderSystem.minkowski_difference(
+        sp1 = ColliderSystem.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
         )
 
