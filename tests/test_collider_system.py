@@ -36,7 +36,7 @@ class TestColliserSystem(unittest.TestCase):
         point_b = Vector2(3, -2)
         normal = ColliderSystem.get_normal(point_a, point_b)
 
-        self.assertEqual(normal, Vector2(-2, 6).normalize())
+        self.assertEqual(normal, Vector2(2, -6).normalize())
 
     def test_collide(self):
         transform1 = Transform((5, 5))

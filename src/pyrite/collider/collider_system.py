@@ -163,4 +163,4 @@ class ColliderSystem(System):
         """
         # Creates a normal 90 degrees clockwise from from the origin
         edge = end - start
-        return Vector2(-edge.y, edge.x).normalize()
+        return Vector2(edge.y, -edge.x).normalize()
