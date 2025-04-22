@@ -1,16 +1,42 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TypeAlias, TYPE_CHECKING, Any
 
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
 
-from pygame import Vector2
+from pygame import Vector2, Vector3
 
 if TYPE_CHECKING:
     from ..types.collider import Collider
     from ..transform import Transform
+
+Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
+
+
+def check_region(simplex: Simplex) -> bool:
+    return False
+
+
+def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
+    return sort(simplex)[:1]
+
+
+def sort(simplex: Simplex) -> Simplex:
+    return sorted(simplex, key)
+
+
+def key(vector: Vector2) -> int:
+    return len(vector)
+
+
+def triple_product(vector_a: Vector2, vector_b: Vector2, vector_c: Vector2) -> Vector2:
+    vector_a3 = Vector3(vector_a)
+    vector_b3 = Vector3(vector_b)
+    vector_c3 = Vector3(vector_c)
+    product = vector_a3.cross(vector_b3.cross(vector_c3))
+    return product.xy
 
 
 class ColliderSystem(System):
@@ -83,6 +109,47 @@ class ColliderSystem(System):
         point_b = collider_b.get_furthest_vertex(-direction, transform_b)
 
         return point_a - point_b
+
+    @classmethod
+    def collide(
+        cls,
+        collider_a: Collider,
+        collider_b: Collider,
+        transform_a: Transform,
+        transform_b: Transform,
+    ) -> bool:
+        direction = Vector2(1, 0)
+        sp1 = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+        direction = -sp1
+        sp2 = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+        direction = cls.get_normal(sp1, sp2)
+        sp3 = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+        simplex = [sp1, sp2, sp3]
+        if check_region(simplex):
+            return True
+        p1, p2 = get_closest_edge(simplex)
+        direction = cls.get_normal(p1, p2)
+        sp4 = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+        simplex = [p1, p2, sp4]
+        vector_a_c = simplex[0] - simplex[2]
+        vector_b_c = simplex[1] - simplex[2]
+        vector_c_o = -simplex[2]
+        triple_a_c = triple_product(vector_b_c, vector_a_c, vector_a_c)
+        triple_b_c = triple_product(vector_a_c, vector_b_c, vector_b_c)
+
+        if triple_a_c.dot(vector_c_o) > 0:
+            return False
+        if triple_b_c.dot(vector_c_o) > 0:
+            return False
+        return True
 
     @staticmethod
     def get_normal(start: Vector2, end: Vector2) -> Vector2:
