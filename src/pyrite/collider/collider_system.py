@@ -42,9 +42,9 @@ def key(vector: Vector2) -> int:
 
 
 def triple_product(vector_a: Vector2, vector_b: Vector2, vector_c: Vector2) -> Vector2:
-    vector_a3 = Vector3(vector_a)
-    vector_b3 = Vector3(vector_b)
-    vector_c3 = Vector3(vector_c)
+    vector_a3 = Vector3(*vector_a, 0)
+    vector_b3 = Vector3(*vector_b, 0)
+    vector_c3 = Vector3(*vector_c, 0)
     product = vector_a3.cross(vector_b3.cross(vector_c3))
     return product.xy
 
