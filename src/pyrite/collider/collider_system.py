@@ -16,7 +16,17 @@ Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 
 def check_region(simplex: Simplex) -> bool:
-    return False
+    vector_a_c = simplex[0] - simplex[2]
+    vector_b_c = simplex[1] - simplex[2]
+    vector_c_o = -simplex[2]
+    triple_a_c = triple_product(vector_b_c, vector_a_c, vector_a_c)
+    triple_b_c = triple_product(vector_a_c, vector_b_c, vector_b_c)
+
+    if triple_a_c.dot(vector_c_o) > 0:
+        return False
+    if triple_b_c.dot(vector_c_o) > 0:
+        return False
+    return True
 
 
 def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
@@ -139,17 +149,7 @@ class ColliderSystem(System):
             direction, collider_a, collider_b, transform_a, transform_b
         )
         simplex = [p1, p2, sp4]
-        vector_a_c = simplex[0] - simplex[2]
-        vector_b_c = simplex[1] - simplex[2]
-        vector_c_o = -simplex[2]
-        triple_a_c = triple_product(vector_b_c, vector_a_c, vector_a_c)
-        triple_b_c = triple_product(vector_a_c, vector_b_c, vector_b_c)
-
-        if triple_a_c.dot(vector_c_o) > 0:
-            return False
-        if triple_b_c.dot(vector_c_o) > 0:
-            return False
-        return True
+        return check_region(simplex)
 
     @staticmethod
     def get_normal(start: Vector2, end: Vector2) -> Vector2:
