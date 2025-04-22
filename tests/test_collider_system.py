@@ -38,6 +38,16 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertEqual(normal, Vector2(-2, 6).normalize())
 
+    def test_collide(self):
+        transform1 = Transform((5, 5))
+        transform2 = Transform((-4, -4))
+
+        self.assertFalse(
+            ColliderSystem.collide(
+                self.collider1, self.collider2, transform1, transform2
+            )
+        )
+
 
 if __name__ == "__main__":
 
