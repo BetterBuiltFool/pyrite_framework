@@ -6,7 +6,7 @@ from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
 
-from pygame import Vector2, Vector3
+from pygame import Vector2
 
 if TYPE_CHECKING:
     from ..types.collider import Collider
@@ -38,14 +38,6 @@ def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
 
 def key(vector: Vector2) -> int:
     return vector.magnitude()
-
-
-def triple_product(vector_a: Vector2, vector_b: Vector2, vector_c: Vector2) -> Vector2:
-    vector_a3 = Vector3(*vector_a, 0)
-    vector_b3 = Vector3(*vector_b, 0)
-    vector_c3 = Vector3(*vector_c, 0)
-    product = (vector_a3 * vector_b3) * vector_c3
-    return product.xy
 
 
 class ColliderSystem(System):
