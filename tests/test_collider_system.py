@@ -48,6 +48,14 @@ class TestColliserSystem(unittest.TestCase):
             )
         )
 
+        transform3 = Transform((0, 0))
+
+        self.assertTrue(
+            ColliderSystem.collide(
+                self.collider1, self.collider2, transform3, transform2
+            )
+        )
+
 
 if __name__ == "__main__":
 
