@@ -194,4 +194,16 @@ class ColliderSystem(System):
         """
         # Creates a normal 90 degrees clockwise from from the origin
         edge = end - start
-        return Vector2(-edge.y, edge.x).normalize()
+        return Vector2(-edge.y, edge.x)
+
+    @classmethod
+    def get_unit_normal(cls, start: Vector2, end: Vector2) -> Vector2:
+        """
+        Finds the normal 90 degrees clockwise (in display directions) between the two
+        points, normalized.
+
+        :param start: A Vector2 representing the starting position of the vector
+        :param end: A Vector2 representing the end position of the vector
+        :return: A Vector2 representing the normal direction of the vector, normalized
+        """
+        return cls.get_normal(start, end).normalize()
