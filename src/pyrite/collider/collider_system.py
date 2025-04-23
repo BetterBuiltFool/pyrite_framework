@@ -30,7 +30,8 @@ def check_region(simplex: Simplex) -> bool:
 
 
 def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
-    return sort(simplex)[:2]
+    sorted_simplex = sort(simplex)
+    return sorted_simplex[:2]
 
 
 def sort(simplex: Simplex) -> Simplex:
@@ -38,7 +39,7 @@ def sort(simplex: Simplex) -> Simplex:
 
 
 def key(vector: Vector2) -> int:
-    return len(vector)
+    return vector.magnitude()
 
 
 def triple_product(vector_a: Vector2, vector_b: Vector2, vector_c: Vector2) -> Vector2:
