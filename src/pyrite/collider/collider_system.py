@@ -30,14 +30,14 @@ def check_region(simplex: Simplex) -> bool:
 
     vector_co = -simplex[2]
 
-    normal_ac = ColliderSystem.get_normal(simplex[0], simplex[2])
-    ac_dot = normal_ac.dot(vector_co)
-    if ac_dot > 0:
+    normal_ca = ColliderSystem.get_normal(simplex[2], simplex[0])
+    ca_dot = normal_ca.dot(vector_co)
+    if ca_dot > 0:
         return False
 
-    normal_cb = ColliderSystem.get_normal(simplex[2], simplex[1])
-    cb_dot = normal_cb.dot(vector_co)
-    if cb_dot > 0:
+    normal_bc = ColliderSystem.get_normal(simplex[1], simplex[2])
+    bc_dot = normal_bc.dot(vector_co)
+    if bc_dot > 0:
         return False
     return True
 
