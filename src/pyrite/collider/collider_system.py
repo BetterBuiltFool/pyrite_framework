@@ -32,12 +32,8 @@ def check_region(simplex: Simplex) -> bool:
 
 
 def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
-    sorted_simplex = sort(simplex)
+    sorted_simplex = sorted(simplex, key=key)
     return sorted_simplex[:2]
-
-
-def sort(simplex: Simplex) -> Simplex:
-    return sorted(simplex, key=key)
 
 
 def key(vector: Vector2) -> int:
