@@ -59,10 +59,9 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertTrue(collider_system.check_region(region3))
 
-        region4 = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1)]
+        region4 = [Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)]
 
-        # This one doesn't wuite make sense to me, but graphically it checks out
-        self.assertFalse(collider_system.check_region(region4))
+        self.assertTrue(collider_system.check_region(region4))
 
 
 if __name__ == "__main__":
