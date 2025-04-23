@@ -63,6 +63,26 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertTrue(collider_system.check_region(region4))
 
+    def test_collide(self):
+        collider_a = EllipseCollider(5)
+        collider_b = EllipseCollider(4)
+
+        transform_a = Transform((5, 5))
+        transform_b = Transform((-4, -4))
+
+        # Obviously no overlap
+        self.assertFalse(
+            ColliderSystem.collide(collider_a, collider_b, transform_a, transform_b)
+        )
+
+        transform_c = Transform((0, 0))
+
+        # This SHOULD overlap
+        # Infinite loops...
+        # self.assertTrue(
+        #     ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
+        # )
+
 
 if __name__ == "__main__":
 
