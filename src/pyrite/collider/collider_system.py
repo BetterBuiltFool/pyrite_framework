@@ -16,6 +16,17 @@ Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 
 def check_region(simplex: Simplex) -> bool:
+    """
+    Determines of the origin is located within the triangular simplex.
+
+    Edge cases:
+    - Vertex on origin: True
+    - Edge through origin: False
+
+
+    :param simplex: A simplex containing three verticies
+    :return: True if the origin is contained, False otherwise.
+    """
 
     vector_co = -simplex[2]
 
@@ -32,6 +43,12 @@ def check_region(simplex: Simplex) -> bool:
 
 
 def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
+    """
+    Finds the verticies of the simplex defining the edge that's closests to the origin.
+
+    :param simplex: A collection of vertices making a simplex
+    :return: A tuple containing the two closests points to 0,0
+    """
     sorted_simplex = sorted(simplex, key=key)
     return sorted_simplex[:2]
 
