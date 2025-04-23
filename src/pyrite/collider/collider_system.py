@@ -129,28 +129,7 @@ class ColliderSystem(System):
         transform_a: Transform,
         transform_b: Transform,
     ) -> bool:
-        direction = Vector2(1, 0)
-        sp1 = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-        direction = -sp1
-        sp2 = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-        direction = cls.get_normal(sp1, sp2)
-        sp3 = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-        simplex = [sp1, sp2, sp3]
-        if check_region(simplex):
-            return True
-        p1, p2 = get_closest_edge(simplex)
-        direction = cls.get_normal(p1, p2)
-        sp4 = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-        simplex = [p1, p2, sp4]
-        return check_region(simplex)
+        pass
 
     @staticmethod
     def get_normal(start: Vector2, end: Vector2) -> Vector2:
