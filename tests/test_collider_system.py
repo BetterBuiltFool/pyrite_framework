@@ -55,6 +55,15 @@ class TestColliserSystem(unittest.TestCase):
         # Needs addt'l edge cases
         # Literal origin on edge, vertex on origin
 
+        region3 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 0)]
+
+        self.assertTrue(collider_system.check_region(region3))
+
+        region4 = [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1)]
+
+        # This one doesn't wuite make sense to me, but graphically it checks out
+        self.assertFalse(collider_system.check_region(region4))
+
 
 if __name__ == "__main__":
 
