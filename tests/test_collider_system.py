@@ -40,7 +40,7 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertEqual(edge, Vector2(-6, -2))
 
-        self.assertEqual(normal, Vector2(-2, 6).normalize())
+        self.assertEqual(normal, edge.rotate(-90))
 
     def test_check_region(self):
 
