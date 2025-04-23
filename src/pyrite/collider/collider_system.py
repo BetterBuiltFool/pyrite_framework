@@ -194,7 +194,7 @@ class ColliderSystem(System):
         """
         # Creates a normal 90 degrees clockwise from from the origin
         edge = end - start
-        return Vector2(-edge.y, edge.x)
+        return edge.rotate(-90)
 
     @classmethod
     def get_unit_normal(cls, start: Vector2, end: Vector2) -> Vector2:
