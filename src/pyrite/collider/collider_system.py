@@ -15,27 +15,16 @@ if TYPE_CHECKING:
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 
-# def check_region(simplex: Simplex) -> bool:
-#     vector_a_c = simplex[0] - simplex[2]
-#     vector_b_c = simplex[1] - simplex[2]
-#     vector_c_o = -simplex[2]
-#     triple_a_c = triple_product(vector_b_c, vector_a_c, vector_a_c)
-#     triple_b_c = triple_product(vector_a_c, vector_b_c, vector_b_c)
-
-
-#     if triple_a_c.dot(vector_c_o) > 0:
-#         return False
-#     if triple_b_c.dot(vector_c_o) > 0:
-#         return False
-#     return True
 def check_region(simplex: Simplex) -> bool:
     vector_co = -simplex[2]
     normal_ac = ColliderSystem.get_normal(simplex[0], simplex[2])
-    normal_bc = ColliderSystem.get_normal(simplex[1], simplex[2])
+    normal_cb = ColliderSystem.get_normal(simplex[2], simplex[1])
 
-    if normal_ac.dot(vector_co) > 0:
+    ac_dot = normal_ac.dot(vector_co)
+    if ac_dot > 0:
         return False
-    if normal_bc.dot(vector_co) > 0:
+    cb_dot = normal_cb.dot(vector_co)
+    if cb_dot > 0:
         return False
     return True
 
