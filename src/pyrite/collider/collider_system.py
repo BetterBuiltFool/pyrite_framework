@@ -129,7 +129,55 @@ class ColliderSystem(System):
         transform_a: Transform,
         transform_b: Transform,
     ) -> bool:
-        pass
+        direction = Vector2(1, 0)  # Arbitrary direction
+
+        # Get support point 1
+        support_point = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+
+        # Add to simplex
+        simplex: Simplex = [support_point]
+
+        # New direction through origin
+        direction = -support_point
+
+        # Get support point 2
+        support_point = cls.support_function(
+            direction, collider_a, collider_b, transform_a, transform_b
+        )
+
+        # Add to simplex
+        simplex.append(support_point)
+
+        # Short circuit if point is already invalid
+        if support_point * direction < 0:
+            return False
+
+        # Loop
+        while True:
+            # Get the normal of the two closest points
+            direction = cls.get_normal(simplex[0], simplex[1])
+
+            # Get support point 3
+            support_point = cls.support_function(
+                direction, collider_a, collider_b, transform_a, transform_b
+            )
+
+            # Short circuit if point is already invalid
+            if support_point * direction < 0:
+                return False
+
+            # Add to simplex
+            simplex.append(support_point)
+
+            # Simplex is now a triangle
+            if check_region(simplex):
+                # Found our overlap!
+                return True
+
+            # Failed, reduce simplex and try again
+            simplex = get_closest_edge(simplex)
 
     @staticmethod
     def get_normal(start: Vector2, end: Vector2) -> Vector2:
