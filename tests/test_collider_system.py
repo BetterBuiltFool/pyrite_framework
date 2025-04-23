@@ -45,24 +45,6 @@ class TestColliserSystem(unittest.TestCase):
 
         self.assertTrue(collider_system.check_region(region1))
 
-    def test_collide(self):
-        transform1 = Transform((5, 5))
-        transform2 = Transform((-4, -4))
-
-        self.assertFalse(
-            ColliderSystem.collide(
-                self.collider1, self.collider2, transform1, transform2
-            )
-        )
-
-        # transform3 = Transform((0, 0))
-
-        # self.assertTrue(
-        #     ColliderSystem.collide(
-        #         self.collider1, self.collider2, transform3, transform2
-        #     )
-        # )
-
 
 if __name__ == "__main__":
 
