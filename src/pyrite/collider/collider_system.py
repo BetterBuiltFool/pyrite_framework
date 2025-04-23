@@ -49,12 +49,8 @@ def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
     :param simplex: A collection of vertices making a simplex
     :return: A tuple containing the two closests points to 0,0
     """
-    sorted_simplex = sorted(simplex, key=key)
+    sorted_simplex = sorted(simplex, key=Vector2.magnitude)
     return sorted_simplex[:2]
-
-
-def key(vector: Vector2) -> int:
-    return vector.magnitude()
 
 
 class ColliderSystem(System):
