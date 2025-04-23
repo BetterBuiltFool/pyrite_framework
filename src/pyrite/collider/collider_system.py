@@ -193,5 +193,5 @@ class ColliderSystem(System):
         :return: A Vector2 representing the normal direction of the vector
         """
         # Creates a normal 90 degrees clockwise from from the origin
-        edge = start - end
-        return Vector2(edge.y, -edge.x).normalize()
+        edge = end - start
+        return Vector2(-edge.y, edge.x).normalize()
