@@ -10,7 +10,7 @@ from pygame import Vector2
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.collider.ellipse import EllipseCollider  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
-from src.pyrite.collider import collider_system  # noqa:E402
+from src.pyrite import collider  # noqa:E402
 from src.pyrite.transform import Transform  # noqa:E402
 
 
@@ -35,7 +35,7 @@ class TestColliserSystem(unittest.TestCase):
     def test_normal(self):
         point_a = Vector2(-3, -4)
         point_b = Vector2(3, -2)
-        normal = ColliderSystem.get_normal(point_a, point_b)
+        normal = collider.get_normal(point_a, point_b)
         edge = point_a - point_b
 
         self.assertEqual(edge, Vector2(-6, -2))
@@ -46,17 +46,17 @@ class TestColliserSystem(unittest.TestCase):
 
         region1 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, -1)]
 
-        self.assertTrue(collider_system.check_region(region1))
+        self.assertTrue(collider.check_region(region1))
 
         region2 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 2)]
 
-        self.assertFalse(collider_system.check_region(region2))
+        self.assertFalse(collider.check_region(region2))
 
         # Same triangle as 1, opposing chirality
 
         region3 = [Vector2(-1, 1), Vector2(1, 1), Vector2(0, -1)]
 
-        self.assertTrue(collider_system.check_region(region3))
+        self.assertTrue(collider.check_region(region3))
 
         # Needs addt'l edge cases
         # Literal origin on edge, vertex on origin
@@ -64,12 +64,12 @@ class TestColliserSystem(unittest.TestCase):
         # Origin on vertex
         region4 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 0)]
 
-        self.assertFalse(collider_system.check_region(region4))
+        self.assertFalse(collider.check_region(region4))
 
         # Origin on edge
         region5 = [Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)]
 
-        self.assertTrue(collider_system.check_region(region5))
+        self.assertTrue(collider.check_region(region5))
 
     def test_collide(self):
         collider_a = EllipseCollider(5)
