@@ -83,13 +83,13 @@ class TestColliserSystem(unittest.TestCase):
             ColliderSystem.collide(collider_a, collider_b, transform_a, transform_b)
         )
 
-        # transform_c = Transform((0, 0))
+        transform_c = Transform((0, 0))
 
         # This SHOULD overlap
         # Infinite loops...
-        # self.assertTrue(
-        #     ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
-        # )
+        self.assertTrue(
+            ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
+        )
 
 
 if __name__ == "__main__":
