@@ -19,27 +19,26 @@ def check_region(simplex: Simplex) -> bool:
     """
     Determines of the origin is located within the triangular simplex.
 
-    Edge cases:
-    - Vertex on origin: True
-    - Edge through origin: False
-
 
     :param simplex: A simplex containing three verticies
     :return: True if the origin is contained, False otherwise.
     """
+    vector_ao = -simplex[0]
+    edge_ab = simplex[1] - simplex[0]
+    ab_pos = edge_ab.dot(vector_ao) > 0
+
+    vector_bo = -simplex[1]
+    edge_bc = simplex[2] - simplex[1]
+    bc_pos = edge_bc.dot(vector_bo) > 0
+
+    if ab_pos != bc_pos:
+        return False
 
     vector_co = -simplex[2]
+    edge_ca = simplex[0] - simplex[2]
+    ca_pos = edge_ca.dot(vector_co) > 0
 
-    normal_ca = ColliderSystem.get_normal(simplex[2], simplex[0])
-    ca_dot = normal_ca.dot(vector_co)
-    if ca_dot > 0:
-        return False
-
-    normal_bc = ColliderSystem.get_normal(simplex[1], simplex[2])
-    bc_dot = normal_bc.dot(vector_co)
-    if bc_dot > 0:
-        return False
-    return True
+    return ca_pos == ab_pos
 
 
 def get_closest_edge(simplex: Simplex) -> tuple[Vector2, Vector2]:
