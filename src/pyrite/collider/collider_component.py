@@ -43,6 +43,5 @@ class ColliderComponent(Component):
         self.layers.update({self: layers})
         self.collision_masks.update({self: collision_mask})
 
-    @property
-    def collider(self) -> Collider:
+    def get_colliders(self) -> list[Collider]:
         return self.colliders[self]
