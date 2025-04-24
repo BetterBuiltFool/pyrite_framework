@@ -54,5 +54,8 @@ class ColliderComponent(Component):
     def get_colliders(self) -> list[Collider]:
         return self.colliders[self]
 
+    def get_transforms(self) -> list[Transform]:
+        return self.transforms[self]
+
     def compare_mask(self, other: ColliderComponent) -> bool:
         return self.collision_mask & other.layer_mask
