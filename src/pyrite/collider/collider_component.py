@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class ColliderComponent(Component):
-    layers: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
+    layer_masks: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
     collision_masks: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
     colliders: WeakKeyDictionary[ColliderComponent, list[Collider]] = (
         WeakKeyDictionary()
@@ -40,8 +40,16 @@ class ColliderComponent(Component):
         self.colliders.setdefault(self, colliders)
         self.transforms.setdefault(self, transforms)
 
-        self.layers.update({self: layers})
+        self.layer_masks.update({self: layers})
         self.collision_masks.update({self: collision_mask})
+
+    @property
+    def layer_mask(self) -> int:
+        return self.layer_masks[self]
+
+    @property
+    def collision_mask(self) -> int:
+        return self.collision_masks[self]
 
     def get_colliders(self) -> list[Collider]:
         return self.colliders[self]
