@@ -61,15 +61,15 @@ class TestColliserSystem(unittest.TestCase):
         # Needs addt'l edge cases
         # Literal origin on edge, vertex on origin
 
-        # Commenting these out until I find what they're supposed to be
+        # Origin on vertex
+        region4 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 0)]
 
-        # region4 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 0)]
+        self.assertFalse(collider_system.check_region(region4))
 
-        # self.assertFalse(collider_system.check_region(region4))
+        # Origin on edge
+        region5 = [Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)]
 
-        # region5 = [Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)]
-
-        # self.assertFalse(collider_system.check_region(region5))
+        self.assertTrue(collider_system.check_region(region5))
 
     def test_collide(self):
         collider_a = EllipseCollider(5)
@@ -86,7 +86,6 @@ class TestColliserSystem(unittest.TestCase):
         transform_c = Transform((0, 0))
 
         # This SHOULD overlap
-        # Infinite loops...
         self.assertTrue(
             ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
         )
