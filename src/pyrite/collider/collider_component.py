@@ -32,7 +32,7 @@ class ColliderComponent(Component):
         super().__init__(owner)
 
         if not isinstance(colliders, Sequence):
-            colliders = list(colliders)
+            colliders = [colliders]
         if not isinstance(transforms, Sequence):
             # Use the same transform for all colliders if only one is provided.
             transforms = [transforms for _ in colliders]
