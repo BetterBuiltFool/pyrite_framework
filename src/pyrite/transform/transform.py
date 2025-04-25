@@ -80,7 +80,7 @@ class Transform:
         new_scale = self._scale.elementwise() * root.scale
         new_rotation = self._rotation + root.rotation
 
-        scaled_position = self._position.elementwise() * new_scale
+        scaled_position = self._position.elementwise() * root.scale
         rotated_position = scaled_position.rotate(-root.rotation)
         new_position = root.position + rotated_position
 
