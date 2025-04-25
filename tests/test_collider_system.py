@@ -5,13 +5,19 @@ import pathlib
 import sys
 import unittest
 
-from pygame import Vector2
+from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.collider.ellipse import EllipseCollider  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
+from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite import collider  # noqa:E402
-from src.pyrite.transform import Transform  # noqa:E402
+from src.pyrite.transform import Transform, TransformComponent  # noqa:E402
+
+
+class TestOwner:
+
+    pass
 
 
 class TestColliserSystem(unittest.TestCase):
@@ -89,6 +95,25 @@ class TestColliserSystem(unittest.TestCase):
         self.assertTrue(
             ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
         )
+
+    def test_get_aabbs(self):
+        object1 = TestOwner()
+        object2 = TestOwner()
+
+        TransformComponent(object1, (0, 0), 0, (1, 1))
+        TransformComponent(object2, (4, 4), 0, (1, 1))
+
+        collider1 = EllipseCollider(4)
+        collider2 = EllipseCollider(4)
+
+        ColliderComponent(object1, collider1, Transform(), 1, 1)
+        ColliderComponent(object2, collider2, Transform(), 1, 1)
+
+        aabbs = ColliderSystem.get_aabbs([object1, object2])
+
+        expected = {object1: [Rect(-4, -4, 8, 8)], object2: [Rect(0, 0, 8, 8)]}
+
+        self.assertEqual(aabbs, expected)
 
 
 if __name__ == "__main__":
