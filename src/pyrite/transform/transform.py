@@ -66,7 +66,7 @@ class Transform:
 
     def local_to(self, other_transform: transform.TransformProtocol) -> Transform:
         """
-        Returns a new transform with the current transform's values
+        Translates the transform into the space of another.
 
         :param other_transform: A transform-like object whose context is being shifted
             into.
@@ -75,7 +75,9 @@ class Transform:
         """
         new_scale = self._scale.elementwise() * other_transform.scale
         new_rotation = self._rotation + other_transform.rotation
-        new_position = other_transform.position + (
-            self._position.elementwise() * new_scale
-        ).rotate(-self._rotation)
+
+        scaled_position = self._position.elementwise() * new_scale
+        rotated_position = scaled_position.rotate(-other_transform.rotation)
+        new_position = other_transform.position + rotated_position
+
         return Transform(new_position, new_rotation, new_scale)
