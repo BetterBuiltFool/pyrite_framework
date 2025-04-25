@@ -70,12 +70,14 @@ class Transform:
         first.
 
         This treats the transform as local to _root_, and finds the equivalent
-        transform in the same sapce as _root_.
+        transform in the same space as _root_.
 
-        :param root: A transform-like object whose context is being shifted
-            into.
+        Inverse of Transform.localize()
+
+        :param root: A transform-like object being treated like the new origin for the
+            local transform.
         :return: A new transform, representing the current transform in the local space
-            of _root_
+            of _root_.
         """
         new_scale = self.scale.elementwise() * root.scale
         new_rotation = self.rotation + root.rotation
@@ -87,6 +89,18 @@ class Transform:
         return Transform(new_position, new_rotation, new_scale)
 
     def localize(self, root: transform.TransformProtocol) -> Transform:
+        """
+        Derives a local transform from _root_.
+
+        Given both this transform and _root_ existing in the same space, finds the
+        equivalent local transform from the difference between the two.
+
+        Inverse of Transform.generalize()
+
+        :param root: A transform-like object in the same space as the current transform.
+        :return: A new transform, equivalent to the difference between the current
+            transform and _root_.
+        """
 
         translated_position = self.position - root.position
         rotated_position = translated_position.rotate(root.rotation)
