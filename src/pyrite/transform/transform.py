@@ -77,10 +77,10 @@ class Transform:
         :return: A new transform, representing the current transform in the local space
             of _root_
         """
-        new_scale = self._scale.elementwise() * root.scale
-        new_rotation = self._rotation + root.rotation
+        new_scale = self.scale.elementwise() * root.scale
+        new_rotation = self.rotation + root.rotation
 
-        scaled_position = self._position.elementwise() * root.scale
+        scaled_position = self.position.elementwise() * root.scale
         rotated_position = scaled_position.rotate(-root.rotation)
         new_position = root.position + rotated_position
 
