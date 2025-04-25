@@ -12,6 +12,7 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from ..types.collider import Collider
     from ..transform import Transform
+    from pygame import Rect
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
@@ -21,34 +22,16 @@ class ColliderSystem(System):
     def post_update(self, delta_time: float) -> None:
         colliding_objects = list(ColliderComponent.intersect(TransformComponent))
 
-        colliders = {
-            colliding_object: ColliderComponent.get(colliding_object).collider
-            for colliding_object in colliding_objects
-        }
-
-        transforms = {
-            colliding_object: TransformComponent.get(colliding_object).world()
-            for colliding_object in colliding_objects
-        }
-
         first_pass_candidates = self.get_first_pass_collisions(  # noqa:F841
-            colliding_objects, colliders, transforms
+            colliding_objects
         )
 
     def get_first_pass_collisions(
-        self,
-        colliding_objects: list[Any],
-        colliders: dict[Any, Collider],
-        transforms: dict[Any, Transform],
+        self, colliding_objects: list[Any]
     ) -> dict[ColliderComponent, list[ColliderComponent]]:
         first_pass_candidates: dict[ColliderComponent, list[ColliderComponent]] = {}
 
-        aabbs = {
-            colliding_object: colliders[colliding_object].get_aabb(
-                transforms[colliding_object]
-            )
-            for colliding_object in colliding_objects
-        }
+        aabbs = self.get_aabbs(colliding_objects)
 
         length = len(colliding_objects)
 
@@ -56,23 +39,67 @@ class ColliderSystem(System):
 
             if index == length:
                 continue
-            collider_aabb = aabbs[colliding_object]
 
-            other_aabbs = [
-                aabbs[other_object]
-                for other_object in colliding_objects[index + 1 : length]
-            ]
+            other_candidates = colliding_objects[index + 1 : length]
 
-            collision_indices = collider_aabb.collidelistall(other_aabbs)
-            candidates = [colliding_objects[i + index + 1] for i in collision_indices]
-            candidate_colliders = [
-                ColliderComponent.get(candidate) for candidate in candidates
-            ]
-            first_pass_candidates.update(
-                {ColliderComponent.get(colliding_object): candidate_colliders}
-            )
+            collider = ColliderComponent.get(colliding_object)
+
+            for other_candidate in other_candidates:
+                other_component = ColliderComponent.get(other_candidate)
+                # Early break if masks don't interact
+                if not (
+                    collider.compare_mask(other_component)
+                    or other_component.compare_mask(collider)
+                ):
+                    continue
+                other_aabbs = aabbs[other_candidate]
+                for aabb in aabbs[colliding_object]:
+                    if not aabb.collidelist(other_aabbs):
+                        # No interactions with the other's aabbs, so try the next
+                        continue
+                    # Found a hit, so add the candidates and break.
+                    first_pass_candidates.setdefault(colliding_object, []).append(
+                        other_candidate
+                    )
+                    break
+
+        #     collider_aabb = aabbs[colliding_object]
+
+        #     other_aabbs = [
+        #         aabbs[other_object]
+        #         for other_object in colliding_objects[index + 1 : length]
+        #     ]
+
+        #     collision_indices = collider_aabb.collidelistall(other_aabbs)
+        #     candidates = [colliding_objects[i + index + 1] for i in collision_indices]
+        #     candidate_colliders = [
+        #         ColliderComponent.get(candidate) for candidate in candidates
+        #     ]
+        #     first_pass_candidates.update(
+        #         {ColliderComponent.get(colliding_object): candidate_colliders}
+        #     )
 
         return first_pass_candidates
+
+    @staticmethod
+    def get_aabbs(
+        colliding_objects: list[Any],
+    ) -> dict[Any, list[Rect]]:
+
+        aabbs: dict[Any, list[Rect]] = {}
+
+        for colliding_object in colliding_objects:
+            component = ColliderComponent.get(colliding_object)
+            world_transform = TransformComponent.get(colliding_object).world()
+            aabb_list = aabbs.setdefault(colliding_object, [])
+            for object_collider, transform in zip(
+                component.get_colliders(), component.get_transforms()
+            ):
+                aabb_list.append(
+                    object_collider.get_aabb(transform.local_to(world_transform))
+                )
+
+        return aabbs
 
     @staticmethod
     def support_function(
