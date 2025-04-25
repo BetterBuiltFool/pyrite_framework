@@ -23,6 +23,20 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(modified.rotation, expected.rotation)
         self.assertEqual(modified.scale, expected.scale)
 
+    def test_localize(self):
+
+        root_transform = Transform((10, 10), 90, (2, 2))
+        branch_transform = Transform((10, 0), 90, (2, 2))
+
+        expected = Transform((5, 0), 0, (1, 1))
+        modified = branch_transform.localize(root_transform)
+
+        # Literally just the inverse of generalize()
+
+        self.assertEqual(modified.position, expected.position)
+        self.assertEqual(modified.rotation, expected.rotation)
+        self.assertEqual(modified.scale, expected.scale)
+
 
 if __name__ == "__main__":
 
