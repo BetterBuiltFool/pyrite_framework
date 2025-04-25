@@ -85,3 +85,15 @@ class Transform:
         new_position = root.position + rotated_position
 
         return Transform(new_position, new_rotation, new_scale)
+
+    def localize(self, root: transform.TransformProtocol) -> Transform:
+
+        translated_position = self.position - root.position
+        rotated_position = translated_position.rotate(root.rotation)
+        new_position = rotated_position.elementwise() / root.scale
+
+        new_rotation = self.rotation - root.rotation
+
+        new_scale = self.scale.elementwise() / root.scale
+
+        return Transform(new_position, new_rotation, new_scale)
