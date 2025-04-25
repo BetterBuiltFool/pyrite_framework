@@ -63,3 +63,19 @@ class Transform:
 
     def copy(self) -> Transform:
         return Transform(self._position, self._rotation, self._scale)
+
+    def local_to(self, other_transform: transform.TransformProtocol) -> Transform:
+        """
+        Returns a new transform with the current transform's values
+
+        :param other_transform: A transform-like object whose context is being shifted
+            into.
+        :return: A new transform, representing the current transform in the local space
+            of _other_transform_
+        """
+        new_scale = self._scale.elementwise() * other_transform.scale
+        new_rotation = self._rotation + other_transform.rotation
+        new_position = (self._position.elementwise() * new_scale).rotate(
+            -self._rotation
+        )
+        return Transform(new_position, new_rotation, new_scale)
