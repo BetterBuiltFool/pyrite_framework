@@ -75,7 +75,7 @@ class Transform:
         """
         new_scale = self._scale.elementwise() * other_transform.scale
         new_rotation = self._rotation + other_transform.rotation
-        new_position = (self._position.elementwise() * new_scale).rotate(
-            -self._rotation
-        )
+        new_position = other_transform.position + (
+            self._position.elementwise() * new_scale
+        ).rotate(-self._rotation)
         return Transform(new_position, new_rotation, new_scale)
