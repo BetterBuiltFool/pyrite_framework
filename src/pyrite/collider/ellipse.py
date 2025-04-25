@@ -14,7 +14,9 @@ class EllipseCollider(Collider):
 
     def get_aabb(self, transform: Transform) -> Rect:
         diameter = self.radius * 2
-        rect = Rect(0, 0, diameter * transform.scale.x, diameter * transform.scale.y)
+        rect = Rect(
+            0, 0, diameter.x * transform.scale.x, diameter.y * transform.scale.y
+        )
         rect.center = transform.position
         return rect
 
