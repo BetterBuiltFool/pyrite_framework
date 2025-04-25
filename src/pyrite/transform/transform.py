@@ -64,20 +64,24 @@ class Transform:
     def copy(self) -> Transform:
         return Transform(self._position, self._rotation, self._scale)
 
-    def generalize(self, other_transform: transform.TransformProtocol) -> Transform:
+    def generalize(self, root: transform.TransformProtocol) -> Transform:
         """
-        Translates the transform into the space of another.
+        Applies one transform onto another, generalizing it into the same space as the
+        first.
 
-        :param other_transform: A transform-like object whose context is being shifted
+        This treats the transform as local to _root_, and finds the equivalent
+        transform in the same sapce as _root_.
+
+        :param root: A transform-like object whose context is being shifted
             into.
         :return: A new transform, representing the current transform in the local space
-            of _other_transform_
+            of _root_
         """
-        new_scale = self._scale.elementwise() * other_transform.scale
-        new_rotation = self._rotation + other_transform.rotation
+        new_scale = self._scale.elementwise() * root.scale
+        new_rotation = self._rotation + root.rotation
 
         scaled_position = self._position.elementwise() * new_scale
-        rotated_position = scaled_position.rotate(-other_transform.rotation)
-        new_position = other_transform.position + rotated_position
+        rotated_position = scaled_position.rotate(-root.rotation)
+        new_position = root.position + rotated_position
 
         return Transform(new_position, new_rotation, new_scale)
