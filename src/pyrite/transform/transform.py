@@ -88,6 +88,12 @@ class Transform:
 
         return Transform(new_position, new_rotation, new_scale)
 
+    def __mul__(self, other_transform: transform.TransformProtocol) -> Transform:
+        return Transform.generalize(other_transform, self)
+
+    def __rmul__(self, other_transform: transform.TransformProtocol) -> Transform:
+        return Transform.generalize(self, other_transform)
+
     def localize(self, root: transform.TransformProtocol) -> Transform:
         """
         Derives a local transform from _root_.
