@@ -64,7 +64,7 @@ class Transform:
     def copy(self) -> Transform:
         return Transform(self._position, self._rotation, self._scale)
 
-    def local_to(self, other_transform: transform.TransformProtocol) -> Transform:
+    def generalize(self, other_transform: transform.TransformProtocol) -> Transform:
         """
         Translates the transform into the space of another.
 

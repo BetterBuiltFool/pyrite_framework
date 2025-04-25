@@ -96,7 +96,7 @@ class ColliderSystem(System):
                 component.get_colliders(), component.get_transforms()
             ):
                 aabb_list.append(
-                    object_collider.get_aabb(transform.local_to(world_transform))
+                    object_collider.get_aabb(transform.generalize(world_transform))
                 )
 
         return aabbs
