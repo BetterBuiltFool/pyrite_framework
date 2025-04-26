@@ -87,6 +87,13 @@ class ColliderComponent(Component):
     def compare_mask(self, other: ColliderComponent) -> bool:
         return self.collision_mask & other.layer_mask
 
+    def _flush_buffer(self):
+        """
+        Clears the last-frame collision buffer, and pushes the current frame buffer
+        into it.
+        """
+        pass
+
     def collides_with(self, other_collider: ColliderComponent) -> bool:
         """
         Determines if there is overlap with _other_collider_
