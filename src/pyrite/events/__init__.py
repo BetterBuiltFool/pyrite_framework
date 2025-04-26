@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import TYPE_CHECKING
 from ..types.instance_event import InstanceEvent  # noqa:F401
 
