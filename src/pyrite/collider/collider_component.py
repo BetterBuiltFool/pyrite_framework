@@ -86,3 +86,23 @@ class ColliderComponent(Component):
 
     def compare_mask(self, other: ColliderComponent) -> bool:
         return self.collision_mask & other.layer_mask
+
+    def collides_with(self, other_collider: ColliderComponent) -> bool:
+        """
+        Determines if there is overlap with _other_collider_
+
+        :param other_collider: Another collider component that is a potential overlap.
+        :return: True if the components have any overlapping colliders.
+        """
+        pass
+
+    def add_collision(self, other_collider: ColliderComponent) -> bool:
+        """
+        Adds the other collider to the internal set of collisions this frame.
+
+        :param other_collider: Another collider component determined to have collided
+            with this one.
+        :return: True if _other_collider_ is a new collision for this frame, otherwise
+            False.
+        """
+        pass
