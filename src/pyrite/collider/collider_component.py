@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any
 from weakref import WeakKeyDictionary
 
 from ..types import Component
+from ..events import OnTouch
 
 if TYPE_CHECKING:
     from ..types.collider import Collider
@@ -42,6 +43,19 @@ class ColliderComponent(Component):
 
         self.layer_masks.update({self: layers})
         self.collision_masks.update({self: collision_mask})
+
+        self.OnTouch = OnTouch(self)
+        """
+        Called whenever a collider begins contact with another.
+
+        :Signature:
+        on_touch(this_collider: ColliderComponent, touching: ColliderComponent) -> None
+
+
+        this_collider: The collider component belonging to the owner of the
+            instance event.
+        touching: The collider component in contact with _this_collider_
+        """
 
     @property
     def layer_mask(self) -> int:
