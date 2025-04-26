@@ -22,9 +22,30 @@ class ColliderSystem(System):
     def post_update(self, delta_time: float) -> None:
         colliding_objects = list(ColliderComponent.intersect(TransformComponent))
 
+        # Should be the fastest way of flushing all the buffers once and only once
+        map(ColliderComponent._flush_buffer, colliding_objects)
+
         first_pass_candidates = self.get_first_pass_collisions(  # noqa:F841
             colliding_objects
         )
+
+        for collider_component, candidates in first_pass_candidates.items():
+            for candidate in candidates:
+                pass
+                if not (collider_component.collides_with(candidate)):
+                    continue
+                # Update the collision lists
+                if collider_component.compare_mask(candidate):
+                    # colldier_component can touch candidate
+                    if collider_component.add_collision(candidate):
+                        collider_component.OnTouch(collider_component, candidate)
+                    collider_component.WhileTouching(collider_component, candidate)
+
+                if candidate.compare_mask(collider_component):
+                    # candidate can touch collider_component
+                    if candidate.add_collision(collider_component):
+                        candidate.OnTouch(candidate, collider_component)
+                    candidate.WhileTouching(candidate, collider_component)
 
     def get_first_pass_collisions(
         self, colliding_objects: list[Any]
