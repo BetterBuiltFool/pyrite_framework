@@ -5,6 +5,7 @@ from typing import TypeAlias, TYPE_CHECKING, Any
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
+from .. import collider
 
 from pygame import Vector2
 
@@ -29,7 +30,7 @@ class ColliderSystem(System):
         for collider_component, candidates in first_pass_candidates.items():
             for candidate in candidates:
                 pass
-                if not (collider_component.collides_with(candidate)):
+                if not (self.collide_between(collider_component, candidate)):
                     continue
                 # Update the collision lists
                 if collider_component.compare_mask(candidate):
@@ -81,22 +82,6 @@ class ColliderSystem(System):
                     )
                     break
 
-        #     collider_aabb = aabbs[colliding_object]
-
-        #     other_aabbs = [
-        #         aabbs[other_object]
-        #         for other_object in colliding_objects[index + 1 : length]
-        #     ]
-
-        #     collision_indices = collider_aabb.collidelistall(other_aabbs)
-        #     candidates = [colliding_objects[i + index + 1] for i in collision_indices]
-        #     candidate_colliders = [
-        #         ColliderComponent.get(candidate) for candidate in candidates
-        #     ]
-        #     first_pass_candidates.update(
-        #         {ColliderComponent.get(colliding_object): candidate_colliders}
-        #     )
-
         return first_pass_candidates
 
     @staticmethod
@@ -118,3 +103,29 @@ class ColliderSystem(System):
                 )
 
         return aabbs
+
+    def collide_between(
+        self, component_a: ColliderComponent, component_b: ColliderComponent
+    ) -> bool:
+        """
+        Determines if there is overlap with _other_collider_
+
+        :param other_component: Another collider component that is a potential overlap.
+        :return: True if the components have any overlapping colliders.
+        """
+        this_transform = TransformComponent.get(component_a.owner)
+        other_transform = TransformComponent.get(component_b.owner)
+        return any(
+            collider.collide(
+                collider_a,
+                collider_b,
+                this_transform * transform_a,
+                other_transform * transform_b,
+            )
+            for collider_b, transform_b in zip(
+                component_b.get_colliders(), component_b.get_transforms()
+            )
+            for collider_a, transform_a in zip(
+                component_a.get_colliders(), component_a.get_transforms()
+            )
+        )

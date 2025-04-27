@@ -6,8 +6,6 @@ from weakref import WeakKeyDictionary, WeakSet
 
 from ..types import Component
 from ..events import OnTouch, WhileTouching
-from ..transform.transform_component import TransformComponent
-from .. import collider
 
 if TYPE_CHECKING:
     from ..types.collider import Collider
@@ -99,30 +97,6 @@ class ColliderComponent(Component):
         """
         self.was_touching = self.is_touching
         self.is_touching = WeakSet()
-
-    def collides_with(self, other_component: ColliderComponent) -> bool:
-        """
-        Determines if there is overlap with _other_collider_
-
-        :param other_component: Another collider component that is a potential overlap.
-        :return: True if the components have any overlapping colliders.
-        """
-        this_transform = TransformComponent.get(self.owner)
-        other_transform = TransformComponent.get(other_component.owner)
-        return any(
-            collider.collide(
-                collider_a,
-                collider_b,
-                this_transform * transform_a,
-                other_transform * transform_b,
-            )
-            for collider_b, transform_b in zip(
-                other_component.get_colliders(), other_component.get_transforms()
-            )
-            for collider_a, transform_a in zip(
-                self.get_colliders(), self.get_transforms()
-            )
-        )
 
     def add_collision(self, other_collider: ColliderComponent) -> bool:
         """
