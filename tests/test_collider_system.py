@@ -125,6 +125,22 @@ class TestColliderSystem(unittest.TestCase):
 
         self.assertTrue(aabbs[self.object1][0].colliderect(aabbs[self.object2][0]))
 
+    def test_collide_between(self):
+        component_a = ColliderComponent.get(self.object1)
+        component_b = ColliderComponent.get(self.object2)
+
+        self.assertTrue(ColliderSystem.collide_between(component_a, component_b))
+
+    def test_get_first_pass_collisions(self):
+        component_a = ColliderComponent.get(self.object1)
+        component_b = ColliderComponent.get(self.object2)
+
+        expected = {component_a: [component_b]}
+
+        result = ColliderSystem.get_first_pass_collisions([self.object1, self.object2])
+
+        self.assertEqual(result, expected)
+
 
 if __name__ == "__main__":
 
