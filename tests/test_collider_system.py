@@ -32,7 +32,7 @@ class TestColliserSystem(unittest.TestCase):
         transform1 = Transform((5, 5))
         transform2 = Transform((-4, -4))
 
-        sp1 = ColliderSystem.support_function(
+        sp1 = collider.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
         )
 
@@ -86,14 +86,14 @@ class TestColliserSystem(unittest.TestCase):
 
         # Obviously no overlap
         self.assertFalse(
-            ColliderSystem.collide(collider_a, collider_b, transform_a, transform_b)
+            collider.collide(collider_a, collider_b, transform_a, transform_b)
         )
 
         transform_c = Transform((0, 0))
 
         # This SHOULD overlap
         self.assertTrue(
-            ColliderSystem.collide(collider_a, collider_b, transform_a, transform_c)
+            collider.collide(collider_a, collider_b, transform_a, transform_c)
         )
 
     def test_get_aabbs(self):

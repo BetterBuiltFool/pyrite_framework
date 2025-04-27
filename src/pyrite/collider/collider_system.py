@@ -5,13 +5,10 @@ from typing import TypeAlias, TYPE_CHECKING, Any
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
-from .. import collider
 
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from ..types.collider import Collider
-    from ..transform import Transform
     from pygame import Rect
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
@@ -121,74 +118,3 @@ class ColliderSystem(System):
                 )
 
         return aabbs
-
-    @staticmethod
-    def support_function(
-        direction: Vector2,
-        collider_a: Collider,
-        collider_b: Collider,
-        transform_a: Transform,
-        transform_b: Transform,
-    ) -> Vector2:
-        point_a = collider_a.get_furthest_vertex(direction, transform_a)
-        point_b = collider_b.get_furthest_vertex(-direction, transform_b)
-
-        return point_a - point_b
-
-    @classmethod
-    def collide(
-        cls,
-        collider_a: Collider,
-        collider_b: Collider,
-        transform_a: Transform,
-        transform_b: Transform,
-    ) -> bool:
-        direction = Vector2(1, 0)  # Arbitrary direction
-
-        # Get support point 1
-        support_point = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-
-        # Add to simplex
-        simplex: Simplex = [support_point]
-
-        # New direction through origin
-        direction = -support_point
-
-        # Get support point 2
-        support_point = cls.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
-        )
-
-        # Add to simplex
-        simplex.append(support_point)
-
-        # Short circuit if point is already invalid
-        if support_point * direction < 0:
-            return False
-
-        # Loop
-        while True:
-            # Get the normal of the two closest points
-            direction = collider.get_normal(simplex[0], simplex[1])
-
-            # Get support point 3
-            support_point = cls.support_function(
-                direction, collider_a, collider_b, transform_a, transform_b
-            )
-
-            # Short circuit if point is already invalid
-            if support_point * direction < 0:
-                return False
-
-            # Add to simplex
-            simplex.append(support_point)
-
-            # Simplex is now a triangle
-            if collider.check_region(simplex):
-                # Found our overlap!
-                return True
-
-            # Failed, reduce simplex and try again
-            simplex = collider.get_closest_edge(simplex)
