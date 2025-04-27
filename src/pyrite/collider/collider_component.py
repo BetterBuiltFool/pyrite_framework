@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
-from weakref import WeakKeyDictionary
+from weakref import WeakKeyDictionary, WeakSet
 
 from ..types import Component
 from ..events import OnTouch, WhileTouching
@@ -43,6 +43,9 @@ class ColliderComponent(Component):
 
         self.layer_masks.update({self: layers})
         self.collision_masks.update({self: collision_mask})
+
+        self.is_touching: WeakSet[ColliderComponent] = WeakSet()
+        self.was_touching: WeakSet[ColliderComponent] = WeakSet()
 
         self.OnTouch = OnTouch(self)
         """
@@ -92,7 +95,8 @@ class ColliderComponent(Component):
         Clears the last-frame collision buffer, and pushes the current frame buffer
         into it.
         """
-        pass
+        self.was_touching = self.is_touching
+        self.is_touching = WeakSet()
 
     def collides_with(self, other_collider: ColliderComponent) -> bool:
         """
