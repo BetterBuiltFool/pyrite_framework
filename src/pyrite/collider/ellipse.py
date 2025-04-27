@@ -20,9 +20,6 @@ class EllipseCollider(Collider):
         rect.center = transform.position
         return rect
 
-    def collide(self, collide_with: Collider, delta_transform: Transform) -> bool:
-        return super().collide(collide_with, delta_transform)
-
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
         # Rotate and scale vector by transform data
         # normalize vector

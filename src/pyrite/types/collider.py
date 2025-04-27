@@ -21,22 +21,6 @@ class Collider(ABC):
         pass
 
     @abstractmethod
-    def collide(
-        self,
-        collide_with: Collider,
-        delta_transform: Transform,
-    ) -> bool:
-        """
-        Does detailed collision detection against the other collider.
-
-        :param collide_with: Another collider to be compared against.
-        :param delta_transform: A Transform representing the difference in transform
-            values between the two colliders' centers.
-        :return: True if the colliders intersect, False otherwise.
-        """
-        pass
-
-    @abstractmethod
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
         """
         Gets the furthest point of the shape in the direction provided by the vector
