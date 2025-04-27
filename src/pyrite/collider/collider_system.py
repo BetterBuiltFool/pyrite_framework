@@ -104,8 +104,9 @@ class ColliderSystem(System):
 
         return aabbs
 
+    @classmethod
     def collide_between(
-        self, component_a: ColliderComponent, component_b: ColliderComponent
+        cls, component_a: ColliderComponent, component_b: ColliderComponent
     ) -> bool:
         """
         Determines if there is overlap with _other_collider_
