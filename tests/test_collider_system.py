@@ -20,7 +20,7 @@ class TestOwner:
     pass
 
 
-class TestColliserSystem(unittest.TestCase):
+class TestCollider(unittest.TestCase):
 
     def setUp(self) -> None:
         self.collider1 = EllipseCollider(5)
@@ -96,24 +96,34 @@ class TestColliserSystem(unittest.TestCase):
             collider.collide(collider_a, collider_b, transform_a, transform_c)
         )
 
-    def test_get_aabbs(self):
-        object1 = TestOwner()
-        object2 = TestOwner()
 
-        TransformComponent(object1, (0, 0), 0, (1, 1))
-        TransformComponent(object2, (4, 4), 0, (1, 1))
+class TestColliderSystem(unittest.TestCase):
+
+    def setUp(self):
+        self.object1 = TestOwner()
+        self.object2 = TestOwner()
+
+        TransformComponent(self.object1, (0, 0), 0, (1, 1))
+        TransformComponent(self.object2, (4, 4), 0, (1, 1))
 
         collider1 = EllipseCollider(4)
         collider2 = EllipseCollider(4)
 
-        ColliderComponent(object1, collider1, Transform(), 1, 1)
-        ColliderComponent(object2, collider2, Transform(), 1, 1)
+        ColliderComponent(self.object1, collider1, Transform(), 1, 1)
+        ColliderComponent(self.object2, collider2, Transform(), 1, 1)
 
-        aabbs = ColliderSystem.get_aabbs([object1, object2])
+    def test_get_aabbs(self):
 
-        expected = {object1: [Rect(-4, -4, 8, 8)], object2: [Rect(0, 0, 8, 8)]}
+        aabbs = ColliderSystem.get_aabbs([self.object1, self.object2])
+
+        expected = {
+            self.object1: [Rect(-4, -4, 8, 8)],
+            self.object2: [Rect(0, 0, 8, 8)],
+        }
 
         self.assertEqual(aabbs, expected)
+
+        self.assertTrue(aabbs[self.object1][0].colliderect(aabbs[self.object2][0]))
 
 
 if __name__ == "__main__":
