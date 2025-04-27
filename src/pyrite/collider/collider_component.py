@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, Any
+from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary, WeakSet
 
 from ..types import Component
@@ -109,17 +109,20 @@ class ColliderComponent(Component):
         """
         this_transform = TransformComponent.get(self.owner)
         other_transform = TransformComponent.get(other_component.owner)
-        for collider_, transform in zip(self.get_colliders(), self.get_transforms()):
-            transform = this_transform * transform
-            for other_collider, other_collider_transform in zip(
+        return any(
+            collider.collide(
+                collider_a,
+                collider_b,
+                this_transform * transform_a,
+                other_transform * transform_b,
+            )
+            for collider_b, transform_b in zip(
                 other_component.get_colliders(), other_component.get_transforms()
-            ):
-                other_collider_transform = other_transform * other_collider_transform
-                if collider.collide(
-                    collider_, other_collider, transform, other_collider_transform
-                ):
-                    return True
-        return False
+            )
+            for collider_a, transform_a in zip(
+                self.get_colliders(), self.get_transforms()
+            )
+        )
 
     def add_collision(self, other_collider: ColliderComponent) -> bool:
         """
