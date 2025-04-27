@@ -116,4 +116,5 @@ class ColliderComponent(Component):
         :return: True if _other_collider_ is a new collision for this frame, otherwise
             False.
         """
-        pass
+        self.is_touching.add(other_collider)
+        return other_collider not in self.was_touching
