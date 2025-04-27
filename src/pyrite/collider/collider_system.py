@@ -45,12 +45,13 @@ class ColliderSystem(System):
                         candidate.OnTouch(candidate, collider_component)
                     candidate.WhileTouching(candidate, collider_component)
 
+    @classmethod
     def get_first_pass_collisions(
-        self, colliding_objects: list[Any]
+        cls, colliding_objects: list[Any]
     ) -> dict[ColliderComponent, list[ColliderComponent]]:
         first_pass_candidates: dict[ColliderComponent, list[ColliderComponent]] = {}
 
-        aabbs = self.get_aabbs(colliding_objects)
+        aabbs = cls.get_aabbs(colliding_objects)
 
         length = len(colliding_objects)
 
