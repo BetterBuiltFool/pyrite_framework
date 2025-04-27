@@ -141,6 +141,39 @@ class TestColliderSystem(unittest.TestCase):
 
         self.assertEqual(result, expected)
 
+        # Other cases:
+        # - AABBS don't touch
+        # - AABBS touch, even if colliders don't
+        # - Results with mask mismatches
+
+    def test_postupdate(self):
+        component_a = ColliderComponent.get(self.object1)
+        component_b = ColliderComponent.get(self.object2)
+
+        collided_a = False
+        collided_b = False
+
+        @component_a.OnTouch.add_listener
+        def _(this_collider: ColliderComponent, other_collider: ColliderComponent):
+            nonlocal collided_a
+            collided_a = True
+
+        @component_b.OnTouch.add_listener
+        def _(this_collider: ColliderComponent, other_collider: ColliderComponent):
+            nonlocal collided_b
+            collided_b = True
+
+        test_system = ColliderSystem()
+
+        test_system.post_update(0)
+
+        self.assertTrue(collided_a)
+        self.assertTrue(collided_b)
+
+        # Other cases:
+        # - No collision
+        # - Mask mismatches
+
 
 if __name__ == "__main__":
 
