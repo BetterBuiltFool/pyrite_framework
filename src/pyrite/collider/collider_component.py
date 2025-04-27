@@ -26,11 +26,15 @@ class ColliderComponent(Component):
         self,
         owner: Any,
         colliders: Collider | Sequence[Collider],
-        transforms: Transform | Sequence[Transform],
-        layers: int,
-        collision_mask: int,
+        transforms: Transform | Sequence[Transform] = None,
+        layers: int = 0,
+        collision_mask: int = 0,
     ) -> None:
         super().__init__(owner)
+
+        if transforms is None:
+            # Make it a default transform
+            transforms = Transform()
 
         if not isinstance(colliders, Sequence):
             colliders = [colliders]
