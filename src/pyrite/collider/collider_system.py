@@ -74,12 +74,12 @@ class ColliderSystem(System):
                     continue
                 other_aabbs = aabbs[other_candidate]
                 for aabb in aabbs[colliding_object]:
-                    if not aabb.collidelist(other_aabbs):
+                    if aabb.collidelist(other_aabbs) < 0:
                         # No interactions with the other's aabbs, so try the next
                         continue
                     # Found a hit, so add the candidates and break.
-                    first_pass_candidates.setdefault(colliding_object, []).append(
-                        other_candidate
+                    first_pass_candidates.setdefault(collider, []).append(
+                        other_component
                     )
                     break
 
