@@ -197,6 +197,9 @@ class CollisionLayers:
 
         mask: int = 0
         for index in indices:
+            if index < 0:
+                # Throw out negative keys, they indicate invalid labels.
+                continue
             mask |= 2**index
 
         return mask
