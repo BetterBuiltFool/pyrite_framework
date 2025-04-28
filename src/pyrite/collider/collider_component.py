@@ -81,9 +81,21 @@ class ColliderComponent(Component):
     def layer_mask(self) -> int:
         return self.layer_masks[self]
 
+    def add_layer_mask_layer(self, layer: int):
+        self.layer_masks[self] |= layer
+
+    def remove_layer_mask_layer(self, layer: int):
+        self.layer_masks[self] &= ~layer
+
     @property
     def collision_mask(self) -> int:
         return self.collision_masks[self]
+
+    def add_collision_mask_layer(self, layer: int):
+        self.collision_masks[self] |= layer
+
+    def remove_collision_mask_layer(self, layer: int):
+        self.collision_masks[self] &= ~layer
 
     def get_colliders(self) -> list[Collider]:
         return self.colliders[self]
