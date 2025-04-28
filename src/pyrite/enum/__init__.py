@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from functools import singledispatchmethod
 from typing import TYPE_CHECKING
 
@@ -176,76 +175,3 @@ class AnchorPoint:
     BOTTOMLEFT = Anchor((0, 1))
     MIDBOTTOM = Anchor((0.5, 1))
     BOTTOMRIGHT = Anchor((1, 1))
-
-
-class CollisionLayers:
-    _layers: dict[str, int] = {}
-
-    @classmethod
-    def generate_mask(cls, layers: Sequence[str] | str) -> int:
-        if isinstance(layers, str):
-            # Force layers to be a sequence
-            # Can't check against sequence, strings ARE sequences
-            # Sequences of other strings.
-            # It goes ad infinitum...
-            layers = [layers]
-
-        indices: set[int] = set()
-
-        for layer in layers:
-            indices.add(cls.get(layer))
-
-        mask: int = 0
-        for index in indices:
-            if index < 0:
-                # Throw out negative keys, they indicate invalid labels.
-                continue
-            mask |= 2**index
-
-        return mask
-
-    @classmethod
-    def get(cls, key: str) -> int:
-        """
-        Returns the layer index for the given key. Will raise an error on invalid keys
-
-        :param key: A layer label string
-        :return: Integer for the layer index
-        """
-        return cls._layers[key]
-
-    @classmethod
-    def get_labels_for_layer(cls, index: int) -> list[str]:
-        """
-        Finds all labels for a given index.
-
-        :param index: The layer index to be searched.
-        :return: A list of strings being used as labels for the index. If the index is
-            unlabelled, an empty list is returned.
-        """
-        return [
-            label for label, layer_index in cls._layers.items() if layer_index == index
-        ]
-
-    @classmethod
-    def _get_lowest_index(cls) -> int:
-        values = set(cls._layers.values())
-        for value in sorted(values):
-            if value + 1 in values:
-                continue
-            return value
-
-    @classmethod
-    def label_layer(cls, label: str, index: int = None):
-        """
-        Assigns a label to a given layer index.
-        Layers can have multiple labels, but multiple layers cannot share a label.
-        If no index is provided, the lowest unlabelled index is used.
-
-        :param label: A string label to be applied to a layer.
-        :param index: An index, to receive _label_
-        """
-        cls._layers.pop(label, None)
-        if index is None:
-            index = cls._get_lowest_index()
-        cls._layers.update({label: index})
