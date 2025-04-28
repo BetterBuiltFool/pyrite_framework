@@ -1,0 +1,29 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+from pygame import Rect
+
+
+from ..types.shape import Shape
+
+if TYPE_CHECKING:
+    from pygame import Vector2
+    from ..transform import Transform
+
+
+class Point(Shape):
+    # Point has all static methods, since it has no state. You don't need to
+    # instantiate it to use it, although it absolutely can be used in ColliderComponents
+
+    @staticmethod
+    def get_aabb(transform: Transform) -> Rect:
+        # Create the smallest possible rectangle for collision sake.
+        rect = Rect(0, 0, 1, 1)
+        rect.center = transform.position
+        return rect
+
+    @staticmethod
+    def get_furthest_vertex(vector: Vector2, transform: Transform) -> Vector2:
+        # A Point only has one point, so we always return that.
+        # vector is only included to match signatures
+        return transform.position
