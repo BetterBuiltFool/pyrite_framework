@@ -207,12 +207,12 @@ class CollisionLayers:
     @classmethod
     def get(cls, key: str) -> int:
         """
-        Returns the layer index for the given key.
+        Returns the layer index for the given key. Will raise an error on invalid keys
 
         :param key: A layer label string
-        :return: Integer for the layer index, or -1 if the key is not valid.
+        :return: Integer for the layer index
         """
-        return cls._layers.get(key, -1)
+        return cls._layers[key]
 
     @classmethod
     def get_labels_for_layer(cls, index: int) -> list[str]:
