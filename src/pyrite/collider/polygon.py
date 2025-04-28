@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
-from pygame import Rect, Vector2
+from pygame import Vector2
 
 from ..transform import Transform
 
@@ -30,14 +30,14 @@ class Polygon(Shape):
     def __init__(self, vertices: Sequence[Vector2]) -> None:
         self._vertices = list(vertices)
 
-    def get_aabb(self, transform: Transform) -> Rect:
+    def _get_extents(self, transform: Transform) -> dict[str, Vector2]:
         vertices = self.get_vertices()
-        highest, lowest, rightest, leftest = vertices[0].rotate(-transform.rotation)
+        initial_vert = vertices[0].rotate(-transform.rotation)
         extents: dict[str, Vector2] = {
-            "up": vertices[0],
-            "right": vertices[0],
-            "down": vertices[0],
-            "left": vertices[0],
+            "up": initial_vert,
+            "right": initial_vert,
+            "down": initial_vert,
+            "left": initial_vert,
         }
         for vertex in vertices:
             transformed_vertex = vertex.rotate(-transform.rotation)
@@ -45,11 +45,7 @@ class Polygon(Shape):
                 extents[extent_key] = _get_furthest(
                     directions[extent_key], extent_value, transformed_vertex
                 )
-        top = extents["up"].y
-        left = extents["left"].x
-        height = top - extents["down"].y
-        width = extents["right"].x - left
-        return Rect(left_top=(left, top), width_height=(width, height))
+        return extents
 
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
         pass
