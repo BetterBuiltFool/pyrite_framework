@@ -5,7 +5,7 @@ from typing import TypeAlias, TYPE_CHECKING
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from ..types.collider import Collider
+    from ..types.shape import Shape
     from ..transform import Transform
 
 
@@ -77,8 +77,8 @@ def get_unit_normal(start: Vector2, end: Vector2) -> Vector2:
 
 def support_function(
     direction: Vector2,
-    collider_a: Collider,
-    collider_b: Collider,
+    collider_a: Shape,
+    collider_b: Shape,
     transform_a: Transform,
     transform_b: Transform,
 ) -> Vector2:
@@ -89,8 +89,8 @@ def support_function(
 
 
 def collide(
-    collider_a: Collider,
-    collider_b: Collider,
+    collider_a: Shape,
+    collider_b: Shape,
     transform_a: Transform,
     transform_b: Transform,
 ) -> bool:

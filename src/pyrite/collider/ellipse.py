@@ -4,10 +4,10 @@ from pygame import Rect, Vector2
 
 from ..transform import Transform
 
-from ..types.collider import Collider
+from ..types.shape import Shape
 
 
-class EllipseCollider(Collider):
+class EllipseCollider(Shape):
 
     def __init__(self, radius: float) -> None:
         self.radius = Vector2(radius)

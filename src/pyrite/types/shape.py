@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from ..transform import Transform
 
 
-class Collider(ABC):
+class Shape(ABC):
 
     @abstractmethod
     def get_aabb(self, transform: Transform) -> Rect:

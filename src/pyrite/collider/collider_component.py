@@ -8,16 +8,14 @@ from ..types import Component
 from ..events import OnTouch, WhileTouching
 
 if TYPE_CHECKING:
-    from ..types.collider import Collider
+    from ..types.shape import Shape
     from ..transform import Transform
 
 
 class ColliderComponent(Component):
     layer_masks: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
     collision_masks: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
-    colliders: WeakKeyDictionary[ColliderComponent, list[Collider]] = (
-        WeakKeyDictionary()
-    )
+    colliders: WeakKeyDictionary[ColliderComponent, list[Shape]] = WeakKeyDictionary()
     transforms: WeakKeyDictionary[ColliderComponent, list[Transform]] = (
         WeakKeyDictionary()
     )
@@ -25,7 +23,7 @@ class ColliderComponent(Component):
     def __init__(
         self,
         owner: Any,
-        colliders: Collider | Sequence[Collider],
+        colliders: Shape | Sequence[Shape],
         transforms: Transform | Sequence[Transform] = None,
         layers: int = 1,
         collision_mask: int = 1,
@@ -97,7 +95,7 @@ class ColliderComponent(Component):
     def remove_collision_mask_layer(self, layer: int):
         self.collision_masks[self] &= ~layer
 
-    def get_colliders(self) -> list[Collider]:
+    def get_colliders(self) -> list[Shape]:
         return self.colliders[self]
 
     def get_transforms(self) -> list[Transform]:
