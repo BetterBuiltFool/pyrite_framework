@@ -9,6 +9,13 @@ if TYPE_CHECKING:
     from pygame import Vector2
     from ..transform import Transform
 
+DIRECTIONS: dict[str, Vector2] = {
+    "up": Vector2(0, 1),
+    "right": Vector2(1, 0),
+    "down": Vector2(0, -1),
+    "left": Vector2(-1, 0),
+}
+
 
 class Shape(ABC):
 

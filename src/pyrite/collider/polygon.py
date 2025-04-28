@@ -6,17 +6,10 @@ from pygame import Vector2
 
 from ..transform import Transform
 
-from ..types.shape import Shape
+from ..types.shape import Shape, DIRECTIONS
 
 if TYPE_CHECKING:
     pass
-
-directions: dict[str, Vector2] = {
-    "up": Vector2(0, 1),
-    "right": Vector2(1, 0),
-    "down": Vector2(0, -1),
-    "left": Vector2(-1, 0),
-}
 
 
 def _get_furthest(direction: Vector2, point_a: Vector2, point_b: Vector2) -> Vector2:
@@ -43,7 +36,7 @@ class Polygon(Shape):
             transformed_vertex = vertex.rotate(-transform.rotation)
             for extent_key, extent_value in extents.items():
                 extents[extent_key] = _get_furthest(
-                    directions[extent_key], extent_value, transformed_vertex
+                    DIRECTIONS[extent_key], extent_value, transformed_vertex
                 )
         return extents
 
