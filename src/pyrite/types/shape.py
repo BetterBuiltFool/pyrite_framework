@@ -3,14 +3,15 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+from pygame import Rect
+
 if TYPE_CHECKING:
-    from pygame import Rect, Vector2
+    from pygame import Vector2
     from ..transform import Transform
 
 
 class Shape(ABC):
 
-    @abstractmethod
     def get_aabb(self, transform: Transform) -> Rect:
         """
         Returns an axis-aligned bounding box for the collider.
@@ -18,7 +19,12 @@ class Shape(ABC):
         :transform: A Transform object representing the center of the collider in world
             space.
         """
-        pass
+        extents = self._get_extents(transform)
+        top = extents["up"].y
+        left = extents["left"].x
+        height = top - extents["down"].y
+        width = extents["right"].x - left
+        return Rect(left_top=(left, top), width_height=(width, height))
 
     @abstractmethod
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
@@ -30,6 +36,10 @@ class Shape(ABC):
         :return: A position, in world space, representing the furthest point in that
             direction.
         """
+        pass
+
+    @abstractmethod
+    def _get_extents(self, transform: Transform) -> dict[str, Vector2]:
         pass
 
     def _prescale_vector(self, vector: Vector2, transform: Transform) -> Vector2:
