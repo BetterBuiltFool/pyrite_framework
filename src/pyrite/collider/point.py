@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from pygame import Rect
 
-
 from ..types.shape import Shape
 
 if TYPE_CHECKING:
@@ -21,6 +20,11 @@ class Point(Shape):
         rect = Rect(0, 0, 1, 1)
         rect.center = transform.position
         return rect
+
+    def _get_extents(self, transform: Transform) -> dict[str, Vector2]:
+        # We overload get_aabb, so this isnt actually needed
+        # It's abstract, though, so we have to implement
+        pass
 
     @staticmethod
     def get_furthest_vertex(vector: Vector2, transform: Transform) -> Vector2:
