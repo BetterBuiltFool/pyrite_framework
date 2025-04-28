@@ -1,0 +1,58 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+from typing import TYPE_CHECKING
+from pygame import Rect, Vector2
+
+from ..transform import Transform
+
+from ..types.shape import Shape
+
+if TYPE_CHECKING:
+    pass
+
+directions: dict[str, Vector2] = {
+    "up": Vector2(0, 1),
+    "right": Vector2(1, 0),
+    "down": Vector2(0, -1),
+    "left": Vector2(-1, 0),
+}
+
+
+def _get_furthest(direction: Vector2, point_a: Vector2, point_b: Vector2) -> Vector2:
+    a = point_a * direction
+    b = point_b * direction
+    return point_a if a > b else point_b
+
+
+class Polygon(Shape):
+
+    def __init__(self, vertices: Sequence[Vector2]) -> None:
+        self._vertices = list(vertices)
+
+    def get_aabb(self, transform: Transform) -> Rect:
+        vertices = self.get_vertices()
+        highest, lowest, rightest, leftest = vertices[0]
+        extents: dict[str, Vector2] = {
+            "up": vertices[0],
+            "right": vertices[0],
+            "down": vertices[0],
+            "left": vertices[0],
+        }
+        for vertex in vertices:
+            transformed_vertex = vertex.rotate(-transform.rotation)
+            for extent_key, extent_value in extents.items():
+                extents[extent_key] = _get_furthest(
+                    directions[extent_key], extent_value, transformed_vertex
+                )
+        top = extents["up"].y
+        left = extents["left"].x
+        height = top - extents["down"].y
+        width = extents["right"].x - left
+        return Rect(left_top=(left, top), width_height=(width, height))
+
+    def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
+        pass
+
+    def get_vertices(self) -> list[Vector2]:
+        return self._vertices
