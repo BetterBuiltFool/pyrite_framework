@@ -202,6 +202,16 @@ class CollisionLayers:
         return mask
 
     @classmethod
+    def get(cls, key: str) -> int:
+        """
+        Returns the layer index for the given key.
+
+        :param key: A layer label string
+        :return: Integer for the layer index, or -1 if the key is not valid.
+        """
+        return cls._layers.get(key, -1)
+
+    @classmethod
     def get_labels_for_layer(cls, index: int) -> list[str]:
         """
         Finds all labels for a given index.
