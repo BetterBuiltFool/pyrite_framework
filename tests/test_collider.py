@@ -7,7 +7,7 @@ import unittest
 from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.collider.ellipse import EllipseCollider  # noqa:E402
+from src.pyrite.collider.ellipse import Ellipse  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite import collider  # noqa:E402
@@ -22,8 +22,8 @@ class TestOwner:
 class TestColliderComponent(unittest.TestCase):
 
     def setUp(self):
-        self.circle1 = EllipseCollider(5)
-        self.circle2 = EllipseCollider(4)
+        self.circle1 = Ellipse(5)
+        self.circle2 = Ellipse(4)
         self.transform1 = Transform((1, 2))
         self.transform2 = Transform((5, 5))
 
@@ -73,8 +73,8 @@ class TestColliderComponent(unittest.TestCase):
 class TestCollider(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.collider1 = EllipseCollider(5)
-        self.collider2 = EllipseCollider(4)
+        self.collider1 = Ellipse(5)
+        self.collider2 = Ellipse(4)
 
     def test_support_function(self):
         direction = Vector2(1, 0)
@@ -128,8 +128,8 @@ class TestCollider(unittest.TestCase):
         self.assertTrue(collider.check_region(region5))
 
     def test_collide(self):
-        collider_a = EllipseCollider(5)
-        collider_b = EllipseCollider(4)
+        collider_a = Ellipse(5)
+        collider_b = Ellipse(4)
 
         transform_a = Transform((5, 5))
         transform_b = Transform((-4, -4))
@@ -156,8 +156,8 @@ class TestColliderSystem(unittest.TestCase):
         TransformComponent(self.object1, (0, 0), 0, (1, 1))
         TransformComponent(self.object2, (4, 4), 0, (1, 1))
 
-        collider1 = EllipseCollider(4)
-        collider2 = EllipseCollider(4)
+        collider1 = Ellipse(4)
+        collider2 = Ellipse(4)
 
         ColliderComponent(self.object1, collider1, Transform(), 1, 1)
         ColliderComponent(self.object2, collider2, Transform(), 1, 1)

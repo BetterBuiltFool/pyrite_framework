@@ -7,7 +7,7 @@ from ..transform import Transform
 from ..types.shape import Shape
 
 
-class EllipseCollider(Shape):
+class Ellipse(Shape):
 
     def __init__(self, radius: float) -> None:
         self.radius = Vector2(radius)
