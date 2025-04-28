@@ -32,7 +32,7 @@ class Polygon(Shape):
 
     def get_aabb(self, transform: Transform) -> Rect:
         vertices = self.get_vertices()
-        highest, lowest, rightest, leftest = vertices[0]
+        highest, lowest, rightest, leftest = vertices[0].rotate(-transform.rotation)
         extents: dict[str, Vector2] = {
             "up": vertices[0],
             "right": vertices[0],
