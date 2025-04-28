@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from functools import singledispatchmethod
-import typing
+from typing import TYPE_CHECKING
 
 import pygame
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
 
 
@@ -181,8 +182,24 @@ class CollisionLayers:
     _layers: dict[str, int] = {}
 
     @classmethod
-    def generate_mask(cls) -> int:
-        pass
+    def generate_mask(cls, layers: Sequence[str] | str) -> int:
+        if isinstance(layers, str):
+            # Force layers to be a sequence
+            # Can't check against sequence, strings ARE sequences
+            # Sequences of other strings.
+            # It goes ad infinitum...
+            layers = [layers]
+
+        indices: set[int] = set()
+
+        for layer in layers:
+            indices.add(cls.get(layer))
+
+        mask: int = 0
+        for index in indices:
+            mask |= 2**index
+
+        return mask
 
     @classmethod
     def get_labels_for_layer(cls, index: int) -> list[str]:
