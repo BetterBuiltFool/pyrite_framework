@@ -3,16 +3,15 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from pygame import Rect
+from pygame import Rect, Vector2
 
 if TYPE_CHECKING:
-    from pygame import Vector2
     from ..transform import Transform
 
 DIRECTIONS: dict[str, Vector2] = {
-    "up": Vector2(0, 1),
+    "up": Vector2(0, -1),
     "right": Vector2(1, 0),
-    "down": Vector2(0, -1),
+    "down": Vector2(0, 1),
     "left": Vector2(-1, 0),
 }
 
@@ -29,9 +28,9 @@ class Shape(ABC):
         extents = self._get_extents(transform)
         top = extents["up"].y
         left = extents["left"].x
-        height = top - extents["down"].y
+        height = extents["down"].y - top
         width = extents["right"].x - left
-        return Rect(left_top=(left, top), width_height=(width, height))
+        return Rect(left, top, width, height)
 
     @abstractmethod
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
