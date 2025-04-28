@@ -177,25 +177,32 @@ class AnchorPoint:
     BOTTOMRIGHT = Anchor((1, 1))
 
 
-class CLayer:
-
-    def __init__(self, name: str = "") -> None:
-        self.name = name
-        self._index = 0
-
-    @property
-    def index(self) -> int:
-        return self._index
-
-    @index.setter
-    def index(self, bit_value: int):
-        self._index = bit_value
-
-
 class CollisionLayers:
-    _layers = []
+    _layers: dict[str, int] = {}
 
     @classmethod
-    def add_layer(cls, layer: CLayer):
-        cls._layers.append(layer)
-        layer.index = 2 ** len(cls._layers)
+    def generate_mask(cls) -> int:
+        pass
+
+    @classmethod
+    def _get_lowest_index(cls) -> int:
+        values = set(cls._layers.values())
+        for value in sorted(values):
+            if value + 1 in values:
+                continue
+            return value
+
+    @classmethod
+    def label_layer(cls, label: str, index: int = None):
+        """
+        Assigns a label to a given layer index.
+        Layers can have multiple labels, but multiple layers cannot share a label.
+        If no index is provided, the lowest unlabelled index is used.
+
+        :param label: A string label to be applied to a layer.
+        :param index: An index, to receive _label_
+        """
+        cls._layers.pop(label, None)
+        if index is None:
+            index = cls._get_lowest_index()
+        cls._layers.update({label: index})
