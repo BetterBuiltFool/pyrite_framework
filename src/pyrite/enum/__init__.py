@@ -185,6 +185,19 @@ class CollisionLayers:
         pass
 
     @classmethod
+    def get_labels_for_layer(cls, index: int) -> list[str]:
+        """
+        Finds all labels for a given index.
+
+        :param index: The layer index to be searched.
+        :return: A list of strings being used as labels for the index. If the index is
+            unlabelled, an empty list is returned.
+        """
+        return [
+            label for label, layer_index in cls._layers.items() if layer_index == index
+        ]
+
+    @classmethod
     def _get_lowest_index(cls) -> int:
         values = set(cls._layers.values())
         for value in sorted(values):
