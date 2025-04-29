@@ -21,7 +21,9 @@ class ColliderSystem(System):
         colliding_objects = list(ColliderComponent.intersect(TransformComponent))
 
         # Should be the fastest way of flushing all the buffers once and only once
-        map(ColliderComponent._flush_buffer, colliding_objects)
+        components = ColliderComponent.get_instances()
+        for component in components.values():
+            component._flush_buffer()
 
         first_pass_candidates = self.get_first_pass_collisions(  # noqa:F841
             colliding_objects
