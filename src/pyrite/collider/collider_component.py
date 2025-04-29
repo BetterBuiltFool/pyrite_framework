@@ -4,12 +4,12 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary, WeakSet
 
+from ..transform import Transform
 from ..types import Component
 from ..events import OnTouch, WhileTouching
 
 if TYPE_CHECKING:
     from ..types.shape import Shape
-    from ..transform import Transform
 
 
 class ColliderComponent(Component):
