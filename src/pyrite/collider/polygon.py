@@ -46,10 +46,12 @@ class Polygon(Shape):
         for vertex in self.get_vertices():
             new_distance = vertex * vector
             if new_distance > distance:
-                distance = (new_distance,)
+                distance = new_distance
                 furthest = vertex
 
-        assert furthest is not None
+        furthest = furthest.elementwise() * transform.scale
+        furthest = furthest.rotate(transform.rotation)
+        furthest += transform.position
 
         return furthest
 
