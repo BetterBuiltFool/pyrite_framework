@@ -119,7 +119,7 @@ class ColliderComponent(Component):
         Clears the last-frame collision buffer, and pushes the current frame buffer
         into it.
         """
-        self.was_touching = self.is_touching
+        self.was_touching = self.is_touching.copy()
         self.is_touching = WeakSet()
 
     def add_collision(self, other_collider: ColliderComponent) -> bool:
