@@ -8,6 +8,7 @@ from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.collider.ellipse import Ellipse  # noqa:E402
+from src.pyrite.collider.polygon import Polygon  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite import collider  # noqa:E402
@@ -73,20 +74,32 @@ class TestColliderComponent(unittest.TestCase):
 class TestCollider(unittest.TestCase):
 
     def setUp(self) -> None:
+        vertices = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
         self.collider1 = Ellipse(5)
         self.collider2 = Ellipse(4)
+        self.collider3 = Polygon([Vector2(*point) for point in vertices])
 
     def test_support_function(self):
         direction = Vector2(1, 0)
 
         transform1 = Transform((5, 5))
         transform2 = Transform((-4, -4))
+        transform3 = Transform((0, 0), 45)
 
         sp1 = collider.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
         )
 
         self.assertEqual(sp1, Vector2(18, 9))
+
+        sp2 = collider.support_function(
+            direction, self.collider1, self.collider3, transform1, transform3
+        )
+
+        expected = Vector2(10 + math.sqrt(2), 5)
+
+        self.assertAlmostEqual(sp2.x, expected.x)
+        self.assertAlmostEqual(sp2.y, expected.y)
 
     def test_normal(self):
         point_a = Vector2(-3, -4)
