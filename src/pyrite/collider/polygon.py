@@ -4,12 +4,10 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 from pygame import Vector2
 
-from ..transform import Transform
-
 from ..types.shape import Shape, DIRECTIONS
 
 if TYPE_CHECKING:
-    pass
+    from ..transform import Transform
 
 
 def _get_furthest(direction: Vector2, point_a: Vector2, point_b: Vector2) -> Vector2:
@@ -41,7 +39,19 @@ class Polygon(Shape):
         return extents
 
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
-        pass
+        # Translate the vector into unit space
+        vector = self._prescale_vector(vector, transform)
+        furthest: Vector2 = None
+        distance = 0
+        for vertex in self.get_vertices():
+            new_distance = vertex * vector
+            if new_distance > distance:
+                distance = (new_distance,)
+                furthest = vertex
+
+        assert furthest is not None
+
+        return furthest
 
     def get_vertices(self) -> list[Vector2]:
         return self._vertices
