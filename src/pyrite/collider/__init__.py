@@ -120,7 +120,14 @@ def collide(
         return False
 
     # Loop
-    while True:
+    # while True:
+
+    # Capping at 16 iterations.
+    # There's a hard (for me) to diagnose bug which can cause infinite looping.
+    # Frankly, 16 iterations should be more than enough. Any more than that and we're
+    # talking about very slight overlap.
+
+    for _ in range(16):
         # Get the normal of the two closest points
         direction = get_normal(simplex[0], simplex[1])
 
