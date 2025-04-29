@@ -48,7 +48,6 @@ class Entity:
         Does NOT guarantee the object is not already enabled.
 
         """
-        print(f"Enabling {self=}")
 
     def on_enable(self):
         """
