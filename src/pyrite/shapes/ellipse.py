@@ -24,3 +24,7 @@ class Ellipse(Shape):
         point += transform.position
         # return position
         return point
+
+    def get_vertices(self) -> tuple[Vector2]:
+        # Critical point: Origin
+        return (Vector2(0, 0),)

@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from pygame import Rect
+from pygame import Rect, Vector2
 
 from ..types.shape import Shape
 
 if TYPE_CHECKING:
-    from pygame import Vector2
     from ..transform import Transform
 
 
@@ -26,3 +25,7 @@ class Point(Shape):
         # A Point only has one point, so we always return that.
         # vector is only included to match signatures
         return transform.position
+
+    @staticmethod
+    def get_vertices() -> list[Vector2]:
+        return (Vector2(0, 0),)

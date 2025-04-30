@@ -31,3 +31,16 @@ class Stadium(Shape):
         point += transform.position
         # return position
         return point
+
+    def get_vertices(self) -> tuple[Vector2]:
+        # Critical Points: Foci, ends of side segments
+        subheight = self.height / 2
+        radius = self.radius
+        return (
+            Vector2(0, subheight),
+            Vector2(radius, subheight),
+            Vector2(radius, -subheight),
+            Vector2(0, -subheight),
+            Vector2(-radius, -subheight),
+            Vector2(-radius, subheight),
+        )

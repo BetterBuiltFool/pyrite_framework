@@ -44,6 +44,14 @@ class Shape(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_vertices(self) -> tuple[Vector2]:
+        """
+        Returns a list of vertices (for polygons) or critical points (for shapes with
+        curves), relative to the shape's center.
+        """
+        pass
+
     def _get_extents(self, transform: Transform) -> list[Vector2]:
         extents: list[Vector2] = []
         for direction in DIRECTIONS:

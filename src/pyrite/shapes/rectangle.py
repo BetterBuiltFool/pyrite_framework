@@ -17,8 +17,11 @@ class Rectangle(Polygon):
         self._width = width
         self._height = height
 
-    def get_vertices(self) -> list[Vector2]:
-        return [
-            vertex.elementwise() * (self._width, self._height)
-            for vertex in self._vertices
-        ]
+    def get_vertices(self) -> tuple[Vector2]:
+        scalar = (self._width, self._height)
+        return (
+            self._vertices[0].elementwise() * scalar,
+            self._vertices[1].elementwise() * scalar,
+            self._vertices[3].elementwise() * scalar,
+            self._vertices[4].elementwise() * scalar,
+        )

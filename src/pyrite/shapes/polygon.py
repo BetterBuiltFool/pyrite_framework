@@ -38,5 +38,5 @@ class Polygon(Shape):
 
         return furthest
 
-    def get_vertices(self) -> list[Vector2]:
-        return self._vertices
+    def get_vertices(self) -> tuple[Vector2]:
+        return tuple(self._vertices)
