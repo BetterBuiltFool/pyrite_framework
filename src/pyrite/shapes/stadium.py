@@ -21,9 +21,10 @@ class Stadium(Shape):
         # Rotate and scale vector by transform data
         # normalize vector
         vector = self._prescale_vector(vector, transform)
-        # Find the farthest point of the shape (In this case, it's now a circle)
-        origin = vector * _vertical_axis
-        y_offset = math.copysign(self.height / 2, origin)
+        # Offset to the closer of the two foci
+        focus = vector * _vertical_axis
+        y_offset = math.copysign(self.height / 2, focus)
+        # Now we can treat it like a circle again.
         point = Vector2(0, y_offset) + (self.radius * vector)
         # Add the position component of transform
         point = point.elementwise() * transform.scale
