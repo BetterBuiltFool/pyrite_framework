@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 from pygame import Rect, Vector2
 
 if TYPE_CHECKING:
+    from pygame import Surface
+    from pygame.typing import ColorLike
     from ..transform import Transform
 
 DIRECTIONS: list[Vector2] = [
@@ -50,6 +52,15 @@ class Shape(ABC):
         Returns a list of vertices (for polygons) or critical points (for shapes with
         curves), relative to the shape's center.
         """
+        pass
+
+    @abstractmethod
+    def draw(
+        self,
+        edge_width: int = 1,
+        edge_color: ColorLike = None,
+        fill_color: ColorLike = None,
+    ) -> Surface:
         pass
 
     def _get_extents(self, transform: Transform) -> list[Vector2]:
