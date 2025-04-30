@@ -7,7 +7,7 @@ import unittest
 from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.shapes import Ellipse, Polygon  # noqa:E402
+from src.pyrite.shapes import Ellipse, Polygon, Stadium  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite import collider  # noqa:E402
@@ -77,6 +77,7 @@ class TestCollider(unittest.TestCase):
         self.collider1 = Ellipse(5)
         self.collider2 = Ellipse(4)
         self.collider3 = Polygon([Vector2(*point) for point in vertices])
+        self.collider4 = Stadium(1, 2)
 
     def test_support_function(self):
         direction = Vector2(1, 0)
@@ -84,6 +85,7 @@ class TestCollider(unittest.TestCase):
         transform1 = Transform((5, 5))
         transform2 = Transform((-4, -4))
         transform3 = Transform((0, 0), 45)
+        transform4 = Transform((5, 0), 90)
 
         sp1 = collider.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
@@ -99,6 +101,14 @@ class TestCollider(unittest.TestCase):
 
         self.assertAlmostEqual(sp2.x, expected.x)
         self.assertAlmostEqual(sp2.y, expected.y)
+
+        sp3 = collider.support_function(
+            direction, self.collider4, self.collider2, transform4, transform2
+        )
+
+        expected = Vector2(15, 4)
+
+        self.assertEqual(sp3, expected)
 
     def test_normal(self):
         point_a = Vector2(-3, -4)
