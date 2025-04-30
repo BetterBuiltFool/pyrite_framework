@@ -7,8 +7,7 @@ import unittest
 from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.shapes.ellipse import Ellipse  # noqa:E402
-from src.pyrite.shapes.polygon import Polygon  # noqa:E402
+from src.pyrite.shapes import Ellipse, Polygon  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite import collider  # noqa:E402
