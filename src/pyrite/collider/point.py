@@ -21,11 +21,6 @@ class Point(Shape):
         rect.center = transform.position
         return rect
 
-    def _get_extents(self, transform: Transform) -> dict[str, Vector2]:
-        # We overload get_aabb, so this isnt actually needed
-        # It's abstract, though, so we have to implement
-        pass
-
     @staticmethod
     def get_furthest_vertex(vector: Vector2, transform: Transform) -> Vector2:
         # A Point only has one point, so we always return that.

@@ -8,12 +8,12 @@ from pygame import Rect, Vector2
 if TYPE_CHECKING:
     from ..transform import Transform
 
-DIRECTIONS: dict[str, Vector2] = {
-    "up": Vector2(0, -1),
-    "right": Vector2(1, 0),
-    "down": Vector2(0, 1),
-    "left": Vector2(-1, 0),
-}
+DIRECTIONS: list[Vector2] = [
+    Vector2(0, -1),  # Up, 0
+    Vector2(1, 0),  # Right, 1
+    Vector2(0, 1),  # Down, 2
+    Vector2(-1, 0),  # Left, 3
+]
 
 
 class Shape(ABC):
@@ -26,10 +26,10 @@ class Shape(ABC):
             space.
         """
         extents = self._get_extents(transform)
-        top = extents["up"].y
-        left = extents["left"].x
-        height = extents["down"].y - top
-        width = extents["right"].x - left
+        top = extents[0].y
+        left = extents[3].x
+        height = extents[2].y - top
+        width = extents[1].x - left
         return Rect(left, top, width, height)
 
     @abstractmethod
@@ -44,9 +44,11 @@ class Shape(ABC):
         """
         pass
 
-    @abstractmethod
-    def _get_extents(self, transform: Transform) -> dict[str, Vector2]:
-        pass
+    def _get_extents(self, transform: Transform) -> list[Vector2]:
+        extents: list[Vector2] = []
+        for direction in DIRECTIONS:
+            extents.append(self.get_furthest_vertex(direction, transform))
+        return extents
 
     def _prescale_vector(self, vector: Vector2, transform: Transform) -> Vector2:
         """
