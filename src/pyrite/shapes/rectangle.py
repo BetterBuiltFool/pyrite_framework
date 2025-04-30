@@ -22,6 +22,6 @@ class Rectangle(Polygon):
         return (
             self._vertices[0].elementwise() * scalar,
             self._vertices[1].elementwise() * scalar,
+            self._vertices[2].elementwise() * scalar,
             self._vertices[3].elementwise() * scalar,
-            self._vertices[4].elementwise() * scalar,
         )
