@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from pygame import Rect, Vector2
+from ..transform import Transform
 
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import ColorLike
-    from ..transform import Transform
 
 DIRECTIONS: list[Vector2] = [
     Vector2(0, -1),  # Up, 0
@@ -20,13 +20,15 @@ DIRECTIONS: list[Vector2] = [
 
 class Shape(ABC):
 
-    def get_aabb(self, transform: Transform) -> Rect:
+    def get_aabb(self, transform: Transform = None) -> Rect:
         """
         Returns an axis-aligned bounding box for the collider.
 
         :transform: A Transform object representing the center of the collider in world
-            space.
+            space. If None, will use a default transform.
         """
+        if transform is None:
+            transform = Transform()
         extents = self._get_extents(transform)
         top = extents[0].y
         left = extents[3].x
