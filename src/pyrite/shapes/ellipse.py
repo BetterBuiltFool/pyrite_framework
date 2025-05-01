@@ -1,10 +1,15 @@
 from __future__ import annotations
 
-from pygame import Vector2
+from typing import TYPE_CHECKING
+
+from pygame import draw, Rect, Surface, Vector2
 
 from ..transform import Transform
 
 from ..types.shape import Shape
+
+if TYPE_CHECKING:
+    from pygame.typing import ColorLike
 
 
 class Ellipse(Shape):
@@ -24,6 +29,30 @@ class Ellipse(Shape):
         point += transform.position
         # return position
         return point
+
+    def draw(
+        self,
+        edge_width: int = 1,
+        edge_color: ColorLike = None,
+        fill_color: ColorLike = None,
+    ) -> Surface:
+        box = self.get_aabb()
+        surface_size = box.size
+        surface = Surface(surface_size)
+        origin = (surface.width / 2, surface.height / 2)
+        if fill_color is not None:
+            fill_rect = Rect(box)
+            fill_rect.center = origin
+            draw.ellipse(
+                surface,
+                fill_color,
+                fill_rect,
+            )
+        if edge_width > 0:
+            fill_rect = Rect(box)
+            fill_rect.center = origin
+            draw.ellipse(surface, edge_color, fill_rect, width=edge_width)
+        return surface
 
     def get_vertices(self) -> tuple[Vector2]:
         # Critical point: Origin

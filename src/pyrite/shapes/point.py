@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from pygame import Rect, Vector2
+from pygame import Rect, Surface, Vector2
 
 from ..types.shape import Shape
 
 if TYPE_CHECKING:
     from ..transform import Transform
+    from pygame.typing import ColorLike
 
 
 class Point(Shape):
@@ -29,3 +30,13 @@ class Point(Shape):
     @staticmethod
     def get_vertices() -> list[Vector2]:
         return (Vector2(0, 0),)
+
+    def draw(
+        self,
+        edge_width: int = 1,
+        edge_color: ColorLike = None,
+        fill_color: ColorLike = None,
+    ) -> Surface:
+        surface = Surface((1, 1))
+        surface.fill(edge_color)
+        return surface

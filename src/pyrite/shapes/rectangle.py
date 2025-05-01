@@ -1,8 +1,13 @@
 from __future__ import annotations
 
-from pygame import Vector2
+from typing import TYPE_CHECKING
+
+from pygame import draw, Surface, Vector2
 
 from .polygon import Polygon
+
+if TYPE_CHECKING:
+    from pygame.typing import ColorLike
 
 
 class Rectangle(Polygon):
@@ -25,3 +30,18 @@ class Rectangle(Polygon):
             self._vertices[2].elementwise() * scalar,
             self._vertices[3].elementwise() * scalar,
         )
+
+    def draw(
+        self,
+        edge_width: int = 1,
+        edge_color: ColorLike = None,
+        fill_color: ColorLike = None,
+    ) -> Surface:
+        surface = Surface((self._width, self._height))
+        if fill_color:
+            surface.fill(fill_color)
+        if edge_width > 0:
+            draw.rect(
+                surface, edge_color, (0, 0, self._width, self._height), edge_width
+            )
+        return surface

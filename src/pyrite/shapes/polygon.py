@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
-from pygame import Vector2
+from pygame import Surface, Vector2
 
 from ..types.shape import Shape
 
 if TYPE_CHECKING:
     from ..transform import Transform
+    from pygame.typing import ColorLike
 
 
 def _get_furthest(direction: Vector2, point_a: Vector2, point_b: Vector2) -> Vector2:
@@ -40,3 +41,18 @@ class Polygon(Shape):
 
     def get_vertices(self) -> tuple[Vector2]:
         return tuple(self._vertices)
+
+    def draw(
+        self,
+        edge_width: int = 1,
+        edge_color: ColorLike = None,
+        fill_color: ColorLike = None,
+    ) -> Surface:
+        if fill_color is not None:
+            # Draw the filled polygon by forming triangles from edges to origin
+            pass
+        if edge_width > 0:
+            # Loop the vertices, and draw the lines along the edges
+            pass
+
+        return super().draw(edge_width, edge_color, fill_color)
