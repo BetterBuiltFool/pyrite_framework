@@ -3,11 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from pygame import Rect, Vector2
+from pygame import Rect, Surface, Vector2
 from ..transform import Transform
 
 if TYPE_CHECKING:
-    from pygame import Surface
     from pygame.typing import ColorLike
 
 DIRECTIONS: list[Vector2] = [
@@ -63,7 +62,9 @@ class Shape(ABC):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
-        pass
+        surface = Surface(self.get_aabb().size).convert_alpha()
+        surface.fill((0, 0, 0, 0))
+        return surface
 
     def _get_extents(self, transform: Transform) -> list[Vector2]:
         extents: list[Vector2] = []

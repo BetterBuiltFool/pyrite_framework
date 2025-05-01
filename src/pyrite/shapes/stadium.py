@@ -56,7 +56,7 @@ class Stadium(Shape):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
-        surface = Surface((self.radius * 2, self.height + self.radius * 2))
+        surface = super().draw(edge_width, edge_color, fill_color)
         origin = (surface.width / 2, surface.height / 2)
         if fill_color:
             draw.circle(surface, fill_color, origin + (0, self.height / 2), self.radius)
@@ -70,26 +70,32 @@ class Stadium(Shape):
                 0,
                 0,
                 surface.width,
-                self.radius,
+                self.radius * 2,
             )
-            draw.arc(surface, edge_color, top_rect, 0, math.pi * 2, edge_width)
+            draw.arc(surface, edge_color, top_rect, 0, math.pi, edge_width)
 
             bottom_rect = (
                 0,
-                surface.height - self.radius,
+                surface.height - self.radius * 2,
                 surface.width,
-                self.radius,
+                self.radius * 2,
             )
-            draw.arc(surface, edge_color, bottom_rect, math.pi * 2, 0, edge_width)
+            draw.arc(surface, edge_color, bottom_rect, math.pi, 0, edge_width)
 
             draw.line(
-                surface, edge_color, (0, self.radius), (0, surface.height - self.radius)
+                surface,
+                edge_color,
+                (0, self.radius),
+                (0, surface.height - self.radius),
+                edge_width,
             )
             draw.line(
                 surface,
                 edge_color,
-                (surface.width, self.radius),
-                (surface.width, surface.height - self.radius),
+                (surface.width - edge_width, self.radius),
+                (surface.width - edge_width, surface.height - self.radius),
+                edge_width,
             )
+            return surface
 
         return super().draw(edge_width, edge_color, fill_color)

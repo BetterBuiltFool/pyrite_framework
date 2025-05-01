@@ -37,7 +37,7 @@ class Rectangle(Polygon):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
-        surface = Surface((self._width, self._height))
+        surface = super().draw(edge_width, edge_color, fill_color)
         if fill_color:
             surface.fill(fill_color)
         if edge_width > 0:

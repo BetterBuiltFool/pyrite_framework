@@ -48,6 +48,7 @@ class Polygon(Shape):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
+        surface = super().draw(edge_width, edge_color, fill_color)
         if fill_color is not None:
             # Draw the filled polygon by forming triangles from edges to origin
             pass
@@ -55,4 +56,4 @@ class Polygon(Shape):
             # Loop the vertices, and draw the lines along the edges
             pass
 
-        return super().draw(edge_width, edge_color, fill_color)
+        return surface

@@ -37,6 +37,6 @@ class Point(Shape):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
-        surface = Surface((1, 1))
+        surface = super().draw(edge_width, edge_color, fill_color)
         surface.fill(edge_color)
         return surface
