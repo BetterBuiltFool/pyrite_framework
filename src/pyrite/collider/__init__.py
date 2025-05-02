@@ -85,7 +85,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> Vector2:
+    ) -> tuple[Vector2, Vector2, Vector2]:
         """
         Determines the Minkowski difference between two colliders in the given
         direction.
@@ -95,12 +95,18 @@ class GJKFunctions:
         :param collider_b: The secondary collider shape
         :param transform_a: The transform value of the primary shape, in world space.
         :param transform_b: The transform value of the secondary shape, in world space.
-        :return: A point relative the the origin, as part of a simplex.
+        :return: A tuple containing:
+
+            - A point relative the the origin, as part of a simplex.
+
+            - The furthest vertex of _collider_a_, in world space.
+
+            - The furthest vertex of _collider_b_, in world space.
         """
         point_a = collider_a.get_furthest_vertex(direction, transform_a)
         point_b = collider_b.get_furthest_vertex(-direction, transform_b)
 
-        return point_a - point_b
+        return point_a - point_b, point_a, point_b
 
     @staticmethod
     def collide(
@@ -123,7 +129,7 @@ class GJKFunctions:
         direction = Vector2(1, 0)  # Arbitrary direction
 
         # Get support point 1
-        support_point = GJKFunctions.support_function(
+        support_point, *_ = GJKFunctions.support_function(
             direction, collider_a, collider_b, transform_a, transform_b
         )
 
@@ -134,7 +140,7 @@ class GJKFunctions:
         direction = -support_point
 
         # Get support point 2
-        support_point = GJKFunctions.support_function(
+        support_point, *_ = GJKFunctions.support_function(
             direction, collider_a, collider_b, transform_a, transform_b
         )
 
@@ -166,12 +172,12 @@ class GJKFunctions:
             direction = GJKFunctions.get_normal(simplex[0], simplex[1])
 
             # Get support point 3
-            support_point = GJKFunctions.support_function(
+            support_point, point_a, point_b = GJKFunctions.support_function(
                 direction, collider_a, collider_b, transform_a, transform_b
             )
 
             # Short circuit if point is already invalid
-            if support_point * direction < 0:
+            if support_point * direction < simplex[0] * direction:
                 break
 
             # Add to simplex

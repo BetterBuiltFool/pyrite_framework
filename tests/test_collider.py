@@ -87,13 +87,13 @@ class TestGJKFunctions(unittest.TestCase):
         transform3 = Transform((0, 0), 45)
         transform4 = Transform((5, 0), 90)
 
-        sp1 = GJKFunctions.support_function(
+        sp1, *_ = GJKFunctions.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
         )
 
         self.assertEqual(sp1, Vector2(18, 9))
 
-        sp2 = GJKFunctions.support_function(
+        sp2, *_ = GJKFunctions.support_function(
             direction, self.collider1, self.collider3, transform1, transform3
         )
 
@@ -102,7 +102,7 @@ class TestGJKFunctions(unittest.TestCase):
         self.assertAlmostEqual(sp2.x, expected.x)
         self.assertAlmostEqual(sp2.y, expected.y)
 
-        sp3 = GJKFunctions.support_function(
+        sp3, *_ = GJKFunctions.support_function(
             direction, self.collider4, self.collider2, transform4, transform2
         )
 
@@ -158,14 +158,14 @@ class TestGJKFunctions(unittest.TestCase):
 
         # Obviously no overlap
         self.assertFalse(
-            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_b)
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_b)[0]
         )
 
         transform_c = Transform((0, 0))
 
         # This SHOULD overlap
         self.assertTrue(
-            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_c)
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_c)[0]
         )
 
 
