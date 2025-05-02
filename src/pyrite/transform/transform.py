@@ -66,13 +66,25 @@ class Transform:
 
     def generalize(self, root: transform.TransformProtocol) -> Transform:
         """
-        Applies one transform onto another, generalizing it into the same space as the
-        first.
+        Applies a root transform to a local transform, converting it into the same
+        relative space.
 
-        This treats the transform as local to _root_, and finds the equivalent
-        transform in the same space as _root_.
+        Can also be done with the * operator.
+
+        Can be stacked with other generalizations and localizations to convert from any
+        reference frame to another.
 
         Inverse of Transform.localize()
+
+        :Example:
+        ```
+        local_transform = Transform((5, 0), 0, (1, 1))
+        root_transform = Transform((10, 10), 90, (2, 2))
+
+        local_transform.generalize(root_transform) == Transform((10, 0), 90, (2, 2))
+        ```
+
+        _______________________________________________________________________________
 
         :param root: A transform-like object being treated like the new origin for the
             local transform.
@@ -94,10 +106,13 @@ class Transform:
         space as the Transform.
 
         :Example:
+        ```
         transform = Transform((10, 10), 0, (2,2))
         position = Vector2(5,5)
 
         transform.generalize_position(position) == Vector2(20, 20)
+        ```
+        _______________________________________________________________________________
 
         :param position: A position (as a Vector2) that is local to this Transform.
         :return: A new Vector2 position in the same relative space as this Transform.
@@ -114,12 +129,23 @@ class Transform:
 
     def localize(self, root: transform.TransformProtocol) -> Transform:
         """
-        Derives a local transform from _root_.
-
-        Given both this transform and _root_ existing in the same space, finds the
-        equivalent local transform from the difference between the two.
+        Given two Transforms in the same relative space, finds the Transform local to
+        the root that is equivalent of this Transform.
 
         Inverse of Transform.generalize()
+
+        Can be stacked with other localizations and generalizations to convert from any
+        reference frame to another.
+
+        :Example:
+        ```
+        branch_transform = Transform((10, 0), 90, (2, 2))
+        root_transform = Transform((10, 10), 90, (2, 2))
+
+        branch_transform.localize(root_transform) == Transform((5, 0), 0, (1, 1))
+        ```
+
+        _______________________________________________________________________________
 
         :param root: A transform-like object in the same space as the current transform.
         :return: A new transform, equivalent to the difference between the current
