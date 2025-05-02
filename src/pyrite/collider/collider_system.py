@@ -5,7 +5,7 @@ from typing import TypeAlias, TYPE_CHECKING, Any
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
-from .. import collider
+from . import GJKFunctions
 
 from pygame import Vector2
 
@@ -120,7 +120,7 @@ class ColliderSystem(System):
         this_transform = TransformComponent.get(component_a.owner)
         other_transform = TransformComponent.get(component_b.owner)
         return any(
-            collider.collide(
+            GJKFunctions.collide(
                 collider_a,
                 collider_b,
                 this_transform * transform_a,

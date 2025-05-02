@@ -10,7 +10,7 @@ sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.shapes import Ellipse, Polygon, Stadium  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
-from src.pyrite import collider  # noqa:E402
+from src.pyrite.collider import GJKFunctions  # noqa:E402
 from src.pyrite.transform import Transform, TransformComponent  # noqa:E402
 
 
@@ -70,7 +70,7 @@ class TestColliderComponent(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class TestCollider(unittest.TestCase):
+class TestGJKFunctions(unittest.TestCase):
 
     def setUp(self) -> None:
         vertices = [(1, 1), (1, -1), (-1, -1), (-1, 1)]
@@ -87,13 +87,13 @@ class TestCollider(unittest.TestCase):
         transform3 = Transform((0, 0), 45)
         transform4 = Transform((5, 0), 90)
 
-        sp1 = collider.support_function(
+        sp1 = GJKFunctions.support_function(
             direction, self.collider1, self.collider2, transform1, transform2
         )
 
         self.assertEqual(sp1, Vector2(18, 9))
 
-        sp2 = collider.support_function(
+        sp2 = GJKFunctions.support_function(
             direction, self.collider1, self.collider3, transform1, transform3
         )
 
@@ -102,7 +102,7 @@ class TestCollider(unittest.TestCase):
         self.assertAlmostEqual(sp2.x, expected.x)
         self.assertAlmostEqual(sp2.y, expected.y)
 
-        sp3 = collider.support_function(
+        sp3 = GJKFunctions.support_function(
             direction, self.collider4, self.collider2, transform4, transform2
         )
 
@@ -113,7 +113,7 @@ class TestCollider(unittest.TestCase):
     def test_normal(self):
         point_a = Vector2(-3, -4)
         point_b = Vector2(3, -2)
-        normal = collider.get_normal(point_a, point_b)
+        normal = GJKFunctions.get_normal(point_a, point_b)
         edge = point_a - point_b
 
         self.assertEqual(edge, Vector2(-6, -2))
@@ -124,17 +124,17 @@ class TestCollider(unittest.TestCase):
 
         region1 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, -1)]
 
-        self.assertTrue(collider.check_region(region1))
+        self.assertTrue(GJKFunctions.check_region(region1))
 
         region2 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 2)]
 
-        self.assertFalse(collider.check_region(region2))
+        self.assertFalse(GJKFunctions.check_region(region2))
 
         # Same triangle as 1, opposing chirality
 
         region3 = [Vector2(-1, 1), Vector2(1, 1), Vector2(0, -1)]
 
-        self.assertTrue(collider.check_region(region3))
+        self.assertTrue(GJKFunctions.check_region(region3))
 
         # Needs addt'l edge cases
         # Literal origin on edge, vertex on origin
@@ -142,12 +142,12 @@ class TestCollider(unittest.TestCase):
         # Origin on vertex
         region4 = [Vector2(1, 1), Vector2(-1, 1), Vector2(0, 0)]
 
-        self.assertFalse(collider.check_region(region4))
+        self.assertFalse(GJKFunctions.check_region(region4))
 
         # Origin on edge
         region5 = [Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)]
 
-        self.assertTrue(collider.check_region(region5))
+        self.assertTrue(GJKFunctions.check_region(region5))
 
     def test_collide(self):
         collider_a = Ellipse(5)
@@ -158,14 +158,14 @@ class TestCollider(unittest.TestCase):
 
         # Obviously no overlap
         self.assertFalse(
-            collider.collide(collider_a, collider_b, transform_a, transform_b)
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_b)
         )
 
         transform_c = Transform((0, 0))
 
         # This SHOULD overlap
         self.assertTrue(
-            collider.collide(collider_a, collider_b, transform_a, transform_c)
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_c)
         )
 
 
