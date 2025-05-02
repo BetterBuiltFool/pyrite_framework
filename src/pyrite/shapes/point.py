@@ -11,6 +11,13 @@ if TYPE_CHECKING:
 
 
 class Point(Shape):
+    """
+    A fixed point in space.
+    Can be used statically.
+
+    Vertices: Always (0,0)
+    """
+
     # Point has all static methods, since it has no state. You don't need to
     # instantiate it to use it, although it absolutely can be used in ColliderComponents
 
