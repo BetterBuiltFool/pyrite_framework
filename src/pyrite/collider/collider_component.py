@@ -23,25 +23,25 @@ class ColliderComponent(Component):
     def __init__(
         self,
         owner: Any,
-        colliders: Shape | Sequence[Shape],
-        transforms: Transform | Sequence[Transform] = None,
+        collider: Shape | Sequence[Shape],
+        transform: Transform | Sequence[Transform] = None,
         layers: int = 1,
         collision_mask: int = 1,
     ) -> None:
         super().__init__(owner)
 
-        if transforms is None:
+        if transform is None:
             # Make it a default transform
-            transforms = Transform()
+            transform = Transform()
 
-        if not isinstance(colliders, Sequence):
-            colliders = [colliders]
-        if not isinstance(transforms, Sequence):
+        if not isinstance(collider, Sequence):
+            collider = [collider]
+        if not isinstance(transform, Sequence):
             # Use the same transform for all colliders if only one is provided.
-            transforms = [transforms for _ in colliders]
+            transform = [transform for _ in collider]
 
-        self.colliders.setdefault(self, colliders)
-        self.transforms.setdefault(self, transforms)
+        self.colliders.setdefault(self, collider)
+        self.transforms.setdefault(self, transform)
 
         self.layer_masks.update({self: layers})
         self.collision_masks.update({self: collision_mask})
