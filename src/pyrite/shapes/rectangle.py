@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 
 class Rectangle(Polygon):
+    """
+    A basic rectangle, defined by its height and width.
+
+    Vertices: One for each corner.
+    """
+
     _vertices = (
         Vector2(0.5, 0.5),
         Vector2(-0.5, 0.5),
@@ -19,6 +25,12 @@ class Rectangle(Polygon):
     )
 
     def __init__(self, width: float, height: float) -> None:
+        """
+        A basic rectangle.
+
+        :param width: The width of the rectangle.
+        :param height: The height of the rectangle.
+        """
         self._width = width
         self._height = height
 
