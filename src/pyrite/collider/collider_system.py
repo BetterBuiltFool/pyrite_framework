@@ -139,26 +139,29 @@ class ColliderSystem(System):
     @classmethod
     def collide_between(
         cls, component_a: ColliderComponent, component_b: ColliderComponent
-    ) -> bool:
+    ) -> tuple[bool, Simplex]:
         """
         Determines if there is overlap with _other_collider_
 
         :param other_component: Another collider component that is a potential overlap.
-        :return: True if the components have any overlapping colliders.
+        :return: True if the components have any overlapping colliders, as well as the
+            simplex
         """
         this_transform = TransformComponent.get(component_a.owner)
         other_transform = TransformComponent.get(component_b.owner)
-        return any(
-            cls.gjk_functions.collide(
-                collider_a,
-                collider_b,
-                this_transform * transform_a,
-                other_transform * transform_b,
-            )
+
+        for collider_a, transform_a in zip(
+            component_a.get_colliders(), component_a.get_transforms()
+        ):
             for collider_b, transform_b in zip(
                 component_b.get_colliders(), component_b.get_transforms()
-            )
-            for collider_a, transform_a in zip(
-                component_a.get_colliders(), component_a.get_transforms()
-            )
-        )
+            ):
+                collides, simplex = cls.gjk_functions.collide(
+                    collider_a,
+                    collider_b,
+                    this_transform * transform_a,
+                    other_transform * transform_b,
+                )
+                if collides:
+                    return True, simplex
+        return False, None

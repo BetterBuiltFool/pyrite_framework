@@ -108,7 +108,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> bool:
+    ) -> tuple[bool, Simplex]:
         """
         Runs the Gilbert-Johnson-Keerthi algorithm over the two shapes to determine if
         they overlap.
@@ -117,7 +117,8 @@ class GJKFunctions:
         :param collider_b: The secondary collider shape
         :param transform_a: The transform value of the primary shape, in world space.
         :param transform_b: The transform value of the secondary shape, in world space.
-        :return: True is an overlap is detected, otherwise False
+        :return: True is an overlap is detected, otherwise False. In either case, the
+            resultant simplex.
         """
         direction = Vector2(1, 0)  # Arbitrary direction
 
@@ -142,7 +143,7 @@ class GJKFunctions:
 
         # Short circuit if point is already invalid
         if support_point * direction < 0:
-            return False
+            return False, simplex
 
         # Loop
 
@@ -171,7 +172,7 @@ class GJKFunctions:
 
             # Short circuit if point is already invalid
             if support_point * direction < 0:
-                return False
+                break
 
             # Add to simplex
             simplex.append(support_point)
@@ -179,10 +180,11 @@ class GJKFunctions:
             # Simplex is now a triangle
             if GJKFunctions.check_region(simplex):
                 # Found our overlap!
-                return True
+                return True, simplex
 
             # Failed, reduce simplex and try again
             simplex = GJKFunctions.get_closest_edge(simplex)
+        return False, simplex
 
 
 _default_collider_functions: type[GJKFunctions] = GJKFunctions
