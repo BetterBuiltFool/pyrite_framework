@@ -86,6 +86,17 @@ class GJKFunctions:
         transform_a: Transform,
         transform_b: Transform,
     ) -> Vector2:
+        """
+        Determines the Minkowski difference between two colliders in the given
+        direction.
+
+        :param direction: A vector determining a direction to search for vertices.
+        :param collider_a: The primary collider shape
+        :param collider_b: The secondary collider shape
+        :param transform_a: The transform value of the primary shape, in world space.
+        :param transform_b: The transform value of the secondary shape, in world space.
+        :return: A point relative the the origin, as part of a simplex.
+        """
         point_a = collider_a.get_furthest_vertex(direction, transform_a)
         point_b = collider_b.get_furthest_vertex(-direction, transform_b)
 
@@ -98,6 +109,16 @@ class GJKFunctions:
         transform_a: Transform,
         transform_b: Transform,
     ) -> bool:
+        """
+        Runs the Gilbert-Johnson-Keerthi algorithm over the two shapes to determine if
+        they overlap.
+
+        :param collider_a: The primary collider shape
+        :param collider_b: The secondary collider shape
+        :param transform_a: The transform value of the primary shape, in world space.
+        :param transform_b: The transform value of the secondary shape, in world space.
+        :return: True is an overlap is detected, otherwise False
+        """
         direction = Vector2(1, 0)  # Arbitrary direction
 
         # Get support point 1
@@ -124,12 +145,20 @@ class GJKFunctions:
             return False
 
         # Loop
-        # while True:
 
         # Capping at 16 iterations.
         # There's a hard (for me) to diagnose bug which can cause infinite looping.
         # Frankly, 16 iterations should be more than enough. Any more than that and
         # we're talking about very slight overlap.
+
+        # I _think_ this issue is cause by two ellipses just barely touching, causing
+        # the simplex triangle to get smaller and smaller but never quite breaking the
+        # bounds. I _think_ given enough time, it would eventually resolve, but I can't
+        # tell for sure.
+        # Ellipses and Stadia technically have infinite vertices on their curves, and
+        # would be the cause of this.
+
+        # Still, *not* worth fixing.
 
         for _ in range(16):
             # Get the normal of the two closest points
