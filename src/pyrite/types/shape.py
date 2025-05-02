@@ -62,6 +62,16 @@ class Shape(ABC):
         edge_color: ColorLike = None,
         fill_color: ColorLike = None,
     ) -> Surface:
+        """
+        Draws the shape on a surface using the following parameters:
+
+        :param edge_width: The width of the edge line, defaults to 1. Does not draw an
+            outline if 0.
+        :param edge_color: The color of the edge, defaults to None
+        :param fill_color: The color of the fill, defaults to None. Does not draw a
+            fill if None.
+        :return: A surface containing the drawn shape.
+        """
         surface = Surface(self.get_aabb().size).convert_alpha()
         surface.fill((0, 0, 0, 0))
         return surface
