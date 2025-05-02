@@ -16,8 +16,24 @@ if TYPE_CHECKING:
 
 
 class Stadium(Shape):
+    """
+    The 2D equivalent of a capsule.
+    Defined by the radius of the semicircles and the height of the straight sides.
+
+    Vertices: One for each focus, plus each end of the straight sides.
+    """
 
     def __init__(self, radius: float, height: float) -> None:
+        """
+        The 2D equivalent of a capsule.
+
+        Total height will be _height_ + 2 * _radius_
+
+        Total width will be 2 * _radius_.
+
+        :param radius: The radius of the semicircular ends.
+        :param height: The height of the straight sides.
+        """
         self.radius = radius
         self.height = height
 
