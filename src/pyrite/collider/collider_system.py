@@ -61,6 +61,17 @@ class ColliderSystem(System):
     def get_first_pass_collisions(
         cls, colliding_objects: list[Any]
     ) -> dict[ColliderComponent, list[ColliderComponent]]:
+        """
+        Processes AABB collisions for the list of colliding objects, to cheaply filter
+        out impossible collisions.
+
+        Not all collisions may be represented in the keys, but between the key-value
+        sets, they all are.
+
+        :param colliding_objects: A list of keys for which there is both a
+            ColliderComponent and a TransformComponent.
+        :return: A dictionary matching ColliderComponents to their potential collisions.
+        """
         first_pass_candidates: dict[ColliderComponent, list[ColliderComponent]] = {}
 
         aabbs = cls.get_aabbs(colliding_objects)
@@ -101,6 +112,14 @@ class ColliderSystem(System):
     def get_aabbs(
         colliding_objects: list[Any],
     ) -> dict[Any, list[Rect]]:
+        """
+        Collects aabbs for all eligible colliding objects.
+
+        :param colliding_objects: A list of keys for which there is both a
+            ColliderComponent and a TransformComponent.
+        :return: A dictionary containing the list objects as keys and a list of
+            rectangles representing the AABBS for each collider shape, for each key.
+        """
 
         aabbs: dict[Any, list[Rect]] = {}
 
