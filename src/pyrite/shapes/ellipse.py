@@ -13,8 +13,14 @@ if TYPE_CHECKING:
 
 
 class Ellipse(Shape):
+    """
+    An elliptical shape. If the radii are equal, forms a circle.
+
+    Vertices: Always (0,0)
+    """
 
     def __init__(self, radius: float) -> None:
+        # TODO Make this accept differing length radii
         self.radius = Vector2(radius)
 
     def get_furthest_vertex(self, vector: Vector2, transform: Transform) -> Vector2:
