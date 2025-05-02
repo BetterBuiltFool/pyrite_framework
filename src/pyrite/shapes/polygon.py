@@ -65,7 +65,7 @@ class Polygon(Shape):
     ) -> Surface:
         surface = super().draw(edge_width, edge_color, fill_color)
         # TODO Implement this!
-        raise NotImplementedError("Cannot draw polygons yet.")
+        # raise NotImplementedError("Cannot draw polygons yet.")
         if fill_color is not None:
             # Draw the filled polygon by forming triangles from edges to origin
             pass
