@@ -50,7 +50,7 @@ class Shape(ABC):
     @abstractmethod
     def get_vertices(self) -> tuple[Vector2]:
         """
-        Returns a list of vertices (for polygons) or critical points (for shapes with
+        Returns a tuple of vertices (for polygons) or critical points (for shapes with
         curves), relative to the shape's center.
         """
         pass

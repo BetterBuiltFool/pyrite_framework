@@ -35,7 +35,7 @@ class Point(Shape):
         return transform.position
 
     @staticmethod
-    def get_vertices() -> list[Vector2]:
+    def get_vertices() -> tuple[Vector2]:
         return (Vector2(0, 0),)
 
     def draw(
