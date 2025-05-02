@@ -156,5 +156,25 @@ class GJKFunctions:
             simplex = GJKFunctions.get_closest_edge(simplex)
 
 
+_default_collider_functions: type[GJKFunctions] = GJKFunctions
+
+
 def get_collider_functions() -> type[GJKFunctions]:
-    return GJKFunctions
+    """
+    Returns the current set of functions necessary for doing collision detection.
+    Between this and set_collider_functions, actual method of detecting collisions is
+    customizable.
+    """
+    return _default_collider_functions
+
+
+def set_collider_functions(collider_functions: type[GJKFunctions]):
+    """
+    Sets the object for useful collider functions.
+
+    Call this before creating the instance of the ColliderSystem.
+
+    :param collider_functions: A subtype of GJKFunctions, as a class
+    """
+    global _default_collider_functions
+    _default_collider_functions = collider_functions
