@@ -11,7 +11,9 @@ if TYPE_CHECKING:
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
-CollisionData: TypeAlias = tuple[bool, Simplex, Vector2, Vector2]
+WorldPosition: TypeAlias = Vector2
+LocalPosition: TypeAlias = Vector2
+CollisionData: TypeAlias = tuple[bool, Simplex, WorldPosition, WorldPosition]
 
 
 class GJKFunctions:
@@ -87,7 +89,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> tuple[Vector2, Vector2, Vector2]:
+    ) -> tuple[Vector2, WorldPosition, WorldPosition]:
         """
         Determines the Minkowski difference between two colliders in the given
         direction.
