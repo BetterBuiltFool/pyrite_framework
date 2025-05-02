@@ -184,6 +184,8 @@ class TestColliderSystem(unittest.TestCase):
         ColliderComponent(self.object1, collider1, Transform(), 1, 1)
         ColliderComponent(self.object2, collider2, Transform(), 1, 1)
 
+        ColliderSystem._set_collider_functions(GJKFunctions)
+
     def test_get_aabbs(self):
 
         aabbs = ColliderSystem.get_aabbs([self.object1, self.object2])

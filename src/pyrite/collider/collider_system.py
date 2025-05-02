@@ -5,17 +5,27 @@ from typing import TypeAlias, TYPE_CHECKING, Any
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
-from . import GJKFunctions
+from . import get_collider_functions
 
 from pygame import Vector2
 
 if TYPE_CHECKING:
+    from . import GJKFunctions
     from pygame import Rect
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 
 class ColliderSystem(System):
+    gjk_functions: type[GJKFunctions] = None
+
+    def __init__(self, enabled=True, order_index=0) -> None:
+        super().__init__(enabled, order_index)
+        self._set_collider_functions(get_collider_functions())
+
+    @classmethod
+    def _set_collider_functions(cls, collider_functions: type[GJKFunctions]):
+        cls.gjk_functions = collider_functions
 
     def post_update(self, delta_time: float) -> None:
         colliding_objects = list(ColliderComponent.intersect(TransformComponent))
@@ -120,7 +130,7 @@ class ColliderSystem(System):
         this_transform = TransformComponent.get(component_a.owner)
         other_transform = TransformComponent.get(component_b.owner)
         return any(
-            GJKFunctions.collide(
+            cls.gjk_functions.collide(
                 collider_a,
                 collider_b,
                 this_transform * transform_a,

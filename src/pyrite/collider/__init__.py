@@ -154,3 +154,7 @@ class GJKFunctions:
 
             # Failed, reduce simplex and try again
             simplex = GJKFunctions.get_closest_edge(simplex)
+
+
+def get_collider_functions() -> type[GJKFunctions]:
+    return GJKFunctions
