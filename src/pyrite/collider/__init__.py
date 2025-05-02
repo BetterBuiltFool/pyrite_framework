@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
+CollisionData: TypeAlias = tuple[bool, Simplex, Vector2, Vector2]
+
 
 class GJKFunctions:
 
@@ -114,7 +116,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> tuple[bool, Simplex]:
+    ) -> CollisionData:
         """
         Runs the Gilbert-Johnson-Keerthi algorithm over the two shapes to determine if
         they overlap.
@@ -149,7 +151,7 @@ class GJKFunctions:
 
         # Short circuit if point is already invalid
         if support_point * direction < 0:
-            return False, simplex
+            return False, simplex, None, None
 
         # Loop
 
@@ -186,11 +188,11 @@ class GJKFunctions:
             # Simplex is now a triangle
             if GJKFunctions.check_region(simplex):
                 # Found our overlap!
-                return True, simplex
+                return True, simplex, point_a, point_b
 
             # Failed, reduce simplex and try again
             simplex = GJKFunctions.get_closest_edge(simplex)
-        return False, simplex
+        return False, simplex, None, None
 
 
 _default_collider_functions: type[GJKFunctions] = GJKFunctions

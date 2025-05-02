@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-from typing import TypeAlias, TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any
 
 from ..types import System
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent
 from . import get_collider_functions
 
-from pygame import Vector2
-
 if TYPE_CHECKING:
-    from . import GJKFunctions
+    from . import GJKFunctions, CollisionData
     from pygame import Rect
-
-Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 
 class ColliderSystem(System):
@@ -139,7 +135,7 @@ class ColliderSystem(System):
     @classmethod
     def collide_between(
         cls, component_a: ColliderComponent, component_b: ColliderComponent
-    ) -> tuple[bool, Simplex]:
+    ) -> CollisionData:
         """
         Determines if there is overlap with _other_collider_
 
@@ -156,12 +152,12 @@ class ColliderSystem(System):
             for collider_b, transform_b in zip(
                 component_b.get_colliders(), component_b.get_transforms()
             ):
-                collides, simplex = cls.gjk_functions.collide(
+                collides, simplex, point_a, point_b = cls.gjk_functions.collide(
                     collider_a,
                     collider_b,
                     this_transform * transform_a,
                     other_transform * transform_b,
                 )
                 if collides:
-                    return True, simplex
-        return False, None
+                    return True, simplex, point_a, point_b
+        return False, None, None, None
