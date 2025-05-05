@@ -13,7 +13,16 @@ Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
 WorldPosition: TypeAlias = Vector2
 LocalPosition: TypeAlias = Vector2
-CollisionData: TypeAlias = tuple[bool, Simplex, WorldPosition, WorldPosition]
+CollisionData: TypeAlias = tuple[
+    WorldPosition,
+    WorldPosition,
+    LocalPosition,
+    LocalPosition,
+    Vector2,
+    Vector2,
+    Vector2,
+    float,
+]
 
 
 class GJKFunctions:
@@ -83,6 +92,10 @@ class GJKFunctions:
         return GJKFunctions.get_normal(start, end).normalize()
 
     @staticmethod
+    def generate_collision_data(simplex: Simplex) -> CollisionData:
+        pass
+
+    @staticmethod
     def support_function(
         direction: Vector2,
         collider_a: Shape,
@@ -118,7 +131,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> CollisionData:
+    ) -> bool:
         """
         Runs the Gilbert-Johnson-Keerthi algorithm over the two shapes to determine if
         they overlap.
@@ -153,7 +166,7 @@ class GJKFunctions:
 
         # Short circuit if point is already invalid
         if support_point * direction < 0:
-            return False, simplex, None, None
+            return False
 
         # Loop
 
@@ -190,11 +203,11 @@ class GJKFunctions:
             # Simplex is now a triangle
             if GJKFunctions.check_region(simplex):
                 # Found our overlap!
-                return True, simplex, point_a, point_b
+                return True
 
             # Failed, reduce simplex and try again
             simplex = GJKFunctions.get_closest_edge(simplex)
-        return False, simplex, None, None
+        return False
 
 
 _default_collider_functions: type[GJKFunctions] = GJKFunctions

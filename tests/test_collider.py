@@ -158,14 +158,14 @@ class TestGJKFunctions(unittest.TestCase):
 
         # Obviously no overlap
         self.assertFalse(
-            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_b)[0]
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_b)
         )
 
         transform_c = Transform((0, 0))
 
         # This SHOULD overlap
         self.assertTrue(
-            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_c)[0]
+            GJKFunctions.collide(collider_a, collider_b, transform_a, transform_c)
         )
 
 

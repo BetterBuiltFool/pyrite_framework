@@ -8,7 +8,7 @@ from ..transform import TransformComponent
 from . import get_collider_functions
 
 if TYPE_CHECKING:
-    from . import GJKFunctions, CollisionData
+    from . import GJKFunctions
     from pygame import Rect
 
 
@@ -135,7 +135,7 @@ class ColliderSystem(System):
     @classmethod
     def collide_between(
         cls, component_a: ColliderComponent, component_b: ColliderComponent
-    ) -> CollisionData:
+    ) -> bool:
         """
         Determines if there is overlap with _other_collider_
 
@@ -152,12 +152,12 @@ class ColliderSystem(System):
             for collider_b, transform_b in zip(
                 component_b.get_colliders(), component_b.get_transforms()
             ):
-                collides, simplex, point_a, point_b = cls.gjk_functions.collide(
+                collides = cls.gjk_functions.collide(
                     collider_a,
                     collider_b,
                     this_transform * transform_a,
                     other_transform * transform_b,
                 )
                 if collides:
-                    return True, simplex, point_a, point_b
-        return False, None, None, None
+                    return True
+        return False
