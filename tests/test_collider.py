@@ -88,13 +88,13 @@ class TestGJKFunctions(unittest.TestCase):
         transform4 = Transform((5, 0), 90)
 
         sp1, *_ = GJKFunctions.support_function(
-            direction, self.collider1, self.collider2, transform1, transform2
+            direction, (self.collider1, transform1), (self.collider2, transform2)
         )
 
         self.assertEqual(sp1, Vector2(18, 9))
 
         sp2, *_ = GJKFunctions.support_function(
-            direction, self.collider1, self.collider3, transform1, transform3
+            direction, (self.collider1, transform1), (self.collider3, transform3)
         )
 
         expected = Vector2(10 + math.sqrt(2), 5)
@@ -103,7 +103,7 @@ class TestGJKFunctions(unittest.TestCase):
         self.assertAlmostEqual(sp2.y, expected.y)
 
         sp3, *_ = GJKFunctions.support_function(
-            direction, self.collider4, self.collider2, transform4, transform2
+            direction, (self.collider4, transform4), (self.collider2, transform2)
         )
 
         expected = Vector2(15, 4)

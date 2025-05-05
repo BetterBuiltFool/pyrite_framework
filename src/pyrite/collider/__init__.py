@@ -4,10 +4,11 @@ from typing import TypeAlias, TYPE_CHECKING
 
 from pygame import Vector2
 
-if TYPE_CHECKING:
-    from ..types.shape import Shape
-    from ..transform import Transform
+from ..types.shape import Shape
+from ..transform import Transform
 
+if TYPE_CHECKING:
+    pass
 
 Simplex: TypeAlias = list[Vector2, Vector2, Vector2]
 
@@ -23,6 +24,8 @@ CollisionData: TypeAlias = tuple[
     Vector2,
     float,
 ]
+
+ShapeData: TypeAlias = tuple[Shape, Transform]
 
 
 class GJKFunctions:
@@ -98,10 +101,8 @@ class GJKFunctions:
     @staticmethod
     def support_function(
         direction: Vector2,
-        collider_a: Shape,
-        collider_b: Shape,
-        transform_a: Transform,
-        transform_b: Transform,
+        shape_a: ShapeData,
+        shape_b: ShapeData,
     ) -> tuple[Vector2, WorldPosition, WorldPosition]:
         """
         Determines the Minkowski difference between two colliders in the given
@@ -120,8 +121,8 @@ class GJKFunctions:
 
             - The furthest vertex of _collider_b_, in world space.
         """
-        point_a = collider_a.get_furthest_vertex(direction, transform_a)
-        point_b = collider_b.get_furthest_vertex(-direction, transform_b)
+        point_a = shape_a[0].get_furthest_vertex(direction, shape_a[1])
+        point_b = shape_b[0].get_furthest_vertex(-direction, shape_b[1])
 
         return point_a - point_b, point_a, point_b
 
@@ -147,7 +148,7 @@ class GJKFunctions:
 
         # Get support point 1
         support_point, *_ = GJKFunctions.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
+            direction, (collider_a, transform_a), (collider_b, transform_b)
         )
 
         # Add to simplex
@@ -158,7 +159,7 @@ class GJKFunctions:
 
         # Get support point 2
         support_point, *_ = GJKFunctions.support_function(
-            direction, collider_a, collider_b, transform_a, transform_b
+            direction, (collider_a, transform_a), (collider_b, transform_b)
         )
 
         # Add to simplex
@@ -190,7 +191,7 @@ class GJKFunctions:
 
             # Get support point 3
             support_point, point_a, point_b = GJKFunctions.support_function(
-                direction, collider_a, collider_b, transform_a, transform_b
+                direction, (collider_a, transform_a), (collider_b, transform_b)
             )
 
             # Short circuit if point is already invalid
