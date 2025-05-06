@@ -167,7 +167,7 @@ class GJKFunctions:
         collider_b: Shape,
         transform_a: Transform,
         transform_b: Transform,
-    ) -> bool:
+    ) -> Simplex | None:
         """
         Runs the Gilbert-Johnson-Keerthi algorithm over the two shapes to determine if
         they overlap.
@@ -239,11 +239,11 @@ class GJKFunctions:
             # Simplex is now a triangle
             if GJKFunctions.check_region(simplex):
                 # Found our overlap!
-                return True
+                return simplex
 
             # Failed, reduce simplex and try again
             simplex = GJKFunctions.get_closest_edge(simplex)
-        return False
+        return None
 
 
 _default_collider_functions: type[GJKFunctions] = GJKFunctions
