@@ -98,7 +98,9 @@ class GJKFunctions:
         return GJKFunctions.get_normal(start, end).normalize()
 
     @staticmethod
-    def epa(polytope: Simplex, shape_a: ShapeData, shape_b: ShapeData) -> Vector2:
+    def get_collision_normal(
+        polytope: Simplex, shape_a: ShapeData, shape_b: ShapeData
+    ) -> Vector2:
         min_index: int = 0
         min_distance = math.inf
         min_normal: Vector2
