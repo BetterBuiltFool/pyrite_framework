@@ -124,6 +124,7 @@ class GJKFunctions:
                     min_distance = distance
                     min_normal = normal
                     min_index = j
+                i += 1
             support_point = GJKFunctions.support_function(min_normal, shape_a, shape_b)
             support_distance = min_normal * support_point
 
