@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import TypeAlias, TYPE_CHECKING
 
 from pygame import Vector2
@@ -26,6 +27,8 @@ CollisionData: TypeAlias = tuple[
 ]
 
 ShapeData: TypeAlias = tuple[Shape, Transform]
+
+DIST_ADJUST: float = 0.001
 
 
 class GJKFunctions:
@@ -95,8 +98,38 @@ class GJKFunctions:
         return GJKFunctions.get_normal(start, end).normalize()
 
     @staticmethod
-    def generate_collision_data(simplex: Simplex) -> CollisionData:
-        pass
+    def epa(polytope: Simplex, shape_a: ShapeData, shape_b: ShapeData) -> Vector2:
+        min_index: int = 0
+        min_distance = math.inf
+        min_normal: Vector2
+
+        while min_distance == math.inf:
+            max_index = len(polytope)
+            i = 0
+            while i < max_index:
+                j = i + 1 % max_index
+
+                vert_i = polytope[i]
+
+                normal = GJKFunctions.get_unit_normal(polytope[j], vert_i)
+                distance = normal * vert_i
+
+                if distance < 0:
+                    distance *= -1
+                    normal *= -1
+
+                if distance < min_distance:
+                    min_distance = distance
+                    min_normal = normal
+                    min_index = j
+            support_point = GJKFunctions.support_function(min_normal, shape_a, shape_b)
+            support_distance = min_normal * support_point
+
+            if abs(support_distance - min_distance) > DIST_ADJUST:
+                min_distance = math.inf
+                polytope.insert(min_index, support_point)
+
+        return min_normal * (min_distance + DIST_ADJUST)
 
     @staticmethod
     def support_function(
