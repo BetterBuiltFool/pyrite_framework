@@ -7,7 +7,7 @@ import unittest
 from pygame import Vector2, Rect
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.shapes import Ellipse, Polygon, Rectangle, Stadium  # noqa:E402
+from src.pyrite.shapes import Ellipse, Polygon, Stadium  # noqa:E402
 from src.pyrite.collider.collider_system import ColliderSystem  # noqa:E402
 from src.pyrite.collider.collider_component import ColliderComponent  # noqa:E402
 from src.pyrite.collider import GJKFunctions  # noqa:E402
@@ -169,9 +169,9 @@ class TestGJKFunctions(unittest.TestCase):
         )
 
     def test_get_collision_normal(self):
-        collider = Rectangle(6, 6)
+        collider = Ellipse(3)
 
-        transform_a = Transform((5, 5))
+        transform_a = Transform((math.cos(math.pi / 4) * 3, math.sin(math.pi / 4) * 3))
         transform_b = Transform((0, 0))
 
         simplex = GJKFunctions.collide(collider, collider, transform_a, transform_b)
@@ -182,8 +182,9 @@ class TestGJKFunctions(unittest.TestCase):
             simplex, (collider, transform_a), (collider, transform_b)
         )
 
-        expected = Vector2(1, 1)
-        self.assertEqual(normal, expected)
+        expected = -transform_a.position
+        self.assertAlmostEqual(normal.x, expected.x)
+        self.assertAlmostEqual(normal.y, expected.y)
 
 
 class TestColliderSystem(unittest.TestCase):
