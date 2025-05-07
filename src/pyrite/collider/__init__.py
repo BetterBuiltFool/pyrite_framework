@@ -109,7 +109,7 @@ class GJKFunctions:
             max_index = len(polytope)
             i = 0
             while i < max_index:
-                j = i + 1 % max_index
+                j = (i + 1) % max_index
 
                 vert_i = polytope[i]
 
@@ -125,14 +125,16 @@ class GJKFunctions:
                     min_normal = normal
                     min_index = j
                 i += 1
-            support_point = GJKFunctions.support_function(min_normal, shape_a, shape_b)
+            support_point, *_ = GJKFunctions.support_function(
+                min_normal, shape_a, shape_b
+            )
             support_distance = min_normal * support_point
 
             if abs(support_distance - min_distance) > DIST_ADJUST:
                 min_distance = math.inf
                 polytope.insert(min_index, support_point)
 
-        return min_normal * (min_distance + DIST_ADJUST)
+        return min_normal * min_distance
 
     @staticmethod
     def support_function(
