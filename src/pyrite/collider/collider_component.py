@@ -6,7 +6,7 @@ from weakref import WeakKeyDictionary, WeakSet
 
 from ..transform import Transform
 from ..types import Component
-from ..events import OnTouch, WhileTouching
+from ..events import OnSeperate, OnTouch, WhileTouching
 
 if TYPE_CHECKING:
     from ..types.shape import Shape
@@ -73,6 +73,22 @@ class ColliderComponent(Component):
         this_collider: The collider component belonging to the owner of the
             instance event.
         touching: The collider component in contact with _this_collider_
+        """
+
+        self.OnSeperate = OnSeperate(self)
+        """
+        Called whenever a previously touching collider stops touching.
+
+        :Signature:
+        on_seperate(
+            this_collider: ColliderComponent,
+            touching: ColliderComponent
+        ) -> None
+
+
+        this_collider: The collider component belonging to the owner of the
+            instance event.
+        touching: The collider component formerly in contact with _this_collider_
         """
 
     @property
