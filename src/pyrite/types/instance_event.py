@@ -192,7 +192,7 @@ class InstanceEvent(ABC):
         # entire game, just the thread.
 
         # TODO If there is demand for sync listeners, make them the exception, not the
-        # rule. Add a seperate list and registration method for those.
+        # rule. Add a separate list and registration method for those.
         for caller, listeners in self.listeners.items():
             # The pyrite threading module can be set to run regular threads or asyncio
             # threads.

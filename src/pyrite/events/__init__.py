@@ -38,9 +38,9 @@ class WhileTouching(InstanceEvent):
         return super().__call__(this_collider, touching)
 
 
-class OnSeperate(InstanceEvent):
+class OnSeparate(InstanceEvent):
     """
-    Called when a previously touching collider seperates.
+    Called when a previously touching collider separates.
 
     :param this_collider: The collider component belonging to the owner of the instance
         event.

@@ -140,7 +140,7 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy(param1: bool):
             self.value1 = param1
 
-        # listeners on two seperate events
+        # listeners on two separate events
         @self.test_object.OnTestEvent2.add_listener
         def test_dummy2(param2: int):
             self.value2 = param2
