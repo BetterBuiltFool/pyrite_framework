@@ -29,7 +29,7 @@ class ColliderComponent(Component):
         owner: Any,
         shape: Shape | Sequence[Shape],
         category: int = 1,
-        mask: int = 4294967295,  # Pymunk provided max value
+        mask: int = 0xFFFFFFFF,  # Pymunk provided max value
     ) -> None:
         super().__init__(owner)
         if not (rigidbody := RigidbodyComponent.get(owner)):
