@@ -4,12 +4,20 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
+import cffi
+from pymunk import ShapeFilter
+
 from ..types import Component
 from .rigidbody import RigidbodyComponent
 from .physics_service import PhysicsService
 
 if TYPE_CHECKING:
     from pymunk import Shape
+
+
+# Calculating the system's max int value for setting the collision type of
+# ColliderComponents
+COMPONENT_TYPE: int = 2 ** (cffi.FFI().sizeof("int") * 8 - 1) - 1
 
 
 class ColliderComponent(Component):
@@ -21,7 +29,7 @@ class ColliderComponent(Component):
         owner: Any,
         shape: Shape | Sequence[Shape],
         category: int = 1,
-        mask: int = None,
+        mask: int = 4294967295,  # Pymunk provided max value
     ) -> None:
         super().__init__(owner)
         if not (rigidbody := RigidbodyComponent.get(owner)):
@@ -36,9 +44,13 @@ class ColliderComponent(Component):
 
         self.shapes = shape
 
+        self.filter = ShapeFilter(categories=category, mask=mask)
+
         body = rigidbody.body
         for collision_shape in shape:
+            collision_shape.collision_type = COMPONENT_TYPE
             collision_shape.body = body
+            collision_shape.filter = self.filter
             PhysicsService.space.add(collision_shape)
 
     @property
@@ -63,3 +75,8 @@ class ColliderComponent(Component):
 
     def compare_mask(self, other: ColliderComponent) -> bool:
         return self.collision_mask & other.category
+
+    def _set_shape_filter(self):
+        self.filter = ShapeFilter(categories=self.category, mask=self.collision_mask)
+        for shape in self.shapes:
+            shape.filter = self.filter
