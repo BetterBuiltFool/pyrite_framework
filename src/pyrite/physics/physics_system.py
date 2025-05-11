@@ -15,7 +15,7 @@ class PhysicsSystem(System):
 
         self.sync_bodies_to_transforms()
 
-        PhysicsService.space.step(timestep)
+        PhysicsService.step(timestep)
 
         self.sync_transforms_to_bodies()
 

@@ -29,3 +29,7 @@ class PhysicsService:
     @staticmethod
     def check_point(point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
         pass
+
+    @classmethod
+    def step(cls, delta_time: float):
+        cls.space.step(delta_time)
