@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ColliderComponent(Component):
-    all_categories: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
+    _categories: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
     collision_masks: WeakKeyDictionary[ColliderComponent, int] = WeakKeyDictionary()
     colliders: WeakKeyDictionary[ColliderComponent, list[Shape]] = WeakKeyDictionary()
     transforms: WeakKeyDictionary[ColliderComponent, list[Transform]] = (
@@ -43,7 +43,7 @@ class ColliderComponent(Component):
         self.colliders.setdefault(self, collider)
         self.transforms.setdefault(self, transform)
 
-        self.categories.update({self: layers})
+        self._categories.update({self: layers})
         self.collision_masks.update({self: collision_mask})
 
         self.is_touching: WeakSet[ColliderComponent] = WeakSet()
@@ -92,14 +92,14 @@ class ColliderComponent(Component):
         """
 
     @property
-    def categories(self) -> int:
-        return self.all_categories[self]
+    def category(self) -> int:
+        return self._categories[self]
 
     def add_categories_layer(self, layer: int):
-        self.categories[self] |= layer
+        self._categories[self] |= layer
 
     def remove_categories_layer(self, layer: int):
-        self.categories[self] &= ~layer
+        self._categories[self] &= ~layer
 
     @property
     def collision_mask(self) -> int:
@@ -118,7 +118,7 @@ class ColliderComponent(Component):
         return self.transforms[self]
 
     def compare_mask(self, other: ColliderComponent) -> bool:
-        return self.collision_mask & other.categories
+        return self.collision_mask & other.category
 
     def collides_with(self, other: ColliderComponent) -> bool:
         """
