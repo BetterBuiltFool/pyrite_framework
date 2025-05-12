@@ -30,10 +30,14 @@ class PhysicsSystem(System):
         for body, key_object in RigidbodyComponent._bodies.items():
             if not (transform := TransformComponent.get(key_object)):
                 continue
+            vel = body.velocity
+            ang_vel = body.angular_velocity
             pos = transform.world_position
             body.position = (pos.x, pos.y)
             rot = math.radians(transform.world_rotation)
             body.angle = rot
+            body.velocity = vel
+            body.angular_velocity = ang_vel
             PhysicsService.space.reindex_shapes_for_body(body)
 
     def sync_transforms_to_bodies(self):
