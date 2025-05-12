@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TypeAlias, TYPE_CHECKING
 
+import cffi
 import pymunk
 
 if TYPE_CHECKING:
@@ -9,6 +10,10 @@ if TYPE_CHECKING:
 
 
 Point: TypeAlias = tuple[float, float]
+
+# Calculating the system's max int value for setting the collision type of
+# ColliderComponents
+COMPONENT_TYPE: int = 2 ** (cffi.FFI().sizeof("int") * 8 - 1) - 1
 
 
 class PhysicsService:

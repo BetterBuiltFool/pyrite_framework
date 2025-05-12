@@ -4,20 +4,14 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
-import cffi
 from pymunk import ShapeFilter
 
 from ..types import Component
 from .rigidbody_component import RigidbodyComponent
-from .physics_service import PhysicsService
+from .physics_service import PhysicsService, COMPONENT_TYPE
 
 if TYPE_CHECKING:
     from pymunk import Shape
-
-
-# Calculating the system's max int value for setting the collision type of
-# ColliderComponents
-COMPONENT_TYPE: int = 2 ** (cffi.FFI().sizeof("int") * 8 - 1) - 1
 
 
 class ColliderComponent(Component):
