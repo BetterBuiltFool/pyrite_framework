@@ -8,7 +8,7 @@ import cffi
 from pymunk import ShapeFilter
 
 from ..types import Component
-from .rigidbody import RigidbodyComponent
+from .rigidbody_component import RigidbodyComponent
 from .physics_service import PhysicsService
 
 if TYPE_CHECKING:

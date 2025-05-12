@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from ..types import System
 from .physics_service import PhysicsService
-from .rigidbody import RigidbodyComponent
+from .rigidbody_component import RigidbodyComponent
 from ..transform import TransformComponent
 
 if TYPE_CHECKING:
