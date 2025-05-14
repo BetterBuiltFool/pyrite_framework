@@ -7,7 +7,8 @@ from weakref import WeakKeyDictionary
 from pymunk import ShapeFilter
 
 from ..events import OnSeparate, OnTouch, WhileTouching
-from .physics_service import PhysicsService, COMPONENT_TYPE
+from .. import physics
+from .physics_service import PhysicsService
 from .rigidbody_component import RigidbodyComponent
 from ..types import Component
 
@@ -43,7 +44,7 @@ class ColliderComponent(Component):
 
         body = rigidbody.body
         for collision_shape in shape:
-            collision_shape.collision_type = COMPONENT_TYPE
+            collision_shape.collision_type = physics.COMPONENT_TYPE
             collision_shape.body = body
             collision_shape.filter = self.filter
             PhysicsService.space.add(collision_shape)
