@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
-from weakref import WeakValueDictionary
-
 from ..transform import TransformComponent
 from ..types import Component
+from .. import physics
 from .physics_service import PhysicsService
 
 if TYPE_CHECKING:
@@ -12,7 +11,6 @@ if TYPE_CHECKING:
 
 
 class RigidbodyComponent(Component):
-    _bodies: WeakValueDictionary[Body, Any] = WeakValueDictionary()
     """
     Associates an owner object with a physics body
     """
@@ -25,7 +23,7 @@ class RigidbodyComponent(Component):
             )
         self.transform = transform
         self.body = body
-        self._bodies.update({body: owner})
+        physics._bodies.update({body: owner})
         PhysicsService.space.add(body)
 
     @classmethod
