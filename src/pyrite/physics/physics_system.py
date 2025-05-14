@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 import pymunk
 
 from ..types import System
+from .. import physics
 from .physics_service import PhysicsService
-from .rigidbody_component import RigidbodyComponent
 from ..transform import TransformComponent, transform_service
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ class PhysicsSystem(System):
         Takes all bodies with a TransformComponent and sets their position and rotation
         to match.
         """
-        for body, key_object in RigidbodyComponent._bodies.items():
+        for body, key_object in physics._bodies.items():
             if not (transform := TransformComponent.get(key_object)):
                 continue
             vel = body.velocity
@@ -50,7 +50,7 @@ class PhysicsSystem(System):
         Takes all TransformComponents with a rigidbody and updates their position and
         rotation with the new calculations.
         """
-        for body, key_object in RigidbodyComponent._bodies.items():
+        for body, key_object in physics._bodies.items():
             if (
                 not (transform := TransformComponent.get(key_object))
                 or body.is_sleeping
@@ -64,7 +64,7 @@ class PhysicsSystem(System):
             ) % 360 - 180
             new_rot = angle_between / 2
 
-            print(f"{key_object} {new_pos=}, {transform.world_position=}")
+            # print(f"{key_object} {new_pos=}, {transform.world_position=}")
 
             transform_service.set_world_position(transform, new_pos)
             transform_service.set_world_rotation(transform, new_rot)
