@@ -8,6 +8,7 @@ import pymunk
 from ..types import System
 from .. import physics
 from .physics_service import PhysicsService
+from .collider_component import ColliderComponent
 from ..transform import TransformComponent, transform_service
 
 if TYPE_CHECKING:
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 # Figure out where to put this so it doesn't cause circular imports
 # Track _bodies here? Would remove RigidbodyComponent import
 def post_solve(arbiter: Arbiter, space: Space, data: Any):
-    collider1, collider2 = physics.get_collider_components(arbiter)
+    collider1, collider2 = get_collider_components(arbiter)
     if arbiter.is_first_contact:
         if collider1.compare_mask(collider2):
             collider1.OnTouch(collider1, collider2)
@@ -33,11 +34,22 @@ def post_solve(arbiter: Arbiter, space: Space, data: Any):
 
 
 def separate(arbiter: Arbiter, space: Space, data: Any):
-    collider1, collider2 = physics.get_collider_components(arbiter)
+    collider1, collider2 = get_collider_components(arbiter)
     if collider1.compare_mask(collider2):
         collider1.OnSeparate(collider1, collider2)
     if collider2.compare_mask(collider1):
         collider2.OnSeparate(collider2, collider1)
+
+
+def get_collider_components(
+    arbiter: Arbiter,
+) -> tuple[ColliderComponent, ColliderComponent]:
+    shape1, shape2 = arbiter.shapes
+    body1 = shape1.body
+    body2 = shape2.body
+    owner1 = physics._bodies.get(body1)
+    owner2 = physics._bodies.get(body2)
+    return ColliderComponent.get(owner1), ColliderComponent.get(owner2)
 
 
 class PhysicsSystem(System):
