@@ -53,16 +53,17 @@ def get_collider_components(
 
 class PhysicsSystem(System):
 
-    def __init__(self, enabled=True, order_index=0) -> None:
+    def __init__(self, physics_mult=1, enabled=True, order_index=0) -> None:
         super().__init__(enabled, order_index)
         PhysicsService.comp_handler.post_solve = post_solve
         PhysicsService.comp_handler.separate = separate
+        self.physics_mult = physics_mult
 
     def const_update(self, timestep: float) -> None:
 
         self.sync_bodies_to_transforms()
 
-        PhysicsService.step(timestep)
+        PhysicsService.step(timestep * self.physics_mult)
 
         self.sync_transforms_to_bodies()
 
