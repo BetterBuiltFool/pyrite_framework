@@ -6,7 +6,6 @@ from typing import Any, TYPE_CHECKING
 import pymunk
 
 from ..types import System
-from .. import physics
 from .physics_service import PhysicsService
 from .collider_component import ColliderComponent
 from ..transform import TransformComponent, transform_service
@@ -47,8 +46,8 @@ def get_collider_components(
     shape1, shape2 = arbiter.shapes
     body1 = shape1.body
     body2 = shape2.body
-    owner1 = physics._bodies.get(body1)
-    owner2 = physics._bodies.get(body2)
+    owner1 = PhysicsService.get_owner_from_body(body1)
+    owner2 = PhysicsService.get_owner_from_body(body2)
     return ColliderComponent.get(owner1), ColliderComponent.get(owner2)
 
 
@@ -75,7 +74,7 @@ class PhysicsSystem(System):
         Takes all bodies with a TransformComponent and sets their position and rotation
         to match.
         """
-        for body, key_object in physics._bodies.items():
+        for body, key_object in PhysicsService.bodies.items():
             if not (transform := TransformComponent.get(key_object)):
                 continue
             vel = body.velocity
@@ -93,7 +92,7 @@ class PhysicsSystem(System):
         Takes all TransformComponents with a rigidbody and updates their position and
         rotation with the new calculations.
         """
-        for body, key_object in physics._bodies.items():
+        for body, key_object in PhysicsService.bodies.items():
             if (
                 not (transform := TransformComponent.get(key_object))
                 or body.is_sleeping

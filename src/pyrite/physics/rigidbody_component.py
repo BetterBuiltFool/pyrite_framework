@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 from ..transform import TransformComponent
 from ..types import Component
-from .. import physics
 from .physics_service import PhysicsService
 
 if TYPE_CHECKING:
@@ -23,9 +22,5 @@ class RigidbodyComponent(Component):
             )
         self.transform = transform
         self.body = body
-        physics._bodies.update({body: owner})
+        PhysicsService.bodies.update({body: owner})
         PhysicsService.space.add(body)
-
-    @classmethod
-    def get_owner_from_body(cls, body: Body) -> Any | None:
-        return cls._bodies.get(body)
