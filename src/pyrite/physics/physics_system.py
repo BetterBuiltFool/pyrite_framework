@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 import pymunk
 
@@ -11,10 +11,41 @@ from .physics_service import PhysicsService
 from ..transform import TransformComponent, transform_service
 
 if TYPE_CHECKING:
-    pass
+    from pymunk import (
+        Arbiter,
+        Space,
+    )
+
+
+# Figure out where to put this so it doesn't cause circular imports
+# Track _bodies here? Would remove RigidbodyComponent import
+def post_solve(arbiter: Arbiter, space: Space, data: Any):
+    collider1, collider2 = physics.get_collider_components(arbiter)
+    if arbiter.is_first_contact:
+        if collider1.compare_mask(collider2):
+            collider1.OnTouch(collider1, collider2)
+        if collider2.compare_mask(collider1):
+            collider2.OnTouch(collider2, collider1)
+    if collider1.compare_mask(collider2):
+        collider1.WhileTouching(collider1, collider2)
+    if collider2.compare_mask(collider1):
+        collider2.WhileTouching(collider2, collider1)
+
+
+def separate(arbiter: Arbiter, space: Space, data: Any):
+    collider1, collider2 = physics.get_collider_components(arbiter)
+    if collider1.compare_mask(collider2):
+        collider1.OnSeparate(collider1, collider2)
+    if collider2.compare_mask(collider1):
+        collider2.OnSeparate(collider2, collider1)
 
 
 class PhysicsSystem(System):
+
+    def __init__(self, enabled=True, order_index=0) -> None:
+        super().__init__(enabled, order_index)
+        PhysicsService.comp_handler.post_solve = post_solve
+        PhysicsService.comp_handler.separate = separate
 
     def const_update(self, timestep: float) -> None:
 
