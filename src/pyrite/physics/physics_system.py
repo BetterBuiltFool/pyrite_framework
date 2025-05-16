@@ -76,6 +76,8 @@ class PhysicsSystem(System):
         for body, key_object in PhysicsService.bodies.items():
             if not (transform := TransformComponent.get(key_object)):
                 continue
+            if not transform.is_dirty():
+                continue
             vel = body.velocity
             ang_vel = body.angular_velocity
             pos = transform.world_position
