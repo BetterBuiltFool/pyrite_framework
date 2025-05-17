@@ -120,12 +120,14 @@ class ColliderComponent(Component):
         Takes a bitmask value and ensure that the Collider's category includes it.
         """
         self._categories[self] |= layer
+        self.filter.categories = self._categories[self]
 
     def remove_categories_layer(self, layer: int):
         """
         Takes a bitmask value and ensures that the Collider's category excludes it.
         """
         self._categories[self] &= ~layer
+        self.filter.categories = self._categories[self]
 
     @property
     def collision_mask(self) -> int:
@@ -140,6 +142,7 @@ class ColliderComponent(Component):
         Takes a bitmask value and ensure that the Collider's collision mask includes it.
         """
         self._collision_masks[self] |= layer
+        self.filter.mask = self._collision_masks[self]
 
     def remove_collision_mask_layer(self, layer: int):
         """
@@ -147,6 +150,7 @@ class ColliderComponent(Component):
         it.
         """
         self._collision_masks[self] &= ~layer
+        self.filter.mask = self._collision_masks[self]
 
     def compare_mask(self, other: ColliderComponent) -> bool:
         """
@@ -157,8 +161,3 @@ class ColliderComponent(Component):
         :return: True if the masks are overlapping, otherwise False.
         """
         return self.collision_mask & other.category
-
-    def _set_shape_filter(self):
-        self.filter = ShapeFilter(categories=self.category, mask=self.collision_mask)
-        for shape in self.shapes:
-            shape.filter = self.filter
