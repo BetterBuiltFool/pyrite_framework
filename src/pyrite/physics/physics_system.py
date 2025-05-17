@@ -52,6 +52,12 @@ def get_collider_components(
 
 
 class PhysicsSystem(System):
+    """
+    A system that manages the flow of physics in the world space.
+    Syncs Rigidbodies and their transforms, and steps the simulation.
+
+    TODO: Pull this out of const_update, give it its own accumulator.
+    """
 
     def __init__(self, physics_mult=1, enabled=True, order_index=0) -> None:
         super().__init__(enabled, order_index)
@@ -107,10 +113,5 @@ class PhysicsSystem(System):
             ) % 360 - 180
             new_rot = angle_between / 2
 
-            # print(f"{key_object} {new_pos=}, {transform.world_position=}")
-
             transform_service.set_world_position(transform, new_pos)
             transform_service.set_world_rotation(transform, new_rot)
-
-            # transform.world_position = body.position
-            # transform.world_rotation = math.degrees(body.angle)
