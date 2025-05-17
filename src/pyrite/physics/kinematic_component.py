@@ -13,6 +13,12 @@ if TYPE_CHECKING:
 
 
 class KinematicComponent(Component):
+    """
+    A component that ties into the kinematic attributes of an object's
+    RigidbodyComponent.
+
+    Requires RigidbodyComponent.
+    """
 
     def __init__(self, owner: Any) -> None:
         super().__init__(owner)
