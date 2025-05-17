@@ -116,6 +116,14 @@ class Sprite(Renderable):
         """
         self._flip_y = flag
 
+    @property
+    def is_dirty(self) -> bool:
+        return self._is_dirty or self.transform.is_dirty()
+
+    @is_dirty.setter
+    def is_dirty(self, flag: bool):
+        self._is_dirty = False
+
     def set_surface(
         self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
     ):
@@ -140,7 +148,7 @@ class Sprite(Renderable):
         self._is_dirty = True
 
     def _force_update_surface(self) -> Surface:
-        self._is_dirty = False
+        self.is_dirty = False
         self.transform._dirty = False
 
         return self.draw_sprite()
@@ -165,6 +173,6 @@ class Sprite(Renderable):
         return rect
 
     def render(self, delta_time: float) -> pygame.Surface:
-        if self._is_dirty or self.transform.is_dirty():
+        if self.is_dirty:
             self.display_surface = self._force_update_surface()
         return self.display_surface
