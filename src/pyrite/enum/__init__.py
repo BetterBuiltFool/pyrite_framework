@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from functools import singledispatchmethod
-import typing
+from typing import TYPE_CHECKING
 
 import pygame
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
 
 
