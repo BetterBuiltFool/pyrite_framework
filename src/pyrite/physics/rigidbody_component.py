@@ -14,7 +14,14 @@ if TYPE_CHECKING:
 
 class RigidbodyComponent(Component):
     """
-    Associates an owner object with a physics body
+    Associates an owner object with a physics body.
+
+    Requires a TransformComponent.
+
+    Required for ColliderComponent and KinematicComponent.
+
+    TODO: Automatically sync Body position with TransformComponent when
+    TransformComponent is changed.
     """
 
     def __init__(self, owner: Any, body: Body = None) -> None:
