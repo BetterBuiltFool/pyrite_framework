@@ -25,7 +25,7 @@ class KinematicComponent(Component):
 
         if not (rigidbody := RigidbodyComponent.get(owner)):
             raise RuntimeError(
-                f"ColliderComponent requires that {owner} has a RigidbodyComponent"
+                f"KinematicComponent requires that {owner} has a RigidbodyComponent"
             )
         self.body = rigidbody.body
 
