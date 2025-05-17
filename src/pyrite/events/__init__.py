@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from ..types.instance_event import InstanceEvent  # noqa:F401
 
 if TYPE_CHECKING:
-    from ..collider.collider_component import ColliderComponent
+    from ..physics.collider_component import ColliderComponent
 
 # Define common events here.
 
