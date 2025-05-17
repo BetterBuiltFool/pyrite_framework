@@ -11,6 +11,7 @@ from .system import System  # noqa: F401
 from .transform import TransformProtocol  # noqa:F401
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
     from ..transform import Transform
 
 import pygame
@@ -67,3 +68,12 @@ class CanConstUpdate(Protocol):
 class CanRender(Protocol):
 
     def render(self, delta_time: float) -> tuple[pygame.Surface, pygame.Rect]: ...
+
+
+class TransformDependent(Protocol):
+
+    def world_position_changed(self, world_position: Point): ...
+
+    def world_scale_changed(self, world_scale: Point): ...
+
+    def world_rotation_changed(self, world_rotation: float): ...
