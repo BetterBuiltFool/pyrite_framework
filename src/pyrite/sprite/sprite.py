@@ -140,10 +140,15 @@ class Sprite(Renderable):
         self._is_dirty = True
 
     def _force_update_surface(self) -> Surface:
+        self._is_dirty = False
+        self.transform._dirty = False
+
+        return self.draw_sprite()
+
+    def draw_sprite(self) -> Surface:
         new_surface = pygame.transform.flip(
             self._reference_image, self.flip_x, self.flip_y
         )
-        self._is_dirty = False
 
         # FIXME This really only works for centered renderables
 
@@ -152,9 +157,6 @@ class Sprite(Renderable):
         new_surface = pygame.transform.rotate(
             new_surface, self.transform.world_rotation
         )
-
-        self.transform._dirty = False
-
         return new_surface
 
     def get_rect(self) -> Rect:
