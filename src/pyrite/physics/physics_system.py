@@ -107,6 +107,7 @@ class PhysicsSystem(System):
             ):
                 # No adjustments to sleeping, static, or transformless objects
                 continue
+            # TODO calculate an expected interpolation value?
             new_pos = transform.world_position.lerp(body.position, 0.1)
             angle_between = (
                 (math.degrees(body.angle) - transform.world_rotation) + 180
