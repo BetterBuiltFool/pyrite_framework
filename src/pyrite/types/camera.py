@@ -8,6 +8,7 @@ import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
+    from pygame import Surface
     from pygame.typing import Point
     from ..enum import Layer
     from .renderable import Renderable
@@ -23,7 +24,7 @@ class CameraBase:
 
     def __init__(
         self,
-        surface: pygame.Surface,
+        surface: Surface,
         layer_mask: tuple[Layer] = None,
     ) -> None:
         self.surface = surface
@@ -47,6 +48,16 @@ class CameraBase:
         viewport.
         """
         return (item for item in items if self._in_view(item.get_rect()))
+
+    def draw_to_view(self, surface: Surface, position: Point):
+        """
+        Draws a surface to the camera's surface. Automatically converts the position
+        into local space.
+
+        :param surface: The source surface being drawn from.
+        :param position: A point in world space where the surface is located.
+        """
+        self.surface.blit(surface, self.to_local(position))
 
     def _in_view(self, rect: pygame.Rect) -> bool:
         return self.surface.get_rect().colliderect(rect)

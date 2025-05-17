@@ -367,9 +367,7 @@ class DefaultRenderer(Renderer):
                 continue
             if not camera._in_view(renderable_rect):
                 continue
-            camera.surface.blit(
-                rendered_surface, camera.to_local(renderable_rect.topleft)
-            )
+            camera.draw_to_view(rendered_surface, renderable_rect.topleft)
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
         """
