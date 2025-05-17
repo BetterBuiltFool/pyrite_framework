@@ -18,6 +18,8 @@ class KinematicComponent(Component):
     RigidbodyComponent.
 
     Requires RigidbodyComponent.
+
+    TODO: Give methods for manipulating forces on bodies
     """
 
     def __init__(self, owner: Any) -> None:
