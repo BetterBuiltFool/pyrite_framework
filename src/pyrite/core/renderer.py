@@ -8,12 +8,12 @@ from weakref import WeakSet
 
 # from pygame.typing import Point
 
-from ..types.camera import CameraBase
 from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from ..camera import Camera
     from ..types.renderable import Renderable
+    from ..types.camera import CameraBase
     from ..enum import Layer
     from pygame import Rect
 
@@ -375,7 +375,7 @@ class DefaultRenderer(Renderer):
         self,
         delta_time: float,
         camera: Camera,
-        window: pygame.Surface,
+        window_camera: CameraBase,
     ):
         """
         Draws the given camera to the window, at each of its surface sectors.
@@ -386,8 +386,8 @@ class DefaultRenderer(Renderer):
         """
         camera_surface = camera.render(delta_time)
         for sector in camera.surface_sectors:
-            render_rect = sector.get_rect(window)
-            window.blit(
+            render_rect = sector.get_rect(window_camera.surface)
+            window_camera.surface.blit(
                 camera.scale_view(camera_surface, render_rect.size),
                 render_rect,
             )
@@ -411,12 +411,11 @@ class DefaultRenderer(Renderer):
 
     def render(
         self,
-        window: pygame.Surface,
+        window_camera: CameraBase,
         delta_time: float,
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
         self._rendered_last_frame = 0
-        window_camera = CameraBase(window)
         cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
         if not cameras:
             # Treat the screen as a camera for the sake of rendering if there are no
@@ -432,7 +431,7 @@ class DefaultRenderer(Renderer):
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            self.draw_camera(delta_time, camera, window)
+            self.draw_camera(delta_time, camera, window_camera)
 
         # Render the UI last.
         self.render_ui(

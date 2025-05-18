@@ -12,9 +12,8 @@ from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
 from ._helper import defaults
-
 from .transform import transform_system
-
+from .types import CameraBase
 from .utils import threading
 
 if TYPE_CHECKING:
@@ -147,6 +146,7 @@ class Game:
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
+        self.window_camera = CameraBase(self.window)
 
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)
@@ -334,7 +334,7 @@ class Game:
         window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
-        self.renderer.render(window, delta_time, render_queue)
+        self.renderer.render(self.window_camera, delta_time, render_queue)
 
         self.render(window, delta_time)
 
