@@ -345,19 +345,12 @@ class DefaultRenderer(Renderer):
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
             renderable_rect = renderable.get_rect()
-            for camera in cameras:
-                if layer in camera.layer_mask:
-                    continue
-                if not camera._in_view(renderable_rect):
-                    continue
-                renderable.render_camera(camera)
-
-            # rendered_surface = renderable.render(delta_time)
-            # self.render_item(rendered_surface, renderable.get_rect(), cameras, layer)
+            self.render_item(delta_time, renderable, renderable_rect, cameras, layer)
 
     def render_item(
         self,
-        rendered_surface: Renderable,
+        delta_time: float,
+        renderable: Renderable,
         renderable_rect: Rect,
         cameras: Sequence[CameraBase],
         layer: Layer,
@@ -365,7 +358,8 @@ class DefaultRenderer(Renderer):
         """
         Draws a renderable to the cameras, adjusting its world position to camera space.
 
-        :param rendered_surface: The surface to be drawn to the camera.
+        :param delta_time: Time passed since last frame.
+        :param renderable: The renderable to be drawn to the cameras.
         :param renderable_rect: The rendered item's rectangle in world space.
         :param cameras: The cameras being drawn to.
         :param layer: layer being drawn, for layermask testing.
@@ -375,7 +369,7 @@ class DefaultRenderer(Renderer):
                 continue
             if not camera._in_view(renderable_rect):
                 continue
-            camera.draw_to_view(rendered_surface, renderable_rect.topleft)
+            renderable.render(delta_time, camera)
 
     def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
         """
@@ -396,7 +390,7 @@ class DefaultRenderer(Renderer):
     def render_ui(
         self,
         ui_elements: Sequence[Renderable],
-        window: pygame.Surface,
+        window_camera: CameraBase,
         delta_time: float,
     ):
         """
@@ -408,9 +402,7 @@ class DefaultRenderer(Renderer):
         :param delta_time: Time passed since last frame.
         """
         for ui_element in ui_elements:
-            surface = ui_element.render(delta_time)
-            position = ui_element.get_rect().topleft
-            window.blit(surface, position)
+            ui_element.render(delta_time, window_camera)
 
     def render(
         self,
@@ -419,11 +411,12 @@ class DefaultRenderer(Renderer):
         render_queue: dict[Layer, Sequence[Renderable]],
     ):
         self._rendered_last_frame = 0
+        window_camera = CameraBase(window)
         cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
         if not cameras:
             # Treat the screen as a camera for the sake of rendering if there are no
             # camera objects.
-            cameras = (CameraBase(window),)  # Needs to be in a sequence
+            cameras = (window_camera,)  # Needs to be in a sequence
 
         for camera in cameras:
             camera.clear()
@@ -437,7 +430,9 @@ class DefaultRenderer(Renderer):
             self.draw_camera(camera, window, delta_time)
 
         # Render the UI last.
-        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), window, delta_time)
+        self.render_ui(
+            render_queue.get(RenderLayers.UI_LAYER, []), window_camera, delta_time
+        )
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
