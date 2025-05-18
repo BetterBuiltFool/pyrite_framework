@@ -155,9 +155,7 @@ def set_world(component: TransformComponent, value: Transform):
     to_call: set[Callable] = set()
     world_transform = world_transforms.get(component)
     if world_transform:
-        print(f"Found transform for {component.owner}")
         if world_transform.position != value.position:
-            print("Updating position")
             to_call.add(_call_pos_changed)
         if world_transform.rotation != value.rotation:
             to_call.add(_call_rot_changed)
