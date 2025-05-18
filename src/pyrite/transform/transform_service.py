@@ -151,6 +151,8 @@ def set_world_position(component: TransformComponent, position: Point):
     """
     # TODO Force update local values
     world_transforms.get(component).position = Vector2(position)
+    for dependent in component.dependents:
+        dependent.world_position_changed(position)
 
 
 def set_world_rotation(component: TransformComponent, angle: Point):
@@ -162,6 +164,8 @@ def set_world_rotation(component: TransformComponent, angle: Point):
     :param angle: An angle in world space.
     """
     world_transforms.get(component).rotation = angle
+    for dependent in component.dependents:
+        dependent.world_rotation_changed(angle)
 
 
 def set_world_scale(component: TransformComponent, scale: Point):
@@ -173,6 +177,8 @@ def set_world_scale(component: TransformComponent, scale: Point):
     :param position: A tuple with scaling factors for each dimension, in world space.
     """
     world_transforms.get(component).scale = Vector2(scale)
+    for dependent in component.dependents:
+        dependent.world_scale_changed(scale)
 
 
 def is_dirty(component: TransformComponent) -> bool:
