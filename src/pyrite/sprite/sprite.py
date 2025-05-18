@@ -6,13 +6,14 @@ import pygame
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Container
+    from ..types import Container, CameraBase
     from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
 
 
+from ..renderer.renderer import SpriteRenderer
 from ..types.renderable import Renderable
 from ..enum import AnchorPoint
 
@@ -187,3 +188,6 @@ class Sprite(Renderable):
         if self.is_dirty:
             self.display_surface = self._force_update_surface()
         return self.display_surface
+
+    def render_camera(self, camera: CameraBase) -> None:
+        SpriteRenderer.render(self, camera)
