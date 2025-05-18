@@ -71,9 +71,28 @@ class CanRender(Protocol):
 
 
 class TransformDependent(Protocol):
+    """
+    Defines hooks for classes that require update from a TransformComponent's world
+    values.
+    """
 
-    def world_position_changed(self, world_position: Point): ...
+    def world_position_changed(self, world_position: Point):
+        """
+        Called whenever the world position of the TransformComponent is set.
 
-    def world_scale_changed(self, world_scale: Point): ...
+        :param world_position: The updated world position of the TransformComponent
+        """
 
-    def world_rotation_changed(self, world_rotation: float): ...
+    def world_scale_changed(self, world_scale: Point):
+        """
+        Called whenever the world scale of the TransformComponent is set.
+
+        :param world_scale: The updated world scale of the TransformComponent
+        """
+
+    def world_rotation_changed(self, world_rotation: float):
+        """
+        Called whenever the world rotation of the TransformComponent is set.
+
+        :param world_rotation: The updated world position of the TransformComponent
+        """
