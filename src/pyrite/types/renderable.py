@@ -9,7 +9,7 @@ from .._helper import defaults
 import pygame
 
 if TYPE_CHECKING:
-    from . import Container
+    from . import Container, CameraBase
     from ..enum import Layer
 
 
@@ -108,14 +108,14 @@ class Renderable(ABC):
         """
 
     @abstractmethod
-    def render(self, delta_time: float) -> pygame.Surface:
+    def render(self, delta_time: float, camera: CameraBase):
         """
-        Supplies a surface ready to be blitted to another surface.
+        Causes the Renderable to be rendered to the given camera. Typically calls upon
+        some renderer class that knows how to handle its data.
 
         :param delta_time: Time passed since last frame. Can be ignored by the concrete
         method but must be accepted.
-        :return: A tuple containing a ready-to-draw surface and a rect with the
-        position and size of the drawn area
+        :param camera: A camera-type object to be drawn to.
         """
         pass
 
