@@ -8,8 +8,10 @@ from pygame import Vector2
 from .transform import Transform
 
 if TYPE_CHECKING:
-    from .transform_component import TransformComponent
+    from collections.abc import Callable
     from pygame.typing import Point
+    from ..types import TransformDependent
+    from .transform_component import TransformComponent
 
 
 local_transforms: WeakKeyDictionary[TransformComponent, Transform] = WeakKeyDictionary()
@@ -129,6 +131,18 @@ def get_world_scale(component: TransformComponent) -> Point:
     return world_transforms.get(component).scale
 
 
+def _call_pos_changed(dependent: TransformDependent, transform: Transform):
+    dependent.world_position_changed(transform.position)
+
+
+def _call_rot_changed(dependent: TransformDependent, transform: Transform):
+    dependent.world_rotation_changed(transform.rotation)
+
+
+def _call_scale_changed(dependent: TransformDependent, transform: Transform):
+    dependent.world_scale_changed(transform.scale)
+
+
 def set_world(component: TransformComponent, value: Transform):
     """
     Forces the world transform value of a transform component to a new value.
@@ -138,7 +152,23 @@ def set_world(component: TransformComponent, value: Transform):
     :param value: A Transform value, in world space.
     """
     # TODO Force update local
+    to_call: set[Callable] = set()
+    world_transform = world_transforms.get(component)
+    if world_transform:
+        print(f"Found transform for {component.owner}")
+        if world_transform.position != value.position:
+            print("Updating position")
+            to_call.add(_call_pos_changed)
+        if world_transform.rotation != value.rotation:
+            to_call.add(_call_rot_changed)
+        if world_transform.scale != value.scale:
+            to_call.add(_call_scale_changed)
+    else:
+        to_call = {_call_pos_changed, _call_rot_changed, _call_scale_changed}
     world_transforms.update({component: value})
+    for dependent in component.dependents:
+        for updater in to_call:
+            updater(dependent, value)
 
 
 def set_world_position(component: TransformComponent, position: Point):
