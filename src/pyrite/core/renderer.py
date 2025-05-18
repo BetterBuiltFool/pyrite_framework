@@ -344,8 +344,16 @@ class DefaultRenderer(Renderer):
         """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
-            rendered_surface = renderable.render(delta_time)
-            self.render_item(rendered_surface, renderable.get_rect(), cameras, layer)
+            renderable_rect = renderable.get_rect()
+            for camera in cameras:
+                if layer in camera.layer_mask:
+                    continue
+                if not camera._in_view(renderable_rect):
+                    continue
+                renderable.render_camera(camera)
+
+            # rendered_surface = renderable.render(delta_time)
+            # self.render_item(rendered_surface, renderable.get_rect(), cameras, layer)
 
     def render_item(
         self,
