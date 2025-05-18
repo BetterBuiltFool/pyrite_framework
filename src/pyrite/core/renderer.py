@@ -328,18 +328,18 @@ class DefaultRenderer(Renderer):
 
     def render_layer(
         self,
+        delta_time: float,
         layer_queue: Sequence[Renderable],
         cameras: Sequence[CameraBase],
-        delta_time: float,
         layer: Layer,
     ):
         """
         Extracts the renderables from the layer_queue, and has them drawn to the
         cameras.
 
+        :param delta_time: Time passed since last frame.
         :param layer_queue: The ordered sequence of renderables to be drawn.
         :param cameras: The cameras being drawn to.
-        :param delta_time: Time passed since last frame.
         :param layer: the layer being drawn from, for layermask testing.
         """
         self._rendered_last_frame += len(layer_queue)
@@ -371,13 +371,18 @@ class DefaultRenderer(Renderer):
                 continue
             renderable.render(delta_time, camera)
 
-    def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
+    def draw_camera(
+        self,
+        delta_time: float,
+        camera: Camera,
+        window: pygame.Surface,
+    ):
         """
         Draws the given camera to the window, at each of its surface sectors.
 
+        :param delta_time: Time passed since last frame, if needed for any calculations.
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
-        :param delta_time: Time passed since last frame, if needed for any calculations.
         """
         camera_surface = camera.render(delta_time)
         for sector in camera.surface_sectors:
@@ -389,17 +394,17 @@ class DefaultRenderer(Renderer):
 
     def render_ui(
         self,
+        delta_time: float,
         ui_elements: Sequence[Renderable],
         window_camera: CameraBase,
-        delta_time: float,
     ):
         """
         Goes through the ui elements, and draws them to the screen. They are already in
         screen space, so they do not get adjusted.
 
+        :param delta_time: Time passed since last frame.
         :param ui_elements: The sequence of ui elements to be drawn, in order.
         :param cameras: The cameras being drawn to.
-        :param delta_time: Time passed since last frame.
         """
         for ui_element in ui_elements:
             ui_element.render(delta_time, window_camera)
@@ -423,15 +428,15 @@ class DefaultRenderer(Renderer):
 
         for layer in RenderLayers._layers:
             # _layers is sorted by desired draw order.
-            self.render_layer(render_queue.get(layer, []), cameras, delta_time, layer)
+            self.render_layer(delta_time, render_queue.get(layer, []), cameras, layer)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            self.draw_camera(camera, window, delta_time)
+            self.draw_camera(delta_time, camera, window)
 
         # Render the UI last.
         self.render_ui(
-            render_queue.get(RenderLayers.UI_LAYER, []), window_camera, delta_time
+            delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
         )
 
     def get_rendered_last_frame(self) -> int:
