@@ -7,7 +7,7 @@ import pygame
 
 if typing.TYPE_CHECKING:
     from ..types import Container
-    from ..transform.transform import Transform
+    from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
     from pygame import Surface, Rect, Vector2
     from pygame.typing import Point
@@ -52,6 +52,7 @@ class Sprite(Renderable):
         super().__init__(container, enabled, layer, draw_index)
         self._reference_image = display_surface
         self.display_surface = display_surface
+        self.transform: TransformComponent
         if local_transform is not None:
             if isinstance(local_transform, transform.TransformComponent):
                 # If we're being passed something else's transform,
@@ -61,6 +62,7 @@ class Sprite(Renderable):
                 self.transform = transform.from_transform(self, local_transform)
         else:
             self.transform = transform.from_attributes(self, position)
+        self.transform.add_dependent(self)
         # self.position = pygame.Vector2(position)
         self.anchor = anchor
 
@@ -118,11 +120,11 @@ class Sprite(Renderable):
 
     @property
     def is_dirty(self) -> bool:
-        return self._is_dirty or self.transform.is_dirty()
+        return self._is_dirty
 
     @is_dirty.setter
     def is_dirty(self, flag: bool):
-        self._is_dirty = False
+        self._is_dirty = flag
 
     def set_surface(
         self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
@@ -145,13 +147,22 @@ class Sprite(Renderable):
 
         self._reference_image = sprite_image
 
-        self._is_dirty = True
+        self.is_dirty = True
 
     def _force_update_surface(self) -> Surface:
         self.is_dirty = False
-        self.transform._dirty = False
 
         return self.draw_sprite()
+
+    def world_position_changed(self, world_position):
+        # No-op
+        pass
+
+    def world_scale_changed(self, world_scale):
+        self.is_dirty = True
+
+    def world_rotation_changed(self, world_rotation):
+        self.is_dirty = True
 
     def draw_sprite(self) -> Surface:
         new_surface = pygame.transform.flip(
