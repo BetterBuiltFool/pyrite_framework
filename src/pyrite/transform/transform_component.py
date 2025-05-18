@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
+from weakref import WeakSet
 
 from pygame import Vector2
 
@@ -10,8 +11,9 @@ from ..types import Component
 
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
     from types import ModuleType
+    from pygame.typing import Point
+    from ..types import TransformDependent
 
 transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
@@ -29,6 +31,7 @@ class TransformComponent(Component):
         transform_service.initialize_component(
             self, Transform(position, rotation, scale)
         )
+        self.dependents: WeakSet[TransformDependent] = WeakSet()
         self._dirty = False
 
     @property
@@ -96,6 +99,9 @@ class TransformComponent(Component):
     @world_scale.setter
     def world_scale(self, new_scale: Point):
         transform_service.set_world_scale(self, new_scale)
+
+    def add_dependent(self, dependent: TransformDependent):
+        self.dependents.add(dependent)
 
     def is_dirty(self) -> bool:
         """
