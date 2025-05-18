@@ -184,10 +184,5 @@ class Sprite(Renderable):
         self.anchor.anchor_rect_ip(rect, self.transform.world_position)
         return rect
 
-    def render(self, delta_time: float) -> pygame.Surface:
-        if self.is_dirty:
-            self.display_surface = self._force_update_surface()
-        return self.display_surface
-
-    def render_camera(self, camera: CameraBase) -> None:
+    def render(self, delta_time: float, camera: CameraBase):
         SpriteRenderer.render(self, camera)
