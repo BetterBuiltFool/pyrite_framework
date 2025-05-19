@@ -13,6 +13,14 @@ class SpriteRenderer:
     _sprite_cache: WeakKeyDictionary[Sprite, Surface] = WeakKeyDictionary()
 
     @classmethod
+    def cull(cls, sprite: Sprite, camera: CameraBase) -> bool:
+        if not (surface := cls._sprite_cache.get(sprite)):
+            return False
+        rect = surface.get_rect()
+        sprite.anchor.anchor_rect_ip(rect, sprite.transform.world_position)
+        return camera._in_view(rect)
+
+    @classmethod
     def render(cls, sprite: Sprite, camera: CameraBase):
         if sprite.is_dirty or sprite not in cls._sprite_cache:
             # Update the cache. This will save us redraws when the sprite is unchanged.
