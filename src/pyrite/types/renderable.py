@@ -108,13 +108,10 @@ class Renderable(ABC):
         """
 
     @abstractmethod
-    def cull(self, delta_time: float, camera: CameraBase) -> bool:
+    def cull(self, camera: CameraBase) -> bool:
         """
         Determines if the renderable is seen by the camera and thus should be rendered.
         Typically calls upon some renderer class that knows how to handle its data.
-
-        :param delta_time: Time passed since last frame. Can be ignored by the concrete
-            method but must be accepted.
         :param camera: The camera being tested against.
         :return: True if the renderable is visible to the camera, otherwise False
         """
