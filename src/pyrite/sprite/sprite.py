@@ -184,5 +184,8 @@ class Sprite(Renderable):
         self.anchor.anchor_rect_ip(rect, self.transform.world_position)
         return rect
 
+    def cull(self, delta_time: float, camera: CameraBase) -> bool:
+        SpriteRenderer.cull(self, camera)
+
     def render(self, delta_time: float, camera: CameraBase):
         SpriteRenderer.render(self, camera)
