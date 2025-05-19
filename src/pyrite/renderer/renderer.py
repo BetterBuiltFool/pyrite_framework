@@ -15,7 +15,8 @@ class SpriteRenderer:
     @classmethod
     def cull(cls, sprite: Sprite, camera: CameraBase) -> bool:
         if not (surface := cls._sprite_cache.get(sprite)):
-            return False
+            surface = sprite.draw_sprite()
+            cls._sprite_cache[sprite] = surface
         rect = surface.get_rect()
         sprite.anchor.anchor_rect_ip(rect, sprite.transform.world_position)
         return camera._in_view(rect)
