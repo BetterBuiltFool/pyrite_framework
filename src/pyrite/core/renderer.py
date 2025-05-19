@@ -300,6 +300,23 @@ class DefaultRenderManager(RenderManager):
             culled_set |= set(camera.cull(layer_set))
         return culled_set
 
+    def new_precull(
+        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
+    ) -> dict[CameraBase, set[Renderable]]:
+        if not cameras:
+            # Just give the full layer set if there's no camera, pygame will handle
+            # culling for us.
+            return {None: layer_set}
+        culled_dict: dict[CameraBase, set[Renderable]] = {}
+        for camera in cameras:
+            if layer in camera.layer_mask:
+                continue
+            visible = {
+                renderable for renderable in layer_set if renderable.cull(camera)
+            }
+            culled_dict.update({camera: visible})
+        return culled_dict
+
     def get_number_renderables(self) -> int:
         count = 0
         for layer_set in self.renderables.values():
