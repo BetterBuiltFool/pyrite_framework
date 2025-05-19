@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Sequence
-from typing import Any, Self, TYPE_CHECKING
+from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
 # from pygame.typing import Point
@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     from pygame import Rect
 
 import pygame
+
+LayerDict: TypeAlias = dict[CameraBase, set[Renderable]]
+RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 
 _active_render_manager: RenderManager = None
@@ -288,6 +291,38 @@ class DefaultRenderManager(RenderManager):
 
         return render_queue
 
+    def new_generate_render_queue(
+        self,
+    ) -> RenderQueue:
+        render_queue: RenderQueue = {}
+        cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
+
+        for layer in RenderLayers._layers:
+            layer_dict = self.new_precull(
+                self.renderables.get(layer, {}), layer, cameras
+            )
+            for camera, renderables in layer_dict.items():
+                layer_dict[camera] = self.sort_layer(renderables)
+            render_queue.update({layer: layer_dict})
+
+        render_queue.update(
+            {
+                RenderLayers.UI_LAYER: self.sort_layer(
+                    self.renderables.get(RenderLayers.UI_LAYER, {})
+                )
+            }
+        )
+
+        render_queue.update(
+            {
+                RenderLayers.CAMERA: self.sort_layer(
+                    self.renderables.get(RenderLayers.CAMERA, {})
+                )
+            }
+        )
+
+        return render_queue
+
     def precull(
         self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
     ) -> set[Renderable]:
@@ -302,12 +337,12 @@ class DefaultRenderManager(RenderManager):
 
     def new_precull(
         self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
-    ) -> dict[CameraBase, set[Renderable]]:
+    ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
             # culling for us.
             return {None: layer_set}
-        culled_dict: dict[CameraBase, set[Renderable]] = {}
+        culled_dict: LayerDict = {}
         for camera in cameras:
             if layer in camera.layer_mask:
                 continue
