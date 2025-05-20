@@ -3,13 +3,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
+from ..types import Renderer
+
 if TYPE_CHECKING:
     from ..types import CameraBase
     from ..sprite import Sprite
     from pygame import Surface
 
 
-class SpriteRenderer:
+class SpriteRenderer(Renderer):
     _sprite_cache: WeakKeyDictionary[Sprite, Surface] = WeakKeyDictionary()
 
     @classmethod
