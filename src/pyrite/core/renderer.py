@@ -12,15 +12,14 @@ from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from ..camera import Camera
-    from ..types.renderable import Renderable
-    from ..types.camera import CameraBase
     from ..enum import Layer
-    from pygame import Rect
+    from ..types.camera import CameraBase
+    from ..types.renderable import Renderable
+
+    LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
+    RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 import pygame
-
-LayerDict: TypeAlias = dict[CameraBase, set[Renderable]]
-RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 
 _active_render_manager: RenderManager = None
@@ -265,42 +264,40 @@ class DefaultRenderManager(RenderManager):
     def is_enabled(self, item: Renderable) -> bool:
         return any((item in render_layer) for render_layer in self.renderables.values())
 
-    def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
-        render_queue: dict[Layer, Sequence[Renderable]] = {}
-        cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
+    # def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
+    #     render_queue: dict[Layer, Sequence[Renderable]] = {}
+    #     cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
 
-        for layer in RenderLayers._layers:
-            layer_set = self.precull(self.renderables.get(layer, {}), layer, cameras)
-            render_queue.update({layer: self.sort_layer(layer_set)})
+    #     for layer in RenderLayers._layers:
+    #         layer_set = self.precull(self.renderables.get(layer, {}), layer, cameras)
+    #         render_queue.update({layer: self.sort_layer(layer_set)})
 
-        render_queue.update(
-            {
-                RenderLayers.UI_LAYER: self.sort_layer(
-                    self.renderables.get(RenderLayers.UI_LAYER, {})
-                )
-            }
-        )
+    #     render_queue.update(
+    #         {
+    #             RenderLayers.UI_LAYER: self.sort_layer(
+    #                 self.renderables.get(RenderLayers.UI_LAYER, {})
+    #             )
+    #         }
+    #     )
 
-        render_queue.update(
-            {
-                RenderLayers.CAMERA: self.sort_layer(
-                    self.renderables.get(RenderLayers.CAMERA, {})
-                )
-            }
-        )
+    #     render_queue.update(
+    #         {
+    #             RenderLayers.CAMERA: self.sort_layer(
+    #                 self.renderables.get(RenderLayers.CAMERA, {})
+    #             )
+    #         }
+    #     )
 
-        return render_queue
+    #     return render_queue
 
-    def new_generate_render_queue(
+    def generate_render_queue(
         self,
     ) -> RenderQueue:
         render_queue: RenderQueue = {}
         cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
 
         for layer in RenderLayers._layers:
-            layer_dict = self.new_precull(
-                self.renderables.get(layer, {}), layer, cameras
-            )
+            layer_dict = self.precull(self.renderables.get(layer, {}), layer, cameras)
             render_queue.update({layer: layer_dict})
 
         render_queue.update(
@@ -323,18 +320,6 @@ class DefaultRenderManager(RenderManager):
 
     def precull(
         self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
-    ) -> set[Renderable]:
-        if not cameras:
-            return layer_set
-        culled_set: set[Renderable] = set()
-        for camera in cameras:
-            if layer in camera.layer_mask:
-                continue
-            culled_set |= set(camera.cull(layer_set))
-        return culled_set
-
-    def new_precull(
-        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
     ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
@@ -345,9 +330,6 @@ class DefaultRenderManager(RenderManager):
             if layer in camera.layer_mask:
                 continue
             visible = filter(lambda renderable: renderable.cull(camera), layer_set)
-            # visible = {
-            #     renderable for renderable in layer_set if renderable.cull(camera)
-            # }
             culled_dict.update({camera: self.sort_layer(visible)})
         return culled_dict
 
@@ -381,27 +363,6 @@ class DefaultRenderer(Renderer):
         self,
         delta_time: float,
         layer_queue: Sequence[Renderable],
-        cameras: Sequence[CameraBase],
-        layer: Layer,
-    ):
-        """
-        Extracts the renderables from the layer_queue, and has them drawn to the
-        cameras.
-
-        :param delta_time: Time passed since last frame.
-        :param layer_queue: The ordered sequence of renderables to be drawn.
-        :param cameras: The cameras being drawn to.
-        :param layer: the layer being drawn from, for layermask testing.
-        """
-        self._rendered_last_frame += len(layer_queue)
-        for renderable in layer_queue:
-            renderable_rect = renderable.get_rect()
-            self.render_item(delta_time, renderable, renderable_rect, cameras, layer)
-
-    def new_render_layer(
-        self,
-        delta_time: float,
-        layer_queue: Sequence[Renderable],
         camera: CameraBase,
     ):
         """
@@ -414,30 +375,6 @@ class DefaultRenderer(Renderer):
         """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
-            renderable.render(delta_time, camera)
-
-    def render_item(
-        self,
-        delta_time: float,
-        renderable: Renderable,
-        renderable_rect: Rect,
-        cameras: Sequence[CameraBase],
-        layer: Layer,
-    ):
-        """
-        Draws a renderable to the cameras, adjusting its world position to camera space.
-
-        :param delta_time: Time passed since last frame.
-        :param renderable: The renderable to be drawn to the cameras.
-        :param renderable_rect: The rendered item's rectangle in world space.
-        :param cameras: The cameras being drawn to.
-        :param layer: layer being drawn, for layermask testing.
-        """
-        for camera in cameras:
-            if layer in camera.layer_mask:
-                continue
-            if not camera._in_view(renderable_rect):
-                continue
             renderable.render(delta_time, camera)
 
     def draw_camera(
@@ -482,35 +419,6 @@ class DefaultRenderer(Renderer):
         self,
         window_camera: CameraBase,
         delta_time: float,
-        render_queue: dict[Layer, Sequence[Renderable]],
-    ):
-        self._rendered_last_frame = 0
-        cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
-        if not cameras:
-            # Treat the screen as a camera for the sake of rendering if there are no
-            # camera objects.
-            cameras = (window_camera,)  # Needs to be in a sequence
-
-        for camera in cameras:
-            camera.clear()
-
-        for layer in RenderLayers._layers:
-            # _layers is sorted by desired draw order.
-            self.render_layer(delta_time, render_queue.get(layer, []), cameras, layer)
-
-        # Render any cameras to the screen.
-        for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            self.draw_camera(delta_time, camera, window_camera)
-
-        # Render the UI last.
-        self.render_ui(
-            delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
-        )
-
-    def new_render(
-        self,
-        window_camera: CameraBase,
-        delta_time: float,
         render_queue: RenderQueue,
     ):
         self._rendered_last_frame = 0
@@ -527,9 +435,9 @@ class DefaultRenderer(Renderer):
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
             for camera, render_sequence in layer_dict.items():
-                if layer not in camera.layer_mask:
+                if layer in camera.layer_mask:
                     continue
-                self.new_render_layer(delta_time, render_sequence, camera)
+                self.render_layer(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
