@@ -403,7 +403,6 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         layer_queue: Sequence[Renderable],
         camera: CameraBase,
-        layer: Layer,
     ):
         """
         Extracts the renderables from the layer_queue, and has them drawn to the
@@ -412,11 +411,10 @@ class DefaultRenderer(Renderer):
         :param delta_time: Time passed since last frame.
         :param layer_queue: The ordered sequence of renderables to be drawn.
         :param camera: The camera being drawn to.
-        :param layer: the layer being drawn from, for layermask testing.
         """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
-            self.new_render_item(delta_time, renderable, camera, layer)
+            renderable.render(delta_time, camera)
 
     def render_item(
         self,
@@ -529,7 +527,9 @@ class DefaultRenderer(Renderer):
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
             for camera, render_sequence in layer_dict.items():
-                self.new_render_layer(delta_time, render_sequence, camera, layer)
+                if layer not in camera.layer_mask:
+                    continue
+                self.new_render_layer(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
