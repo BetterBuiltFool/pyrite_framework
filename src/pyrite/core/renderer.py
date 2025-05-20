@@ -490,6 +490,14 @@ class DefaultRenderer(Renderer):
             delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
         )
 
+    def new_render(
+        self,
+        window_camera: CameraBase,
+        delta_time: float,
+        render_queue: RenderQueue,
+    ):
+        pass
+
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
 
