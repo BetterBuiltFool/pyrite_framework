@@ -30,4 +30,7 @@ class SpriteRenderer(Renderer):
             sprite.is_dirty = False
             cls._sprite_cache[sprite] = sprite.draw_sprite()
         surface = cls._sprite_cache[sprite]
-        camera.draw_to_view(surface, sprite.get_rect().topleft)
+        position = sprite.anchor.anchor_rect(
+            surface.get_rect(), sprite.transform.world_position
+        )
+        camera.draw_to_view(surface, position.topleft)

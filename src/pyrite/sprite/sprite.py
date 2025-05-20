@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from ..types import Container, CameraBase
     from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
-    from pygame import Surface, Rect, Vector2
+    from pygame import Surface, Vector2
     from pygame.typing import Point
 
 
@@ -178,11 +178,6 @@ class Sprite(Renderable):
             new_surface, self.transform.world_rotation
         )
         return new_surface
-
-    def get_rect(self) -> Rect:
-        rect = self.display_surface.get_rect()
-        self.anchor.anchor_rect_ip(rect, self.transform.world_position)
-        return rect
 
     def cull(self, camera: CameraBase) -> bool:
         return SpriteRenderer.cull(self, camera)

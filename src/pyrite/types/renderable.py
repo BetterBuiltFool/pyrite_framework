@@ -6,8 +6,6 @@ from typing import TYPE_CHECKING
 from ..core import render_system
 from .._helper import defaults
 
-import pygame
-
 if TYPE_CHECKING:
     from . import Container, CameraBase
     from ..enum import Layer
@@ -125,15 +123,5 @@ class Renderable(ABC):
         :param delta_time: Time passed since last frame. Can be ignored by the concrete
             method but must be accepted.
         :param camera: A camera-type object to be drawn to.
-        """
-        pass
-
-    @abstractmethod
-    def get_rect(self) -> pygame.Rect:
-        """
-        Return a rectangle representing the area the rendered surface is expected to
-        take up.
-
-        :return: _description_
         """
         pass
