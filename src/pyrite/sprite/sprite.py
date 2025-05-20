@@ -185,7 +185,7 @@ class Sprite(Renderable):
         return rect
 
     def cull(self, camera: CameraBase) -> bool:
-        SpriteRenderer.cull(self, camera)
+        return SpriteRenderer.cull(self, camera)
 
     def render(self, delta_time: float, camera: CameraBase):
         SpriteRenderer.render(self, camera)
