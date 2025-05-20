@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from ..types.camera import CameraBase
+from .default_camera import DefaultCamera
 from ..enum import Layer, RenderLayers
 from ..types.renderable import Renderable
 from .surface_sector import SurfaceSector
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class Camera(CameraBase, Renderable):
+class Camera(DefaultCamera, Renderable):
     """
     Basic form of a camera that is capable of rendering to the screen.
     """
@@ -76,7 +76,7 @@ class Camera(CameraBase, Renderable):
             surface_sectors = [surface_sectors]
         self.surface_sectors: Sequence[SurfaceSector] = surface_sectors
         self._zoom_level: float = 1
-        CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
+        DefaultCamera.__init__(self, surface=surface, layer_mask=layer_mask)
         Renderable.__init__(
             self,
             container=container,

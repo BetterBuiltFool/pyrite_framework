@@ -12,15 +12,12 @@ from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
 from ._helper import defaults
+from .camera.default_camera import DefaultCamera
 from .transform import transform_system
-from .types import CameraBase
 from .utils import threading
 
 if TYPE_CHECKING:
     from types import TracebackType
-
-    # from .types.entity import Entity
-    # from .types.renderable import Renderable
     from .types.system import System
 
 
@@ -146,7 +143,7 @@ class Game:
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
-        self.window_camera = CameraBase(self.window)
+        self.window_camera = DefaultCamera(self.window)
 
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)

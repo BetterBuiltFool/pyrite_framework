@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
@@ -8,14 +7,16 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Vector2
 
+from ..types import CameraBase
+
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
     from ..enum import Layer
-    from .renderable import Renderable
+    from ..types import Renderable
 
 
-class CameraBase(ABC):
+class DefaultCamera(CameraBase):
     """
     Defines the important attributes of a camera for the sake of drawing onto its
     surface.
@@ -33,13 +34,12 @@ class CameraBase(ABC):
             layer_mask = ()
         self.layer_mask = layer_mask
 
-    @abstractmethod
     def clear(self):
         """
         Overwrite the surface to allow new drawing on top.
         Default fill is solid black.
         """
-        pass
+        self.surface.fill((0, 0, 0, 0))
 
     def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
         """
@@ -49,9 +49,8 @@ class CameraBase(ABC):
         :return: A generator containing only renderables in view of the camera's
         viewport.
         """
-        pass
+        return (item for item in items if self._in_view(item.get_rect()))
 
-    @abstractmethod
     def draw_to_view(self, surface: Surface, position: Point):
         """
         Draws a surface to the camera's surface. Automatically converts the position
@@ -60,12 +59,11 @@ class CameraBase(ABC):
         :param surface: The source surface being drawn from.
         :param position: A point in world space where the surface is located.
         """
-        pass
+        self.surface.blit(surface, self.to_local(position))
 
     def _in_view(self, rect: pygame.Rect) -> bool:
         return self.surface.get_rect().colliderect(rect)
 
-    @abstractmethod
     def to_local(self, point: Point) -> Vector2:
         """
         Converts a point in world space to local space (The camera'ssurface)
@@ -73,9 +71,8 @@ class CameraBase(ABC):
         :param point: A point, in world space
         :return: The local space equivalent of _point_
         """
-        pass
+        return Vector2(point)
 
-    @abstractmethod
     def to_world(self, point: Point) -> Vector2:
         """
         Converts a point in local space (The camera's surface) to world space.
@@ -83,14 +80,15 @@ class CameraBase(ABC):
         :param point: A point, in local space
         :return: The world space equivalent of _point_
         """
-        pass
 
-    @abstractmethod
+        return Vector2(point)
+
     def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
-        pass
 
-    @abstractmethod
+        return Vector2(point)
+
     def screen_to_world_clamped(
         self, point: Point, sector_index: int = 0
     ) -> Vector2 | None:
-        pass
+
+        return Vector2(point)
