@@ -301,8 +301,6 @@ class DefaultRenderManager(RenderManager):
             layer_dict = self.new_precull(
                 self.renderables.get(layer, {}), layer, cameras
             )
-            for camera, renderables in layer_dict.items():
-                layer_dict[camera] = self.sort_layer(renderables)
             render_queue.update({layer: layer_dict})
 
         render_queue.update(
@@ -349,7 +347,7 @@ class DefaultRenderManager(RenderManager):
             visible = {
                 renderable for renderable in layer_set if renderable.cull(camera)
             }
-            culled_dict.update({camera: visible})
+            culled_dict.update({camera: self.sort_layer(visible)})
         return culled_dict
 
     def get_number_renderables(self) -> int:
