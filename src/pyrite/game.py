@@ -7,7 +7,7 @@ from typing import Self, TYPE_CHECKING
 from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
-from .core.renderer import Renderer, RenderManager
+from .core.render_system import Renderer, RenderManager
 from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 

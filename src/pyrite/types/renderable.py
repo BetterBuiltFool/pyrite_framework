@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
-from ..core import renderer
+from ..core import render_system
 from .._helper import defaults
 
 import pygame
@@ -41,7 +41,7 @@ class Renderable(ABC):
 
     @property
     def enabled(self) -> bool:
-        return renderer.is_enabled(self)
+        return render_system.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
@@ -50,11 +50,11 @@ class Renderable(ABC):
             return
         if value:
             self.on_preenable()
-            if renderer.enable(self):
+            if render_system.enable(self):
                 self.on_enable()
         else:
             self.on_predisable()
-            if renderer.disable(self):
+            if render_system.disable(self):
                 self.on_disable()
 
     @property
@@ -67,10 +67,10 @@ class Renderable(ABC):
             enabled = self.enabled
             # This allows us to update within the renderer without firing
             # on enable/disable events.
-            renderer.disable(self)
+            render_system.disable(self)
             self._layer = new_layer
             if enabled:
-                renderer.enable(self)
+                render_system.enable(self)
 
     def on_preenable(self):
         """
