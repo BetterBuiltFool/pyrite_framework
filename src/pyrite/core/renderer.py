@@ -344,9 +344,10 @@ class DefaultRenderManager(RenderManager):
         for camera in cameras:
             if layer in camera.layer_mask:
                 continue
-            visible = {
-                renderable for renderable in layer_set if renderable.cull(camera)
-            }
+            visible = filter(lambda renderable: renderable.cull(camera), layer_set)
+            # visible = {
+            #     renderable for renderable in layer_set if renderable.cull(camera)
+            # }
             culled_dict.update({camera: self.sort_layer(visible)})
         return culled_dict
 
