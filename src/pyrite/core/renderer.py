@@ -495,7 +495,30 @@ class DefaultRenderer(Renderer):
         delta_time: float,
         render_queue: RenderQueue,
     ):
-        pass
+        self._rendered_last_frame = 0
+        cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
+        if not cameras:
+            # Treat the screen as a camera for the sake of rendering if there are no
+            # camera objects.
+            cameras = (window_camera,)  # Needs to be in a sequence
+
+        for camera in cameras:
+            camera.clear()
+
+        # for layer, layer_dict in render_queue.items():
+        for layer in RenderLayers._layers:
+            layer_dict = render_queue.get(layer, {})
+            for camera, render_sequence in layer_dict.items():
+                self.new_render_layer(delta_time, render_sequence, camera, layer)
+
+        # Render any cameras to the screen.
+        for camera in render_queue.get(RenderLayers.CAMERA, ()):
+            self.draw_camera(delta_time, camera, window_camera)
+
+        # Render the UI last.
+        self.render_ui(
+            delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
+        )
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
