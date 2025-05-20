@@ -6,6 +6,7 @@ from .camera import CameraBase  # noqa: F401
 from .component import Component  # noqa: F401
 from .entity import Entity  # noqa: F401
 from .renderable import Renderable  # noqa: F401
+from .renderer import Renderer  # noqa: F401
 from .static_decor import StaticDecor  # noqa: F401
 from .system import System  # noqa: F401
 from .transform import TransformProtocol  # noqa:F401
