@@ -11,7 +11,6 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
-    from ..enum import Layer
     from .renderable import Renderable
 
 
@@ -22,16 +21,6 @@ class CameraBase(ABC):
 
     Can be constructed from the window.
     """
-
-    def __init__(
-        self,
-        surface: Surface,
-        layer_mask: tuple[Layer] = None,
-    ) -> None:
-        self.surface = surface
-        if layer_mask is None:
-            layer_mask = ()
-        self.layer_mask = layer_mask
 
     @abstractmethod
     def clear(self):
@@ -63,7 +52,8 @@ class CameraBase(ABC):
         pass
 
     def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.surface.get_rect().colliderect(rect)
+        pass
+        # return self.surface.get_rect().colliderect(rect)
 
     @abstractmethod
     def to_local(self, point: Point) -> Vector2:
