@@ -7,8 +7,12 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class Bounds(ABC):
+class CullingBounds(ABC):
 
     @abstractmethod
-    def get_bounds(self) -> list[Point]:
+    def get_volume(self) -> list[Point]:
+        pass
+
+    @abstractmethod
+    def flatten(self) -> list[Point]:
         pass
