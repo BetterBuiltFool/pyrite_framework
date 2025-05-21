@@ -12,8 +12,10 @@ from .system import System  # noqa: F401
 from .transform import TransformProtocol  # noqa:F401
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
+    from pygame.typing import Point, SequenceLike
     from ..transform import Transform
+
+    Point3D = SequenceLike[float]
 
 import pygame
 
