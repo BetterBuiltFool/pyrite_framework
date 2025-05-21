@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    pass
+    from ..types.bounds import Bounds
 
 
 class Frustum(ABC):
@@ -13,7 +13,7 @@ class Frustum(ABC):
     """
 
     @abstractmethod
-    def contains(self, bounds) -> bool:
+    def contains(self, bounds: Bounds) -> bool:
         """
         Determines if the bounds are contained within the Frustum.
 
