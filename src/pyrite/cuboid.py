@@ -7,6 +7,11 @@ if TYPE_CHECKING:
 
 
 class Cuboid:
+    """
+    Simple 3D shape for axis-aligned volumes
+    """
+
+    # TODO Add methods, properties as needed. This will suffice for now.
 
     def __init__(
         self, left: int, top: int, front: int, width: int, height: int, depth: int
