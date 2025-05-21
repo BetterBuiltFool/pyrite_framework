@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point
 
 
-from ..rendering.sprite_render import SpriteRenderer
+from ..rendering.sprite_renderer import SpriteRenderer
 from ..types.renderable import Renderable
 from ..enum import AnchorPoint
 
