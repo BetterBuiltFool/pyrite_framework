@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ..types.bounds import Bounds
 
 
-class Frustum(ABC):
+class CameraViewBounds(ABC):
     """
     An object representing the viewing area of a camera.
     """
@@ -15,9 +15,10 @@ class Frustum(ABC):
     @abstractmethod
     def contains(self, bounds: Bounds) -> bool:
         """
-        Determines if the bounds are contained within the Frustum.
+        Determines if the bounds are contained within the CameraViewBounds.
 
-        :param bounds: A Bounds object that may or may not be within the Frustum
-        :return: True if the frustum contains the bounds, otherwise False
+        :param bounds: A Bounds object that may or may not be within the
+            CameraViewBounds
+        :return: True if the view bounds contains the bounds, otherwise False
         """
         pass
