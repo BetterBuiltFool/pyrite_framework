@@ -8,6 +8,7 @@ from .._helper import defaults
 
 if TYPE_CHECKING:
     from . import Container, CameraBase
+    from .bounds import CullingBounds
     from ..enum import Layer
 
 
@@ -113,6 +114,14 @@ class Renderable(ABC):
         :param camera: The camera being tested against.
         :return: True if the renderable is visible to the camera, otherwise False
         """
+
+    @abstractmethod
+    def get_bounds(self) -> CullingBounds:
+        """
+        Returns a Bounds object that describes the occupied space of the renderable for
+        the sake of camera culling.
+        """
+        pass
 
     @abstractmethod
     def render(self, delta_time: float, camera: CameraBase):

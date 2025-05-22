@@ -4,6 +4,13 @@ import typing
 
 import pygame
 
+from ..rendering.sprite_renderer import SpriteRenderer
+from ..rendering.rect_bounds import RectBounds
+from ..types.renderable import Renderable
+from ..enum import AnchorPoint
+
+from ..transform import transform_component as transform
+
 
 if typing.TYPE_CHECKING:
     from ..types import Container, CameraBase
@@ -11,13 +18,6 @@ if typing.TYPE_CHECKING:
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
     from pygame.typing import Point
-
-
-from ..rendering.sprite_renderer import SpriteRenderer
-from ..types.renderable import Renderable
-from ..enum import AnchorPoint
-
-from ..transform import transform_component as transform
 
 
 class Sprite(Renderable):
@@ -181,6 +181,9 @@ class Sprite(Renderable):
 
     def cull(self, camera: CameraBase) -> bool:
         return SpriteRenderer.cull(self, camera)
+
+    def get_bounds(self) -> RectBounds:
+        return RectBounds(self.display_surface.get_rect())
 
     def render(self, delta_time: float, camera: CameraBase):
         SpriteRenderer.render(self, camera)

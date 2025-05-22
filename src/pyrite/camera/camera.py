@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from .default_camera import DefaultCamera
 from ..enum import Layer, RenderLayers
+from ..rendering.rect_bounds import RectBounds
 from ..types.renderable import Renderable
 from .surface_sector import SurfaceSector
 
@@ -129,6 +130,9 @@ class Camera(DefaultCamera, Renderable):
 
     def get_rect(self) -> pygame.Rect:
         return self.viewport.move_to(topleft=(0, 0))
+
+    def get_bounds(self) -> RectBounds:
+        return RectBounds(self.get_rect())
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface.subsurface(self.viewport)
