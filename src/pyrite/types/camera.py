@@ -4,8 +4,6 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-
-import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
@@ -50,10 +48,6 @@ class CameraBase(ABC):
         :param position: A point in world space where the surface is located.
         """
         pass
-
-    def _in_view(self, rect: pygame.Rect) -> bool:
-        pass
-        # return self.surface.get_rect().colliderect(rect)
 
     @abstractmethod
     def to_local(self, point: Point) -> Vector2:
