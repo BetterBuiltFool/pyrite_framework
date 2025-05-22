@@ -5,7 +5,7 @@ import typing
 import pygame
 
 from ..rendering.sprite_renderer import SpriteRenderer
-from ..rendering.rect_bounds import RectBounds
+from ..rendering.rect_bounds import RectBounds, rotate_rect
 from ..rendering.bounds_service import BoundsService
 from ..types.renderable import Renderable
 from ..enum import AnchorPoint
@@ -188,7 +188,13 @@ class Sprite(Renderable):
         # the sprite hasn't moved.
         bounds, transform = BoundsService.get(self)
         if bounds is None or transform != self.transform.world():
-            bounds = RectBounds(self.display_surface.get_rect())
+            transform = self.transform.world()
+            display_rect = self.anchor.anchor_rect(
+                self.display_surface.get_rect(), transform.position
+            )
+            pivot = self.anchor.get_center_offset(display_rect)
+
+            bounds = RectBounds(rotate_rect(display_rect, transform.rotation, pivot))
             transform = self.transform.world()
             BoundsService.set(self, (bounds, transform))
 
