@@ -18,4 +18,4 @@ class ViewPlane(CameraViewBounds):
 
     def contains(self, bounds: CullingBounds) -> bool:
         # 'flatten' will convert the bounds to a 2D object we can handle.
-        return self.view_rect.colliderect(bounds.flatten())
+        return self.view_rect.colliderect(bounds.get_rect())
