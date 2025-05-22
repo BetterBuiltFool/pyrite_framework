@@ -1,0 +1,22 @@
+from __future__ import annotations
+
+from typing import TypeAlias, TYPE_CHECKING
+from weakref import WeakKeyDictionary
+
+if TYPE_CHECKING:
+    from ..types import Renderable, Transform
+    from ..types.bounds import CullingBounds
+
+    BoundsData: TypeAlias = tuple[CullingBounds, Transform]
+
+
+class BoundsService:
+    _renderables: WeakKeyDictionary[Renderable, BoundsData] = WeakKeyDictionary()
+
+    @classmethod
+    def get(cls, renderable: Renderable) -> BoundsData | None:
+        return cls._renderables.get(renderable)
+
+    @classmethod
+    def set(cls, renderable: Renderable, data: BoundsData):
+        cls._renderables.update({renderable: data})
