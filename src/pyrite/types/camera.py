@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
     from .renderable import Renderable
+    from ..types.view_bounds import CameraViewBounds
 
 
 class CameraBase(ABC):
@@ -48,6 +49,14 @@ class CameraBase(ABC):
         :param position: A point in world space where the surface is located.
         """
         pass
+
+    @abstractmethod
+    def get_view_bounds(self) -> CameraViewBounds:
+        """
+        Gets the bounds object that represents the visible space of the camera.
+
+        :return: A CameraViewBounds object describing the viewed space.
+        """
 
     @abstractmethod
     def to_local(self, point: Point) -> Vector2:
