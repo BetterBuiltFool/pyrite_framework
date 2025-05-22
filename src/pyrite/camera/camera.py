@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from .default_camera import DefaultCamera
 from ..enum import Layer, RenderLayers
 from ..rendering.rect_bounds import RectBounds
+from ..rendering.view_plane import ViewPlane
 from ..types.renderable import Renderable
 from .surface_sector import SurfaceSector
 
@@ -133,6 +134,11 @@ class Camera(DefaultCamera, Renderable):
 
     def get_bounds(self) -> RectBounds:
         return RectBounds(self.get_rect())
+
+    def get_view_bounds(self) -> ViewPlane:
+        # TODO Find a way of caching this per frame so we don't regenerate it for each
+        # renderable.
+        return ViewPlane(self.get_viewport_rect())
 
     def render(self, delta_time: float) -> pygame.Surface:
         return self.surface.subsurface(self.viewport)
