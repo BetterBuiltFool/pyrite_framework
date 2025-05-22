@@ -7,9 +7,9 @@ from pygame import Vector2
 
 from ..types.bounds import CullingBounds
 from ..cuboid import Cuboid
+from pygame import Rect
 
 if TYPE_CHECKING:
-    from pygame import Rect
     from pygame.typing import Point
 
 
