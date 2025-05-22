@@ -13,7 +13,7 @@ class CullingBounds(ABC):
     @abstractmethod
     def get_volume(self) -> Cuboid:
         """
-        Generates a volume representing the location of the bounds in 3D space.
+        Generates a volume representing the  bounds in 3D space.
 
         :return: A Cuboid that describes the bounds in 3D space.
             2D objects are represented by depth = 0.
@@ -21,11 +21,11 @@ class CullingBounds(ABC):
         pass
 
     @abstractmethod
-    def flatten(self) -> Rect:
+    def get_rect(self) -> Rect:
         """
         Generates an area representing the bounds in 2D space.
 
-        :return: A Rect that describes the bounds in 2D space. 3D objects are projected
-            onto a plane before the rect in calculated.
+        :return: A Rect that describes the bounds in 2D space. 3D objects use the front
+            face of their cuboid bounds.
         """
         pass

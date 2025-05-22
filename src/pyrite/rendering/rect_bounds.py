@@ -24,5 +24,5 @@ class RectBounds(CullingBounds):
         rect = self.rect
         return Cuboid(rect.left, rect.top, 0, rect.width, rect.height, 0)
 
-    def flatten(self) -> Rect:
+    def get_rect(self) -> Rect:
         return self.rect
