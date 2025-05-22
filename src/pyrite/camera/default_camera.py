@@ -51,8 +51,7 @@ class DefaultCamera(CameraBase):
         :return: True if the renderable is visible and should be drawn, otherwise False.
         """
         bounds = renderable.get_bounds()
-        rect = bounds.get_rect()
-        return self.get_view_bounds().contains(rect)
+        return self.get_view_bounds().contains(bounds)
 
     # def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
     #     """
