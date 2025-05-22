@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 
 import pygame
 from pygame import Vector2
+
+from ..rendering.view_plane import ViewPlane
 
 from ..types import CameraBase
 
@@ -41,15 +42,27 @@ class DefaultCamera(CameraBase):
         """
         self.surface.fill((0, 0, 0, 0))
 
-    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+    def cull(self, renderable: Renderable) -> bool:
         """
-        Removes any renderables that do not fall within view of the camera.
+        Compares the bounds of the renderable to the camera's view bounds to determine
+        if the renderable should be rendered.
 
-        :param items: Any iterable containing the renderable to be culled.
-        :return: A generator containing only renderables in view of the camera's
-        viewport.
+        :param renderable: Any renderable item to be drawn.
+        :return: True if the renderable is visible and should be drawn, otherwise False.
         """
-        return (item for item in items if self._in_view(item.get_rect()))
+        bounds = renderable.get_bounds()
+        rect = bounds.get_rect()
+        return self.get_view_bounds().contains(rect)
+
+    # def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+    #     """
+    #     Removes any renderables that do not fall within view of the camera.
+
+    #     :param items: Any iterable containing the renderable to be culled.
+    #     :return: A generator containing only renderables in view of the camera's
+    #     viewport.
+    #     """
+    #     return (item for item in items if self._in_view(item.get_rect()))
 
     def draw_to_view(self, surface: Surface, position: Point):
         """
@@ -60,6 +73,11 @@ class DefaultCamera(CameraBase):
         :param position: A point in world space where the surface is located.
         """
         self.surface.blit(surface, self.to_local(position))
+
+    def get_view_bounds(self) -> ViewPlane:
+        # TODO Find a way of caching this per frame so we don't regenerate it for each
+        # renderable.
+        return ViewPlane(self.surface.get_rect())
 
     def _in_view(self, rect: pygame.Rect) -> bool:
         return self.surface.get_rect().colliderect(rect)
