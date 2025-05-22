@@ -4,6 +4,7 @@ from functools import singledispatchmethod
 from typing import TYPE_CHECKING
 
 import pygame
+from pygame import Vector2
 
 if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
@@ -159,6 +160,17 @@ class Anchor:
         pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
         offset = pygame.Vector2(position) - pivot
         rectangle.topleft = offset
+
+    def get_center_offset(self, rectangle: pygame.Rect) -> Vector2:
+        """
+        Calculates the center offset from the rectangle.
+
+        :return: Vector2 representing the difference between the rectangle's center and
+            the pivot point described by the anchor.
+        """
+        pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot += rectangle.topleft
+        return pivot - rectangle.center
 
 
 class AnchorPoint:
