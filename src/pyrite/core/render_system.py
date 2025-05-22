@@ -327,9 +327,10 @@ class DefaultRenderManager(RenderManager):
             return {None: layer_set}
         culled_dict: LayerDict = {}
         for camera in cameras:
+            # TODO: Ensure CameraBase has a layer_maks property
             if layer in camera.layer_mask:
                 continue
-            visible = filter(lambda renderable: renderable.cull(camera), layer_set)
+            visible = filter(camera.cull, layer_set)
             culled_dict.update({camera: self.sort_layer(visible)})
         return culled_dict
 
