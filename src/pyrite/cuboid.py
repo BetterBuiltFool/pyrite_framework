@@ -11,6 +11,8 @@ class Cuboid:
     Simple 3D shape for axis-aligned volumes
     """
 
+    __slots__ = ("left", "top", "front", "width", "height", "depth")
+
     # TODO Add methods, properties as needed. This will suffice for now.
 
     def __init__(

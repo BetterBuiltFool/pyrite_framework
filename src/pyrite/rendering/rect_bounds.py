@@ -15,6 +15,8 @@ class RectBounds(CullingBounds):
     Bounds described by an axis-aligned rectangle on the xy-plane.
     """
 
+    __slots__ = ("rect",)
+
     def __init__(self, rect: Rect) -> None:
         self.rect = rect
 

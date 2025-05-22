@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class ViewPlane(CameraViewBounds):
+    __slots__ = ("view_rect",)
 
     def __init__(self, view_rect: Rect) -> None:
         self.view_rect = view_rect
