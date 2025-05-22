@@ -6,6 +6,7 @@ import pygame
 
 from ..rendering.sprite_renderer import SpriteRenderer
 from ..rendering.rect_bounds import RectBounds
+from ..rendering.bounds_service import BoundsService
 from ..types.renderable import Renderable
 from ..enum import AnchorPoint
 
@@ -185,7 +186,13 @@ class Sprite(Renderable):
     def get_bounds(self) -> RectBounds:
         # TODO Find a way of caching this so it doesn't get regenerated each frame if
         # the sprite hasn't moved.
-        return RectBounds(self.display_surface.get_rect())
+        bounds, transform = BoundsService.get(self)
+        if bounds is None or transform != self.transform.world():
+            bounds = RectBounds(self.display_surface.get_rect())
+            transform = self.transform.world()
+            BoundsService.set(self, (bounds, transform))
+
+        return bounds
 
     def render(self, delta_time: float, camera: CameraBase):
         SpriteRenderer.render(self, camera)
