@@ -14,8 +14,8 @@ class BoundsService:
     _renderables: WeakKeyDictionary[Renderable, BoundsData] = WeakKeyDictionary()
 
     @classmethod
-    def get(cls, renderable: Renderable) -> BoundsData | None:
-        return cls._renderables.get(renderable)
+    def get(cls, renderable: Renderable) -> BoundsData | tuple[None, None]:
+        return cls._renderables.get(renderable, (None, None))
 
     @classmethod
     def set(cls, renderable: Renderable, data: BoundsData):
