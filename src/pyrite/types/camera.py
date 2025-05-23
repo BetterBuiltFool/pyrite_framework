@@ -83,10 +83,36 @@ class CameraBase(ABC):
 
     @abstractmethod
     def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+        """
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface sector, it will extrapolate to
+        find the equivalent space.
+
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param sector_index: Index of the sector to compare against, defaults to 0.
+        :raises IndexError: If the sector_index is larger than the camera's
+        number of sectors.
+        :return: The screen position, in world space relative to the camera
+        """
         pass
 
     @abstractmethod
     def screen_to_world_clamped(
         self, point: Point, sector_index: int = 0
     ) -> Vector2 | None:
+        """
+        Variant of screen_to_world.
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface sector, it will instead return
+        None.
+
+        Use this when it needs to be clear that the mouse is outside the camera
+        view.
+
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param sector_index: Index of the sector to compare against, defaults to 0.
+        :raises IndexError: If the sector_index is larger than the camera's
+        number of sectors.
+        :return: The screen position, in world space relative to the camera
+        """
         pass
