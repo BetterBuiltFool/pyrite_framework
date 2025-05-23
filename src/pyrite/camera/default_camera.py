@@ -53,16 +53,6 @@ class DefaultCamera(CameraBase):
         bounds = renderable.get_bounds()
         return self.get_view_bounds().contains(bounds)
 
-    # def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
-    #     """
-    #     Removes any renderables that do not fall within view of the camera.
-
-    #     :param items: Any iterable containing the renderable to be culled.
-    #     :return: A generator containing only renderables in view of the camera's
-    #     viewport.
-    #     """
-    #     return (item for item in items if self._in_view(item.get_rect()))
-
     def draw_to_view(self, surface: Surface, position: Point):
         """
         Draws a surface to the camera's surface. Automatically converts the position

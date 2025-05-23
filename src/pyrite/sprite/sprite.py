@@ -180,9 +180,6 @@ class Sprite(Renderable):
         )
         return new_surface
 
-    def cull(self, camera: CameraBase) -> bool:
-        return SpriteRenderer.cull(self, camera)
-
     def get_bounds(self) -> RectBounds:
         # TODO Find a way of caching this so it doesn't get regenerated each frame if
         # the sprite hasn't moved.
