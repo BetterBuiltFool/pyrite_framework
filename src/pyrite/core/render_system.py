@@ -378,6 +378,18 @@ class DefaultRenderSystem(RenderSystem):
         for renderable in layer_queue:
             renderable.render(delta_time, camera)
 
+    def draw_bounds(
+        self,
+        delta_time: float,
+        layer_queue: Sequence[Renderable],
+        camera: CameraBase,
+    ):
+        for renderable in layer_queue:
+            # Render bounds
+            render_rect = renderable.get_bounds().get_rect().copy()
+            render_rect.center = camera.to_local(render_rect.center)
+            pygame.draw.rect(camera.surface, (0, 0, 255), render_rect, 2)
+
     def draw_camera(
         self,
         delta_time: float,
@@ -439,6 +451,7 @@ class DefaultRenderSystem(RenderSystem):
                 if layer in camera.layer_mask:
                     continue
                 self.render_layer(delta_time, render_sequence, camera)
+                self.draw_bounds(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
