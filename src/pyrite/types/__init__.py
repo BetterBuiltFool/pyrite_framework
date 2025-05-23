@@ -24,7 +24,7 @@ import pygame
 class Container(Protocol):
     """
     An object that can forward Entities and Renderables to the active EntityManager and
-    Renderer for enabling and disabling.
+    RenderManager for enabling and disabling.
     """
 
     container: Container
