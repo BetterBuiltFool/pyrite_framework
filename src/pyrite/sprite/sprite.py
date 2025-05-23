@@ -64,8 +64,7 @@ class Sprite(Renderable):
                 self.transform = transform.from_transform(self, local_transform)
         else:
             self.transform = transform.from_attributes(self, position)
-        self.transform.add_dependent(self)
-        # self.position = pygame.Vector2(position)
+
         self.anchor = anchor
 
         # Clients can update these easily enough.
@@ -155,16 +154,6 @@ class Sprite(Renderable):
         self.is_dirty = False
 
         return self.draw_sprite()
-
-    def world_position_changed(self, world_position):
-        # No-op
-        pass
-
-    def world_scale_changed(self, world_scale):
-        self.is_dirty = True
-
-    def world_rotation_changed(self, world_rotation):
-        self.is_dirty = True
 
     def draw_sprite(self) -> Surface:
         new_surface = pygame.transform.flip(
