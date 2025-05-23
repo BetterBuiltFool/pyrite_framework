@@ -7,7 +7,7 @@ from typing import Self, TYPE_CHECKING
 from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
-from .core.render_system import Renderer, RenderManager
+from .core.render_system import RenderSystem, RenderManager
 from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
@@ -97,7 +97,7 @@ class Game:
         # Both have a default version that will be spawned if none is provided.
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.render_manager = RenderManager.get_render_manager(**kwds)
-        self.renderer = Renderer.get_renderer(**kwds)
+        self.renderer = RenderSystem.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
         self.starting_systems: list[type[System]] = [

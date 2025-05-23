@@ -34,14 +34,14 @@ def set_render_manager(manager: RenderManager):
     _active_render_manager = manager
 
 
-_active_renderer: Renderer = None
+_active_renderer: RenderSystem = None
 
 
-def get_renderer() -> Renderer:
+def get_renderer() -> RenderSystem:
     return _active_renderer
 
 
-def set_renderer(renderer: Renderer):
+def set_renderer(renderer: RenderSystem):
     global _active_renderer
     _active_renderer = renderer
 
@@ -169,7 +169,7 @@ class RenderManager(ABC):
         return render_manager
 
 
-class Renderer(ABC):
+class RenderSystem(ABC):
     """
     Class responsible for drawing renderables to the screen.
     """
@@ -202,7 +202,7 @@ class Renderer(ABC):
         """
 
     @staticmethod
-    def get_renderer(**kwds) -> Renderer:
+    def get_renderer(**kwds) -> RenderSystem:
         """
         Extracts a renderer from keyword arguments.
         Used for creating a renderer for a new Game instance
@@ -358,7 +358,7 @@ class DefaultRenderManager(RenderManager):
         return renderables + negatives
 
 
-class DefaultRenderer(Renderer):
+class DefaultRenderSystem(RenderSystem):
 
     def render_layer(
         self,
@@ -456,7 +456,7 @@ class DefaultRenderer(Renderer):
 _default_render_manager_type = DefaultRenderManager
 
 
-def get_default_render_manager_type() -> type[Renderer]:
+def get_default_render_manager_type() -> type[RenderSystem]:
     return _default_render_manager_type
 
 
@@ -465,13 +465,13 @@ def set_default_render_manager_type(render_manager_type: type[RenderManager]):
     _default_render_manager_type = render_manager_type
 
 
-_default_renderer_type = DefaultRenderer
+_default_renderer_type = DefaultRenderSystem
 
 
-def get_default_renderer_type() -> type[Renderer]:
+def get_default_renderer_type() -> type[RenderSystem]:
     return _default_renderer_type
 
 
-def set_default_renderer_type(renderer_type: type[Renderer]):
+def set_default_renderer_type(renderer_type: type[RenderSystem]):
     global _default_renderer_type
     _default_renderer_type = renderer_type
