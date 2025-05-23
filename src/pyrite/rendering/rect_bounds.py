@@ -13,6 +13,14 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
+def abs_sin(angle_rad: float) -> float:
+    return abs(math.sin(angle_rad))
+
+
+def abs_cos(angle_rad: float) -> float:
+    return abs(math.cos(angle_rad))
+
+
 def rotate_rect(rect: Rect, angle: float, pivot: Point) -> Rect:
     """
     Generates a Rect that describes the bounding box of a rotated Rect.
@@ -29,8 +37,8 @@ def rotate_rect(rect: Rect, angle: float, pivot: Point) -> Rect:
 
     rad_angle = math.radians(angle)
 
-    new_height = rect.height * math.cos(rad_angle) + rect.width * math.sin(rad_angle)
-    new_width = rect.width * math.cos(rad_angle) + rect.height * math.sin(rad_angle)
+    new_height = (rect.height * abs_cos(rad_angle)) + (rect.width * abs_sin(rad_angle))
+    new_width = rect.width * abs_cos(rad_angle) + rect.height * abs_sin(rad_angle)
     new_rect = Rect(0, 0, new_width, new_height)
 
     rotated_pivot = pivot.rotate(angle)
