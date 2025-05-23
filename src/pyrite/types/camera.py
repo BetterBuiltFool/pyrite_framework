@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
     from .renderable import Renderable
+    from ..enum import Layer
     from ..types.view_bounds import CameraViewBounds
 
 
@@ -20,6 +21,8 @@ class CameraBase(ABC):
 
     Can be constructed from the window.
     """
+
+    layer_mask: tuple[Layer]
 
     @abstractmethod
     def clear(self):
