@@ -261,32 +261,6 @@ class DefaultRenderManager(RenderManager):
     def is_enabled(self, item: Renderable) -> bool:
         return any((item in render_layer) for render_layer in self.renderables.values())
 
-    # def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
-    #     render_queue: dict[Layer, Sequence[Renderable]] = {}
-    #     cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
-
-    #     for layer in RenderLayers._layers:
-    #         layer_set = self.precull(self.renderables.get(layer, {}), layer, cameras)
-    #         render_queue.update({layer: self.sort_layer(layer_set)})
-
-    #     render_queue.update(
-    #         {
-    #             RenderLayers.UI_LAYER: self.sort_layer(
-    #                 self.renderables.get(RenderLayers.UI_LAYER, {})
-    #             )
-    #         }
-    #     )
-
-    #     render_queue.update(
-    #         {
-    #             RenderLayers.CAMERA: self.sort_layer(
-    #                 self.renderables.get(RenderLayers.CAMERA, {})
-    #             )
-    #         }
-    #     )
-
-    #     return render_queue
-
     def generate_render_queue(
         self,
     ) -> RenderQueue:
