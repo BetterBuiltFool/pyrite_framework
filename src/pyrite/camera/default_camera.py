@@ -36,31 +36,13 @@ class DefaultCamera(CameraBase):
         self.layer_mask = layer_mask
 
     def clear(self):
-        """
-        Overwrite the surface to allow new drawing on top.
-        Default fill is solid black.
-        """
         self.surface.fill((0, 0, 0, 0))
 
     def cull(self, renderable: Renderable) -> bool:
-        """
-        Compares the bounds of the renderable to the camera's view bounds to determine
-        if the renderable should be rendered.
-
-        :param renderable: Any renderable item to be drawn.
-        :return: True if the renderable is visible and should be drawn, otherwise False.
-        """
         bounds = renderable.get_bounds()
         return self.get_view_bounds().contains(bounds)
 
     def draw_to_view(self, surface: Surface, position: Point):
-        """
-        Draws a surface to the camera's surface. Automatically converts the position
-        into local space.
-
-        :param surface: The source surface being drawn from.
-        :param position: A point in world space where the surface is located.
-        """
         self.surface.blit(surface, self.to_local(position))
 
     def get_view_bounds(self) -> ViewPlane:
@@ -72,30 +54,15 @@ class DefaultCamera(CameraBase):
         return self.surface.get_rect().colliderect(rect)
 
     def to_local(self, point: Point) -> Vector2:
-        """
-        Converts a point in world space to local space (The camera'ssurface)
-
-        :param point: A point, in world space
-        :return: The local space equivalent of _point_
-        """
         return Vector2(point)
 
     def to_world(self, point: Point) -> Vector2:
-        """
-        Converts a point in local space (The camera's surface) to world space.
-
-        :param point: A point, in local space
-        :return: The world space equivalent of _point_
-        """
-
         return Vector2(point)
 
     def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
-
         return Vector2(point)
 
     def screen_to_world_clamped(
         self, point: Point, sector_index: int = 0
     ) -> Vector2 | None:
-
         return Vector2(point)
