@@ -8,9 +8,8 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
-    from .renderable import Renderable
+    from . import CameraViewBounds, Renderable
     from ..enum import Layer
-    from ..types.view_bounds import CameraViewBounds
 
 
 class CameraBase(ABC):

@@ -4,8 +4,7 @@ from typing import TypeAlias, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 if TYPE_CHECKING:
-    from ..types import Renderable, Transform
-    from ..types.bounds import CullingBounds
+    from ..types import CullingBounds, Renderable, Transform
 
     BoundsData: TypeAlias = tuple[CullingBounds, Transform]
 

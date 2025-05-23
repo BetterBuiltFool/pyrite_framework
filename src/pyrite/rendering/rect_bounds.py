@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pygame import Vector2
 
-from ..types.bounds import CullingBounds
+from ..types import CullingBounds
 from ..cuboid import Cuboid
 from pygame import Rect
 

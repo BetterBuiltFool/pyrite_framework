@@ -4,13 +4,12 @@ import typing
 
 import pygame
 
+from ..enum import AnchorPoint
 from ..rendering.sprite_renderer import SpriteRenderer
 from ..rendering.rect_bounds import RectBounds, rotate_rect
 from ..rendering.bounds_service import BoundsService
-from ..types.renderable import Renderable
-from ..enum import AnchorPoint
-
 from ..transform import transform_component as transform
+from ..types import Renderable
 
 
 if typing.TYPE_CHECKING:

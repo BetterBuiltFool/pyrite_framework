@@ -4,11 +4,11 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from .default_camera import DefaultCamera
+from .surface_sector import SurfaceSector
 from ..enum import Layer, RenderLayers
 from ..rendering.rect_bounds import RectBounds
 from ..rendering.view_plane import ViewPlane
-from ..types.renderable import Renderable
-from .surface_sector import SurfaceSector
+from ..types import Renderable
 
 import pygame
 from pygame import Vector2

@@ -7,8 +7,7 @@ from ..core import render_system
 from .._helper import defaults
 
 if TYPE_CHECKING:
-    from . import Container, CameraBase
-    from .bounds import CullingBounds
+    from . import Container, CameraBase, CullingBounds
     from ..enum import Layer
 
 
