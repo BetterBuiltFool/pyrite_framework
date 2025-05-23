@@ -192,8 +192,6 @@ class Sprite(Renderable):
             display_rect = self.anchor.anchor_rect(
                 self.display_surface.get_rect(), transform.position
             )
-            # TODO Write tests for rotate_rect, get_center_offset
-            # seems to mostly work, but kind of glitchy
             pivot = self.anchor.get_center_offset(display_rect)
 
             display_rect.size *= transform.scale.elementwise()
