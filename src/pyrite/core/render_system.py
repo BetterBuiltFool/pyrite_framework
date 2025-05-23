@@ -6,15 +6,12 @@ from collections.abc import Sequence
 from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
-# from pygame.typing import Point
-
 from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from ..camera import Camera
     from ..enum import Layer
-    from ..types.camera import CameraBase
-    from ..types.renderable import Renderable
+    from ..types import CameraBase, Renderable
 
     LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
@@ -443,7 +440,6 @@ class DefaultRenderSystem(RenderSystem):
         for camera in cameras:
             camera.clear()
 
-        # for layer, layer_dict in render_queue.items():
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
             for camera, render_sequence in layer_dict.items():
