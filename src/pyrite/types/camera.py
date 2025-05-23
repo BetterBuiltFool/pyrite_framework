@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from pygame import Vector2
@@ -32,13 +31,14 @@ class CameraBase(ABC):
         """
         pass
 
-    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+    @abstractmethod
+    def cull(self, renderable: Renderable) -> bool:
         """
-        Removes any renderables that do not fall within view of the camera.
+        Compares the bounds of the renderable to the camera's view bounds to determine
+        if the renderable should be rendered.
 
-        :param items: Any iterable containing the renderable to be culled.
-        :return: A generator containing only renderables in view of the camera's
-        viewport.
+        :param renderable: Any renderable item to be drawn.
+        :return: True if the renderable is visible and should be drawn, otherwise False.
         """
         pass
 
