@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import typing
 
-import pygame
-
 from ..enum import AnchorPoint
 from ..rendering.sprite_renderer import SpriteRenderer
 from ..rendering.rect_bounds import RectBounds, rotate_rect
@@ -52,7 +50,7 @@ class Sprite(Renderable):
         """
         super().__init__(container, enabled, layer, draw_index)
         self._reference_image = display_surface
-        self.display_surface = display_surface
+        # self.display_surface = display_surface
         self.transform: TransformComponent
         if local_transform is not None:
             if isinstance(local_transform, transform.TransformComponent):
@@ -149,25 +147,6 @@ class Sprite(Renderable):
 
         self.is_dirty = True
 
-    def _force_update_surface(self) -> Surface:
-        self.is_dirty = False
-
-        return self.draw_sprite()
-
-    def draw_sprite(self) -> Surface:
-        new_surface = pygame.transform.flip(
-            self._reference_image, self.flip_x, self.flip_y
-        )
-
-        # FIXME This really only works for centered renderables
-
-        new_surface = pygame.transform.scale_by(new_surface, self.transform.world_scale)
-
-        new_surface = pygame.transform.rotate(
-            new_surface, self.transform.world_rotation
-        )
-        return new_surface
-
     def get_bounds(self) -> RectBounds:
         # TODO Find a way of caching this so it doesn't get regenerated each frame if
         # the sprite hasn't moved.
@@ -175,7 +154,7 @@ class Sprite(Renderable):
         if bounds is None or transform != self.transform.world():
             transform = self.transform.world()
             display_rect = self.anchor.anchor_rect(
-                self.display_surface.get_rect(), transform.position
+                self._reference_image.get_rect(), transform.position
             )
             pivot = self.anchor.get_center_offset(display_rect)
 
