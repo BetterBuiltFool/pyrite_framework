@@ -3,8 +3,7 @@ from __future__ import annotations
 from functools import singledispatchmethod
 from typing import TYPE_CHECKING
 
-import pygame
-from pygame import Vector2
+from pygame import Rect, Vector2
 
 if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
@@ -147,26 +146,40 @@ class Anchor:
 
         :param relative_position: (0, 0) is top left, and (1, 1) is bottom right.
         """
-        self._relative_position = pygame.Vector2(relative_position)
+        self._relative_position = Vector2(relative_position)
 
-    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
-        rect = pygame.Rect(rectangle)
-        self.anchor_rect_ip(rect, position)
+    def get_rect_center(
+        self,
+        rectangle: RectLike,
+        position: Point,
+        angle: float = 0,
+        scale: Point = (1, 1),
+    ) -> Vector2:
+        rect = Rect(rectangle)
+        pivot = self.get_center_offset(rect)
+        pivot_scaled: Vector2 = pivot.elementwise() * scale
+        rot_pivot = pivot_scaled.rotate(-angle)
+        return position + rot_pivot
+
+    def anchor_rect(self, rectangle: RectLike, position: Point, angle: float) -> Rect:
+        rect = Rect(rectangle)
+        self.anchor_rect_ip(rect, position, angle)
         return rect
 
-    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
-        pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
-        offset = pygame.Vector2(position) - pivot
+    def anchor_rect_ip(self, rectangle: Rect, position: Point, angle: float) -> None:
+        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot = pivot.rotate(-angle)
+        offset = Vector2(position) - pivot
         rectangle.topleft = offset
 
-    def get_center_offset(self, rectangle: pygame.Rect) -> Vector2:
+    def get_center_offset(self, rectangle: Rect) -> Vector2:
         """
         Calculates the center offset from the rectangle.
 
         :return: Vector2 representing the difference between the rectangle's center and
             the pivot point described by the anchor.
         """
-        pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
         pivot += rectangle.topleft
         return pivot - rectangle.center
 

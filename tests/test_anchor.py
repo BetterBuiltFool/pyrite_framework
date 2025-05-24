@@ -3,7 +3,7 @@ import pathlib
 import sys
 import unittest
 
-from pygame import Rect
+from pygame import Rect, Vector2
 
 
 sys.path.append(str(pathlib.Path.cwd()))
@@ -48,6 +48,48 @@ class TestAnchor(unittest.TestCase):
 
         self.assertEqual(pivot.x, -2)
         self.assertEqual(pivot.y, -1)
+
+    def test_get_rect_center(self):
+        # Case: (Center X, Center Y), 0 C
+        rect = Rect(0, 0, 8, 4)
+        anchor = Anchor((0.5, 0.5))
+        angle = 0
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle)
+
+        expected = Vector2(6, -2)
+
+        # Case: (3/4 X, Center Y), 0 C
+        rect = Rect(0, 0, 8, 4)
+        anchor = Anchor((0.75, 0.5))
+        angle = 0
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle)
+
+        expected = Vector2(4, -2)
+
+        # Case: (3/4 X, Center Y), 90 C
+        angle = 90
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle)
+
+        expected = Vector2(6, -4)
+
+        self.assertEqual(new_center, expected)
+
+        # Case: (3/4 X, Center Y), -90 C
+        angle = -90
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle)
+
+        expected = Vector2(6, 0)
+
+        # Case: (3/4 X, Center Y), 180 C
+        angle = 180
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle)
+
+        expected = Vector2(8, -2)
 
 
 if __name__ == "__main__":
