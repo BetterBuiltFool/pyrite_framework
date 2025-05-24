@@ -45,10 +45,15 @@ class SpriteRenderer(Renderer):
             cls._sprite_cache.update({sprite: (surface, sprite.transform.world())})
             sprite.is_dirty = False
 
-        position = sprite.anchor.anchor_rect(
-            surface.get_rect(), sprite.transform.world_position
+        position = sprite.anchor.get_rect_center(
+            sprite._reference_image.get_rect(),
+            sprite.transform.world_position,
+            sprite.transform.world_rotation,
+            sprite.transform.world_scale,
         )
-        camera.draw_to_view(surface, position.topleft)
+        surface_rect = surface.get_rect()
+        surface_rect.center = position
+        camera.draw_to_view(surface, surface_rect.topleft)
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:
