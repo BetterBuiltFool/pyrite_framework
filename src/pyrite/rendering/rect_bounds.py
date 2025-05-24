@@ -41,7 +41,7 @@ def rotate_rect(rect: Rect, angle: float, pivot: Point) -> Rect:
     new_width = rect.width * abs_cos(rad_angle) + rect.height * abs_sin(rad_angle)
     new_rect = Rect(0, 0, new_width, new_height)
 
-    rotated_pivot = pivot.rotate(angle)
+    rotated_pivot = pivot.rotate(-angle)
 
     new_rect.center = new_center - rotated_pivot
 
