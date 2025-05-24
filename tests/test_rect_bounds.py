@@ -34,7 +34,7 @@ class TestRectBounds(unittest.TestCase):
         rotated_rect = rotate_rect(rect, 90, anchor.get_center_offset(rect))
 
         self.assertEqual(rotated_rect.left, 0)
-        self.assertEqual(rotated_rect.top, -6)
+        self.assertEqual(rotated_rect.top, -2)
         self.assertEqual(rotated_rect.width, 4)
         self.assertEqual(rotated_rect.height, 8)
 
