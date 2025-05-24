@@ -172,7 +172,7 @@ class Anchor:
         pivot = self.get_center_offset(rect)
         pivot_scaled: Vector2 = pivot.elementwise() * scale
         rot_pivot = pivot_scaled.rotate(-angle)
-        return position + rot_pivot
+        return position - rot_pivot
 
     def anchor_rect(self, rectangle: RectLike, position: Point, angle: float) -> Rect:
         rect = Rect(rectangle)

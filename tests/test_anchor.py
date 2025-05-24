@@ -59,8 +59,9 @@ class TestAnchor(unittest.TestCase):
 
         expected = Vector2(6, -2)
 
+        self.assertEqual(new_center, expected)
+
         # Case: (3/4 X, Center Y), 0 C
-        rect = Rect(0, 0, 8, 4)
         anchor = Anchor((0.75, 0.5))
         angle = 0
 
@@ -68,12 +69,14 @@ class TestAnchor(unittest.TestCase):
 
         expected = Vector2(4, -2)
 
+        self.assertEqual(new_center, expected)
+
         # Case: (3/4 X, Center Y), 90 C
         angle = 90
 
         new_center = anchor.get_rect_center(rect, (6, -2), angle)
 
-        expected = Vector2(6, -4)
+        expected = Vector2(6, 0)
 
         self.assertEqual(new_center, expected)
 
@@ -82,7 +85,9 @@ class TestAnchor(unittest.TestCase):
 
         new_center = anchor.get_rect_center(rect, (6, -2), angle)
 
-        expected = Vector2(6, 0)
+        expected = Vector2(6, -4)
+
+        self.assertEqual(new_center, expected)
 
         # Case: (3/4 X, Center Y), 180 C
         angle = 180
@@ -90,6 +95,18 @@ class TestAnchor(unittest.TestCase):
         new_center = anchor.get_rect_center(rect, (6, -2), angle)
 
         expected = Vector2(8, -2)
+
+        self.assertEqual(new_center, expected)
+
+        # Case: (3/4 X, Center Y), 0 C, (2,2) scale
+        angle = 0
+        scale = (2, 2)
+
+        new_center = anchor.get_rect_center(rect, (6, -2), angle, scale)
+
+        expected = Vector2(2, -2)
+
+        self.assertEqual(new_center, expected)
 
 
 if __name__ == "__main__":
