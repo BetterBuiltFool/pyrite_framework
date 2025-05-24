@@ -17,6 +17,19 @@ if TYPE_CHECKING:
 
 class SpriteRenderer(Renderer):
     _sprite_cache: WeakKeyDictionary[Sprite, SpriteData] = WeakKeyDictionary()
+    _debug = False
+
+    @classmethod
+    def set_debug(cls, flag: bool):
+        cls._debug = flag
+        if flag:
+            cls.redraw_sprite = cls._redraw_sprite_debug
+        else:
+            cls.redraw_sprite = cls._redraw_sprite
+
+    @classmethod
+    def get_debug(cls) -> bool:
+        return cls._debug
 
     @classmethod
     def get(cls, key: Sprite) -> SpriteData | tuple[None, None]:
@@ -57,11 +70,30 @@ class SpriteRenderer(Renderer):
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:
+        return cls._redraw_sprite(sprite)
+
+    @classmethod
+    def _redraw_sprite(cls, sprite: Sprite) -> Surface:
         new_surface = pygame.transform.flip(
             sprite._reference_image, sprite.flip_x, sprite.flip_y
         )
 
-        # FIXME This really only works for centered renderables
+        new_surface = pygame.transform.scale_by(
+            new_surface, sprite.transform.world_scale
+        )
+
+        new_surface = pygame.transform.rotate(
+            new_surface, sprite.transform.world_rotation
+        )
+        return new_surface
+
+    @classmethod
+    def _redraw_sprite_debug(cls, sprite: Sprite) -> Surface:
+        new_surface = pygame.transform.flip(
+            sprite._reference_image, sprite.flip_x, sprite.flip_y
+        )
+        # Draw a white border on our image for debug purposes
+        pygame.draw.rect(new_surface, (255, 255, 255), new_surface.get_rect(), 1)
 
         new_surface = pygame.transform.scale_by(
             new_surface, sprite.transform.world_scale
