@@ -155,6 +155,19 @@ class Anchor:
         angle: float = 0,
         scale: Point = (1, 1),
     ) -> Vector2:
+        """
+        Calculates the new center of a rect with a given position, angle, and scaling.
+
+        :param rectangle: A Rect-like pattern capturing the bounds of a raw Rect. The
+            location is unimportant.
+        :param position: The nominal position of the rectangle object, given the Anchor
+            point.
+        :param angle: The nominal rotation of the rectangle around its pivot, defaults
+            to 0
+        :param scale: The scaling factor of the rectangle, defaults to (1, 1)
+        :return: A point in space of the center of a rectangle with the rotation,
+            scaling, and position specified
+        """
         rect = Rect(rectangle)
         pivot = self.get_center_offset(rect)
         pivot_scaled: Vector2 = pivot.elementwise() * scale
