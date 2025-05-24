@@ -174,17 +174,6 @@ class Anchor:
         rot_pivot = pivot_scaled.rotate(-angle)
         return position - rot_pivot
 
-    def anchor_rect(self, rectangle: RectLike, position: Point, angle: float) -> Rect:
-        rect = Rect(rectangle)
-        self.anchor_rect_ip(rect, position, angle)
-        return rect
-
-    def anchor_rect_ip(self, rectangle: Rect, position: Point, angle: float) -> None:
-        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
-        pivot = pivot.rotate(-angle)
-        offset = Vector2(position) - pivot
-        rectangle.topleft = offset
-
     def get_center_offset(self, rectangle: Rect) -> Vector2:
         """
         Calculates the center offset from the rectangle.
