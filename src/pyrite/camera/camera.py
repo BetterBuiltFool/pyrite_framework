@@ -144,12 +144,26 @@ class Camera(DefaultCamera, Renderable):
         return self.surface.subsurface(self.viewport)
 
     def to_local(self, point: Point) -> Vector2:
-        point = Vector2(point)
+        # TODO Slog through this and make it work
+        # It renders correctly, but bounds end up mirrored above the sprites.
+        # point = Vector2(point)
+
+        # point -= Vector2(self.get_surface_rect().bottomleft)
+
+        # point.y = -point.y
+
+        # return point
 
         return point - Vector2(self.get_surface_rect().topleft)
 
     def to_world(self, point: Point) -> Vector2:
-        point = Vector2(point)
+        # point = Vector2(point)
+
+        # point += Vector2(self.get_surface_rect().bottomleft)
+
+        # point.y = -point.y
+
+        # return point
 
         return point + Vector2(self.get_surface_rect().topleft)
 
