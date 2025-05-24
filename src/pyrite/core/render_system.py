@@ -420,7 +420,8 @@ class DefaultRenderSystem(RenderSystem):
                 if layer in camera.layer_mask:
                     continue
                 self.render_layer(delta_time, render_sequence, camera)
-                self.draw_bounds(delta_time, render_sequence, camera)
+                # TODO Add a generic way to do this.
+                # self.draw_bounds(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
