@@ -186,6 +186,19 @@ class Anchor:
         return pivot - rectangle.center
 
 
+class AbsoluteAnchor(Anchor):
+    """
+    Defines, relative to a rectangle, what spot is considered the position.
+    Unlike regular Anchor, uses pixel values instead of relative values.
+    """
+
+    def __init__(self, relative_position: Point) -> None:
+        self._pivot_point = relative_position
+
+    def get_center_offset(self, rectangle: Rect) -> Vector2:
+        return (self._pivot_point + rectangle.topleft) - rectangle.center
+
+
 class AnchorPoint:
     """
     An enum for modifying the position of a rectangle for renderables.
