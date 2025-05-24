@@ -151,9 +151,7 @@ class Anchor:
 
     def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
         rect = pygame.Rect(rectangle)
-        pivot: pygame.Vector2 = self._relative_position.elementwise() * rect.size
-        offset = pygame.Vector2(position) - pivot
-        rect.topleft = offset
+        self.anchor_rect_ip(rect, position)
         return rect
 
     def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
