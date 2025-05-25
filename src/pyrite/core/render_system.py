@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ..camera import Camera
     from ..enum import Layer
     from ..types import CameraBase, Renderable
+    from ..types.debug_renderer import DebugRenderer
 
     LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
@@ -209,6 +210,13 @@ class RenderSystem(ABC):
             renderer = renderer_type()
         return renderer
 
+    @abstractmethod
+    def add_debug_renderer(self, debug_renderer: DebugRenderer):
+        """
+        Adds a debug renderer that has methods to do draws at various points.
+        """
+        pass
+
 
 def _get_draw_index(renderable: Renderable) -> int:
     """
@@ -330,6 +338,12 @@ class DefaultRenderManager(RenderManager):
 
 
 class DefaultRenderSystem(RenderSystem):
+
+    def __init__(self) -> None:
+        self._debug_renderers: set[DebugRenderer] = set()
+
+    def add_debug_renderer(self, debug_renderer: DebugRenderer):
+        self._debug_renderers.add(debug_renderer)
 
     def render_layer(
         self,
