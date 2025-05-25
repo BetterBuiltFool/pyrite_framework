@@ -18,9 +18,7 @@ class BoundsRenderer(DebugRenderer):
     def __init__(self, draw_color: ColorLike) -> None:
         self.color = Color(draw_color)
 
-    def render(self, *args, **kwds):
-        window: Surface = kwds["window"]
-        render_queue: RenderQueue = kwds["render_queue"]
+    def draw_to_screen(self, window: Surface, render_queue: RenderQueue):
         if not window or not render_queue:
             return
         for layer_dict in render_queue.values():
