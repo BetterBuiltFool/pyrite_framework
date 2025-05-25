@@ -11,4 +11,8 @@ class DebugRenderer(ABC):
 
     @abstractmethod
     def render(self, *args, **kwds):
+        """
+        Generic render function.
+        Passed parameters vary depending on where the renderer gets called.
+        """
         pass
