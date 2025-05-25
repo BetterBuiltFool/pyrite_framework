@@ -441,10 +441,16 @@ class DefaultRenderSystem(RenderSystem):
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
             self.draw_camera(delta_time, camera, window_camera)
 
+        self._debug_draw_to_screen(window_camera.surface, render_queue)
+
         # Render the UI last.
         self.render_ui(
             delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
         )
+
+    def _debug_draw_to_screen(self, window: pygame.Surface, render_queue: RenderQueue):
+        for renderer in self._debug_renderers:
+            renderer.draw_to_screen(window, render_queue)
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
