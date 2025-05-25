@@ -6,6 +6,7 @@ import pygame
 from pygame import Color
 
 from ..types.debug_renderer import DebugRenderer
+from ..enum import RenderLayers
 
 if TYPE_CHECKING:
     from pygame import Surface
@@ -19,9 +20,8 @@ class BoundsRenderer(DebugRenderer):
         self.color = Color(draw_color)
 
     def draw_to_screen(self, window: Surface, render_queue: RenderQueue):
-        if not window or not render_queue:
-            return
-        for layer_dict in render_queue.values():
+        for layer in RenderLayers._layers:
+            layer_dict = render_queue.get(layer, {})
             for renderables in layer_dict.values():
                 for renderable in renderables:
                     bounds = renderable.get_bounds()
