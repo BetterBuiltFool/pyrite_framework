@@ -6,8 +6,7 @@ import pygame
 from pygame import FRect, Rect
 
 if typing.TYPE_CHECKING:
-    from pygame.typing import RectLike
-    from pygame import Surface
+    from pygame.typing import Point, RectLike
 
 
 class SurfaceSector:
@@ -28,11 +27,43 @@ class SurfaceSector:
                 topleft = (-1, 1)
             if not (bottomright := kwds.get("bottomright")):
                 bottomright = (1, -1)
-            frect = FRect()
-            frect.topleft = topleft
             size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
-            frect.size = size
+            frect = FRect(topleft[0], topleft[1], size[0], size[1])
         self.frect = FRect(frect)
+
+    @staticmethod
+    def NDC_to_screen(point: Point) -> Point:
+        """
+        Converts a point in NDC space to screen space on the current display.
+
+        :param point: A point in NDC space
+        :return: A point in pygame screen space.
+        """
+        display = pygame.display.get_surface()
+        display_rect = display.get_rect()
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        return (
+            center_x - int(point[0] * (-surface_width / 2)),
+            center_y - int(point[1] * (surface_height / 2)),
+        )
+
+    @staticmethod
+    def screen_to_NDC(point: Point) -> Point:
+        """
+        Converts a point in screen space on the current display to NDC space.
+
+        :param point: A point in pygame screen space.
+        :return: A point in NDC space
+        """
+        display = pygame.display.get_surface()
+        display_rect = display.get_rect()
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        return (
+            (point[0] + center_x) / (-surface_width / 2),
+            (point[1] + center_y) / (surface_height / 2),
+        )
 
     def get_display_rect(self) -> Rect:
         """
@@ -41,28 +72,7 @@ class SurfaceSector:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen sectors' frect.
         """
-        return self.get_rect(pygame.display.get_surface())
-
-    def get_rect(self, surface: Surface) -> Rect:
-        """
-        Calculates the subrect for the sector
-
-        :param surface: A surface being partitioned by the screen sector
-        :return: A rectangle proportionate to both the surface rectangle, and the
-        screen sectors' frect.
-        """
-        frect = self.frect
-        surface_rect = surface.get_rect()
-        surface_width, surface_height = surface_rect.size
-        center_x, center_y = surface_rect.center
-        topleft = (
-            center_x - int(frect.left * (-surface_width / 2)),
-            center_y - int(frect.top * (surface_height / 2)),
-        )
-        size = (
-            int(frect.width * (surface_width / 2)),
-            int(frect.height * (surface_height / 2)),
-        )
-        rect = Rect()
-        rect.topleft, rect.size = topleft, size
-        return rect
+        topleft = self.NDC_to_screen(self.frect.topleft)
+        bottomright = self.NDC_to_screen(self.frect.bottomright)
+        size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
+        return Rect(topleft[0], topleft[1], size[0], size[1])
