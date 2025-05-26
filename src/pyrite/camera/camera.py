@@ -61,7 +61,7 @@ class Camera(DefaultCamera, Renderable):
         """
         self.max_size = Vector2(max_size)
         surface = pygame.Surface(self.max_size)
-        CameraService.add_camera(self, surface)
+        CameraService.add_camera(self)
         if viewport is None:
             viewport = surface.get_rect()
         self.viewport = viewport
