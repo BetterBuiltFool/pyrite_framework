@@ -16,5 +16,8 @@ class CameraRenderer(Renderer):
         for sector in camera.surface_sectors:
             render_rect = sector.get_rect(window_camera.surface)
             window_camera.draw_to_view(
-                camera.scale_view(camera.surface, render_rect.size), render_rect.topleft
+                camera.scale_view(
+                    camera.surface.subsurface(camera.viewport), render_rect.size
+                ),
+                render_rect.topleft,
             )
