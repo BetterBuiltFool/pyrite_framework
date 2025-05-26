@@ -211,7 +211,7 @@ class Camera(DefaultCamera, Renderable):
         return viewport_space_position
 
     def _get_sector_rect(self, sector: SurfaceSector) -> pygame.Rect:
-        return sector.get_rect(pygame.display.get_surface())
+        return sector.get_display_rect()
 
     def scale_view(
         self, camera_surface: pygame.Surface, target_size: Point
