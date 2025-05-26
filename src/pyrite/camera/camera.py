@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from .camera_service import CameraService
 from .default_camera import DefaultCamera
 from .surface_sector import SurfaceSector
 from ..enum import Layer, RenderLayers
@@ -60,6 +61,7 @@ class Camera(DefaultCamera, Renderable):
         """
         self.max_size = Vector2(max_size)
         surface = pygame.Surface(self.max_size)
+        CameraService.add_camera(self, surface)
         if viewport is None:
             viewport = surface.get_rect()
         self.viewport = viewport
