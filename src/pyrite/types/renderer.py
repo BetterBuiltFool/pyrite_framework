@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 class Renderer(ABC):
 
+    @classmethod
     @abstractmethod
     def render(self, renderable: Renderable, camera: CameraBase):
         """
