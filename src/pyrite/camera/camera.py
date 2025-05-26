@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from .default_camera import DefaultCamera
 from .surface_sector import SurfaceSector
 from ..enum import Layer, RenderLayers
+from ..rendering.camera_renderer import CameraRenderer
 from ..rendering.rect_bounds import RectBounds
 from ..rendering.view_plane import ViewPlane
 from ..types import Renderable
@@ -14,7 +15,7 @@ import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from ..types import Container
+    from ..types import Container, CameraBase
     from pygame.typing import Point
 
 
@@ -140,8 +141,8 @@ class Camera(DefaultCamera, Renderable):
         # renderable.
         return ViewPlane(self.get_viewport_rect())
 
-    def render(self, delta_time: float) -> pygame.Surface:
-        return self.surface.subsurface(self.viewport)
+    def render(self, delta_time: float, camera: CameraBase):
+        CameraRenderer.render(self, camera)
 
     def to_local(self, point: Point) -> Vector2:
         # TODO Slog through this and make it work

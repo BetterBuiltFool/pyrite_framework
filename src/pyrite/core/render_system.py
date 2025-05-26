@@ -388,12 +388,7 @@ class DefaultRenderSystem(RenderSystem):
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
         """
-        camera_surface = camera.render(delta_time)
-        for sector in camera.surface_sectors:
-            render_rect = sector.get_rect(window_camera.surface)
-            window_camera.draw_to_view(
-                camera.scale_view(camera_surface, render_rect.size), render_rect.topleft
-            )
+        camera.render(delta_time, window_camera)
 
     def render_ui(
         self,
