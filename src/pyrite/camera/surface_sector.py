@@ -23,6 +23,15 @@ class SurfaceSector:
         """
         self.frect = pygame.FRect(frect)
 
+    def get_display_rect(self) -> pygame.Rect:
+        """
+        Calculates the subrect for the sector, from the display.
+
+        :return: A rectangle proportionate to both the surface rectangle, and the
+        screen sectors' frect.
+        """
+        return self.get_rect(pygame.display.get_surface())
+
     def get_rect(self, surface: pygame.Surface) -> pygame.Rect:
         """
         Calculates the subrect for the sector
