@@ -382,7 +382,7 @@ class DefaultRenderSystem(RenderSystem):
         window_camera: CameraBase,
     ):
         """
-        Draws the given camera to the window, at each of its surface sectors.
+        Draws the given camera to the window, at each of its surface viewports.
 
         :param delta_time: Time passed since last frame, if needed for any calculations.
         :param camera: Camera being drawn to the screen

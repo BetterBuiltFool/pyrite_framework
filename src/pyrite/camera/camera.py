@@ -31,7 +31,7 @@ class Camera(DefaultCamera, Renderable):
         projection: P,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
-        surface_sectors: Viewport | Sequence[Viewport] = None,
+        viewports: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -53,11 +53,11 @@ class Camera(DefaultCamera, Renderable):
         self._scale_method = (
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
         )
-        if surface_sectors is None:
-            surface_sectors = [Viewport()]
-        if not isinstance(surface_sectors, Sequence):
-            surface_sectors = [surface_sectors]
-        self.surface_sectors: Sequence[Viewport] = surface_sectors
+        if viewports is None:
+            viewports = [Viewport()]
+        if not isinstance(viewports, Sequence):
+            viewports = [viewports]
+        self.viewports: Sequence[Viewport] = viewports
         DefaultCamera.__init__(self, surface=None, layer_mask=layer_mask)
         Renderable.__init__(
             self,
@@ -105,13 +105,13 @@ class Camera(DefaultCamera, Renderable):
     def to_world(self, point: Point) -> Vector2:
         return CameraService.to_world(self, point)
 
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Point:
-        return CameraService.screen_to_world(self, point, sector_index)
+    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
+        return CameraService.screen_to_world(self, point, viewport_index)
 
     def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
+        self, point: Point, viewport_index: int = 0
     ) -> Point | None:
-        return CameraService.screen_to_world_clamped(self, point, sector_index)
+        return CameraService.screen_to_world_clamped(self, point, viewport_index)
 
     def scale_view(
         self, camera_surface: pygame.Surface, target_size: Point

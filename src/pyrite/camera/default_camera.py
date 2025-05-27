@@ -59,10 +59,10 @@ class DefaultCamera(CameraBase):
     def to_world(self, point: Point) -> Vector2:
         return Vector2(point)
 
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Vector2:
         return Vector2(point)
 
     def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
+        self, point: Point, viewport_index: int = 0
     ) -> Vector2 | None:
         return Vector2(point)

@@ -89,15 +89,15 @@ class CameraService:
 
     @classmethod
     def screen_to_world(
-        cls, camera: Camera, point: Point, sector_index: int = 0
+        cls, camera: Camera, point: Point, viewport_index: int = 0
     ) -> Point:
-        # sector = self.surface_sectors[sector_index]
-        # sector_rect = self._get_sector_rect(sector)
+        # viewport = self.viewports[viewport_index]
+        # viewport_rect = self._get_viewport_rect(viewport)
 
         # viewport_world = self.get_viewport_rect()
 
         # viewport_space_position = self._screen_to_viewport(
-        #     point, sector_rect, Vector2(viewport_world.size)
+        #     point, viewport_rect, Vector2(viewport_world.size)
         # )
 
         # return viewport_space_position.elementwise() + viewport_world.topleft
@@ -105,18 +105,18 @@ class CameraService:
 
     @classmethod
     def screen_to_world_clamped(
-        cls, camera: Camera, point: Point, sector_index: int = 0
+        cls, camera: Camera, point: Point, viewport_index: int = 0
     ) -> Point | None:
-        # sector = self.surface_sectors[sector_index]
-        # sector_rect = self._get_sector_rect(sector)
+        # viewport = self.viewports[viewport_index]
+        # viewport_rect = self._get_viewport_rect(viewport)
 
-        # if not sector_rect.collidepoint(point):
+        # if not viewport_rect.collidepoint(point):
         #     return None
 
         # viewport_world = self.get_viewport_rect()
 
         # viewport_space_position = self._screen_to_viewport(
-        #     point, sector_rect, Vector2(viewport_world.size)
+        #     point, viewport_rect, Vector2(viewport_world.size)
         # )
 
         # return viewport_space_position.elementwise() + viewport_world.topleft

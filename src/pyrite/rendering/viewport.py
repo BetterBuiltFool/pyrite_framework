@@ -20,7 +20,7 @@ class Viewport:
         Uses Normalized Device Coordinates (NDC), so
         left = -1, right = 1, top = 1, bottom = -1
 
-        :param frect: An FRect representing the screen sector in NDC space.
+        :param frect: An FRect representing the screen viewport in NDC space.
         """
         if frect is None:
             if not (topleft := kwds.get("topleft")):
@@ -67,10 +67,10 @@ class Viewport:
 
     def get_display_rect(self) -> Rect:
         """
-        Calculates the subrect for the sector, from the display.
+        Calculates the subrect for the viewport, from the display.
 
         :return: A rectangle proportionate to both the surface rectangle, and the
-        screen sectors' frect.
+        screen viewports' frect.
         """
         topleft = self.NDC_to_screen(self.frect.topleft)
         bottomright = self.NDC_to_screen(self.frect.bottomright)

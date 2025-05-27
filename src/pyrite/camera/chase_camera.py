@@ -40,7 +40,7 @@ class ChaseCamera(Entity):
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         container=None,
-        surface_sectors: Viewport | Sequence[Viewport] = None,
+        viewports: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         enabled=True,
         draw_index=0,
@@ -55,8 +55,8 @@ class ChaseCamera(Entity):
         :param max_size: Largest, most zoomed out size of the camera.
         :param position: Position of the center of the camera surface, defaults to None
         None will give the center of the viewport.
-        :param surface_sectors: Defines sections of the screen to render to. If multiple
-        surface sectors are used, the camera will be rendered and scaled to each of
+        :param viewports: Defines sections of the screen to render to. If multiple
+        surface viewports are used, the camera will be rendered and scaled to each of
         them.
         :param viewport: A rectangle representing the actual viewable area of the
         camera, defaults to None.
@@ -91,7 +91,7 @@ class ChaseCamera(Entity):
         self.camera = Camera(
             projection=projection,
             transform=transform,
-            surface_sectors=surface_sectors,
+            viewports=viewports,
             smooth_scale=smooth_scale,
             container=container,
             enabled=enabled,
@@ -140,13 +140,13 @@ class ChaseCamera(Entity):
     def to_world(self, point: Point) -> Vector2:
         return self.camera.to_world(self, point)
 
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Point:
-        return self.camera.screen_to_world(self, point, sector_index)
+    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
+        return self.camera.screen_to_world(self, point, viewport_index)
 
     def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
+        self, point: Point, viewport_index: int = 0
     ) -> Point | None:
-        return self.camera.screen_to_world_clamped(self, point, sector_index)
+        return self.camera.screen_to_world_clamped(self, point, viewport_index)
 
     def scale_view(
         self, camera_surface: pygame.Surface, target_size: Point

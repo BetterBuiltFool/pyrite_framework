@@ -14,8 +14,8 @@ class CameraRenderer(Renderer):
 
     @classmethod
     def render(cls, camera: Camera, window_camera: CameraBase):
-        for sector in camera.surface_sectors:
-            render_rect = sector.get_display_rect()
+        for viewport in camera.viewports:
+            render_rect = viewport.get_display_rect()
             window_camera.draw_to_view(
                 camera.scale_view(
                     CameraService._surfaces.get(camera), render_rect.size
