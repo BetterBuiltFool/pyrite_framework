@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from .camera_service import CameraService
 from .default_camera import DefaultCamera
-from .viewport import Viewport
+from ..rendering.viewport import Viewport
 from ..enum import Layer, RenderLayers
 from ..rendering.camera_renderer import CameraRenderer
 from ..rendering.rect_bounds import RectBounds

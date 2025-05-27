@@ -19,7 +19,7 @@ if TYPE_CHECKING:
         TransformProtocol,
     )
     from ..types.projection import Projection
-    from .viewport import Viewport
+    from ..rendering.viewport import Viewport
     from pygame.typing import Point
     from pygame import Surface
 
