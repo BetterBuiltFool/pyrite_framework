@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
-from pygame import Surface
+from pygame import Surface, Vector2
 
 if TYPE_CHECKING:
-    from . import Camera
+    from .camera import NewCamera as Camera
     from ..types import CameraViewBounds, CullingBounds
     from pygame import Rect
     from pygame.typing import Point
@@ -23,7 +23,7 @@ class CameraService:
 
         :param camera: The Camera object being added.
         """
-        camera_surface = Surface(camera.max_size)
+        camera_surface = Surface(camera.projection.far_plane)
         cls._surfaces.update({camera: camera_surface})
 
     @classmethod
@@ -61,8 +61,10 @@ class CameraService:
 
         # return point
 
-        # return point - Vector2(self.get_surface_rect().topleft)
-        pass
+        surface = cls._surfaces.get(camera)
+        surface_rect = surface.get_rect().copy()
+        surface_rect.center = camera.transform.world_position
+        return point - Vector2(surface_rect.topleft)
 
     @classmethod
     def to_world(cls, camera: Camera, point: Point) -> Point:
@@ -74,8 +76,10 @@ class CameraService:
 
         # return point
 
-        # return point + Vector2(self.get_surface_rect().topleft)
-        pass
+        surface = cls._surfaces.get(camera)
+        surface_rect = surface.get_rect().copy()
+        surface_rect.center = camera.transform.world_position
+        return point + Vector2(surface_rect.topleft)
 
     @classmethod
     def screen_to_world(
@@ -114,14 +118,14 @@ class CameraService:
 
     @classmethod
     def zoom(cls, camera: Camera, zoom: float):
-        display_size = camera.max_size
+        display_size = camera.projection.far_plane
         surface_size = (display_size[0] * zoom), (display_size[1] * zoom)
         surface = Surface(surface_size)
         cls._surfaces.update({camera: surface})
 
     @classmethod
     def zoom_to(cls, camera: Camera, size: Point):
-        display_size = camera.max_size
+        display_size = camera.projection.far_plane
         zoom_x = display_size[0] / size[0]
         zoom_y = display_size[1] / size[1]
         camera.zoom = (zoom_x, zoom_y)
