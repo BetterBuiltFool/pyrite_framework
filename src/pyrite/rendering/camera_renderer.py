@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from ..camera.camera_service import CameraService
 from ..types import Renderer
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ class CameraRenderer(Renderer):
             render_rect = sector.get_display_rect()
             window_camera.draw_to_view(
                 camera.scale_view(
-                    camera.surface.subsurface(camera.viewport), render_rect.size
+                    CameraService._surfaces.get(camera), render_rect.size
                 ),
                 render_rect.topleft,
             )
