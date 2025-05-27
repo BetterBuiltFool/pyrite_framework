@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .camera import NewCamera as Camera
     from ..types import CameraViewBounds, CullingBounds, Transform
     from ..rendering.view_plane import ViewPlane
+    from ..rendering.rect_bounds import RectBounds
     from pygame import Rect
     from pygame.typing import Point
 
@@ -42,7 +43,7 @@ class CameraService:
 
     @classmethod
     def get_bounds(cls, camera: Camera) -> CullingBounds:
-        pass
+        return RectBounds(cls.get_rect(camera))
 
     @classmethod
     def get_rect(cls, camera: Camera) -> Rect:
