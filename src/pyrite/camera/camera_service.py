@@ -10,7 +10,7 @@ from ..rendering.rect_bounds import RectBounds
 
 if TYPE_CHECKING:
     from .camera import NewCamera as Camera
-    from ..types import CameraViewBounds, CullingBounds, Transform
+    from ..types import CameraViewBounds, CullingBounds
     from pygame import Rect
     from pygame.typing import Point
 
@@ -18,9 +18,6 @@ if TYPE_CHECKING:
 class CameraService:
 
     _surfaces: WeakKeyDictionary[Camera, Surface] = WeakKeyDictionary()
-    _view_planes: WeakKeyDictionary[Camera, tuple[ViewPlane, Transform]] = (
-        WeakKeyDictionary()
-    )
 
     @classmethod
     def add_camera(cls, camera: Camera):
@@ -53,12 +50,7 @@ class CameraService:
 
     @classmethod
     def get_view_bounds(cls, camera: Camera) -> CameraViewBounds:
-        view_plane, transform = cls._view_planes.get(camera, (None, None))
-        if not view_plane or not transform or transform != camera.transform.world():
-            view_plane = ViewPlane(cls._get_view_rect(camera))
-            transform = camera.transform.world()
-            cls._view_planes.update({camera: (view_plane, transform)})
-        return view_plane
+        return ViewPlane(cls._get_view_rect(camera))
 
     @classmethod
     def _get_view_rect(cls, camera: Camera) -> Rect:
