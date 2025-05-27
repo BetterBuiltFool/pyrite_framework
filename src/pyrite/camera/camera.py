@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from .camera_service import CameraService
 from .default_camera import DefaultCamera
-from .surface_sector import SurfaceSector
+from .viewport import Viewport
 from ..enum import Layer, RenderLayers
 from ..rendering.camera_renderer import CameraRenderer
 from ..rendering.rect_bounds import RectBounds
@@ -31,7 +31,7 @@ class Camera(DefaultCamera, Renderable):
         projection: P,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
-        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
+        surface_sectors: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -54,10 +54,10 @@ class Camera(DefaultCamera, Renderable):
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
         )
         if surface_sectors is None:
-            surface_sectors = [SurfaceSector()]
+            surface_sectors = [Viewport()]
         if not isinstance(surface_sectors, Sequence):
             surface_sectors = [surface_sectors]
-        self.surface_sectors: Sequence[SurfaceSector] = surface_sectors
+        self.surface_sectors: Sequence[Viewport] = surface_sectors
         DefaultCamera.__init__(self, surface=None, layer_mask=layer_mask)
         Renderable.__init__(
             self,

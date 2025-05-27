@@ -19,7 +19,7 @@ if TYPE_CHECKING:
         TransformProtocol,
     )
     from ..types.projection import Projection
-    from .surface_sector import SurfaceSector
+    from .viewport import Viewport
     from pygame.typing import Point
     from pygame import Surface
 
@@ -40,7 +40,7 @@ class ChaseCamera(Entity):
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         container=None,
-        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
+        surface_sectors: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         enabled=True,
         draw_index=0,

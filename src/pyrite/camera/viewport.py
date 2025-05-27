@@ -9,7 +9,7 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point, RectLike
 
 
-class SurfaceSector:
+class Viewport:
     """
     Represents a portion of a surface, primarily for rendering out cameras.
     """
