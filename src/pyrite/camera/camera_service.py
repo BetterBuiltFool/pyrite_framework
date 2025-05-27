@@ -9,7 +9,7 @@ from ..rendering.view_plane import ViewPlane
 from ..rendering.rect_bounds import RectBounds
 
 if TYPE_CHECKING:
-    from .camera import NewCamera as Camera
+    from .camera import Camera
     from ..types import CameraViewBounds, CullingBounds
     from pygame import Rect
     from pygame.typing import Point
