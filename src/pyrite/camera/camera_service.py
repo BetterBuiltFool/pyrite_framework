@@ -132,10 +132,3 @@ class CameraService:
     @classmethod
     def zoom(cls, camera: Camera, zoom: float):
         cls._rebuild_surface(camera)
-
-    @classmethod
-    def zoom_to(cls, camera: Camera, size: Point):
-        display_size = camera.projection.far_plane.size
-        zoom_x = display_size[0] / size[0]
-        zoom_y = display_size[1] / size[1]
-        camera.zoom = (zoom_x, zoom_y)
