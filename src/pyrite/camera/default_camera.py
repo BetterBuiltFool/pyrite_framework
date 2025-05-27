@@ -25,6 +25,9 @@ class DefaultCamera(CameraBase):
     Can be constructed from the window.
     """
 
+    # TODO Break out the window camera specific code into its own class so Camera
+    # doesn't have a surface attribute.
+
     def __init__(
         self,
         surface: Surface,
