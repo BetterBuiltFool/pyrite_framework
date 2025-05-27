@@ -48,7 +48,6 @@ class Camera(DefaultCamera, Renderable):
         else:
             self.transform = transform_component.from_attributes(self, position)
         self.projection = projection
-        CameraService.add_camera(self)
         self._smooth_scale = smooth_scale
         self._scale_method = (
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
@@ -67,6 +66,7 @@ class Camera(DefaultCamera, Renderable):
             draw_index=draw_index,
         )
         self._zoom_level = 1
+        CameraService.add_camera(self)
 
     @property
     def smooth_scale(self) -> bool:
