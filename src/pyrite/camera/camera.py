@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, CameraBase, TransformProtocol
     from ..types.projection import Projection
     from pygame.typing import Point
+    from pygame import Surface
 
     P = TypeVar("P", bound=Projection)
 
@@ -32,7 +33,6 @@ class NewCamera(DefaultCamera, Renderable):
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
-        viewport: pygame.Rect = None,
         smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -54,6 +54,11 @@ class NewCamera(DefaultCamera, Renderable):
         self._scale_method = (
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
         )
+        if surface_sectors is None:
+            surface_sectors = [SurfaceSector()]
+        if not isinstance(surface_sectors, Sequence):
+            surface_sectors = [surface_sectors]
+        self.surface_sectors: Sequence[SurfaceSector] = surface_sectors
         DefaultCamera.__init__(self, surface=None, layer_mask=layer_mask)
         Renderable.__init__(
             self,
@@ -77,6 +82,9 @@ class NewCamera(DefaultCamera, Renderable):
 
     def clear(self):
         CameraService.clear(self)
+
+    def draw_to_view(self, surface: Surface, position: Point):
+        CameraService.draw_to_camera(self, surface, position)
 
     def get_bounds(self) -> RectBounds:
         return CameraService.get_bounds(self)
