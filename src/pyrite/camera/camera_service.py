@@ -132,8 +132,9 @@ class CameraService:
 
     @classmethod
     def zoom(cls, camera: Camera, zoom: float):
+        zoom_factor = 1 / zoom
         display_size = camera.projection.far_plane.size
-        surface_size = (display_size[0] * zoom), (display_size[1] * zoom)
+        surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
         surface = Surface(surface_size)
         cls._surfaces.update({camera: surface})
 
