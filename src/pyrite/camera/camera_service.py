@@ -131,4 +131,5 @@ class CameraService:
 
     @classmethod
     def zoom(cls, camera: Camera, zoom: float):
+        camera._zoom_level = zoom
         cls._rebuild_surface(camera)

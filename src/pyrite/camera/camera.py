@@ -127,5 +127,4 @@ class Camera(DefaultCamera, Renderable):
         return self._scale_method(camera_surface, target_size)
 
     def zoom(self, zoom_level: float):
-        self._zoom_level = zoom_level
         CameraService.zoom(self, zoom_level)
