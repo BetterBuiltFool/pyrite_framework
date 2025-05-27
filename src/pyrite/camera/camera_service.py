@@ -113,9 +113,9 @@ class CameraService:
         pass
 
     @classmethod
-    def zoom(cls, camera: Camera, zoom: Point):
+    def zoom(cls, camera: Camera, zoom: float):
         display_size = camera.max_size
-        surface_size = (display_size[0] * zoom[0]), (display_size[1] * zoom[1])
+        surface_size = (display_size[0] * zoom), (display_size[1] * zoom)
         surface = Surface(surface_size)
         cls._surfaces.update({camera: surface})
 
