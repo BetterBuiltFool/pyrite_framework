@@ -26,8 +26,7 @@ class CameraService:
 
         :param camera: The Camera object being added.
         """
-        camera_surface = Surface(camera.projection.far_plane.size)
-        cls._surfaces.update({camera: camera_surface})
+        cls._rebuild_surface(camera)
 
     @classmethod
     def clear(cls, camera: Camera):
@@ -58,6 +57,14 @@ class CameraService:
         surface_rect = surface.get_rect().copy()
         surface_rect.center = camera.transform.world_position
         return surface_rect
+
+    @classmethod
+    def _rebuild_surface(cls, camera: Camera):
+        zoom_factor = 1 / camera.zoom_level
+        display_size = camera.projection.far_plane.size
+        surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
+        surface = Surface(surface_size)
+        cls._surfaces.update({camera: surface})
 
     @classmethod
     def to_local(cls, camera: Camera, point: Point) -> Point:
@@ -124,11 +131,7 @@ class CameraService:
 
     @classmethod
     def zoom(cls, camera: Camera, zoom: float):
-        zoom_factor = 1 / zoom
-        display_size = camera.projection.far_plane.size
-        surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
-        surface = Surface(surface_size)
-        cls._surfaces.update({camera: surface})
+        cls._rebuild_surface(camera)
 
     @classmethod
     def zoom_to(cls, camera: Camera, size: Point):
