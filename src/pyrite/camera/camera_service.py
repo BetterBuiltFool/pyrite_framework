@@ -7,7 +7,8 @@ from pygame import Surface, Vector2
 
 if TYPE_CHECKING:
     from .camera import NewCamera as Camera
-    from ..types import CameraViewBounds, CullingBounds
+    from ..types import CameraViewBounds, CullingBounds, Transform
+    from ..rendering.view_plane import ViewPlane
     from pygame import Rect
     from pygame.typing import Point
 
@@ -15,6 +16,9 @@ if TYPE_CHECKING:
 class CameraService:
 
     _surfaces: WeakKeyDictionary[Camera, Surface] = WeakKeyDictionary()
+    _view_planes: WeakKeyDictionary[Camera, tuple[ViewPlane, Transform]] = (
+        WeakKeyDictionary()
+    )
 
     @classmethod
     def add_camera(cls, camera: Camera):
@@ -47,7 +51,19 @@ class CameraService:
 
     @classmethod
     def get_view_bounds(cls, camera: Camera) -> CameraViewBounds:
-        pass
+        view_plane, transform = cls._view_planes.get(camera, (None, None))
+        if not view_plane or not transform or transform != camera.transform.world():
+            view_plane = ViewPlane(cls._get_view_rect(camera))
+            transform = camera.transform.world()
+            cls._view_planes.update({camera: (view_plane, transform)})
+        return view_plane
+
+    @classmethod
+    def _get_view_rect(cls, camera: Camera) -> Rect:
+        surface = cls._surfaces.get(camera)
+        surface_rect = surface.get_rect().copy()
+        surface_rect.center = camera.transform.world_position
+        return surface_rect
 
     @classmethod
     def to_local(cls, camera: Camera, point: Point) -> Point:
@@ -60,11 +76,7 @@ class CameraService:
         # point.y = -point.y
 
         # return point
-
-        surface = cls._surfaces.get(camera)
-        surface_rect = surface.get_rect().copy()
-        surface_rect.center = camera.transform.world_position
-        return point - Vector2(surface_rect.topleft)
+        return point - Vector2(cls._get_view_rect(camera).topleft)
 
     @classmethod
     def to_world(cls, camera: Camera, point: Point) -> Point:
