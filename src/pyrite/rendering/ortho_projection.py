@@ -9,7 +9,6 @@ from ..types.projection import Projection
 
 if TYPE_CHECKING:
     from pygame import Rect
-    from pygame.typing import Point
 
 
 class OrthProjection(Projection):
@@ -29,24 +28,6 @@ class OrthProjection(Projection):
     @property
     def far_plane(self) -> Rect:
         return self.projection_rect
-
-    def screen_to_NDC(self, screen_point: Point, viewport: Rect) -> Point:
-        # Viewport may be smaller or larger than the projection, so adjust.
-        width_ratio = self.projection_rect.width / viewport.width
-        height_ratio = self.projection_rect.height / viewport.height
-
-        # Convert screen space to projection space.
-        point = (
-            (screen_point[0] * width_ratio) - (self.projection_rect.width / 2),
-            (screen_point[1] * height_ratio) - (self.projection_rect.height / 2),
-        )
-        # Normalize coordinates
-        ndc_point = (
-            point[0] / (self.projection_rect.width / 2),
-            -point[1] / (self.projection_rect.height / 2),
-            self.z_far,
-        )
-        return Vector3(*ndc_point)
 
     def clip_to_NDC(self, clip_coords: Vector3) -> Vector3:
         width = self.projection_rect.width
