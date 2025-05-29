@@ -28,3 +28,15 @@ class Projection(ABC):
         :return: A 3D point in standard NDC space.
         """
         pass
+
+    @abstractmethod
+    def view_to_NDC(self, view_position: Vector3) -> Vector3:
+        """
+        Takes a point in view space (The space in which a camera is looking) and
+        transforms it into NDC space.
+
+        :param view_position: A 3D point in the relative space of the viewing camera.
+            For 2D, the Z axis is ignored.
+        :return: A 3D point in standard NDC space.
+        """
+        pass
