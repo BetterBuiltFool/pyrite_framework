@@ -40,3 +40,14 @@ class Projection(ABC):
         :return: A 3D point in standard NDC space.
         """
         pass
+
+    @abstractmethod
+    def NDC_to_view(self, ndc_coords: Vector3) -> Vector3:
+        """
+        Takes a point in NDC space and transforms it into the view space of the
+        projection.
+
+        :param ndc_coords: A 3D point in NDC space.
+        :return: A 3D point in the view space of the projection.
+        """
+        pass
