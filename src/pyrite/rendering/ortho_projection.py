@@ -63,3 +63,21 @@ class OrthProjection(Projection):
             projected_point[2] / (depth / 2),
         )
         return Vector3(*ndc_point)
+
+    def NDC_to_view(self, ndc_coords: Vector3) -> Vector3:
+        width = self.projection_rect.width
+        height = self.projection_rect.height
+        depth = self.z_far - self.z_near
+
+        projected_point = (
+            ndc_coords.x * (width / 2),
+            ndc_coords.y * (height / 2),
+            ndc_coords.z * (depth / 2),
+        )
+
+        view_point = (
+            projected_point[0] + (width / 2),
+            projected_point[1] + (height / 2),
+            projected_point[2] + (depth / 2),
+        )
+        return Vector3(*view_point)
