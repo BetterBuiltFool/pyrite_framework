@@ -17,10 +17,10 @@ class Viewport:
     def __init__(self, frect: FRect | RectLike = None, **kwds) -> None:
         """
         Represents a portion of a surface, primarily for rendering out cameras.
-        Uses Normalized Device Coordinates (NDC), so
+        Uses Normalized Device Coordinates (ndc), so
         left = -1, right = 1, top = 1, bottom = -1
 
-        :param frect: An FRect representing the screen viewport in NDC space.
+        :param frect: An FRect representing the screen viewport in ndc space.
         """
         if frect is None:
             if not (topleft := kwds.get("topleft")):
@@ -32,11 +32,11 @@ class Viewport:
         self.frect = FRect(frect)
 
     @staticmethod
-    def NDC_to_screen(point: Point) -> Point:
+    def ndc_to_screen(point: Point) -> Point:
         """
-        Converts a point in NDC space to screen space on the current display.
+        Converts a point in ndc space to screen space on the current display.
 
-        :param point: A point in NDC space
+        :param point: A point in ndc space
         :return: A point in pygame screen space.
         """
         display = pygame.display.get_surface()
@@ -49,12 +49,12 @@ class Viewport:
         )
 
     @staticmethod
-    def screen_to_NDC(point: Point) -> Point:
+    def screen_to_ndc(point: Point) -> Point:
         """
-        Converts a point in screen space on the current display to NDC space.
+        Converts a point in screen space on the current display to ndc space.
 
         :param point: A point in pygame screen space.
-        :return: A point in NDC space
+        :return: A point in ndc space
         """
         display = pygame.display.get_surface()
         display_rect = display.get_rect()
@@ -72,7 +72,7 @@ class Viewport:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' frect.
         """
-        topleft = self.NDC_to_screen(self.frect.topleft)
-        bottomright = self.NDC_to_screen(self.frect.bottomright)
+        topleft = self.ndc_to_screen(self.frect.topleft)
+        bottomright = self.ndc_to_screen(self.frect.bottomright)
         size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
         return Rect(topleft[0], topleft[1], size[0], size[1])

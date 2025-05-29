@@ -29,7 +29,7 @@ class OrthProjection(Projection):
     def far_plane(self) -> Rect:
         return self.projection_rect
 
-    def clip_to_NDC(self, clip_coords: Vector3) -> Vector3:
+    def clip_to_ndc(self, clip_coords: Vector3) -> Vector3:
         width = self.projection_rect.width
         height = self.projection_rect.height
         depth = self.z_far - self.z_near
@@ -45,7 +45,7 @@ class OrthProjection(Projection):
         )
         return Vector3(*ndc_point)
 
-    def NDC_to_clip(self, ndc_coords: Vector3) -> Vector3:
+    def ndc_to_clip(self, ndc_coords: Vector3) -> Vector3:
         width = self.projection_rect.width
         height = self.projection_rect.height
         depth = self.z_far - self.z_near
