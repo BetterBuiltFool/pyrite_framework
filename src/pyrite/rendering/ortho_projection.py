@@ -48,14 +48,14 @@ class OrthProjection(Projection):
         )
         return Vector3(*ndc_point)
 
-    def view_to_NDC(self, view_position: Vector3) -> Vector3:
+    def clip_to_NDC(self, clip_coords: Vector3) -> Vector3:
         width = self.projection_rect.width
         height = self.projection_rect.height
         depth = self.z_far - self.z_near
         projected_point = (
-            view_position.x - width / 2,
-            view_position.y - height / 2,
-            view_position.z - depth / 2,
+            clip_coords.x - width / 2,
+            clip_coords.y - height / 2,
+            clip_coords.z - depth / 2,
         )
         ndc_point = (
             projected_point[0] / (width / 2),
@@ -64,7 +64,7 @@ class OrthProjection(Projection):
         )
         return Vector3(*ndc_point)
 
-    def NDC_to_view(self, ndc_coords: Vector3) -> Vector3:
+    def NDC_to_clip(self, ndc_coords: Vector3) -> Vector3:
         width = self.projection_rect.width
         height = self.projection_rect.height
         depth = self.z_far - self.z_near
@@ -75,9 +75,9 @@ class OrthProjection(Projection):
             ndc_coords.z * (depth / 2),
         )
 
-        view_point = (
+        clip_point = (
             projected_point[0] + (width / 2),
             projected_point[1] + (height / 2),
             projected_point[2] + (depth / 2),
         )
-        return Vector3(*view_point)
+        return Vector3(*clip_point)
