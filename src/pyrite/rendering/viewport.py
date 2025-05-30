@@ -31,23 +31,23 @@ class Viewport:
             frect = FRect(topleft[0], topleft[1], size[0], size[1])
         self.frect = FRect(frect)
 
-    @staticmethod
-    def ndc_to_screen(point: Point) -> Point:
+    def ndc_to_screen(self, ndc_coord: Point) -> Point:
         """
-        Converts a point in ndc space to screen space on the current display.
+        Converts a point in ndc space to screen coordinates on the current display.
 
         :param point: A point in ndc space
-        :return: A point in pygame screen space.
+        :return: A point in pygame screen coordinates.
         """
         # TODO NDC space is local to the viewport. Make it behave so.
-        display = pygame.display.get_surface()
-        display_rect = display.get_rect()
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        return (
-            center_x - int(point[0] * (-surface_width / 2)),
-            center_y - int(point[1] * (surface_height / 2)),
-        )
+
+        # display_rect = self.get_display_rect()
+        # surface_width, surface_height = display_rect.size
+        # center_x, center_y = display_rect.center
+        # view_point = (
+        #     center_x - int(ndc_coord[0] * (-surface_width / 2)),
+        #     center_y - int(ndc_coord[1] * (surface_height / 2)),
+        # )
+        # return view_point
 
     def screen_to_ndc(self, point: Point) -> Point:
         """
@@ -73,13 +73,14 @@ class Viewport:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' frect.
         """
-        return self._get_subrect(pygame.display.get_surface().size)
+        return self._get_subrect(self.frect, pygame.display.get_surface().size)
 
     # TODO Consider @functools.cache?
-    def _get_subrect(self, size: Point) -> Rect:
+    @staticmethod
+    def _get_subrect(frect: FRect, size: Point) -> Rect:
         center_x, center_y = size[0] / 2, size[1] / 2
-        left = center_x - (self.frect.left * -center_x)
-        top = center_y - (self.frect.top * center_y)
-        width = self.frect.width * center_x
-        height = self.frect.height * center_y
+        left = center_x - (frect.left * -center_x)
+        top = center_y - (frect.top * center_y)
+        width = frect.width * center_x
+        height = frect.height * center_y
         return Rect(left, top, width, height)
