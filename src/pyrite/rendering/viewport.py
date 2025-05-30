@@ -39,6 +39,7 @@ class Viewport:
         :param point: A point in ndc space
         :return: A point in pygame screen space.
         """
+        # TODO NDC space is local to the viewport. Make it behave so.
         display = pygame.display.get_surface()
         display_rect = display.get_rect()
         surface_width, surface_height = display_rect.size
@@ -48,14 +49,14 @@ class Viewport:
             center_y - int(point[1] * (surface_height / 2)),
         )
 
-    @staticmethod
-    def screen_to_ndc(point: Point) -> Point:
+    def screen_to_ndc(self, point: Point) -> Point:
         """
         Converts a point in screen space on the current display to ndc space.
 
         :param point: A point in pygame screen space.
         :return: A point in ndc space
         """
+        # TODO NDC space is local to the viewport. Make it behave so.
         display = pygame.display.get_surface()
         display_rect = display.get_rect()
         surface_width, surface_height = display_rect.size
@@ -72,7 +73,13 @@ class Viewport:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' frect.
         """
-        topleft = self.ndc_to_screen(self.frect.topleft)
-        bottomright = self.ndc_to_screen(self.frect.bottomright)
-        size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
-        return Rect(topleft[0], topleft[1], size[0], size[1])
+        return self._get_subrect(pygame.display.get_surface().size)
+
+    # TODO Consider @functools.cache?
+    def _get_subrect(self, size: Point) -> Rect:
+        center_x, center_y = size[0] / 2, size[1] / 2
+        left = center_x - (self.frect.left * -center_x)
+        top = center_y - (self.frect.top * center_y)
+        width = self.frect.width * center_x
+        height = self.frect.height * center_y
+        return Rect(left, top, width, height)
