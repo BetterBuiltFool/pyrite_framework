@@ -82,10 +82,3 @@ class Viewport:
         width = frect.width * center_x
         height = frect.height * center_y
         return Rect(left, top, width, height)
-
-    @staticmethod
-    def _get_subrect_point(s_point: Point, size: Point) -> Point:
-        half_x, half_y = size[0] / 2, size[1] / 2
-        x = half_x - (s_point[0] * -half_x)
-        y = half_y - (s_point[1] * half_y)
-        return x, y
