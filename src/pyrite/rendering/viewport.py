@@ -48,22 +48,21 @@ class Viewport:
         )
         return view_point
 
-    def screen_to_ndc(self, point: Point) -> Point:
+    def screen_to_ndc(self, screen_point: Point) -> Point:
         """
         Converts a point in screen space on the current display to ndc space.
 
-        :param point: A point in pygame screen space.
+        :param screen_point: A point in pygame screen space.
         :return: A point in ndc space
         """
-        # TODO NDC space is local to the viewport. Make it behave so.
-        display = pygame.display.get_surface()
-        display_rect = display.get_rect()
+        display_rect = self.get_display_rect()
         surface_width, surface_height = display_rect.size
         center_x, center_y = display_rect.center
-        return (
-            (point[0] + center_x) / (-surface_width / 2),
-            (point[1] + center_y) / (surface_height / 2),
+        ndc_point = (
+            (screen_point[0] - center_x) / (surface_width / 2),
+            (screen_point[1] - center_y) / (-surface_height / 2),
         )
+        return ndc_point
 
     def get_display_rect(self) -> Rect:
         """
