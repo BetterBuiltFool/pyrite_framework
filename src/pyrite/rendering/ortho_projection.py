@@ -36,11 +36,11 @@ class OrthProjection(Projection):
         projected_point = (
             clip_coords.x - width / 2,
             clip_coords.y - height / 2,
-            clip_coords.z - depth / 2,
+            clip_coords.z,
         )
         ndc_point = (
             projected_point[0] / (width / 2),
-            projected_point[1] / (height / 2),
+            projected_point[1] / (-height / 2),
             projected_point[2] / (depth / 2),
         )
         return Vector3(*ndc_point)
