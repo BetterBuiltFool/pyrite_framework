@@ -15,3 +15,17 @@ class Projection(ABC):
         """
         A Rect describing the characteristics of the projection's far plane.
         """
+
+    @property
+    @abstractmethod
+    def z_near(self) -> float:
+        """
+        Distance of the near plane from the projection source.
+        """
+
+    @property
+    @abstractmethod
+    def z_far(self) -> float:
+        """
+        Distance of the far plane from the projection source.
+        """

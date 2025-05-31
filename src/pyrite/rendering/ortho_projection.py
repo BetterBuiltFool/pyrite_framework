@@ -21,9 +21,25 @@ class OrthProjection(Projection):
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
         self.projection_rect = projection_rect
-        self.z_near = z_near
-        self.z_far = z_far
+        self._z_near = z_near
+        self._z_far = z_far
 
     @property
     def far_plane(self) -> Rect:
         return self.projection_rect
+
+    @property
+    def z_near(self) -> float:
+        return self._z_near
+
+    @z_near.setter
+    def z_near(self, distance: float):
+        self._z_near = distance
+
+    @property
+    def z_far(self) -> float:
+        return self._z_far
+
+    @z_far.setter
+    def z_far(self, distance: float):
+        self._z_far = distance
