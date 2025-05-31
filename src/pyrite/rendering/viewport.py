@@ -38,16 +38,15 @@ class Viewport:
         :param point: A point in ndc space
         :return: A point in pygame screen coordinates.
         """
-        # TODO NDC space is local to the viewport. Make it behave so.
 
-        # display_rect = self.get_display_rect()
-        # surface_width, surface_height = display_rect.size
-        # center_x, center_y = display_rect.center
-        # view_point = (
-        #     center_x - int(ndc_coord[0] * (-surface_width / 2)),
-        #     center_y - int(ndc_coord[1] * (surface_height / 2)),
-        # )
-        # return view_point
+        display_rect = self.get_display_rect()
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        view_point = (
+            center_x - int(ndc_coord[0] * (-surface_width / 2)),
+            center_y - int(ndc_coord[1] * (surface_height / 2)),
+        )
+        return view_point
 
     def screen_to_ndc(self, point: Point) -> Point:
         """
@@ -84,3 +83,10 @@ class Viewport:
         width = frect.width * center_x
         height = frect.height * center_y
         return Rect(left, top, width, height)
+
+    @staticmethod
+    def _get_subrect_point(s_point: Point, size: Point) -> Point:
+        half_x, half_y = size[0] / 2, size[1] / 2
+        x = half_x - (s_point[0] * -half_x)
+        y = half_y - (s_point[1] * half_y)
+        return x, y
