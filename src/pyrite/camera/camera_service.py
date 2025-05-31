@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
-from pygame import Surface, Vector2
+from pygame import Surface, Vector2, Vector3
 
 from ..rendering.view_plane import ViewPlane
 from ..rendering.rect_bounds import RectBounds
@@ -57,6 +57,27 @@ class CameraService:
         surface_rect = surface.get_rect().copy()
         surface_rect.center = camera.transform.world_position
         return surface_rect
+
+    @classmethod
+    def local_to_ndc(cls, camera: Camera, local_coords: Vector3) -> Vector3:
+        """
+        Takes a point in local coordinates and transforms it into ndc space.
+
+        :param clip_coords: A 3D point in the local space of the camera.
+            For 2D, the Z axis is ignored.
+        :return: A 3D point in standard ndc space.
+        """
+        pass
+
+    @classmethod
+    def ndc_to_local(cls, camera: Camera, ndc_coords: Vector3) -> Vector3:
+        """
+        Takes a point in ndc space and transforms it into local coordinates
+
+        :param ndc_coords: A 3D point in ndc space.
+        :return: A 3D point in clip coordinates of the projection.
+        """
+        pass
 
     @classmethod
     def _rebuild_surface(cls, camera: Camera):
