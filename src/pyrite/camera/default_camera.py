@@ -46,6 +46,7 @@ class DefaultCamera(CameraBase):
         return self.get_view_bounds().contains(bounds)
 
     def draw_to_view(self, surface: Surface, position: Point):
+        # TODO Remove this
         self.surface.blit(surface, self.to_local(position))
 
     def get_view_bounds(self) -> ViewPlane:

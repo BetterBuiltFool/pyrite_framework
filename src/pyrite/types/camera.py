@@ -43,6 +43,7 @@ class CameraBase(ABC):
 
     @abstractmethod
     def draw_to_view(self, surface: Surface, position: Point):
+        # TODO Remove this
         """
         Draws a surface to the camera's surface. Automatically converts the position
         into local space.
