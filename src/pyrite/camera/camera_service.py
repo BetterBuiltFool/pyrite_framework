@@ -67,7 +67,26 @@ class CameraService:
             For 2D, the Z axis is ignored.
         :return: A 3D point in standard ndc space.
         """
-        pass
+        # Take the camera's projection.
+        # Take the far_plane rect
+        projection = camera.projection
+        far_plane = projection.far_plane
+        width, height = far_plane.size
+        depth = projection.z_far - projection.z_near
+        center_x, center_y = far_plane.center
+        # Convert the local coords to projection space center.
+        eye_point = (
+            local_coords.x - center_x,
+            local_coords.y - center_y,
+            local_coords.z,
+        )
+        # Divide by projection size to normalize.
+        ndc_coords = Vector3(
+            eye_point[0] / width,
+            eye_point[1] / height,
+            eye_point[2] / depth,
+        )
+        return ndc_coords
 
     @classmethod
     def ndc_to_local(cls, camera: Camera, ndc_coords: Vector3) -> Vector3:
@@ -81,6 +100,7 @@ class CameraService:
 
     @classmethod
     def _rebuild_surface(cls, camera: Camera):
+        # TODO Move this into CameraService
         zoom_factor = 1 / camera.zoom_level
         display_size = camera.projection.far_plane.size
         surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
@@ -89,26 +109,12 @@ class CameraService:
 
     @classmethod
     def to_local(cls, camera: Camera, point: Point) -> Point:
-        # TODO Slog through this and make it work
-        # It renders correctly, but bounds end up mirrored above the sprites.
-        # point = Vector2(point)
-
-        # point -= Vector2(self.get_surface_rect().bottomleft)
-
-        # point.y = -point.y
-
-        # return point
+        # TODO Make this factor in the camera's TransformComponent
         return point - Vector2(cls._get_view_rect(camera).topleft)
 
     @classmethod
     def to_world(cls, camera: Camera, point: Point) -> Point:
-        # point = Vector2(point)
-
-        # point += Vector2(self.get_surface_rect().bottomleft)
-
-        # point.y = -point.y
-
-        # return point
+        # TODO Make this factor in the camera's TransformComponent
 
         surface = cls._surfaces.get(camera)
         surface_rect = surface.get_rect().copy()
