@@ -82,9 +82,9 @@ class CameraService:
         )
         # Divide by projection size to normalize.
         ndc_coords = Vector3(
-            eye_point[0] / width,
-            eye_point[1] / height,
-            eye_point[2] / depth,
+            eye_point[0] / (width / 2),
+            eye_point[1] / (height / 2),
+            eye_point[2] / (depth / 2),
         )
         return ndc_coords
 
