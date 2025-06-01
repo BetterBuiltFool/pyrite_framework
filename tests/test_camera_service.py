@@ -25,6 +25,7 @@ class MockCamera:
 class TestCameraService(unittest.TestCase):
 
     def test_local_to_ndc(self):
+        # Centered projection, center coords
         projection = OrthProjection(Rect(-400, -300, 800, 600))
         test_cam = MockCamera(projection)
 
@@ -33,6 +34,51 @@ class TestCameraService(unittest.TestCase):
         ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
 
         expected = Vector3(0, 0, 0)
+
+        self.assertEqual(ndc_coords, expected)
+
+        # Centered projection, corner coords
+
+        local_position = Vector3(-400, -300, 1)
+
+        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
+
+        expected = Vector3(-1, -1, 1)
+
+        self.assertEqual(ndc_coords, expected)
+
+        # 3/4 projection, local 0 coords
+
+        projection = OrthProjection(Rect(-200, -150, 800, 600))
+        # center = (200, 150)
+        assert projection.far_plane.center == (200, 150)
+        test_cam.projection = projection
+
+        local_position = Vector3(0, 0, 0)
+
+        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
+
+        expected = Vector3(-0.5, -0.5, 0)
+
+        self.assertEqual(ndc_coords, expected)
+
+        # 3/4 projection, center coords
+
+        local_position = Vector3(200, 150, 0)
+
+        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
+
+        expected = Vector3(0, 0, 0)
+
+        self.assertEqual(ndc_coords, expected)
+
+        # 3/4 projection, corner coords
+
+        local_position = Vector3(-200, -150, 0)
+
+        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
+
+        expected = Vector3(-1, -1, 0)
 
         self.assertEqual(ndc_coords, expected)
 
