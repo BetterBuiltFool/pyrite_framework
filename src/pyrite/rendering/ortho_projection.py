@@ -43,3 +43,7 @@ class OrthProjection(Projection):
     @z_far.setter
     def z_far(self, distance: float):
         self._z_far = distance
+
+    @property
+    def z_depth(self) -> float:
+        return self._z_far - self._z_near

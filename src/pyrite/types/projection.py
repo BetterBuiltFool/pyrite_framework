@@ -29,3 +29,10 @@ class Projection(ABC):
         """
         Distance of the far plane from the projection source.
         """
+
+    @property
+    @abstractmethod
+    def z_depth(self) -> float:
+        """
+        Total depth of the projected area.
+        """
