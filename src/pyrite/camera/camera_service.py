@@ -59,6 +59,15 @@ class CameraService:
         return surface_rect
 
     @classmethod
+    def _get_projection_data(cls, camera: Camera) -> tuple[float, ...]:
+        projection = camera.projection
+        far_plane = projection.far_plane
+        width, height = far_plane.size
+        depth = projection.z_depth
+        center_x, center_y = far_plane.center
+        return width, height, depth, center_x, center_y
+
+    @classmethod
     def local_to_ndc(cls, camera: Camera, local_coords: Vector3) -> Vector3:
         """
         Takes a point in local coordinates and transforms it into ndc space.
@@ -67,13 +76,12 @@ class CameraService:
             For 2D, the Z axis is ignored.
         :return: A 3D point in standard ndc space.
         """
-        # Take the camera's projection.
-        # Take the far_plane rect
-        projection = camera.projection
-        far_plane = projection.far_plane
-        width, height = far_plane.size
-        depth = projection.z_depth
-        center_x, center_y = far_plane.center
+        # Frankly the only reason this is here is because the method will vary
+        # depending on the renderer.
+        # Default pyrite renderer doesn't use matrices, but openGL would, and I don't
+        # want to have to overwrite the projection classes if it can be avoided.
+
+        width, height, depth, center_x, center_y = cls._get_projection_data(camera)
         # Convert the local coords to projection space center.
         eye_point = (
             local_coords.x - center_x,
