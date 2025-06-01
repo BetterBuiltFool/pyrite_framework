@@ -72,7 +72,7 @@ class CameraService:
         projection = camera.projection
         far_plane = projection.far_plane
         width, height = far_plane.size
-        depth = projection.z_far - projection.z_near
+        depth = projection.z_depth
         center_x, center_y = far_plane.center
         # Convert the local coords to projection space center.
         eye_point = (
