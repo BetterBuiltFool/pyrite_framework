@@ -34,15 +34,6 @@ class CameraService:
         surface.fill((0, 0, 0))
 
     @classmethod
-    def draw_to_camera(cls, camera: Camera, image: Surface, position: Point):
-        surface = cls._surfaces.get(camera)
-        if surface is None:
-            camera.draw_to_view(image, position)
-            return
-            # TODO Fix this
-        surface.blit(image, camera.to_local(position))
-
-    @classmethod
     def get_bounds(cls, camera: Camera) -> CullingBounds:
         return RectBounds(cls.get_rect(camera))
 
