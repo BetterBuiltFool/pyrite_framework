@@ -88,8 +88,8 @@ class Camera(DefaultCamera, Renderable):
         CameraService.clear(self)
 
     def draw_to_view(self, surface: Surface, position: Point):
-        # TODO Remove this and let the SpriteRenderer do this.
-        CameraService.draw_to_camera(self, surface, position)
+        # TODO Erase this once removed from Camera ABC
+        pass
 
     def get_bounds(self) -> RectBounds:
         return CameraService.get_bounds(self)
