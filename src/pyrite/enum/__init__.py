@@ -171,7 +171,7 @@ class Anchor:
         rect = Rect(rectangle)
         pivot = self.get_center_offset(rect)
         pivot_scaled: Vector2 = pivot.elementwise() * scale
-        rot_pivot = pivot_scaled.rotate(-angle)
+        rot_pivot = pivot_scaled.rotate(angle)
         return position - rot_pivot
 
     def get_center_offset(self, rectangle: Rect) -> Vector2:
@@ -204,12 +204,12 @@ class AnchorPoint:
     An enum for modifying the position of a rectangle for renderables.
     """
 
-    TOPLEFT = Anchor((0, 0))
-    MIDTOP = Anchor((0.5, 0))
-    TOPRIGHT = Anchor((1, 0))
+    TOPLEFT = Anchor((0, 1))
+    MIDTOP = Anchor((0.5, 1))
+    TOPRIGHT = Anchor((1, 1))
     MIDLEFT = Anchor((0, 0.5))
     CENTER = Anchor((0.5, 0.5))
     MIDRIGHT = Anchor((1, 0.5))
-    BOTTOMLEFT = Anchor((0, 1))
-    MIDBOTTOM = Anchor((0.5, 1))
-    BOTTOMRIGHT = Anchor((1, 1))
+    BOTTOMLEFT = Anchor((0, 0))
+    MIDBOTTOM = Anchor((0.5, 0))
+    BOTTOMRIGHT = Anchor((1, 0))

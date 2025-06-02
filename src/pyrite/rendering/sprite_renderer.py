@@ -70,7 +70,7 @@ class SpriteRenderer(Renderer):
         surface_rect = surface.get_rect()
         surface_rect.center = position
 
-        cls._draw_to_camera(camera, surface, surface_rect.topleft)
+        cls._draw_to_camera(camera, surface, surface_rect.bottomleft)
 
     @classmethod
     def _draw_to_camera(cls, camera: Camera, sprite_surface: Surface, position: Point):
@@ -78,8 +78,10 @@ class SpriteRenderer(Renderer):
         if surface is None:
             camera.draw_to_view(sprite_surface, position)
             return
-        surface.blit(sprite_surface, camera.to_local(position))
-        # CameraService.draw_to_camera(camera, sprite_surface, position)
+            # TODO Fix this
+        local_pos = camera.to_local(position)
+        local_pos[1] = surface.size[1] - local_pos[1]
+        surface.blit(sprite_surface, local_pos)
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:
