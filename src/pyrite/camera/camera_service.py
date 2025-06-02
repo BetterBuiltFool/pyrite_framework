@@ -113,8 +113,8 @@ class CameraService:
         )
         # Translate to local camera space.
         local_coords = Vector3(
-            center_x - projection_coords[0],
-            center_y - projection_coords[1],
+            center_x + projection_coords[0],
+            center_y + projection_coords[1],
             projection_coords[2],
         )
         return local_coords
