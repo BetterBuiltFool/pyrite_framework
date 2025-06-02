@@ -36,6 +36,10 @@ class CameraService:
     @classmethod
     def draw_to_camera(cls, camera: Camera, image: Surface, position: Point):
         surface = cls._surfaces.get(camera)
+        if surface is None:
+            camera.draw_to_view(image, position)
+            return
+            # TODO Fix this
         surface.blit(image, camera.to_local(position))
 
     @classmethod
