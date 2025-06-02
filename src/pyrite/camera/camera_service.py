@@ -104,7 +104,20 @@ class CameraService:
         :param ndc_coords: A 3D point in ndc space.
         :return: A 3D point in clip coordinates of the projection.
         """
-        pass
+        width, height, depth, center_x, center_y = cls._get_projection_data(camera)
+        # Convert into projection space coords
+        projection_coords = (
+            int(ndc_coords[0] * (width / 2)),
+            int(ndc_coords[1] * (height / 2)),
+            int(ndc_coords[2] * (depth / 2)),
+        )
+        # Translate to local camera space.
+        local_coords = Vector3(
+            center_x - projection_coords[0],
+            center_y - projection_coords[1],
+            projection_coords[2],
+        )
+        return local_coords
 
     @classmethod
     def _rebuild_surface(cls, camera: Camera):
