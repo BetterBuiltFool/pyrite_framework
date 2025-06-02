@@ -8,9 +8,11 @@ import pygame
 from ..types import Renderer
 
 if TYPE_CHECKING:
-    from ..types import CameraBase, Transform
+    from ..types import Transform
+    from ..camera import Camera
     from ..sprite import Sprite
     from pygame import Surface
+    from pygame.typing import Point
 
     SpriteData: TypeAlias = tuple[Surface, Transform]
 
@@ -49,7 +51,7 @@ class SpriteRenderer(Renderer):
         )
 
     @classmethod
-    def render(cls, sprite: Sprite, camera: CameraBase):
+    def render(cls, sprite: Sprite, camera: Camera):
         surface, transform = cls.get(sprite)
         if surface is None or not cls.validate_sprite(sprite, surface, transform):
             # Update the cache. This will save us redraws when the sprite is unchanged.
@@ -66,7 +68,12 @@ class SpriteRenderer(Renderer):
         )
         surface_rect = surface.get_rect()
         surface_rect.center = position
-        camera.draw_to_view(surface, surface_rect.topleft)
+        # camera.draw_to_view(surface, surface_rect.topleft)
+        cls._draw_to_camera(camera, surface, surface_rect.topleft)
+
+    @classmethod
+    def _draw_to_camera(cls, camera: Camera, sprite_surface: Surface, position: Point):
+        camera.draw_to_view(sprite_surface, position)
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:
