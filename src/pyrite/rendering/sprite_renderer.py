@@ -6,6 +6,7 @@ from weakref import WeakKeyDictionary
 import pygame
 
 from ..types import Renderer
+from ..camera.camera_service import CameraService
 
 if TYPE_CHECKING:
     from ..types import Transform
@@ -68,12 +69,12 @@ class SpriteRenderer(Renderer):
         )
         surface_rect = surface.get_rect()
         surface_rect.center = position
-        # camera.draw_to_view(surface, surface_rect.topleft)
+
         cls._draw_to_camera(camera, surface, surface_rect.topleft)
 
     @classmethod
     def _draw_to_camera(cls, camera: Camera, sprite_surface: Surface, position: Point):
-        camera.draw_to_view(sprite_surface, position)
+        CameraService.draw_to_camera(camera, sprite_surface, position)
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:
