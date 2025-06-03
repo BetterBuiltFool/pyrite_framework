@@ -34,10 +34,6 @@ class RenderLayers:
     BACKGROUND = Layer(0, "Background")
     MIDGROUND = Layer(1, "Midground")
     FOREGROUND = Layer(2, "Foreground")
-    UI_LAYER = Layer(3, "UI Layer")
-    """
-    Special layer that is drawn in camera space, not world space.
-    """
     CAMERA = Layer(-1, "Camera")
     """
     Special layer for camera objects. Not in the layer sequence. Always draw last.
@@ -50,8 +46,7 @@ class RenderLayers:
     def add_layer(cls, layer: Layer):
         """
         Inserts the new layer into the enum. The layer is assigned based on its
-        render_index. If the render index is None, the layer is placed second to last,
-        just before the UI layer (To ensure UI is always drawn last.)
+        render_index. If the render index is None, the layer is placed last.
 
         :param layer: Layer object being inserted.
         """
@@ -90,7 +85,6 @@ class RenderLayers:
             item == cls.BACKGROUND,
             item == cls.MIDGROUND,
             item == cls.FOREGROUND,
-            item == cls.UI_LAYER,
             item == cls.CAMERA,
         ):
             raise ValueError(

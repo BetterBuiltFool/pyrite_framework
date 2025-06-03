@@ -281,14 +281,6 @@ class DefaultRenderManager(RenderManager):
 
         render_queue.update(
             {
-                RenderLayers.UI_LAYER: self.sort_layer(
-                    self.renderables.get(RenderLayers.UI_LAYER, {})
-                )
-            }
-        )
-
-        render_queue.update(
-            {
                 RenderLayers.CAMERA: self.sort_layer(
                     self.renderables.get(RenderLayers.CAMERA, {})
                 )
@@ -437,9 +429,6 @@ class DefaultRenderSystem(RenderSystem):
         self._debug_draw_to_screen(window_camera.surface, render_queue)
 
         # Render the UI last.
-        # self.render_ui(
-        #     delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
-        # )
 
     def _debug_draw_to_screen(self, window: pygame.Surface, render_queue: RenderQueue):
         for renderer in self._debug_renderers:
