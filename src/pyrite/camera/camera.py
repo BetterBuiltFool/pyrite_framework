@@ -16,7 +16,7 @@ import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from ..types import CameraViewBounds, Container, CameraBase, TransformProtocol
+    from ..types import CameraViewBounds, Container, TransformProtocol
     from ..types.projection import Projection
     from pygame.typing import Point
     from pygame import Surface
@@ -97,8 +97,8 @@ class Camera(DefaultCamera, Renderable):
     def get_view_bounds(self) -> CameraViewBounds:
         return CameraService.get_view_bounds(self)
 
-    def render(self, delta_time: float, camera: CameraBase):
-        CameraRenderer.render(self, camera)
+    def render(self, delta_time, viewport: Viewport):
+        CameraRenderer.render(self, viewport)
 
     def to_local(self, point: Point) -> Point:
         return CameraService.to_local(self, point)

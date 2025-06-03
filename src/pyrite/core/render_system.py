@@ -367,11 +367,10 @@ class DefaultRenderSystem(RenderSystem):
             render_rect.center = camera.to_local(render_rect.center)
             pygame.draw.rect(camera.surface, (0, 0, 255), render_rect, 2)
 
-    def draw_camera(
+    def render_camera(
         self,
         delta_time: float,
         camera: Camera,
-        window_camera: CameraBase,
     ):
         """
         Draws the given camera to the window, at each of its surface viewports.
@@ -380,7 +379,8 @@ class DefaultRenderSystem(RenderSystem):
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
         """
-        camera.render(delta_time, window_camera)
+        for viewport in camera.viewports:
+            camera.render(delta_time, viewport)
 
     def render_ui(
         self,
@@ -424,7 +424,7 @@ class DefaultRenderSystem(RenderSystem):
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            self.draw_camera(delta_time, camera, window_camera)
+            self.render_camera(delta_time, camera)
 
         self._debug_draw_to_screen(window_camera.surface, render_queue)
 
