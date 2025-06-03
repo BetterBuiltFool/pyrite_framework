@@ -404,8 +404,8 @@ class DefaultRenderSystem(RenderSystem):
         :param ui_elements: The sequence of ui elements to be drawn, in order.
         :param cameras: The cameras being drawn to.
         """
-        for ui_element in ui_elements:
-            ui_element.render(delta_time, window_camera)
+        # for ui_element in ui_elements:
+        #     ui_element.render(delta_time, window_camera)
 
     def render(
         self,
@@ -429,8 +429,6 @@ class DefaultRenderSystem(RenderSystem):
                 if layer in camera.layer_mask:
                     continue
                 self.render_layer(delta_time, render_sequence, camera)
-                # TODO Add a generic way to do this.
-                # self.draw_bounds(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in render_queue.get(RenderLayers.CAMERA, ()):
@@ -439,9 +437,9 @@ class DefaultRenderSystem(RenderSystem):
         self._debug_draw_to_screen(window_camera.surface, render_queue)
 
         # Render the UI last.
-        self.render_ui(
-            delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
-        )
+        # self.render_ui(
+        #     delta_time, render_queue.get(RenderLayers.UI_LAYER, []), window_camera
+        # )
 
     def _debug_draw_to_screen(self, window: pygame.Surface, render_queue: RenderQueue):
         for renderer in self._debug_renderers:
