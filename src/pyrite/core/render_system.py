@@ -7,7 +7,6 @@ from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
 from ..enum import RenderLayers
-from ..rendering.viewport import Viewport
 
 if TYPE_CHECKING:
     from ..camera import Camera
@@ -167,16 +166,6 @@ class RenderManager(ABC):
             render_manager = manager_type()
         return render_manager
 
-    @abstractmethod
-    def get_viewports(self) -> list[Viewport]:
-        """
-        Returns a list of viewports managed by the Render Manager.
-        If no viewports are managed, the default, full screen viewport is used.
-
-        :return: A list of viewports.
-        """
-        pass
-
 
 class RenderSystem(ABC):
     """
@@ -241,7 +230,6 @@ class DefaultRenderManager(RenderManager):
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
         self._rendered_last_frame: int = 0
-        self._viewports: list[Viewport] = []
 
         super().__init__()
 
@@ -322,9 +310,6 @@ class DefaultRenderManager(RenderManager):
         for layer_set in self.renderables.values():
             count += len(layer_set)
         return count
-
-    def get_viewports(self) -> list[Viewport]:
-        return self._viewports
 
     def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
         """
