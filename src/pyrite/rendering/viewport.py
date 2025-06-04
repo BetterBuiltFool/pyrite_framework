@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import typing
+from typing import Any, TYPE_CHECKING
 
 import pygame
 from pygame import FRect, Rect
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
 
 
@@ -14,13 +14,21 @@ class Viewport:
     Represents a portion of a surface, primarily for rendering out cameras.
     """
 
-    def __init__(self, frect: FRect | RectLike = None, **kwds) -> None:
-        """
-        Represents a portion of a surface, primarily for rendering out cameras.
-        Uses Normalized Device Coordinates (ndc), so
-        left = -1, right = 1, top = 1, bottom = -1
+    _viewports: dict[Any, Viewport] = {}
+    DEFAULT: Viewport = None
 
+    def __init__(self, frect: FRect | RectLike) -> None:
+        self.frect = FRect(frect)
+
+    @classmethod
+    def add_new_viewport(cls, label: Any, frect: FRect | RectLike = None, **kwds):
+        """
+        Adds a new viewport to the viewport dict.
+
+        :param label: An object to be associated with the new Viewport.
         :param frect: An FRect representing the screen viewport in ndc space.
+            Uses Normalized Device Coordinates (ndc), so
+            left = -1, right = 1, top = 1, bottom = -1
         """
         if frect is None:
             if not (topleft := kwds.get("topleft")):
@@ -29,7 +37,8 @@ class Viewport:
                 bottomright = (1, -1)
             size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
             frect = FRect(topleft[0], topleft[1], size[0], size[1])
-        self.frect = FRect(frect)
+        viewport = Viewport(frect)
+        cls._viewports.update({label: viewport})
 
     def ndc_to_screen(self, ndc_coord: Point) -> Point:
         """
@@ -82,3 +91,8 @@ class Viewport:
         width = frect.width * center_x
         height = frect.height * center_y
         return Rect(left, top, width, height)
+
+
+# Set the default Viewport, since we can't form an instance inside that class's
+# declaration.
+Viewport.DEFAULT = Viewport((-1, 1, 2, 2))
