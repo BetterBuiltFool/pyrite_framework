@@ -13,6 +13,7 @@ from .core.system_manager import SystemManager
 
 from ._helper import defaults
 from .camera.default_camera import DefaultCamera
+from .rendering.viewport import Viewport
 from .transform import transform_system
 from .utils import threading
 
@@ -143,6 +144,7 @@ class Game:
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
+        Viewport.update_viewports(self.window.size)
         self.window_camera = DefaultCamera(self.window)
 
     def add_system(self, system_type: type[System]):
