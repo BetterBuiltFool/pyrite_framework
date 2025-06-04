@@ -97,6 +97,7 @@ class Viewport:
         """
         for viewport in cls._viewports.values():
             viewport._update_display_rect(size)
+        cls.DEFAULT._update_display_rect(size)
 
     # TODO Consider @functools.cache?
     @staticmethod
