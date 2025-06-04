@@ -53,7 +53,7 @@ class Camera(DefaultCamera, Renderable):
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
         )
         if viewports is None:
-            viewports = [Viewport()]
+            viewports = [Viewport.DEFAULT]
         if not isinstance(viewports, Sequence):
             viewports = [viewports]
         self.viewports: Sequence[Viewport] = viewports
