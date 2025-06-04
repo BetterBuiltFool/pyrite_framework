@@ -31,6 +31,7 @@ class Viewport:
         :param frect: An FRect representing the screen viewport in ndc space.
             Uses Normalized Device Coordinates (ndc), so
             left = -1, right = 1, top = 1, bottom = -1
+        :return: The created viewport.
         """
         if frect is None:
             if not (topleft := kwds.get("topleft")):
@@ -40,6 +41,17 @@ class Viewport:
             size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
             frect = FRect(topleft[0], topleft[1], size[0], size[1])
         viewport = Viewport(frect)
+        return cls.add_viewport(label, viewport)
+
+    @classmethod
+    def add_viewport(cls, label: Any, viewport: Viewport) -> Viewport:
+        """
+        Adds a new viewport to the viewport dict.
+
+        :param label: An object to be associated with the new Viewport.
+        :param viewport: An existing viewport object to be added.
+        :return: The existing viewport object.
+        """
         cls._viewports.update({label: viewport})
         return viewport
 
