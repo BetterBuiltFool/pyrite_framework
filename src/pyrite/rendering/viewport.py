@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
-import pygame
 from pygame import FRect, Rect
 
 if TYPE_CHECKING:
@@ -84,7 +83,7 @@ class Viewport:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' frect.
         """
-        return self._get_subrect(self.frect, pygame.display.get_surface().size)
+        return self._display_rects.get(self)
 
     def _update_display_rect(self, size: Point):
         abs_rect = self._get_subrect(self.frect, size)
@@ -93,7 +92,7 @@ class Viewport:
     @classmethod
     def update_viewports(cls, size: Point):
         """
-        Updates all of the contianed viewports so their absolute size is appropriate
+        Updates all of the contained viewports so their absolute size is appropriate
         for the passed size.
 
         :param size: A point describing the size of the display.
@@ -102,7 +101,6 @@ class Viewport:
             viewport._update_display_rect(size)
         cls.DEFAULT._update_display_rect(size)
 
-    # TODO Consider @functools.cache?
     @staticmethod
     def _get_subrect(frect: FRect, size: Point) -> Rect:
         center_x, center_y = size[0] / 2, size[1] / 2
@@ -116,3 +114,4 @@ class Viewport:
 # Set the default Viewport, since we can't form an instance inside that class's
 # declaration.
 Viewport.DEFAULT = Viewport((-1, 1, 2, 2))
+# Do NOT set the display rect yet, since the display might not exist yet.
