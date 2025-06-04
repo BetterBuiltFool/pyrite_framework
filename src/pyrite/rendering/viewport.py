@@ -15,6 +15,7 @@ class Viewport:
     """
 
     _viewports: dict[Any, Viewport] = {}
+    _display_rects: dict[Viewport, Rect] = {}
     DEFAULT: Viewport = None
 
     def __init__(self, frect: FRect | RectLike) -> None:
@@ -81,6 +82,21 @@ class Viewport:
         screen viewports' frect.
         """
         return self._get_subrect(self.frect, pygame.display.get_surface().size)
+
+    def _update_display_rect(self, size: Point):
+        abs_rect = self._get_subrect(self.frect, size)
+        self._display_rects.update({self, abs_rect})
+
+    @classmethod
+    def update_viewports(cls, size: Point):
+        """
+        Updates all of the contianed viewports so their absolute size is appropriate
+        for the passed size.
+
+        :param size: A point describing the size of the display.
+        """
+        for viewport in cls._viewports.values():
+            viewport._update_display_rect(size)
 
     # TODO Consider @functools.cache?
     @staticmethod
