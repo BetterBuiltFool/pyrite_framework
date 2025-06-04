@@ -15,10 +15,21 @@ class Viewport:
 
     _viewports: dict[Any, Viewport] = {}
     _display_rects: dict[Viewport, Rect] = {}
+    # TODO: Store these as numpy array data, and construct rects as needed?
+    _relative_rects: dict[Viewport, FRect] = {}
     DEFAULT: Viewport = None
 
     def __init__(self, frect: FRect | RectLike) -> None:
         self.frect = FRect(frect)
+
+    @property
+    def frect(self) -> FRect:
+        return self._relative_rects.get(self)
+
+    @frect.setter
+    def frect(self, new_frect: FRect):
+        self._relative_rects.update({self: new_frect})
+        # TODO Force update to the display size.
 
     @classmethod
     def add_new_viewport(
