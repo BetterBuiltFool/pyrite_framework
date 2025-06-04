@@ -22,7 +22,9 @@ class Viewport:
         self.frect = FRect(frect)
 
     @classmethod
-    def add_new_viewport(cls, label: Any, frect: FRect | RectLike = None, **kwds):
+    def add_new_viewport(
+        cls, label: Any, frect: FRect | RectLike = None, **kwds
+    ) -> Viewport:
         """
         Adds a new viewport to the viewport dict.
 
@@ -40,6 +42,7 @@ class Viewport:
             frect = FRect(topleft[0], topleft[1], size[0], size[1])
         viewport = Viewport(frect)
         cls._viewports.update({label: viewport})
+        return viewport
 
     def ndc_to_screen(self, ndc_coord: Point) -> Point:
         """
