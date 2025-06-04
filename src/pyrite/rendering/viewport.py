@@ -88,7 +88,7 @@ class Viewport:
 
     def _update_display_rect(self, size: Point):
         abs_rect = self._get_subrect(self.frect, size)
-        self._display_rects.update({self, abs_rect})
+        self._display_rects.update({self: abs_rect})
 
     @classmethod
     def update_viewports(cls, size: Point):
