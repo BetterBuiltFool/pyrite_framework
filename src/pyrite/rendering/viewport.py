@@ -14,22 +14,23 @@ class Viewport:
     """
 
     _viewports: dict[Any, Viewport] = {}
-    _display_rects: dict[Viewport, Rect] = {}
-    # TODO: Store these as numpy array data, and construct rects as needed?
-    _relative_rects: dict[Viewport, FRect] = {}
+
     DEFAULT: Viewport = None
 
     def __init__(self, frect: FRect | RectLike) -> None:
-        self.frect = FRect(frect)
+        self._frect = FRect(frect)
 
     @property
     def frect(self) -> FRect:
-        return self._relative_rects.get(self)
+        return self._frect
 
     @frect.setter
     def frect(self, new_frect: FRect):
-        self._relative_rects.update({self: new_frect})
-        # TODO Force update to the display size.
+        self._frect = new_frect
+
+    @property
+    def display_rect(self) -> Rect:
+        return self._display_rect
 
     @classmethod
     def add_new_viewport(
@@ -106,11 +107,11 @@ class Viewport:
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' frect.
         """
-        return self._display_rects.get(self)
+        return self._display_rect
 
     def _update_display_rect(self, size: Point):
         abs_rect = self._get_subrect(self.frect, size)
-        self._display_rects.update({self: abs_rect})
+        self._display_rect = abs_rect
 
     @classmethod
     def update_viewports(cls, size: Point):
