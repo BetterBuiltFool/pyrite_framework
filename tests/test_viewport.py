@@ -16,15 +16,7 @@ from src.pyrite.rendering.viewport import Viewport  # noqa:E402
 display_size = (600, 800)
 
 
-def get_display_rect(self: Viewport) -> Rect:
-    return self._get_subrect(self.frect, display_size)
-
-
 class TestViewport(unittest.TestCase):
-
-    def setUp(self) -> None:
-        # Some methods use this, so we monkeypatch in a controlled, testable version.
-        Viewport.get_display_rect = get_display_rect
 
     def test_get_subrect(self):
         # Full screen
@@ -59,6 +51,7 @@ class TestViewport(unittest.TestCase):
         # Full screen, top left point
         viewport_rect = FRect(-1, 1, 2, 2)
         viewport = Viewport(viewport_rect)
+        viewport._update_display_rect(display_size)
         ndc_coords = (-1, 1)
 
         screen_coords = viewport.ndc_to_screen(ndc_coords)
@@ -88,6 +81,7 @@ class TestViewport(unittest.TestCase):
         # Bottomright quadrant screen, top left point
         viewport_rect = FRect(0, 0, 1, 1)
         viewport = Viewport(viewport_rect)
+        viewport._update_display_rect(display_size)
         ndc_coords = (-1, 1)
 
         screen_coords = viewport.ndc_to_screen(ndc_coords)
@@ -118,6 +112,7 @@ class TestViewport(unittest.TestCase):
         # Full screen, top left point
         viewport_rect = FRect(-1, 1, 2, 2)
         viewport = Viewport(viewport_rect)
+        viewport._update_display_rect(display_size)
         screen_coords = (0, 0)
 
         ndc_coords = viewport.screen_to_ndc(screen_coords)
@@ -147,6 +142,7 @@ class TestViewport(unittest.TestCase):
         # Bottomright quadrant screen, top left point
         viewport_rect = FRect(0, 0, 1, 1)
         viewport = Viewport(viewport_rect)
+        viewport._update_display_rect(display_size)
         screen_coords = display_size[0] / 2, display_size[1] / 2
 
         ndc_coords = viewport.screen_to_ndc(screen_coords)
