@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+import pygame
 from pygame import FRect, Rect
 
 if TYPE_CHECKING:
@@ -27,6 +28,7 @@ class Viewport:
     @relative_rect.setter
     def relative_rect(self, new_relative_rect: FRect):
         self._relative_rect = new_relative_rect
+        self._update_display_rect(pygame.display.get_surface().size)
 
     @property
     def display_rect(self) -> Rect:
