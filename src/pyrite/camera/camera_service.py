@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 class CameraService:
 
     _surfaces: WeakKeyDictionary[Camera, Surface] = WeakKeyDictionary()
+    _active_cameras: set[Camera] = set()
 
     @classmethod
     def add_camera(cls, camera: Camera):
@@ -29,9 +30,47 @@ class CameraService:
         cls._rebuild_surface(camera)
 
     @classmethod
+    def enable(cls, camera: Camera):
+        """
+        Marks a camera as being active and thus rendering.
+
+        :param camera: The Camera object to be enabled.
+        """
+        cls._active_cameras.add(camera)
+
+    @classmethod
+    def disable(cls, camera: Camera):
+        """
+        Marks a Camera object as being inactive, and not rendering.
+
+        :param camera: The Camera object to be disabled. Does nothing if the camera is
+            already disabled.
+        """
+        cls._active_cameras.discard(camera)
+
+    @classmethod
     def clear(cls, camera: Camera):
         surface = cls._surfaces.get(camera)
         surface.fill((0, 0, 0))
+
+    @classmethod
+    def get_active_cameras(cls) -> list[Camera]:
+        """
+        Returns a list of all active cameras.
+
+        :return: A list containing all enabled cameras.
+        """
+        return list(cls._active_cameras)
+
+    @classmethod
+    def get_render_cameras(cls) -> list[Camera]:
+        """
+        Returns a list containing all active cameras. If there are no active cameras, a
+        default camera representing the display is supplied isntead.
+
+        :return: A list of cameras.
+        """
+        pass
 
     @classmethod
     def get_bounds(cls, camera: Camera) -> CullingBounds:
