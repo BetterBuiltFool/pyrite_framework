@@ -102,6 +102,10 @@ class CameraService:
         return width, height, depth, center_x, center_y
 
     @classmethod
+    def is_enabled(cls, camera: Camera) -> bool:
+        return camera in cls._active_cameras
+
+    @classmethod
     def local_to_ndc(cls, camera: Camera, local_coords: Vector3) -> Vector3:
         """
         Takes a point in local coordinates and transforms it into ndc space.
