@@ -218,6 +218,15 @@ class CameraService:
         pass
 
     @classmethod
+    def update_default_camera(cls, size: Point):
+        """
+        Updates the default camera so its projection matches the size of the display.
+
+        :param size: A point representing the size of the display
+        """
+        pass
+
+    @classmethod
     def zoom(cls, camera: Camera, zoom: float):
         camera._zoom_level = zoom
         cls._rebuild_surface(camera)
