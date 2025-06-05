@@ -144,6 +144,7 @@ class NewCamera(CameraBase):
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
+        draw_index: int = 0,
     ) -> None:
         if transform is not None:
             if isinstance(transform, transform_component.TransformComponent):
@@ -164,6 +165,7 @@ class NewCamera(CameraBase):
         if not isinstance(viewports, Sequence):
             viewports = [viewports]
         self.viewports: Sequence[Viewport] = viewports
+        self.draw_index = draw_index
         if layer_mask is None:
             layer_mask = ()
         self.layer_mask = layer_mask
