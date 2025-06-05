@@ -8,6 +8,8 @@ from weakref import WeakSet
 
 from ..enum import RenderLayers
 
+from ..camera.camera_service import CameraService
+
 if TYPE_CHECKING:
     from ..camera import Camera
     from ..enum import Layer
@@ -273,19 +275,11 @@ class DefaultRenderManager(RenderManager):
         self,
     ) -> RenderQueue:
         render_queue: RenderQueue = {}
-        cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
+        cameras = CameraService.get_active_cameras()
 
         for layer in RenderLayers._layers:
             layer_dict = self.precull(self.renderables.get(layer, {}), layer, cameras)
             render_queue.update({layer: layer_dict})
-
-        render_queue.update(
-            {
-                RenderLayers.CAMERA: self.sort_layer(
-                    self.renderables.get(RenderLayers.CAMERA, {})
-                )
-            }
-        )
 
         return render_queue
 
@@ -406,11 +400,7 @@ class DefaultRenderSystem(RenderSystem):
         render_queue: RenderQueue,
     ):
         self._rendered_last_frame = 0
-        cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
-        if not cameras:
-            # Treat the screen as a camera for the sake of rendering if there are no
-            # camera objects.
-            cameras = (window_camera,)  # Needs to be in a sequence
+        cameras = CameraService.get_render_cameras()
 
         for camera in cameras:
             camera.clear()
@@ -423,7 +413,7 @@ class DefaultRenderSystem(RenderSystem):
                 self.render_layer(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
-        for camera in render_queue.get(RenderLayers.CAMERA, ()):
+        for camera in CameraService.get_active_cameras():
             self.render_camera(delta_time, camera)
 
         self._debug_draw_to_screen(window_camera.surface, render_queue)
