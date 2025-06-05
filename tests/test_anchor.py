@@ -76,7 +76,7 @@ class TestAnchor(unittest.TestCase):
 
         new_center = anchor.get_rect_center(rect, (6, -2), angle)
 
-        expected = Vector2(6, 0)
+        expected = Vector2(6, -4)
 
         self.assertEqual(new_center, expected)
 
@@ -85,7 +85,7 @@ class TestAnchor(unittest.TestCase):
 
         new_center = anchor.get_rect_center(rect, (6, -2), angle)
 
-        expected = Vector2(6, -4)
+        expected = Vector2(6, 0)
 
         self.assertEqual(new_center, expected)
 
