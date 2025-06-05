@@ -4,6 +4,8 @@ import asyncio
 import logging
 from typing import Self, TYPE_CHECKING
 
+from pygame import Rect
+
 from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
@@ -13,6 +15,9 @@ from .core.system_manager import SystemManager
 
 from ._helper import defaults
 from .camera.default_camera import DefaultCamera
+from .camera.camera import NewCamera
+from .camera.camera_service import CameraService
+from .rendering.ortho_projection import OrthProjection
 from .rendering.viewport import Viewport
 from .transform import transform_system
 from .utils import threading
@@ -144,7 +149,16 @@ class Game:
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
+        # Ensure we have a default camera in case there are no others.
+        default_camera = NewCamera(OrthProjection(Rect(0, 0, *self.window.size)))
+        CameraService._default_camera = default_camera
+        # Update the default camera so that it captures the new display.
+        CameraService.update_default_camera(self.window.size)
+
+        # Update the viewports so they are sized correctly
         Viewport.update_viewports(self.window.size)
+
+        # TODO Remove this once able.
         self.window_camera = DefaultCamera(self.window)
 
     def add_system(self, system_type: type[System]):
