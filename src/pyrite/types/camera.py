@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from pygame import Surface
     from pygame.typing import Point
     from . import CameraViewBounds, Renderable
     from ..enum import Layer
@@ -38,18 +37,6 @@ class CameraBase(ABC):
 
         :param renderable: Any renderable item to be drawn.
         :return: True if the renderable is visible and should be drawn, otherwise False.
-        """
-        pass
-
-    @abstractmethod
-    def draw_to_view(self, surface: Surface, position: Point):
-        # TODO Remove this
-        """
-        Draws a surface to the camera's surface. Automatically converts the position
-        into local space.
-
-        :param surface: The source surface being drawn from.
-        :param position: A point in world space where the surface is located.
         """
         pass
 

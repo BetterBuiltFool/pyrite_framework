@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
     from ..types.projection import Projection
     from pygame.typing import Point
-    from pygame import Surface
 
     P = TypeVar("P", bound=Projection)
 
@@ -102,10 +101,6 @@ class Camera(CameraBase):
     def cull(self, renderable: Renderable) -> bool:
         bounds = renderable.get_bounds()
         return self.get_view_bounds().contains(bounds)
-
-    def draw_to_view(self, surface: Surface, position: Point):
-        # TODO Erase this once removed from Camera ABC
-        pass
 
     def get_bounds(self) -> RectBounds:
         return CameraService.get_bounds(self)
