@@ -14,7 +14,6 @@ from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
 from ._helper import defaults
-from .camera.default_camera import DefaultCamera
 from .camera.camera import Camera
 from .camera.camera_service import CameraService
 from .rendering.ortho_projection import OrthProjection
@@ -158,9 +157,6 @@ class Game:
         # Update the viewports so they are sized correctly
         Viewport.update_viewports(self.window.size)
 
-        # TODO Remove this once able.
-        self.window_camera = DefaultCamera(self.window)
-
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)
 
@@ -168,8 +164,6 @@ class Game:
         """
         Initializes any systems that are indicated to be required when the game starts.
         """
-        # global get_system_manager
-        # get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
             system()
 
@@ -347,7 +341,7 @@ class Game:
         window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
-        self.renderer.render(self.window_camera, delta_time, render_queue)
+        self.renderer.render(self.window, delta_time, render_queue)
 
         self.render(window, delta_time)
 

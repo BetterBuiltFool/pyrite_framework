@@ -6,6 +6,9 @@ from collections.abc import Sequence
 from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
+import pygame
+from pygame import Surface
+
 from ..enum import RenderLayers
 
 from ..camera.camera_service import CameraService
@@ -18,8 +21,6 @@ if TYPE_CHECKING:
 
     LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
-
-import pygame
 
 
 _active_render_manager: RenderManager = None
@@ -182,7 +183,7 @@ class RenderSystem(ABC):
     @abstractmethod
     def render(
         self,
-        window: pygame.Surface,
+        window: Surface,
         delta_time: float,
         render_queue: dict[Any, Sequence[Renderable]],
     ):
@@ -380,7 +381,7 @@ class DefaultRenderSystem(RenderSystem):
         self,
         delta_time: float,
         ui_elements: Sequence[Renderable],
-        window_camera: CameraBase,
+        window: Surface,
     ):
         """
         Goes through the ui elements, and draws them to the screen. They are already in
@@ -391,11 +392,11 @@ class DefaultRenderSystem(RenderSystem):
         :param cameras: The cameras being drawn to.
         """
         # for ui_element in ui_elements:
-        #     ui_element.render(delta_time, window_camera)
+        #     ui_element.render(delta_time, window)
 
     def render(
         self,
-        window_camera: CameraBase,
+        window: Surface,
         delta_time: float,
         render_queue: RenderQueue,
     ):
@@ -416,11 +417,11 @@ class DefaultRenderSystem(RenderSystem):
         for camera in CameraService.get_active_cameras():
             self.render_camera(delta_time, camera)
 
-        self._debug_draw_to_screen(window_camera.surface, render_queue)
+        self._debug_draw_to_screen(window, render_queue)
 
         # Render the UI last.
 
-    def _debug_draw_to_screen(self, window: pygame.Surface, render_queue: RenderQueue):
+    def _debug_draw_to_screen(self, window: Surface, render_queue: RenderQueue):
         for renderer in self._debug_renderers:
             renderer.draw_to_screen(window, render_queue)
 
