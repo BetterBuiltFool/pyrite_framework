@@ -17,16 +17,16 @@ class Viewport:
 
     DEFAULT: Viewport = None
 
-    def __init__(self, frect: FRect | RectLike) -> None:
-        self._frect = FRect(frect)
+    def __init__(self, relative_rect: FRect | RectLike) -> None:
+        self._relative_rect = FRect(relative_rect)
 
     @property
-    def frect(self) -> FRect:
-        return self._frect
+    def relative_rect(self) -> FRect:
+        return self._relative_rect
 
-    @frect.setter
-    def frect(self, new_frect: FRect):
-        self._frect = new_frect
+    @relative_rect.setter
+    def relative_rect(self, new_relative_rect: FRect):
+        self._relative_rect = new_relative_rect
 
     @property
     def display_rect(self) -> Rect:
@@ -34,25 +34,25 @@ class Viewport:
 
     @classmethod
     def add_new_viewport(
-        cls, label: Any, frect: FRect | RectLike = None, **kwds
+        cls, label: Any, relative_rect: FRect | RectLike = None, **kwds
     ) -> Viewport:
         """
         Adds a new viewport to the viewport dict.
 
         :param label: An object to be associated with the new Viewport.
-        :param frect: An FRect representing the screen viewport in ndc space.
+        :param relative_rect: An FRect representing the screen viewport in ndc space.
             Uses Normalized Device Coordinates (ndc), so
             left = -1, right = 1, top = 1, bottom = -1
         :return: The created viewport.
         """
-        if frect is None:
+        if relative_rect is None:
             if not (topleft := kwds.get("topleft")):
                 topleft = (-1, 1)
             if not (bottomright := kwds.get("bottomright")):
                 bottomright = (1, -1)
             size = (bottomright[0] - topleft[0], topleft[1] - bottomright[1])
-            frect = FRect(topleft[0], topleft[1], size[0], size[1])
-        viewport = Viewport(frect)
+            relative_rect = FRect(topleft[0], topleft[1], size[0], size[1])
+        viewport = Viewport(relative_rect)
         return cls.add_viewport(label, viewport)
 
     @classmethod
@@ -105,12 +105,12 @@ class Viewport:
         Calculates the subrect for the viewport, from the display.
 
         :return: A rectangle proportionate to both the surface rectangle, and the
-        screen viewports' frect.
+        screen viewports' relative_rect.
         """
         return self._display_rect
 
     def _update_display_rect(self, size: Point):
-        abs_rect = self._get_subrect(self.frect, size)
+        abs_rect = self._get_subrect(self.relative_rect, size)
         self._display_rect = abs_rect
 
     @classmethod
@@ -126,12 +126,12 @@ class Viewport:
         cls.DEFAULT._update_display_rect(size)
 
     @staticmethod
-    def _get_subrect(frect: FRect, size: Point) -> Rect:
+    def _get_subrect(relative_rect: FRect, size: Point) -> Rect:
         center_x, center_y = size[0] / 2, size[1] / 2
-        left = center_x - (frect.left * -center_x)
-        top = center_y - (frect.top * center_y)
-        width = frect.width * center_x
-        height = frect.height * center_y
+        left = center_x - (relative_rect.left * -center_x)
+        top = center_y - (relative_rect.top * center_y)
+        width = relative_rect.width * center_x
+        height = relative_rect.height * center_y
         return Rect(left, top, width, height)
 
 
