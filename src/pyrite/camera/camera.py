@@ -205,6 +205,14 @@ class NewCamera(CameraBase):
     def clear(self):
         CameraService.clear(self)
 
+    def cull(self, renderable: Renderable) -> bool:
+        bounds = renderable.get_bounds()
+        return self.get_view_bounds().contains(bounds)
+
+    def draw_to_view(self, surface: Surface, position: Point):
+        # TODO Erase this once removed from Camera ABC
+        pass
+
     def get_bounds(self) -> RectBounds:
         return CameraService.get_bounds(self)
 
