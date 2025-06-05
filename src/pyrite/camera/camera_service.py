@@ -7,7 +7,6 @@ import pygame
 from pygame import Surface, Vector2, Vector3
 
 from ..rendering.view_plane import ViewPlane
-from ..rendering.ortho_projection import OrthProjection
 from ..rendering.rect_bounds import RectBounds
 
 if TYPE_CHECKING:
@@ -227,9 +226,6 @@ class CameraService:
 
         :param size: A point representing the size of the display
         """
-        if not cls._default_camera:
-            # Make sure we have a default camera
-            cls._default_camera = Camera(OrthProjection(Rect(0, 0, *size)))
         # Update the camera surface so we can draw on it correctly.
         cls._surfaces.update({cls._default_camera: pygame.display.get_surface()})
 
