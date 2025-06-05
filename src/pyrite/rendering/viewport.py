@@ -23,6 +23,11 @@ class Viewport:
 
     @property
     def relative_rect(self) -> FRect:
+        """
+        An FRect representing the viewport in relative terms.
+        Uses relative coordinates to display center, so
+        left = -1, right = 1, top = 1, bottom = -1, full width = 2, full height = 2
+        """
         return self._relative_rect
 
     @relative_rect.setter
@@ -32,6 +37,10 @@ class Viewport:
 
     @property
     def display_rect(self) -> Rect:
+        """
+        A Rect representing the actual pixel space of the viewport, relative to the top
+        left corner of the screen. Follows pygame standard, `display.topleft == (0,0)`.
+        """
         return self._display_rect
 
     @classmethod
