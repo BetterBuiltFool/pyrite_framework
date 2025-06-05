@@ -70,7 +70,7 @@ class CameraService:
 
         :return: A list of cameras.
         """
-        pass
+        return list(cls._active_cameras)
 
     @classmethod
     def get_bounds(cls, camera: Camera) -> CullingBounds:
