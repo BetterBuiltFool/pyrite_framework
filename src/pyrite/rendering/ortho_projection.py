@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from pygame import Rect
 
 
-class OrthProjection(Projection):
+class OrthoProjection(Projection):
 
     def __init__(
         self, projection_rect: Rect = None, z_near: float = -1, z_far: float = 1

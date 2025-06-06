@@ -16,7 +16,7 @@ from .core.system_manager import SystemManager
 from ._helper import defaults
 from .camera.camera import Camera
 from .camera.camera_service import CameraService
-from .rendering.ortho_projection import OrthProjection
+from .rendering.ortho_projection import OrthoProjection
 from .rendering.viewport import Viewport
 from .transform import transform_system
 from .utils import threading
@@ -149,7 +149,7 @@ class Game:
             self.display_settings
         )
         # Ensure we have a default camera in case there are no others.
-        default_camera = Camera(OrthProjection(Rect(0, 0, *self.window.size)))
+        default_camera = Camera(OrthoProjection(Rect(0, 0, *self.window.size)))
         CameraService._default_camera = default_camera
         # Update the default camera so that it captures the new display.
         CameraService.update_default_camera(self.window.size)
