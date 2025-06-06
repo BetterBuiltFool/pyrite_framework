@@ -138,7 +138,7 @@ class Anchor:
         Creates an anchor point, defining a relative point for the location of
         the position of a rectangle.
 
-        :param relative_position: (0, 0) is top left, and (1, 1) is bottom right.
+        :param relative_position: (0, 0) is bottom left, and (1, 1) is top right.
         """
         self._relative_position = Vector2(relative_position)
 
