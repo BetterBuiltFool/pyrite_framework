@@ -6,6 +6,7 @@ import pygame
 from pygame import FRect, Rect
 
 if TYPE_CHECKING:
+    from pygame import Surface
     from pygame.typing import Point, RectLike
 
 
@@ -20,6 +21,19 @@ class Viewport:
 
     def __init__(self, relative_rect: FRect | RectLike) -> None:
         self._relative_rect = FRect(relative_rect)
+        self._crop = False
+
+    @property
+    def crop(self) -> bool:
+        """
+        Determines if the rendering should be cropped or not.
+        If False, the rendering will be scaled to fit the target.
+        """
+        return self._crop
+
+    @crop.setter
+    def crop(self, flag: bool):
+        self._crop = flag
 
     @property
     def relative_rect(self) -> FRect:
@@ -117,6 +131,19 @@ class Viewport:
 
         :return: A rectangle proportionate to both the surface rectangle, and the
         screen viewports' relative_rect.
+        """
+        return self._display_rect
+
+    def get_target_surface(self) -> Surface:
+        """
+        Gets the target surface for the viewport. This will always be the current
+        display.
+        """
+        return pygame.display.get_surface()
+
+    def get_target_rect(self) -> Rect:
+        """
+        Gets the target rect representing the subrect of the display.
         """
         return self._display_rect
 
