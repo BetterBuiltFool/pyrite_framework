@@ -29,7 +29,7 @@ class CameraRenderer(Renderer):
                 # Otherwise it's an illegal operation.
                 subsurface_rect.center = camera_view.get_rect().center
                 # Crop from the center of the view
-                camera_view = camera_view.subsurface(subsurface_rect)
+                camera_view = camera_view.subsurface(subsurface_rect).copy()
         else:
             # Not cropping, so scale the view instead.
             camera_view = camera.scale_view(camera_view, render_rect.size)
