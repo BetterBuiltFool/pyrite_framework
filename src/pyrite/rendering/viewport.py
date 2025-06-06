@@ -86,7 +86,7 @@ class Viewport:
         :return: A point in pygame screen coordinates.
         """
 
-        display_rect = self.get_display_rect()
+        display_rect = self._display_rect
         surface_width, surface_height = display_rect.size
         center_x, center_y = display_rect.center
         view_point = (
@@ -102,7 +102,7 @@ class Viewport:
         :param screen_point: A point in pygame screen space.
         :return: A point in ndc space
         """
-        display_rect = self.get_display_rect()
+        display_rect = self._display_rect
         surface_width, surface_height = display_rect.size
         center_x, center_y = display_rect.center
         ndc_point = (
