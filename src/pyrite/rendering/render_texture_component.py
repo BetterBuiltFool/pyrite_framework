@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import cast, TYPE_CHECKING
 
-from ..types import Component
+from ..types import Component, HasTexture
 
 if TYPE_CHECKING:
-    from ..types import HasTexture
     from .render_texture import RenderTexture
 
 
@@ -17,9 +16,9 @@ class RenderTextureComponent(Component):
 
     def __init__(self, owner: HasTexture, render_texture: RenderTexture) -> None:
         super().__init__(owner)
-        self.render_texture = RenderTexture
+        self.render_texture = render_texture
 
     def update_texture(self):
         owner = cast(HasTexture, self.owner)
-        owner.texture = RenderTexture.get_target_surface()
+        owner.texture = self.render_texture.get_target_surface()
         owner.is_dirty = True
