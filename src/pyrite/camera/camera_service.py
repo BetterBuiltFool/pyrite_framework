@@ -190,6 +190,21 @@ class CameraService:
         return point + Vector2(surface_rect.topleft)
 
     @classmethod
+    def new_to_world(cls, camera: Camera, point: Transform) -> Transform:
+        # Mkae a copy of point to avoid mutation
+        point = point.copy()
+        # Find the adjusted center of the camera's far plane
+        far_plane_center = camera.projection.far_plane.center
+        far_plane_center = (
+            far_plane_center[0] / camera.zoom_level,
+            far_plane_center[1] / camera.zoom_level,
+        )
+        # Apply the offset to return center to origin
+        point.position -= far_plane_center
+        # Generalize to world coords
+        return point.generalize(camera.transform)
+
+    @classmethod
     def _scale_view(cls, camera: Camera, target_size: Point) -> pygame.Surface:
         """
         Returns a scaled version of the camera's view surface using the camera's chosen
