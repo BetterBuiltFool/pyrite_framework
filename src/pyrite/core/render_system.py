@@ -12,6 +12,7 @@ from pygame import Surface
 from ..enum import RenderLayers
 
 from ..camera.camera_service import CameraService
+from ..rendering.render_texture_component import RenderTextureComponent
 
 if TYPE_CHECKING:
     from ..camera import Camera
@@ -405,6 +406,9 @@ class DefaultRenderSystem(RenderSystem):
 
         for camera in cameras:
             camera.clear()
+
+        for render_texture_component in RenderTextureComponent.get_instances().values():
+            render_texture_component.update_texture()
 
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
