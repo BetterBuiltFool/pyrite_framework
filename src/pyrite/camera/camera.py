@@ -13,7 +13,6 @@ from ..types import CameraBase, Renderable
 from .._helper import defaults
 
 import pygame
-from pygame import Vector2
 
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
@@ -115,7 +114,7 @@ class Camera(CameraBase):
     def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)
 
-    def to_world(self, point: Point) -> Vector2:
+    def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 
     def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:

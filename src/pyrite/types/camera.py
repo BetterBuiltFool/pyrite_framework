@@ -60,11 +60,11 @@ class CameraBase(ABC):
         pass
 
     @abstractmethod
-    def to_world(self, point: Point) -> Vector2:
+    def to_world(self, point: Transform) -> Transform:
         """
-        Converts a point in local space (The camera's surface) to world space.
+        Converts a point in local space of the camera to world space.
 
-        :param point: A point, in local space
+        :param point: A transform, in local space
         :return: The world space equivalent of _point_
         """
         pass

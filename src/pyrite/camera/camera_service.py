@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
-from pygame import Surface, Vector2, Vector3
+from pygame import Surface, Vector3
 
 from ..rendering.view_plane import ViewPlane
 from ..rendering.rect_bounds import RectBounds
@@ -181,16 +181,7 @@ class CameraService:
         return local_transform
 
     @classmethod
-    def to_world(cls, camera: Camera, point: Point) -> Point:
-        # TODO Make this factor in the camera's TransformComponent
-
-        surface = cls._surfaces.get(camera)
-        surface_rect = surface.get_rect().copy()
-        surface_rect.center = camera.transform.world_position
-        return point + Vector2(surface_rect.topleft)
-
-    @classmethod
-    def new_to_world(cls, camera: Camera, point: Transform) -> Transform:
+    def to_world(cls, camera: Camera, point: Transform) -> Transform:
         # Mkae a copy of point to avoid mutation
         point = point.copy()
         # Find the adjusted center of the camera's far plane
