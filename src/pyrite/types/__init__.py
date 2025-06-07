@@ -56,6 +56,10 @@ class HasTexture(Protocol):
     def texture(self) -> Surface:
         pass
 
+    @property
+    def is_dirty(self) -> bool:
+        pass
+
 
 class CanUpdate(Protocol):
 
