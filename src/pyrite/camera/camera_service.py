@@ -171,7 +171,7 @@ class CameraService:
 
     @classmethod
     def to_local(cls, camera: Camera, point: Transform) -> Transform:
-        local_transform = point.localize(camera.transform)
+        local_transform = point.localize(camera.transform.world())
         far_plane_center = camera.projection.far_plane.center
         far_plane_center = (
             far_plane_center[0] / camera.zoom_level,
@@ -202,7 +202,7 @@ class CameraService:
         # Apply the offset to return center to origin
         point.position -= far_plane_center
         # Generalize to world coords
-        return point.generalize(camera.transform)
+        return point.generalize(camera.transform.world())
 
     @classmethod
     def _scale_view(cls, camera: Camera, target_size: Point) -> pygame.Surface:
