@@ -7,13 +7,12 @@ import pygame
 
 from ..types import Renderer
 from ..camera.camera_service import CameraService
+from ..transform import Transform
 
 if TYPE_CHECKING:
-    from ..types import Transform
     from ..camera import Camera
     from ..sprite import Sprite
     from pygame import Surface
-    from pygame.typing import Point
 
     SpriteData: TypeAlias = tuple[Surface, Transform]
 
@@ -70,18 +69,19 @@ class SpriteRenderer(Renderer):
         surface_rect = surface.get_rect()
         surface_rect.center = position
 
-        cls._draw_to_camera(camera, surface, surface_rect.bottomleft)
+        # cls._draw_to_camera(camera, surface, surface_rect.bottomleft)
+        cls._draw_to_camera(
+            camera, surface, Transform(position=surface_rect.bottomleft)
+        )
 
     @classmethod
-    def _draw_to_camera(cls, camera: Camera, sprite_surface: Surface, position: Point):
+    def _draw_to_camera(
+        cls, camera: Camera, sprite_surface: Surface, transform: Transform
+    ):
         surface = CameraService._surfaces.get(camera)
-        if surface is None:
-            camera.draw_to_view(sprite_surface, position)
-            return
-            # TODO Fix this
-        local_pos = camera.to_local(position)
-        local_pos[1] = surface.size[1] - local_pos[1]
-        surface.blit(sprite_surface, local_pos)
+        local_position = camera.to_local(transform).position
+        local_position[1] = surface.size[1] - local_position[1]
+        surface.blit(sprite_surface, local_position)
 
     @classmethod
     def redraw_sprite(cls, sprite: Sprite) -> Surface:

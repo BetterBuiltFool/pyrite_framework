@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from . import CameraViewBounds, Renderable
     from ..enum import Layer
+    from ..transform import Transform
 
 
 class CameraBase(ABC):
@@ -49,11 +50,11 @@ class CameraBase(ABC):
         """
 
     @abstractmethod
-    def to_local(self, point: Point) -> Vector2:
+    def to_local(self, point: Transform) -> Transform:
         """
-        Converts a point in world space to local space (The camera'ssurface)
+        Converts a point in world space to local space of the camera
 
-        :param point: A point, in world space
+        :param point: A transform, in world space
         :return: The local space equivalent of _point_
         """
         pass

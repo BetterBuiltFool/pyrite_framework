@@ -18,6 +18,7 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
     from ..types.projection import Projection
+    from ..transform import Transform
     from pygame.typing import Point
 
     P = TypeVar("P", bound=Projection)
@@ -111,7 +112,7 @@ class Camera(CameraBase):
     def render(self, delta_time, viewport: Viewport):
         CameraRenderer.render(self, viewport)
 
-    def to_local(self, point: Point) -> Point:
+    def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)
 
     def to_world(self, point: Point) -> Vector2:
