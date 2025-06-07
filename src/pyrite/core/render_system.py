@@ -290,7 +290,7 @@ class DefaultRenderManager(RenderManager):
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
             # culling for us.
-            return {None: self.sort_layer(layer_set)}
+            return {CameraService._default_camera: self.sort_layer(layer_set)}
         culled_dict: LayerDict = {}
         for camera in cameras:
             # TODO: Ensure CameraBase has a layer_maks property
