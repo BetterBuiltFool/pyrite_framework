@@ -19,7 +19,7 @@ class CameraRenderer(Renderer):
         camera_view = CameraService._surfaces.get(camera)
         if not render_target.crop:
             # Not cropping, so scale the view instead.
-            camera_view = camera.scale_view(camera_view, render_rect.size)
+            camera_view = CameraService._scale_view(camera, render_rect.size)
         # TODO Center the view within render_rect
         surface.blit(
             camera_view,

@@ -125,18 +125,5 @@ class Camera(CameraBase):
     ) -> Point | None:
         return CameraService.screen_to_world_clamped(self, point, viewport_index)
 
-    def scale_view(
-        self, camera_surface: pygame.Surface, target_size: Point
-    ) -> pygame.Surface:
-        """
-        Returns a scaled version of the camera's view surface using the camera's chosen
-        scale method.
-
-        :param camera_surface: the rendered camera surface
-        :param target_size: Destination size of the surface
-        :return: The scaled surface.
-        """
-        return self._scale_method(camera_surface, target_size)
-
     def zoom(self, zoom_level: float):
         CameraService.zoom(self, zoom_level)
