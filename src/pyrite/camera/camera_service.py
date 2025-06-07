@@ -188,7 +188,7 @@ class CameraService:
         Returns a scaled version of the camera's view surface using the camera's chosen
         scale method.
 
-        :param camera: the rendered camera surface
+        :param camera: The camera whose surface need sto be scaled.
         :param target_size: Destination size of the surface
         :return: The scaled surface.
         """
