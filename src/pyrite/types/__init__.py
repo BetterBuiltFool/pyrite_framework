@@ -13,6 +13,7 @@ from .transform import TransformProtocol  # noqa:F401
 from .view_bounds import CameraViewBounds  # noqa: F401
 
 if TYPE_CHECKING:
+    from pygame import Surface
     from pygame.typing import Point, SequenceLike
     from ..transform import Transform
 
@@ -47,6 +48,13 @@ class HasPosition(Protocol):
 
 class HasTransform(Protocol):
     transform: Transform
+
+
+class HasTexture(Protocol):
+
+    @property
+    def texture(self) -> Surface:
+        pass
 
 
 class CanUpdate(Protocol):
