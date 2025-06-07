@@ -149,7 +149,9 @@ class Game:
             self.display_settings
         )
         # Ensure we have a default camera in case there are no others.
-        default_camera = Camera(OrthoProjection(Rect(0, 0, *self.window.size)))
+        default_camera = Camera(
+            OrthoProjection(Rect(0, 0, *self.window.size)), enabled=False
+        )
         CameraService._default_camera = default_camera
         # Update the default camera so that it captures the new display.
         CameraService.update_default_camera(self.window.size)
