@@ -10,14 +10,14 @@ sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.camera.camera_service import CameraService  # noqa:E402
 from src.pyrite.rendering.ortho_projection import OrthoProjection  # noqa: E402
 from src.pyrite.types.projection import Projection  # noqa:E402
-from src.pyrite.transform import TransformComponent  # noqa: E402
+from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 
 
 class MockCamera:
 
     def __init__(self, projection: Projection) -> None:
         self.projection = projection
-        self.transform = TransformComponent(self)
+        self.transform: TransformComponent = TransformComponent(self)
         self.zoom_level = 1
         CameraService.add_camera(self)
 
@@ -139,6 +139,93 @@ class TestCameraService(unittest.TestCase):
         expected = Vector3(-200, -150, 0)
 
         self.assertEqual(local_position, expected)
+
+    def test_to_local(self):
+        # Centered projection, both default transform
+        projection = OrthoProjection(Rect(-400, -300, 800, 600))
+        test_cam = MockCamera(projection)
+
+        world_transform = Transform((0, 0), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((0, 0), 0, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # Centered Projection, Default camera, Different test position,
+
+        world_transform = Transform((10, 0), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((10, 0), 0, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # Centered Projection, Default camera, Different test position, rotation,
+
+        world_transform = Transform((10, 0), 90, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((10, 0), 90, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # 3/4 projection, local 0 coords
+
+        projection = OrthoProjection(Rect(-200, -150, 800, 600))
+
+        assert projection.far_plane.center == (200, 150)
+        test_cam.projection = projection
+
+        world_transform = Transform((0, 0), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((200, 150), 0, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # 3/4 projection, counter local coords
+
+        world_transform = Transform((-200, -150), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((0, 0), 0, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # Centered projection, off center camera, origin test transform
+        projection = OrthoProjection(Rect(-400, -300, 800, 600))
+
+        assert projection.far_plane.center == (0, 0)
+        test_cam.projection = projection
+
+        test_cam.transform.world_position = (100, 100)
+
+        world_transform = Transform((0, 0), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((-100, -100), 0, (0, 0))
+
+        self.assertEqual(local_transform, expected)
+
+        # Centered projection, off center rotated camera, origin test transform
+
+        test_cam.transform.world_position = (100, 0)
+        test_cam.transform.world_rotation = 90
+
+        world_transform = Transform((0, 0), 0, (0, 0))
+
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        expected = Transform((0, -100), -90, (0, 0))
+
+        self.assertEqual(local_transform, expected)
 
 
 if __name__ == "__main__":
