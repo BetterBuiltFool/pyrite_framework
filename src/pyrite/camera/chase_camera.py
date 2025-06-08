@@ -69,7 +69,6 @@ class ChaseCamera(Entity, Camera):
         defaults to None. See Renderable.
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
-        :param draw_index: Index determining draw order within a layer, defaults to 0
         """
         Entity.__init__(
             self,
