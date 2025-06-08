@@ -30,7 +30,7 @@ class ChaseCamera(Entity, Camera):
         projection: P,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
-        viewports: Viewport | Sequence[Viewport] = None,
+        render_targets: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         target: HasTransform = None,
@@ -44,15 +44,19 @@ class ChaseCamera(Entity, Camera):
         A camera that is capable of chasing a target.
 
         :param projection: A camera projection describing the type of camaera.
-        :param position: Position of the center of the camera surface, defaults to None
-        None will give the center of the viewport.
-        :param viewports: Defines sections of the screen to render to. If multiple
-        surface viewports are used, the camera will be rendered and scaled to each of
-        them.
+        :param position: Position of the origin of the projection, defaults to None
+            None will give the center of the viewport.
+        :param transform: A Transform or Transform Component for defining the location
+            of the camera. If another object's TransformComponent is used, the camera
+            will follow it. If a Transform is given, a new TransformComponent is given
+            to the camera based on that value. If None, a new Transform is made from
+            _position_.
+        :param render_targets: Defines targets to render to. If multiple render targets
+            are used, the camera will be rendered and scaled/cropped to each of them.
         :param smooth_scale: Determines if the scaling operation should use the smooth
             variety, defaults to False
         :param layer_mask: Layers that the camera will exclude from rendering,
-        defaults to None
+            defaults to None
         :param target: Object with a position to chase.
         :param ease_factor: Determines the rate at which the camera pursues the target.
         Larger = slower.
@@ -77,7 +81,7 @@ class ChaseCamera(Entity, Camera):
             projection,
             position,
             transform,
-            viewports,
+            render_targets,
             smooth_scale,
             layer_mask,
             container,

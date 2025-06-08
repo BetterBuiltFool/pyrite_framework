@@ -375,8 +375,8 @@ class DefaultRenderSystem(RenderSystem):
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
         """
-        for viewport in camera.viewports:
-            camera.render(delta_time, viewport)
+        for render_target in camera.render_targets:
+            camera.render(delta_time, render_target)
 
     def render_ui(
         self,

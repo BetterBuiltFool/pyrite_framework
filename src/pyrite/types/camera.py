@@ -79,7 +79,7 @@ class CameraBase(ABC):
         :param point: A location in screen space, usually pygame.mouse.get_pos()
         :param viewport_index: Index of the viewport to compare against, defaults to 0.
         :raises IndexError: If the viewport_index is larger than the camera's
-        number of viewports.
+        number of render_targets.
         :return: The screen position, in world space relative to the camera
         """
         pass
@@ -100,7 +100,7 @@ class CameraBase(ABC):
         :param point: A location in screen space, usually pygame.mouse.get_pos()
         :param viewport_index: Index of the viewport to compare against, defaults to 0.
         :raises IndexError: If the viewport_index is larger than the camera's
-        number of viewports.
+        number of render_targets.
         :return: The screen position, in world space relative to the camera
         """
         pass

@@ -30,7 +30,7 @@ class Camera(CameraBase):
         projection: P,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
-        viewports: Viewport | Sequence[Viewport] = None,
+        render_targets: Viewport | Sequence[Viewport] = None,
         smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
@@ -51,11 +51,11 @@ class Camera(CameraBase):
         self._scale_method = (
             pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
         )
-        if viewports is None:
-            viewports = [Viewport.DEFAULT]
-        if not isinstance(viewports, Sequence):
-            viewports = [viewports]
-        self.viewports: Sequence[Viewport] = viewports
+        if render_targets is None:
+            render_targets = [Viewport.DEFAULT]
+        if not isinstance(render_targets, Sequence):
+            render_targets = [render_targets]
+        self.render_targets: Sequence[Viewport] = render_targets
         self.draw_index = draw_index
         if layer_mask is None:
             layer_mask = ()
