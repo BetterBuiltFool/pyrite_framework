@@ -196,19 +196,6 @@ class CameraService:
         return point.generalize(camera.transform.world())
 
     @classmethod
-    def _scale_view(cls, camera: Camera, target_size: Point) -> pygame.Surface:
-        """
-        Returns a scaled version of the camera's view surface using the camera's chosen
-        scale method.
-
-        :param camera: The camera whose surface need sto be scaled.
-        :param target_size: Destination size of the surface
-        :return: The scaled surface.
-        """
-        camera_surface = cls._surfaces.get(camera)
-        return camera._scale_method(camera_surface, target_size)
-
-    @classmethod
     def screen_to_world(
         cls, camera: Camera, point: Point, viewport_index: int = 0
     ) -> Point:

@@ -12,8 +12,6 @@ from ..transform import transform_component
 from ..types import CameraBase, Renderable
 from .._helper import defaults
 
-import pygame
-
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
     from ..types.projection import Projection
@@ -31,7 +29,6 @@ class Camera(CameraBase):
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         render_targets: Viewport | Sequence[Viewport] = None,
-        smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
@@ -46,10 +43,6 @@ class Camera(CameraBase):
         else:
             self.transform = transform_component.from_attributes(self, position)
         self.projection = projection
-        self._smooth_scale = smooth_scale
-        self._scale_method = (
-            pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
-        )
         if render_targets is None:
             render_targets = [Viewport.DEFAULT]
         if not isinstance(render_targets, Sequence):
@@ -76,18 +69,6 @@ class Camera(CameraBase):
             CameraService.enable(self)
         else:
             CameraService.disable(self)
-
-    @property
-    def smooth_scale(self) -> bool:
-        return self._smooth_scale
-
-    @smooth_scale.setter
-    def smooth_scale(self, flag: bool):
-        self._smooth_scale = flag
-        if flag:
-            self._scale_method = pygame.transform.smoothscale
-            return
-        self._scale_method = pygame.transform.scale
 
     @property
     def zoom_level(self):

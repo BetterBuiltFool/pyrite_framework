@@ -31,7 +31,6 @@ class ChaseCamera(Entity, Camera):
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         render_targets: Viewport | Sequence[Viewport] = None,
-        smooth_scale: bool = False,
         layer_mask: tuple[Layer] = None,
         target: HasTransform = None,
         ease_factor: float = 8.0,
@@ -53,8 +52,6 @@ class ChaseCamera(Entity, Camera):
             _position_.
         :param render_targets: Defines targets to render to. If multiple render targets
             are used, the camera will be rendered and scaled/cropped to each of them.
-        :param smooth_scale: Determines if the scaling operation should use the smooth
-            variety, defaults to False
         :param layer_mask: Layers that the camera will exclude from rendering,
             defaults to None
         :param target: Object with a position to chase.
@@ -81,7 +78,6 @@ class ChaseCamera(Entity, Camera):
             position,
             transform,
             render_targets,
-            smooth_scale,
             layer_mask,
             container,
             enabled,
