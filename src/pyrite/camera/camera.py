@@ -88,7 +88,7 @@ class Camera(CameraBase):
         return CameraService.get_view_bounds(self)
 
     def render(self, delta_time, viewport: Viewport):
-        CameraRenderer.render(self, viewport)
+        CameraRenderer.render(delta_time, self, viewport)
 
     def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)

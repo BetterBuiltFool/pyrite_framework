@@ -18,7 +18,7 @@ class CameraRenderer(Renderer):
     _smooth: bool = False
 
     @classmethod
-    def render(cls, camera: Camera, render_target: RenderTarget):
+    def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
         camera_view = CameraService._surfaces.get(camera)

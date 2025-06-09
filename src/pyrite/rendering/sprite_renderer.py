@@ -51,7 +51,7 @@ class SpriteRenderer(Renderer):
         )
 
     @classmethod
-    def render(cls, sprite: Sprite, camera: Camera):
+    def render(cls, delta_time: float, sprite: Sprite, camera: Camera):
         surface, transform = cls.get(sprite)
         if surface is None or not cls.validate_sprite(sprite, surface, transform):
             # Update the cache. This will save us redraws when the sprite is unchanged.

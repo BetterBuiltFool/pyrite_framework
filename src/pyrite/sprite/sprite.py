@@ -172,4 +172,4 @@ class Sprite(Renderable):
         return bounds
 
     def render(self, delta_time: float, camera: CameraBase):
-        SpriteRenderer.render(self, camera)
+        SpriteRenderer.render(delta_time, self, camera)
