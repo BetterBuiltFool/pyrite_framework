@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 from pyrite.types import Container
 
@@ -11,23 +11,21 @@ from ..types.entity import Entity
 from pygame import Vector2
 
 if TYPE_CHECKING:
+    from .camera import Projection
     from ..enum import Layer
     from ..types import (
         HasTransform,
         TransformProtocol,
     )
-    from ..types.projection import Projection
     from ..rendering.viewport import Viewport
     from pygame.typing import Point
-
-    P = TypeVar("P", bound=Projection)
 
 
 class ChaseCamera(Entity, Camera):
 
     def __init__(
         self,
-        projection: P,
+        projection: Projection,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         render_targets: Viewport | Sequence[Viewport] = None,
@@ -42,7 +40,7 @@ class ChaseCamera(Entity, Camera):
         """
         A camera that is capable of chasing a target.
 
-        :param projection: A camera projection describing the type of camaera.
+        :param projection: A camera projection describing the type of camera.
         :param position: Position of the origin of the projection, defaults to None
             None will give the center of the viewport.
         :param transform: A Transform or Transform Component for defining the location

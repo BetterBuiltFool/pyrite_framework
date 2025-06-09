@@ -14,18 +14,18 @@ from .._helper import defaults
 
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
-    from ..types.projection import Projection
+    from ..types.projection import Projection as ProjectionType
     from ..transform import Transform
     from pygame.typing import Point
 
-    P = TypeVar("P", bound=Projection)
+    Projection = TypeVar("Projection", bound=ProjectionType)
 
 
 class Camera(CameraBase):
 
     def __init__(
         self,
-        projection: P,
+        projection: Projection,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
         render_targets: Viewport | Sequence[Viewport] = None,
