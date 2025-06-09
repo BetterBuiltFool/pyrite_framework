@@ -148,8 +148,6 @@ class Sprite(Renderable):
         self.is_dirty = True
 
     def get_bounds(self) -> RectBounds:
-        # TODO Find a way of caching this so it doesn't get regenerated each frame if
-        # the sprite hasn't moved.
         bounds, transform = BoundsService.get(self)
         if bounds is None or transform != self.transform.world():
             transform = self.transform.world()

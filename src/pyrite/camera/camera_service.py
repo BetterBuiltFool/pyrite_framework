@@ -162,7 +162,6 @@ class CameraService:
 
     @classmethod
     def _rebuild_surface(cls, camera: Camera):
-        # TODO Move this into CameraService
         zoom_factor = 1 / camera.zoom_level
         display_size = camera.projection.far_plane.size
         surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)

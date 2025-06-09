@@ -294,7 +294,6 @@ class DefaultRenderManager(RenderManager):
             return {CameraService._default_camera: self.sort_layer(layer_set)}
         culled_dict: LayerDict = {}
         for camera in cameras:
-            # TODO: Ensure CameraBase has a layer_maks property
             if layer in camera.layer_mask:
                 continue
             visible = filter(camera.cull, layer_set)
