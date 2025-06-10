@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Vector3
+from pygame import Rect, Vector3
 
 from ..camera.camera_service import CameraService
 from ..types import Renderer
@@ -52,6 +52,31 @@ class CameraRenderer(Renderer):
         screen_end = viewport.ndc_to_screen(ndc_end)
         # And draw to screen
         pygame.draw.line(display, color, screen_start, screen_end, width)
+
+    @classmethod
+    def draw_rect(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        rect: Rect,
+        width: int = 1,
+        # Add other params eventually
+    ):
+        display = viewport.get_target_surface()
+
+        topleft = CameraService.point_to_local(camera, rect.topleft)
+        bottomright = CameraService.point_to_local(camera, rect.bottomright)
+
+        ndc_tl = CameraService.local_to_ndc(camera, Vector3(*topleft, 0))
+        ndc_br = CameraService.local_to_ndc(camera, Vector3(*bottomright, 0))
+
+        screen_tl = viewport.ndc_to_screen(ndc_tl)
+        screen_br = viewport.ndc_to_screen(ndc_br)
+
+        draw_rect = Rect(left_top=screen_tl, right_bottom=screen_br)
+
+        pygame.draw.rect(display, color, draw_rect, width)
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
