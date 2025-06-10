@@ -9,13 +9,41 @@ from ..types import Renderer
 
 if TYPE_CHECKING:
     from pygame import Surface
-    from pygame.typing import Point
+    from pygame.typing import ColorLike, Point
     from ..camera import Camera
+    from .viewport import Viewport
     from ..types.render_target import RenderTarget
 
 
 class CameraRenderer(Renderer):
     _smooth: bool = False
+
+    @classmethod
+    def draw_line(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        start_pos: Point,
+        end_pos: Point,
+        width: int = 1,
+    ):
+        """
+        Draws a line to the screen, using the coordinates (in world space),
+        transformed to screen space.
+
+        :param camera: The camera whose view is being considered
+        :param viewport: The viewport being drawn in.
+        :param color: A color-like value to give to the line
+        :param start_pos: Start position of the line in world sapce
+        :param end_pos: End position of the line in world space
+        :param width: The width of the line, in pixels, defaults to 1
+        """
+        display = viewport.get_target_surface()
+        # Convert start_pos, end_pos to local coords
+        # Convert local coords to ndc coords
+        # Convert ndc_coords to screen coords
+        pygame.draw.line(display, color, start_pos, end_pos, width)
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
