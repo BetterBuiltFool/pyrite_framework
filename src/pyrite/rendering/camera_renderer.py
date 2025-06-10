@@ -81,6 +81,12 @@ class CameraRenderer(Renderer):
         pygame.draw.rect(display, color, draw_rect, width)
 
     @classmethod
+    def _world_to_screen(point: Point, camera: Camera, viewport: Viewport) -> Point:
+        local_coords = CameraService.point_to_local(camera, point)
+        ndc_coords = CameraService.local_to_ndc(camera, Vector3(*local_coords, 0))
+        return viewport.ndc_to_screen(ndc_coords)
+
+    @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
