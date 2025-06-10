@@ -41,16 +41,10 @@ class CameraRenderer(Renderer):
         :param width: The width of the line, in pixels, defaults to 1
         """
         display = viewport.get_target_surface()
-        # Convert start_pos, end_pos to local coords
-        start_pos = CameraService.point_to_local(camera, start_pos)
-        end_pos = CameraService.point_to_local(camera, end_pos)
-        # Convert local coords to ndc coords
-        ndc_start = CameraService.local_to_ndc(camera, Vector3(*start_pos, 0))
-        ndc_end = CameraService.local_to_ndc(camera, Vector3(*end_pos, 0))
-        # Convert ndc_coords to screen coords
-        screen_start = viewport.ndc_to_screen(ndc_start)
-        screen_end = viewport.ndc_to_screen(ndc_end)
-        # And draw to screen
+
+        screen_start = cls._world_to_screen(start_pos, camera, viewport)
+        screen_end = cls._world_to_screen(end_pos, camera, viewport)
+
         pygame.draw.line(display, color, screen_start, screen_end, width)
 
     @classmethod
@@ -65,25 +59,22 @@ class CameraRenderer(Renderer):
     ):
         display = viewport.get_target_surface()
 
-        topleft = CameraService.point_to_local(camera, rect.topleft)
-        bottomright = CameraService.point_to_local(camera, rect.bottomright)
+        screen_topleft = cls._world_to_screen(rect.topleft, camera, viewport)
+        screen_bottomright = cls._world_to_screen(rect.bottomright, camera, viewport)
 
-        ndc_tl = CameraService.local_to_ndc(camera, Vector3(*topleft, 0))
-        ndc_br = CameraService.local_to_ndc(camera, Vector3(*bottomright, 0))
-
-        screen_tl = viewport.ndc_to_screen(ndc_tl)
-        screen_br = viewport.ndc_to_screen(ndc_br)
-
-        rect_width = screen_tl[0] + screen_br[0]
-        rect_height = screen_tl[1] + screen_br[1]
-        draw_rect = Rect(*screen_tl, rect_width, rect_height)
+        rect_width = screen_topleft[0] + screen_bottomright[0]
+        rect_height = screen_topleft[1] + screen_bottomright[1]
+        draw_rect = Rect(*screen_topleft, rect_width, rect_height)
 
         pygame.draw.rect(display, color, draw_rect, width)
 
     @classmethod
-    def _world_to_screen(point: Point, camera: Camera, viewport: Viewport) -> Point:
+    def _world_to_screen(
+        cls, point: Point, camera: Camera, viewport: Viewport
+    ) -> Point:
         local_coords = CameraService.point_to_local(camera, point)
         ndc_coords = CameraService.local_to_ndc(camera, Vector3(*local_coords, 0))
+
         return viewport.ndc_to_screen(ndc_coords)
 
     @classmethod
