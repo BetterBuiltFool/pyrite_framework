@@ -420,13 +420,15 @@ class DefaultRenderSystem(RenderSystem):
         for camera in CameraService.get_active_cameras():
             self.render_camera(delta_time, camera)
 
-        self._debug_draw_to_screen(window, render_queue)
+        self._debug_draw_to_screen(cameras, render_queue)
 
         # Render the UI last.
 
-    def _debug_draw_to_screen(self, window: Surface, render_queue: RenderQueue):
+    def _debug_draw_to_screen(
+        self, cameras: Sequence[Camera], render_queue: RenderQueue
+    ):
         for renderer in self._debug_renderers:
-            renderer.draw_to_screen(window, render_queue)
+            renderer.draw_to_screen(cameras, render_queue)
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
