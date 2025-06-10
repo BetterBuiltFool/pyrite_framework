@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
+from pygame import Vector3
 
 from ..camera.camera_service import CameraService
 from ..types import Renderer
@@ -41,9 +42,16 @@ class CameraRenderer(Renderer):
         """
         display = viewport.get_target_surface()
         # Convert start_pos, end_pos to local coords
+        start_pos = CameraService.point_to_local(camera, start_pos)
+        end_pos = CameraService.point_to_local(camera, end_pos)
         # Convert local coords to ndc coords
+        ndc_start = CameraService.local_to_ndc(camera, Vector3(*start_pos, 0))
+        ndc_end = CameraService.local_to_ndc(camera, Vector3(*end_pos, 0))
         # Convert ndc_coords to screen coords
-        pygame.draw.line(display, color, start_pos, end_pos, width)
+        screen_start = viewport.ndc_to_screen(ndc_start)
+        screen_end = viewport.ndc_to_screen(ndc_end)
+        # And draw to screen
+        pygame.draw.line(display, color, screen_start, screen_end, width)
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
