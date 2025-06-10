@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
-from pygame import Surface, Vector3
+from pygame import Surface, Vector2, Vector3
 
 from ..rendering.view_plane import ViewPlane
 from ..rendering.rect_bounds import RectBounds
@@ -178,6 +178,20 @@ class CameraService:
         )
         local_transform.position += far_plane_center
         return local_transform
+
+    @classmethod
+    def point_to_local(cls, camera: Camera, point: Point) -> Point:
+        camera_transform = camera.transform.world()
+        offset_point = Vector2(point) - camera_transform.position
+        rotated_position = offset_point.rotate(camera_transform.rotation)
+        new_position = rotated_position.elementwise() / camera_transform.scale
+        far_plane_center = camera.projection.far_plane.center
+        far_plane_center = (
+            far_plane_center[0] / camera.zoom_level,
+            far_plane_center[1] / camera.zoom_level,
+        )
+        new_position += far_plane_center
+        return new_position
 
     @classmethod
     def to_world(cls, camera: Camera, point: Transform) -> Transform:
