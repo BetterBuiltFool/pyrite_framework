@@ -74,7 +74,9 @@ class CameraRenderer(Renderer):
         screen_tl = viewport.ndc_to_screen(ndc_tl)
         screen_br = viewport.ndc_to_screen(ndc_br)
 
-        draw_rect = Rect(left_top=screen_tl, right_bottom=screen_br)
+        rect_width = screen_tl[0] + screen_br[0]
+        rect_height = screen_tl[1] + screen_br[1]
+        draw_rect = Rect(*screen_tl, rect_width, rect_height)
 
         pygame.draw.rect(display, color, draw_rect, width)
 
