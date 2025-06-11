@@ -172,6 +172,7 @@ class CameraService:
 
     @classmethod
     def to_local(cls, camera: Camera, point: Transform) -> Transform:
+        # TODO Make into `to_projection`, let users localize since it isn't hard.
         local_transform = point.localize(camera.transform.world())
         far_plane_center = camera.projection.far_plane.center
         far_plane_center = (
@@ -188,7 +189,6 @@ class CameraService:
         rotated_position = offset_point.rotate(camera_transform.rotation)
         new_position = rotated_position.elementwise() / camera_transform.scale
 
-        new_position += camera.transform.world_position
         return new_position
 
     @classmethod
