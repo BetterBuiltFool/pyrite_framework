@@ -59,11 +59,12 @@ class CameraRenderer(Renderer):
     ):
         display = viewport.get_target_surface()
 
-        screen_topleft = cls._world_to_screen(rect.topleft, camera, viewport)
-        screen_bottomright = cls._world_to_screen(rect.bottomright, camera, viewport)
+        # Remember that display is inverted compared to world
+        screen_topleft = cls._world_to_screen(rect.bottomleft, camera, viewport)
+        screen_bottomright = cls._world_to_screen(rect.topright, camera, viewport)
 
-        rect_width = screen_topleft[0] + screen_bottomright[0]
-        rect_height = screen_topleft[1] + screen_bottomright[1]
+        rect_width = screen_bottomright[0] - screen_topleft[0]
+        rect_height = screen_bottomright[1] - screen_topleft[1]
         draw_rect = Rect(*screen_topleft, rect_width, rect_height)
 
         pygame.draw.rect(display, color, draw_rect, width)
