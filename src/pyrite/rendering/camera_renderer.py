@@ -73,9 +73,13 @@ class CameraRenderer(Renderer):
         cls, point: Point, camera: Camera, viewport: Viewport
     ) -> Point:
         local_coords = CameraService.point_to_local(camera, point)
-        ndc_coords = CameraService.local_to_ndc(camera, Vector3(*local_coords, 0))
-
-        return viewport.ndc_to_screen(ndc_coords)
+        if viewport.crop:
+            coords = viewport.local_to_screen(local_coords)
+        else:
+            eye_coords = CameraService.local_point_to_projection(camera, local_coords)
+            ndc_coords = CameraService.local_to_ndc(camera, Vector3(*eye_coords, 0))
+            coords = viewport.ndc_to_screen(ndc_coords)
+        return coords
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
