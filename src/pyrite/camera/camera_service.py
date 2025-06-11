@@ -187,13 +187,18 @@ class CameraService:
         offset_point = Vector2(point) - camera_transform.position
         rotated_position = offset_point.rotate(camera_transform.rotation)
         new_position = rotated_position.elementwise() / camera_transform.scale
+
+        new_position += camera.transform.world_position
+        return new_position
+
+    @classmethod
+    def local_point_to_projection(cls, camera: Camera, point: Point) -> Point:
         far_plane_center = camera.projection.far_plane.center
         far_plane_center = (
             far_plane_center[0] / camera.zoom_level,
             far_plane_center[1] / camera.zoom_level,
         )
-        new_position += far_plane_center
-        return new_position
+        return point + far_plane_center
 
     @classmethod
     def to_world(cls, camera: Camera, point: Transform) -> Transform:
