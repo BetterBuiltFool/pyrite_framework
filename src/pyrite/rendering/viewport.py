@@ -92,6 +92,21 @@ class Viewport:
         cls._viewports.update({label: viewport})
         return viewport
 
+    def local_to_screen(self, local_coord: Point) -> Point:
+        """
+        Converts a point in local space to screen space. Good for cropping to viewport.
+
+        :param local_coord: A point in local space.
+        :return: A point in pygame screen space.
+        """
+        display_rect = self._display_rect
+        center_x, center_y = display_rect.center
+        view_point = (
+            center_x - int(-local_coord[0]),
+            center_y - int(local_coord[1]),
+        )
+        return view_point
+
     def ndc_to_screen(self, ndc_coord: Point) -> Point:
         """
         Converts a point in ndc space to screen coordinates on the current display.
