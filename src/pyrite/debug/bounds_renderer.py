@@ -34,7 +34,9 @@ class BoundsRenderer(DebugRenderer):
                             bounds_rect.center, camera, Viewport.DEFAULT
                         )
                         rendered_text = self.font.render(
-                            f"World: {bounds_rect.center}\nScreen: {center}",
+                            f"Object: {renderable.transform.owner}\n"
+                            f"World: {bounds_rect.center}\n"
+                            f"Screen: {center}",
                             False,
                             Color("gray"),
                         )
