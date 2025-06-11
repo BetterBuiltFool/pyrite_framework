@@ -124,9 +124,10 @@ class CameraService:
 
         width, height, depth, center_x, center_y = cls._get_projection_data(camera)
         # Convert the local coords to projection space center.
+        zoom_level = camera.zoom_level
         eye_point = (
-            local_coords.x - center_x,
-            local_coords.y - center_y,
+            (local_coords.x * zoom_level) - center_x,
+            (local_coords.y * zoom_level) - center_y,
             local_coords.z,
         )
         # Divide by projection size to normalize.
@@ -153,9 +154,10 @@ class CameraService:
             int(ndc_coords[2] * (depth / 2)),
         )
         # Translate to local camera space.
+        zoom_level = camera.zoom_level
         local_coords = Vector3(
-            center_x + projection_coords[0],
-            center_y + projection_coords[1],
+            center_x + projection_coords[0] / zoom_level,
+            center_y + projection_coords[1] / zoom_level,
             projection_coords[2],
         )
         return local_coords
