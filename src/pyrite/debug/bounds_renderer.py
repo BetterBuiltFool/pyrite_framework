@@ -30,34 +30,10 @@ class BoundsRenderer(DebugRenderer):
                     bounds = renderable.get_bounds()
                     bounds_rect = bounds.get_rect()
                     for camera in cameras:
-                        center = CameraRenderer._world_to_screen(
-                            bounds_rect.center, camera, Viewport.DEFAULT
+                        CameraRenderer.draw_rect(
+                            camera,
+                            Viewport.DEFAULT,
+                            self.color,
+                            bounds_rect,
+                            width=1,
                         )
-                        rendered_text = self.font.render(
-                            f"Object: {renderable.transform.owner}\n"
-                            f"World: {bounds_rect.center}\n"
-                            f"Screen: {center}",
-                            False,
-                            Color("gray"),
-                        )
-                        display = Viewport.DEFAULT.get_target_surface()
-                        pygame.draw.circle(
-                            display,
-                            Color("white"),
-                            center,
-                            1,
-                        )
-                        pygame.draw.line(
-                            display,
-                            Color("darkgray"),
-                            center,
-                            display.get_rect().center,
-                        )
-                        display.blit(rendered_text, center)
-                        # CameraRenderer.draw_rect(
-                        #     camera,
-                        #     Viewport.DEFAULT,
-                        #     self.color,
-                        #     bounds_rect,
-                        #     width=1,
-                        # )
