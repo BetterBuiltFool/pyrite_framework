@@ -8,7 +8,6 @@ from pygame import Color
 from ..types.debug_renderer import DebugRenderer
 from ..enum import RenderLayers
 from .. import draw
-from ..rendering.viewport import Viewport
 
 if TYPE_CHECKING:
     from pygame.typing import ColorLike
@@ -33,7 +32,7 @@ class BoundsRenderer(DebugRenderer):
                         for viewport in camera.get_viewports():
                             draw.rect(
                                 camera,
-                                Viewport.DEFAULT,
+                                viewport,
                                 self.color,
                                 bounds_rect,
                                 width=1,
