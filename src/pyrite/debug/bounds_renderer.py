@@ -7,7 +7,7 @@ from pygame import Color
 
 from ..types.debug_renderer import DebugRenderer
 from ..enum import RenderLayers
-from ..rendering.camera_renderer import CameraRenderer
+from .. import draw
 from ..rendering.viewport import Viewport
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class BoundsRenderer(DebugRenderer):
                     bounds = renderable.get_bounds()
                     bounds_rect = bounds.get_rect()
                     for camera in cameras:
-                        CameraRenderer.draw_rect(
+                        draw.rect(
                             camera,
                             Viewport.DEFAULT,
                             self.color,
