@@ -1,3 +1,10 @@
+"""
+Pyrite module for drawing shapes directly to the screen, over a camera.
+
+Only use this directly if you know what you're doing, otherwise, use the methods of the
+camera.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Sequence
