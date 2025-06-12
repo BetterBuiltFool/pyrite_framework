@@ -74,7 +74,9 @@ class CameraService:
 
         :return: A list of cameras.
         """
-        return list(cls._active_cameras)
+        return (
+            list(cls._active_cameras) if cls._active_cameras else [cls._default_camera]
+        )
 
     @classmethod
     def get_bounds(cls, camera: Camera) -> CullingBounds:
