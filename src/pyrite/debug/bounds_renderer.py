@@ -30,10 +30,11 @@ class BoundsRenderer(DebugRenderer):
                     bounds = renderable.get_bounds()
                     bounds_rect = bounds.get_rect()
                     for camera in cameras:
-                        draw.rect(
-                            camera,
-                            Viewport.DEFAULT,
-                            self.color,
-                            bounds_rect,
-                            width=1,
-                        )
+                        for viewport in camera.get_viewports():
+                            draw.rect(
+                                camera,
+                                Viewport.DEFAULT,
+                                self.color,
+                                bounds_rect,
+                                width=1,
+                            )
