@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector3
+from pygame import Rect
 
 from ..camera.camera_service import CameraService
 from ..types import Renderer
@@ -42,8 +42,8 @@ class CameraRenderer(Renderer):
         """
         display = viewport.get_target_surface()
 
-        screen_start = cls._world_to_screen(start_pos, camera, viewport)
-        screen_end = cls._world_to_screen(end_pos, camera, viewport)
+        screen_start = CameraService.world_to_screen(start_pos, camera, viewport)
+        screen_end = CameraService.world_to_screen(end_pos, camera, viewport)
 
         pygame.draw.line(display, color, screen_start, screen_end, width)
 
@@ -60,27 +60,18 @@ class CameraRenderer(Renderer):
         display = viewport.get_target_surface()
 
         # Remember that display is inverted compared to world
-        screen_topleft = cls._world_to_screen(rect.bottomleft, camera, viewport)
-        screen_bottomright = cls._world_to_screen(rect.topright, camera, viewport)
+        screen_topleft = CameraService.world_to_screen(
+            rect.bottomleft, camera, viewport
+        )
+        screen_bottomright = CameraService.world_to_screen(
+            rect.topright, camera, viewport
+        )
 
         rect_width = screen_bottomright[0] - screen_topleft[0]
         rect_height = screen_bottomright[1] - screen_topleft[1]
         draw_rect = Rect(*screen_topleft, rect_width, rect_height)
 
         pygame.draw.rect(display, color, draw_rect, width)
-
-    @classmethod
-    def _world_to_screen(
-        cls, point: Point, camera: Camera, viewport: Viewport
-    ) -> Point:
-        local_coords = CameraService.point_to_local(camera, point)
-        if viewport.crop:
-            coords = viewport.local_to_screen(local_coords)
-        else:
-            eye_coords = CameraService.local_point_to_projection(camera, local_coords)
-            ndc_coords = CameraService.local_to_ndc(camera, Vector3(*eye_coords, 0))
-            coords = viewport.ndc_to_screen(ndc_coords)
-        return coords
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):

@@ -13,6 +13,7 @@ from ..transform import Transform
 if TYPE_CHECKING:
     from .camera import Camera
     from ..types import CameraViewBounds, CullingBounds
+    from ..rendering.viewport import Viewport
     from pygame import Rect
     from pygame.typing import Point
 
@@ -251,6 +252,17 @@ class CameraService:
 
         # return viewport_space_position.elementwise() + viewport_world.topleft
         pass
+
+    @classmethod
+    def world_to_screen(cls, point: Point, camera: Camera, viewport: Viewport) -> Point:
+        local_coords = cls.point_to_local(camera, point)
+        if viewport.crop:
+            coords = viewport.local_to_screen(local_coords)
+        else:
+            eye_coords = cls.local_point_to_projection(camera, local_coords)
+            ndc_coords = cls.local_to_ndc(camera, Vector3(*eye_coords, 0))
+            coords = viewport.ndc_to_screen(ndc_coords)
+        return coords
 
     @classmethod
     def update_default_camera(cls, size: Point):
