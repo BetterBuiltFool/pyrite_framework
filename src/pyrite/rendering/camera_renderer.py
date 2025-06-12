@@ -9,6 +9,7 @@ from ..camera.camera_service import CameraService
 from ..types import Renderer
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from pygame import Surface
     from pygame.typing import ColorLike, Point
     from ..camera import Camera
@@ -55,11 +56,11 @@ class CameraRenderer(Renderer):
         color: ColorLike,
         rect: Rect,
         width: int = 1,
-        border_radius=-1,
-        border_top_left_radius=-1,
-        border_top_right_radius=-1,
-        border_bottom_left_radius=-1,
-        border_bottom_right_radius=-1,
+        border_radius: int = -1,
+        border_top_left_radius: int = -1,
+        border_top_right_radius: int = -1,
+        border_bottom_left_radius: int = -1,
+        border_bottom_right_radius: int = -1,
     ):
         display = viewport.get_target_surface()
 
@@ -86,6 +87,23 @@ class CameraRenderer(Renderer):
             border_bottom_left_radius,
             border_bottom_right_radius,
         )
+
+    @classmethod
+    def draw_polygon(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        points: Sequence[Point],
+        width: int = 0,
+    ):
+        display = viewport.get_target_surface()
+
+        screen_points = [
+            CameraService.world_to_screen(point, camera, viewport) for point in points
+        ]
+
+        pygame.draw.polygon(display, color, screen_points, width)
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
