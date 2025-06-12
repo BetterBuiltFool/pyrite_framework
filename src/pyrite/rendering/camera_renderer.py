@@ -107,6 +107,36 @@ class CameraRenderer(Renderer):
         return pygame.draw.polygon(display, color, screen_points, width)
 
     @classmethod
+    def draw_circle(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        center: Point,
+        radius: int,
+        width: int = 0,
+        draw_top_right: bool = False,
+        draw_top_left: bool = False,
+        draw_bottom_left: bool = False,
+        draw_bottom_right: bool = False,
+    ):
+        display = viewport.get_target_surface()
+
+        screen_center = CameraService.world_to_screen(center, camera, viewport)
+
+        return pygame.draw.circle(
+            display,
+            color,
+            screen_center,
+            radius,
+            width,
+            draw_top_right,
+            draw_top_left,
+            draw_bottom_left,
+            draw_bottom_right,
+        )
+
+    @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
