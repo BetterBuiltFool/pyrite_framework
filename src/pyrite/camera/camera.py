@@ -15,6 +15,7 @@ from .._helper import defaults
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
     from ..types.projection import Projection as ProjectionType
+    from ..types.render_target import RenderTarget
     from ..transform import Transform
     from pygame.typing import Point
 
@@ -28,7 +29,7 @@ class Camera(CameraBase):
         projection: Projection,
         position: Point = (0, 0),
         transform: TransformProtocol = None,
-        render_targets: Viewport | Sequence[Viewport] = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
