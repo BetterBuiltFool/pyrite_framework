@@ -49,6 +49,9 @@ class Camera(CameraBase):
         if not isinstance(render_targets, Sequence):
             render_targets = [render_targets]
         self.render_targets: Sequence[Viewport] = render_targets
+        self._viewports = [
+            viewport for viewport in render_targets if isinstance(viewport, Viewport)
+        ]
         if layer_mask is None:
             layer_mask = ()
         self.layer_mask = layer_mask
@@ -87,6 +90,13 @@ class Camera(CameraBase):
 
     def get_view_bounds(self) -> CameraViewBounds:
         return CameraService.get_view_bounds(self)
+
+    def get_viewports(self) -> list[Viewport]:
+        """
+        Gets a list of viewports targeted by the camera.
+
+        :return: A list of viewports, empty if there are none.
+        """
 
     def render(self, delta_time, viewport: Viewport):
         CameraRenderer.render(delta_time, self, viewport)
