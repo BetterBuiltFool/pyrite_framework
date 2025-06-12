@@ -197,6 +197,40 @@ class CameraRenderer(Renderer):
         )
 
     @classmethod
+    def draw_arc(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        rect: Rect,
+        start_angle: float,
+        stop_angle: float,
+        width: int = 0,
+    ) -> Rect:
+        display = viewport.get_target_surface()
+
+        # Remember that display is inverted compared to world
+        screen_topleft = CameraService.world_to_screen(
+            rect.bottomleft, camera, viewport
+        )
+        screen_bottomright = CameraService.world_to_screen(
+            rect.topright, camera, viewport
+        )
+
+        rect_width = screen_bottomright[0] - screen_topleft[0]
+        rect_height = screen_bottomright[1] - screen_topleft[1]
+        draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+
+        return pygame.draw.arc(
+            display,
+            color,
+            draw_rect,
+            start_angle,
+            stop_angle,
+            width,
+        )
+
+    @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
