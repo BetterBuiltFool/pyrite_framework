@@ -219,6 +219,24 @@ class CameraRenderer(Renderer):
         return pygame.draw.line(display, color, screen_start, screen_end, width)
 
     @classmethod
+    def draw_lines(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        closed: bool,
+        points: Sequence[Point],
+        width: int = 1,
+    ) -> Rect:
+        display = viewport.get_target_surface()
+
+        screen_points = [
+            CameraService.world_to_screen(point, camera, viewport) for point in points
+        ]
+
+        return pygame.draw.lines(display, color, closed, screen_points, width)
+
+    @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
