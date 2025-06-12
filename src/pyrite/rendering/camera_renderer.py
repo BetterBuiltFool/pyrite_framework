@@ -56,7 +56,7 @@ class CameraRenderer(Renderer):
         viewport: Viewport,
         color: ColorLike,
         rect: Rect,
-        width: int = 1,
+        width: int = 0,
         border_radius: int = -1,
         border_top_left_radius: int = -1,
         border_top_right_radius: int = -1,
@@ -119,7 +119,7 @@ class CameraRenderer(Renderer):
         draw_top_left: bool = False,
         draw_bottom_left: bool = False,
         draw_bottom_right: bool = False,
-    ):
+    ) -> Rect:
         display = viewport.get_target_surface()
 
         screen_center = CameraService.world_to_screen(center, camera, viewport)
@@ -134,6 +134,66 @@ class CameraRenderer(Renderer):
             draw_top_left,
             draw_bottom_left,
             draw_bottom_right,
+        )
+
+    @classmethod
+    def draw_aacircle(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        center: Point,
+        radius: int,
+        width: int = 0,
+        draw_top_right: bool = False,
+        draw_top_left: bool = False,
+        draw_bottom_left: bool = False,
+        draw_bottom_right: bool = False,
+    ) -> Rect:
+        display = viewport.get_target_surface()
+
+        screen_center = CameraService.world_to_screen(center, camera, viewport)
+
+        return pygame.draw.aacircle(
+            display,
+            color,
+            screen_center,
+            radius,
+            width,
+            draw_top_right,
+            draw_top_left,
+            draw_bottom_left,
+            draw_bottom_right,
+        )
+
+    @classmethod
+    def draw_ellipse(
+        cls,
+        camera: Camera,
+        viewport: Viewport,
+        color: ColorLike,
+        rect: Rect,
+        width: int = 0,
+    ) -> Rect:
+        display = viewport.get_target_surface()
+
+        # Remember that display is inverted compared to world
+        screen_topleft = CameraService.world_to_screen(
+            rect.bottomleft, camera, viewport
+        )
+        screen_bottomright = CameraService.world_to_screen(
+            rect.topright, camera, viewport
+        )
+
+        rect_width = screen_bottomright[0] - screen_topleft[0]
+        rect_height = screen_bottomright[1] - screen_topleft[1]
+        draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+
+        return pygame.draw.ellipse(
+            display,
+            color,
+            draw_rect,
+            width,
         )
 
     @classmethod
