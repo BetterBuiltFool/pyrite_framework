@@ -1,8 +1,5 @@
 """
 Pyrite module for drawing shapes directly to the screen, over a camera.
-
-Only use this directly if you know what you're doing, otherwise, use the methods of the
-camera.
 """
 
 from __future__ import annotations
@@ -33,6 +30,16 @@ def rect(
     border_bottom_left_radius: int = -1,
     border_bottom_right_radius: int = -1,
 ) -> Rect:
+    """
+    Draws a rectangle over the screen, using a camera's view for reference.
+
+    See pygame.draw.rect for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     # Remember that display is inverted compared to world
@@ -63,6 +70,16 @@ def polygon(
     points: Sequence[Point],
     width: int = 0,
 ) -> Rect:
+    """
+    Draws a polgon over the screen, using a camera's view for reference.
+
+    See pygame.draw.polygon for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_points = [
@@ -84,6 +101,16 @@ def circle(
     draw_bottom_left: bool = False,
     draw_bottom_right: bool = False,
 ) -> Rect:
+    """
+    Draws a circle over the screen, using a camera's view for reference.
+
+    See pygame.draw.circle for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_center = CameraService.world_to_screen(center, camera, viewport)
@@ -113,6 +140,17 @@ def aacircle(
     draw_bottom_left: bool = False,
     draw_bottom_right: bool = False,
 ) -> Rect:
+    """
+    Draws an anti-aliased circle over the screen, using a camera's view for reference.
+
+    See pygame.draw.aacircle for details about parameters other that camera and
+    viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_center = CameraService.world_to_screen(center, camera, viewport)
@@ -137,6 +175,16 @@ def ellipse(
     rect: Rect,
     width: int = 0,
 ) -> Rect:
+    """
+    Draws an ellipse over the screen, using a camera's view for reference.
+
+    See pygame.draw.ellipse for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     # Remember that display is inverted compared to world
@@ -164,6 +212,16 @@ def arc(
     stop_angle: float,
     width: int = 0,
 ) -> Rect:
+    """
+    Draws an arc over the screen, using a camera's view for reference.
+
+    See pygame.draw.arc for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     # Remember that display is inverted compared to world
@@ -192,6 +250,16 @@ def line(
     end_pos: Point,
     width: int = 1,
 ) -> Rect:
+    """
+    Draws a line over the screen, using a camera's view for reference.
+
+    See pygame.draw.line for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_start = CameraService.world_to_screen(start_pos, camera, viewport)
@@ -208,6 +276,16 @@ def lines(
     points: Sequence[Point],
     width: int = 1,
 ) -> Rect:
+    """
+    Draws a series of lines over the screen, using a camera's view for reference.
+
+    See pygame.draw.lines for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_points = [
@@ -225,6 +303,16 @@ def aaline(
     end_pos: Point,
     width: int = 1,
 ) -> Rect:
+    """
+    Draws an anti-aliased line over the screen, using a camera's view for reference.
+
+    See pygame.draw.aaline for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_start = CameraService.world_to_screen(start_pos, camera, viewport)
@@ -241,6 +329,17 @@ def aalines(
     points: Sequence[Point],
     width: int = 1,
 ) -> Rect:
+    """
+    Draws a series of anti-aliased lines over the screen, using a camera's view for
+    reference.
+
+    See pygame.draw.aalines for details about parameters other that camera and viewport.
+
+    :param camera: The camera whose view is being considered.
+    :param viewport: The viewport being drawn to.
+
+    :return: A Rectangle that surrounds the drawn area.
+    """
     display = viewport.get_target_surface()
 
     screen_points = [
