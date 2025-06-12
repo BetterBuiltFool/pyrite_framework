@@ -97,6 +97,7 @@ class Camera(CameraBase):
 
         :return: A list of viewports, empty if there are none.
         """
+        return self._viewports
 
     def render(self, delta_time, viewport: Viewport):
         CameraRenderer.render(delta_time, self, viewport)
