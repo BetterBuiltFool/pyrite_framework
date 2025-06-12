@@ -55,7 +55,11 @@ class CameraRenderer(Renderer):
         color: ColorLike,
         rect: Rect,
         width: int = 1,
-        # Add other params eventually
+        border_radius=-1,
+        border_top_left_radius=-1,
+        border_top_right_radius=-1,
+        border_bottom_left_radius=-1,
+        border_bottom_right_radius=-1,
     ):
         display = viewport.get_target_surface()
 
@@ -71,7 +75,17 @@ class CameraRenderer(Renderer):
         rect_height = screen_bottomright[1] - screen_topleft[1]
         draw_rect = Rect(*screen_topleft, rect_width, rect_height)
 
-        pygame.draw.rect(display, color, draw_rect, width)
+        pygame.draw.rect(
+            display,
+            color,
+            draw_rect,
+            width,
+            border_radius,
+            border_top_left_radius,
+            border_top_right_radius,
+            border_bottom_left_radius,
+            border_bottom_right_radius,
+        )
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
