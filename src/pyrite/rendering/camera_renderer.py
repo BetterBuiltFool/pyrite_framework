@@ -29,7 +29,7 @@ class CameraRenderer(Renderer):
         start_pos: Point,
         end_pos: Point,
         width: int = 1,
-    ):
+    ) -> Rect:
         """
         Draws a line to the screen, using the coordinates (in world space),
         transformed to screen space.
@@ -40,13 +40,14 @@ class CameraRenderer(Renderer):
         :param start_pos: Start position of the line in world sapce
         :param end_pos: End position of the line in world space
         :param width: The width of the line, in pixels, defaults to 1
+        :return: A Rect that covers the area between the resulting line in screen space.
         """
         display = viewport.get_target_surface()
 
         screen_start = CameraService.world_to_screen(start_pos, camera, viewport)
         screen_end = CameraService.world_to_screen(end_pos, camera, viewport)
 
-        pygame.draw.line(display, color, screen_start, screen_end, width)
+        return pygame.draw.line(display, color, screen_start, screen_end, width)
 
     @classmethod
     def draw_rect(
@@ -61,7 +62,7 @@ class CameraRenderer(Renderer):
         border_top_right_radius: int = -1,
         border_bottom_left_radius: int = -1,
         border_bottom_right_radius: int = -1,
-    ):
+    ) -> Rect:
         display = viewport.get_target_surface()
 
         # Remember that display is inverted compared to world
@@ -76,7 +77,7 @@ class CameraRenderer(Renderer):
         rect_height = screen_bottomright[1] - screen_topleft[1]
         draw_rect = Rect(*screen_topleft, rect_width, rect_height)
 
-        pygame.draw.rect(
+        return pygame.draw.rect(
             display,
             color,
             draw_rect,
@@ -96,14 +97,14 @@ class CameraRenderer(Renderer):
         color: ColorLike,
         points: Sequence[Point],
         width: int = 0,
-    ):
+    ) -> Rect:
         display = viewport.get_target_surface()
 
         screen_points = [
             CameraService.world_to_screen(point, camera, viewport) for point in points
         ]
 
-        pygame.draw.polygon(display, color, screen_points, width)
+        return pygame.draw.polygon(display, color, screen_points, width)
 
     @classmethod
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
