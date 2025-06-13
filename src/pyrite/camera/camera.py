@@ -78,8 +78,8 @@ class Camera(CameraBase):
     def zoom_level(self):
         return self._zoom_level
 
-    def clear(self):
-        CameraService.clear(self)
+    def refresh(self):
+        CameraService.refresh(self)
 
     def cull(self, renderable: Renderable) -> bool:
         bounds = renderable.get_bounds()

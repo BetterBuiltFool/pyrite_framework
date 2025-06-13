@@ -23,10 +23,9 @@ class CameraBase(ABC):
     layer_mask: tuple[Layer]
 
     @abstractmethod
-    def clear(self):
+    def refresh(self):
         """
-        Overwrite the surface to allow new drawing on top.
-        Default fill is solid black.
+        Returns the camera to a state that is ready for rendering.
         """
         pass
 

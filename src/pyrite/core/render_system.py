@@ -404,7 +404,7 @@ class DefaultRenderSystem(RenderSystem):
         cameras = CameraService.get_render_cameras()
 
         for camera in cameras:
-            camera.clear()
+            camera.refresh()
 
         for render_texture_component in RenderTextureComponent.get_instances().values():
             render_texture_component.update_texture()

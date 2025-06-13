@@ -53,7 +53,7 @@ class CameraService:
         cls._active_cameras.discard(camera)
 
     @classmethod
-    def clear(cls, camera: Camera):
+    def refresh(cls, camera: Camera):
         surface = cls._surfaces.get(camera)
         surface.fill((0, 0, 0))
 
