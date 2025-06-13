@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 
 
 class CameraRenderer(Renderer):
+    """
+    A Renderer responsible for rendering camera views to screen.
+    """
+
     _smooth: bool = False
 
     @classmethod

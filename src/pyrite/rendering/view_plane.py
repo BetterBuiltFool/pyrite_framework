@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 
 
 class ViewPlane(CameraViewBounds):
+    """
+    A 2D plane representing the viewing area of an axis-aligned Ortho camera.
+    """
+
     __slots__ = ("view_rect",)
 
     def __init__(self, view_rect: Rect) -> None:

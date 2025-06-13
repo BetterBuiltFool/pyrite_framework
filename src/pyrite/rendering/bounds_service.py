@@ -10,6 +10,10 @@ if TYPE_CHECKING:
 
 
 class BoundsService:
+    """
+    A services that tracks and store data for the Bounds of renderables.
+    """
+
     _renderables: WeakKeyDictionary[Renderable, BoundsData] = WeakKeyDictionary()
 
     @classmethod

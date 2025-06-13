@@ -18,6 +18,10 @@ if TYPE_CHECKING:
 
 
 class SpriteRenderer(Renderer):
+    """
+    Renderer class for rendering sprites to cameras.
+    """
+
     _sprite_cache: WeakKeyDictionary[Sprite, SpriteData] = WeakKeyDictionary()
     _debug = False
 

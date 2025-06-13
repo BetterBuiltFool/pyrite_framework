@@ -11,6 +11,9 @@ if TYPE_CHECKING:
 
 
 class OrthoProjection(Projection):
+    """
+    An orthographic projection data object, useful for 2D applications.
+    """
 
     def __init__(
         self, projection_rect: Rect = None, z_near: float = -1, z_far: float = 1
