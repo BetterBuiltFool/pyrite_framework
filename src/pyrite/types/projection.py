@@ -8,6 +8,11 @@ if TYPE_CHECKING:
 
 
 class Projection(ABC):
+    """
+    An object representing the parameteres of a camera's projection into the world
+    space. The render system makes use of this to correctly place renderable items on
+    the screen.
+    """
 
     @property
     @abstractmethod
