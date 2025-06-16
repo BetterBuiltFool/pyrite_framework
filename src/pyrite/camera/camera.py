@@ -1,266 +1,123 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
-from ..types.camera import CameraBase
-from ..enum import Layer, RenderLayers
-from ..types.renderable import Renderable
-from .surface_sector import SurfaceSector
-
-import pygame
-from pygame import Vector2
+from . import camera_service
+from ..enum import Layer
+from ..rendering import CameraRenderer, RectBounds, Viewport
+from ..transform import transform_component
+from ..types import CameraBase, Renderable
+from .._helper import defaults
 
 if TYPE_CHECKING:
-    from ..types import Container
+    from ..types import CameraViewBounds, Container, TransformProtocol
+    from ..types.projection import Projection as ProjectionType
+    from ..types.render_target import RenderTarget
+    from ..transform import Transform
     from pygame.typing import Point
 
+    Projection = TypeVar("Projection", bound=ProjectionType)
 
-class Camera(CameraBase, Renderable):
-    """
-    Basic form of a camera that is capable of rendering to the screen.
-    """
+
+class Camera(CameraBase):
 
     def __init__(
         self,
-        max_size: Point,
-        position: Point = None,
-        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
-        viewport: pygame.Rect = None,
-        smooth_scale: bool = False,
+        projection: Projection,
+        position: Point = (0, 0),
+        transform: TransformProtocol = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] = None,
         layer_mask: tuple[Layer] = None,
         container: Container = None,
         enabled=True,
-        draw_index: int = 0,
     ) -> None:
-        """
-        Basic form of a camera that is capable of rendering to the screen.
-
-        :param max_size: Largest, most zoomed out size of the camera.
-        :param position: Position of the center of the camera surface, defaults to None
-        None will give the center of the viewport.
-        :param surface_sectors: Defines sections of the screen to render to. If multiple
-        surface sectors are used, the camera will be rendered and scaled to each of
-        them.
-        :param viewport: A rectangle representing the actual viewable area of the
-        camera, defaults to None.
-        None will give the center of the viewport.
-        :param smooth_scale: Determines if the camera will be smoothed when run through
-        the scaling step, defaults to False.
-        :param layer_mask: Layers that the camera will exclude from rendering,
-        defaults to None
-        :param container: The instance of the game to which the rengerable belongs,
-        defaults to None. See Renderable.
-        :param enabled: Whether the Renderable will be drawn to the screen,
-        defaults to True
-        :param draw_index: Index determining draw order within a layer, defaults to 0
-        """
-        self.max_size = Vector2(max_size)
-        surface = pygame.Surface(self.max_size)
-        if viewport is None:
-            viewport = surface.get_rect()
-        self.viewport = viewport
-        """
-        A rectangle representing the actual viewable area of the camera
-        """
-        self._smooth_scale = smooth_scale
-        self._scale_method = (
-            pygame.transform.scale if not smooth_scale else pygame.transform.smoothscale
-        )
-        if position is None:
-            position = self.viewport.center
-        self.position = Vector2(position)
-        if surface_sectors is None:
-            surface_sectors = [SurfaceSector()]
-        if not isinstance(surface_sectors, Sequence):
-            surface_sectors = [surface_sectors]
-        self.surface_sectors: Sequence[SurfaceSector] = surface_sectors
-        self._zoom_level: float = 1
-        CameraBase.__init__(self, surface=surface, layer_mask=layer_mask)
-        Renderable.__init__(
-            self,
-            container=container,
-            enabled=enabled,
-            layer=RenderLayers.CAMERA,
-            draw_index=draw_index,
-        )
+        if transform is not None:
+            if isinstance(transform, transform_component.TransformComponent):
+                # If we're being passed something else's transform,
+                # we'll just use that instead.
+                self.transform = transform
+            else:
+                self.transform = transform_component.from_transform(self, transform)
+        else:
+            self.transform = transform_component.from_attributes(self, position)
+        self.projection = projection
+        if render_targets is None:
+            render_targets = [Viewport.DEFAULT]
+        if not isinstance(render_targets, Sequence):
+            render_targets = [render_targets]
+        self.render_targets: Sequence[Viewport] = render_targets
+        self._viewports = [
+            viewport for viewport in render_targets if isinstance(viewport, Viewport)
+        ]
+        if layer_mask is None:
+            layer_mask = ()
+        self.layer_mask = layer_mask
+        self.enabled = enabled
+        self._zoom_level = 1
+        if container is None:
+            container = defaults.get_default_container()
+        self.container = container
+        camera_service.CameraService.add_camera(self)
 
     @property
-    def smooth_scale(self) -> bool:
-        return self._smooth_scale
+    def enabled(self) -> bool:
+        return camera_service.CameraService.is_enabled(self)
 
-    @smooth_scale.setter
-    def smooth_scale(self, flag: bool):
-        self._smooth_scale = flag
-        if flag:
-            self._scale_method = pygame.transform.smoothscale
-            return
-        self._scale_method = pygame.transform.scale
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        self._enabled = value
+        if value:
+            camera_service.CameraService.enable(self)
+        else:
+            camera_service.CameraService.disable(self)
 
-    def clear(self):
+    @property
+    def zoom_level(self):
+        return self._zoom_level
+
+    def refresh(self):
+        camera_service.CameraService.refresh(self)
+
+    def cull(self, renderable: Renderable) -> bool:
+        bounds = renderable.get_bounds()
+        return self.get_view_bounds().contains(bounds)
+
+    def get_bounds(self) -> RectBounds:
+        return camera_service.CameraService.get_bounds(self)
+
+    def get_view_bounds(self) -> CameraViewBounds:
+        return camera_service.CameraService.get_view_bounds(self)
+
+    def get_viewports(self) -> list[Viewport]:
         """
-        Overwrite the surface to allow new drawing on top.
-        Basic camera fills with transparent black.
+        Gets a list of viewports targeted by the camera.
+
+        :return: A list of viewports, empty if there are none.
         """
-        self.surface.fill((0, 0, 0, 255))
+        return self._viewports
 
-    def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.get_viewport_rect().colliderect(rect)
+    def render(self, delta_time, viewport: Viewport):
+        CameraRenderer.render(delta_time, self, viewport)
 
-    def get_surface_rect(self) -> pygame.Rect:
-        """
-        Gets the rect of the camera's surface, in worldspace, centered on the position.
+    def to_local(self, point: Transform) -> Transform:
+        return camera_service.CameraService.to_local(self, point)
 
-        :return: A Rectangle matching the size of the camera surface, in worldspace.
-        """
-        return self.surface.get_rect(center=self.position)
+    def to_eye(self, point: Transform) -> Transform:
+        return camera_service.CameraService.to_eye(self, point)
 
-    def get_viewport_rect(self) -> pygame.Rect:
-        """
-        Gives the viewport converted to worldspace.
+    def to_world(self, point: Transform) -> Transform:
+        return camera_service.CameraService.to_world(self, point)
 
-        :return: A Rectangle matching the size of the viewport, with worldspace
-        coordinates.
-        """
-        return pygame.Rect(
-            self.to_world(self.viewport.topleft),
-            self.viewport.size,
-        )
-
-    def get_rect(self) -> pygame.Rect:
-        return self.viewport.move_to(topleft=(0, 0))
-
-    def render(self, delta_time: float) -> pygame.Surface:
-        return self.surface.subsurface(self.viewport)
-
-    def to_local(self, point: Point) -> Vector2:
-        point = Vector2(point)
-
-        return point - Vector2(self.get_surface_rect().topleft)
-
-    def to_world(self, point: Point) -> Vector2:
-        point = Vector2(point)
-
-        return point + Vector2(self.get_surface_rect().topleft)
-
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
-        """
-        Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the surface sector, it will extrapolate to
-        find the equivalent space.
-
-        :param point: A location in screen space, usually pygame.mouse.get_pos()
-        :param sector_index: Index of the sector to compare against, defaults to 0.
-        :raises IndexError: If the sector_index is larger than the camera's
-        number of sectors.
-        :return: The screen position, in world space relative to the camera
-        """
-        sector = self.surface_sectors[sector_index]
-        sector_rect = self._get_sector_rect(sector)
-
-        viewport_world = self.get_viewport_rect()
-
-        viewport_space_position = self._screen_to_viewport(
-            point, sector_rect, Vector2(viewport_world.size)
-        )
-
-        return viewport_space_position.elementwise() + viewport_world.topleft
+    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
+        return camera_service.CameraService.screen_to_world(self, point, viewport_index)
 
     def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
-    ) -> Vector2 | None:
-        """
-        Variant of screen_to_world.
-        Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the surface sector, it will instead return
-        None.
-
-        Use this when it needs to be clear that the mouse is outside the camera
-        view.
-
-        :param point: A location in screen space, usually pygame.mouse.get_pos()
-        :param sector_index: Index of the sector to compare against, defaults to 0.
-        :raises IndexError: If the sector_index is larger than the camera's
-        number of sectors.
-        :return: The screen position, in world space relative to the camera
-        """
-        sector = self.surface_sectors[sector_index]
-        sector_rect = self._get_sector_rect(sector)
-
-        if not sector_rect.collidepoint(point):
-            return None
-
-        viewport_world = self.get_viewport_rect()
-
-        viewport_space_position = self._screen_to_viewport(
-            point, sector_rect, Vector2(viewport_world.size)
+        self, point: Point, viewport_index: int = 0
+    ) -> Point | None:
+        return camera_service.CameraService.screen_to_world_clamped(
+            self, point, viewport_index
         )
-
-        return viewport_space_position.elementwise() + viewport_world.topleft
-
-    def _screen_to_viewport(
-        self, point: Point, sector_rect: pygame.Rect, viewport_size: Vector2
-    ) -> Vector2:
-        relative_pos = pygame.Vector2(point) - pygame.Vector2(sector_rect.topleft)
-        scale_x, scale_y = (
-            pygame.Vector2(sector_rect.size).elementwise() / viewport_size
-        )
-        viewport_space_position: pygame.Vector2 = relative_pos.elementwise() / (
-            scale_x,
-            scale_y,
-        )
-        return viewport_space_position
-
-    def _get_sector_rect(self, sector: SurfaceSector) -> pygame.Rect:
-        return sector.get_rect(pygame.display.get_surface())
-
-    def scale_view(
-        self, camera_surface: pygame.Surface, target_size: Point
-    ) -> pygame.Surface:
-        """
-        Returns a scaled version of the camera's view surface using the camera's chosen
-        scale method.
-
-        :param camera_surface: the rendered camera surface
-        :param target_size: Destination size of the surface
-        :return: The scaled surface.
-        """
-        return self._scale_method(camera_surface, target_size)
 
     def zoom(self, zoom_level: float):
-        """
-        Adjusts the viewport size to match the zoom level.
-        Viewport size is scaled in terms of max_size/zoom_level,
-        so overall size is 1/zoom_level^2.
-        (i.e. zoom_level 2 means half width and half height, 1/4 overall size)
-
-        If the viewport is off center, and the new zoom size would push the viewport
-        out of bounds, the viewport is adjusted to fit in the surface. Full zoom out
-        will center the viewport.
-
-        :param zoom_level: Integer value indicating zoom level
-        :raises ValueError: Raised if zoom level is greater than one
-        """
-        if zoom_level < 1:
-            raise ValueError("Cannot zoom out beyond zoom_level 1")
-        self._zoom_level = zoom_level
-
-        center = self.viewport.center
-
-        # Race condition (possibly?) means we can't assign to viewport directly without
-        # a potential crash from pushing viewport out of bounds
-        # So, we create a new rect to calculate with and assign it to viewport later.
-        # This ensures a valid subsurface can always be taken from viewport
-        new_view = pygame.Rect(self.viewport)
-        new_view.size = self.max_size / zoom_level
-        new_view.center = center
-
-        top = new_view.top
-        left = new_view.left
-
-        # Clamp viewport to stay in bounds
-        new_view.top = max(0, min(top, new_view.height + top))
-        new_view.left = max(0, min(left, new_view.width + left))
-
-        # Overwrite the viewport with the new (valid) rect
-        self.viewport = new_view
+        camera_service.CameraService.zoom(self, zoom_level)

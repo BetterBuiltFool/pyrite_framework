@@ -13,8 +13,9 @@ from pygame.typing import Point
 
 sys.path.append(str(pathlib.Path.cwd()))
 
+from pyrite.types import CullingBounds  # noqa:E402
 from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
-from src.pyrite.core.renderer import (  # noqa:E402
+from src.pyrite.core.render_system import (  # noqa:E402
     DefaultRenderManager,
     _get_draw_index,
 )
@@ -35,8 +36,8 @@ class MockRenderable(Renderable):
     def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
         return super().render(delta_time)
 
-    def get_rect(self) -> Rect:
-        return super().get_rect()
+    def get_bounds(self) -> CullingBounds:
+        return super().get_bounds()
 
 
 class MockEntity(Entity):
@@ -174,8 +175,9 @@ class TestDefaultRenderManager(unittest.TestCase):
         render_queue = self.render_manager.generate_render_queue()
         self.maxDiff = None
         for layer, dict_elements in element_dict.items():
-            render_elements = render_queue.get(layer, [])
-            self.assertListEqual(dict_elements, render_elements)
+            render_elements = render_queue.get(layer, {})
+            renderables = render_elements.get(None, [])
+            self.assertListEqual(dict_elements, renderables)
 
         self.render_manager.renderables = {}
 

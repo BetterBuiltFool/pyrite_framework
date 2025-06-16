@@ -3,21 +3,24 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Sequence
-from typing import Any, Self, TYPE_CHECKING
+from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
-# from pygame.typing import Point
+from pygame import Surface
 
-from ..types.camera import CameraBase
 from ..enum import RenderLayers
+
+from ..camera.camera_service import CameraService
+from ..rendering import RenderTextureComponent
 
 if TYPE_CHECKING:
     from ..camera import Camera
-    from ..types.renderable import Renderable
     from ..enum import Layer
-    from pygame import Rect
+    from ..types import CameraBase, Renderable
+    from ..types.debug_renderer import DebugRenderer
 
-import pygame
+    LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
+    RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 
 _active_render_manager: RenderManager = None
@@ -32,14 +35,14 @@ def set_render_manager(manager: RenderManager):
     _active_render_manager = manager
 
 
-_active_renderer: Renderer = None
+_active_renderer: RenderSystem = None
 
 
-def get_renderer() -> Renderer:
+def get_renderer() -> RenderSystem:
     return _active_renderer
 
 
-def set_renderer(renderer: Renderer):
+def set_renderer(renderer: RenderSystem):
     global _active_renderer
     _active_renderer = renderer
 
@@ -167,7 +170,7 @@ class RenderManager(ABC):
         return render_manager
 
 
-class Renderer(ABC):
+class RenderSystem(ABC):
     """
     Class responsible for drawing renderables to the screen.
     """
@@ -180,7 +183,7 @@ class Renderer(ABC):
     @abstractmethod
     def render(
         self,
-        window: pygame.Surface,
+        window: Surface,
         delta_time: float,
         render_queue: dict[Any, Sequence[Renderable]],
     ):
@@ -200,7 +203,7 @@ class Renderer(ABC):
         """
 
     @staticmethod
-    def get_renderer(**kwds) -> Renderer:
+    def get_renderer(**kwds) -> RenderSystem:
         """
         Extracts a renderer from keyword arguments.
         Used for creating a renderer for a new Game instance
@@ -209,6 +212,13 @@ class Renderer(ABC):
             renderer_type = get_default_renderer_type()
             renderer = renderer_type()
         return renderer
+
+    @abstractmethod
+    def add_debug_renderer(self, debug_renderer: DebugRenderer):
+        """
+        Adds a debug renderer that has methods to do draws at various points.
+        """
+        pass
 
 
 def _get_draw_index(renderable: Renderable) -> int:
@@ -262,43 +272,32 @@ class DefaultRenderManager(RenderManager):
     def is_enabled(self, item: Renderable) -> bool:
         return any((item in render_layer) for render_layer in self.renderables.values())
 
-    def generate_render_queue(self) -> dict[Layer, Sequence[Renderable]]:
-        render_queue: dict[Layer, Sequence[Renderable]] = {}
-        cameras: set[CameraBase] = self.renderables.get(RenderLayers.CAMERA, {})
+    def generate_render_queue(
+        self,
+    ) -> RenderQueue:
+        render_queue: RenderQueue = {}
+        cameras = CameraService.get_active_cameras()
 
         for layer in RenderLayers._layers:
-            layer_set = self.precull(self.renderables.get(layer, {}), layer, cameras)
-            render_queue.update({layer: self.sort_layer(layer_set)})
-
-        render_queue.update(
-            {
-                RenderLayers.UI_LAYER: self.sort_layer(
-                    self.renderables.get(RenderLayers.UI_LAYER, {})
-                )
-            }
-        )
-
-        render_queue.update(
-            {
-                RenderLayers.CAMERA: self.sort_layer(
-                    self.renderables.get(RenderLayers.CAMERA, {})
-                )
-            }
-        )
+            layer_dict = self.precull(self.renderables.get(layer, {}), layer, cameras)
+            render_queue.update({layer: layer_dict})
 
         return render_queue
 
     def precull(
         self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
-    ) -> set[Renderable]:
+    ) -> LayerDict:
         if not cameras:
-            return layer_set
-        culled_set: set[Renderable] = set()
+            # Just give the full layer set if there's no camera, pygame will handle
+            # culling for us.
+            return {CameraService._default_camera: self.sort_layer(layer_set)}
+        culled_dict: LayerDict = {}
         for camera in cameras:
             if layer in camera.layer_mask:
                 continue
-            culled_set |= set(camera.cull(layer_set))
-        return culled_set
+            visible = filter(camera.cull, layer_set)
+            culled_dict.update({camera: self.sort_layer(visible)})
+        return culled_dict
 
     def get_number_renderables(self) -> int:
         count = 0
@@ -324,114 +323,99 @@ class DefaultRenderManager(RenderManager):
         return renderables + negatives
 
 
-class DefaultRenderer(Renderer):
+class DefaultRenderSystem(RenderSystem):
+
+    def __init__(self) -> None:
+        self._debug_renderers: set[DebugRenderer] = set()
+
+    def add_debug_renderer(self, debug_renderer: DebugRenderer):
+        self._debug_renderers.add(debug_renderer)
 
     def render_layer(
         self,
-        layer_queue: Sequence[Renderable],
-        cameras: Sequence[CameraBase],
         delta_time: float,
-        layer: Layer,
+        layer_queue: Sequence[Renderable],
+        camera: CameraBase,
     ):
         """
         Extracts the renderables from the layer_queue, and has them drawn to the
-        cameras.
+        camera.
 
-        :param layer_queue: The ordered sequence of renderables to be drawn.
-        :param cameras: The cameras being drawn to.
         :param delta_time: Time passed since last frame.
-        :param layer: the layer being drawn from, for layermask testing.
+        :param layer_queue: The ordered sequence of renderables to be drawn.
+        :param camera: The camera being drawn to.
         """
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
-            rendered_surface = renderable.render(delta_time)
-            self.render_item(rendered_surface, renderable.get_rect(), cameras, layer)
+            renderable.render(delta_time, camera)
 
-    def render_item(
+    def render_camera(
         self,
-        rendered_surface: Renderable,
-        renderable_rect: Rect,
-        cameras: Sequence[CameraBase],
-        layer: Layer,
+        delta_time: float,
+        camera: Camera,
     ):
         """
-        Draws a renderable to the cameras, adjusting its world position to camera space.
+        Draws the given camera to the window, at each of its surface viewports.
 
-        :param rendered_surface: The surface to be drawn to the camera.
-        :param renderable_rect: The rendered item's rectangle in world space.
-        :param cameras: The cameras being drawn to.
-        :param layer: layer being drawn, for layermask testing.
-        """
-        for camera in cameras:
-            if layer in camera.layer_mask:
-                continue
-            if not camera._in_view(renderable_rect):
-                continue
-            camera.surface.blit(
-                rendered_surface, camera.to_local(renderable_rect.topleft)
-            )
-
-    def draw_camera(self, camera: Camera, window: pygame.Surface, delta_time: float):
-        """
-        Draws the given camera to the window, at each of its surface sectors.
-
+        :param delta_time: Time passed since last frame, if needed for any calculations.
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
-        :param delta_time: Time passed since last frame, if needed for any calculations.
         """
-        camera_surface = camera.render(delta_time)
-        for sector in camera.surface_sectors:
-            render_rect = sector.get_rect(window)
-            window.blit(
-                camera.scale_view(camera_surface, render_rect.size),
-                render_rect,
-            )
+        for render_target in camera.render_targets:
+            camera.render(delta_time, render_target)
 
     def render_ui(
         self,
-        ui_elements: Sequence[Renderable],
-        window: pygame.Surface,
         delta_time: float,
+        ui_elements: Sequence[Renderable],
+        window: Surface,
     ):
         """
         Goes through the ui elements, and draws them to the screen. They are already in
         screen space, so they do not get adjusted.
 
+        :param delta_time: Time passed since last frame.
         :param ui_elements: The sequence of ui elements to be drawn, in order.
         :param cameras: The cameras being drawn to.
-        :param delta_time: Time passed since last frame.
         """
-        for ui_element in ui_elements:
-            surface = ui_element.render(delta_time)
-            position = ui_element.get_rect().topleft
-            window.blit(surface, position)
+        # for ui_element in ui_elements:
+        #     ui_element.render(delta_time, window)
 
     def render(
         self,
-        window: pygame.Surface,
+        window: Surface,
         delta_time: float,
-        render_queue: dict[Layer, Sequence[Renderable]],
+        render_queue: RenderQueue,
     ):
         self._rendered_last_frame = 0
-        cameras: tuple[CameraBase] = render_queue.get(RenderLayers.CAMERA, ())
-        if not cameras:
-            # Treat the screen as a camera for the sake of rendering if there are no
-            # camera objects.
-            cameras = (CameraBase(window),)  # Needs to be in a sequence
+        cameras = CameraService.get_render_cameras()
 
         for camera in cameras:
-            camera.clear()
+            camera.refresh()
+
+        for render_texture_component in RenderTextureComponent.get_instances().values():
+            render_texture_component.update_texture()
 
         for layer in RenderLayers._layers:
-            # _layers is sorted by desired draw order.
-            self.render_layer(render_queue.get(layer, []), cameras, delta_time, layer)
+            layer_dict = render_queue.get(layer, {})
+            for camera, render_sequence in layer_dict.items():
+                if layer in camera.layer_mask:
+                    continue
+                self.render_layer(delta_time, render_sequence, camera)
 
         # Render any cameras to the screen.
-        for camera in render_queue.get(RenderLayers.CAMERA, ()):
-            self.draw_camera(camera, window, delta_time)
+        for camera in CameraService.get_active_cameras():
+            self.render_camera(delta_time, camera)
+
+        self._debug_draw_to_screen(cameras, render_queue)
 
         # Render the UI last.
-        self.render_ui(render_queue.get(RenderLayers.UI_LAYER, []), window, delta_time)
+
+    def _debug_draw_to_screen(
+        self, cameras: Sequence[Camera], render_queue: RenderQueue
+    ):
+        for renderer in self._debug_renderers:
+            renderer.draw_to_screen(cameras, render_queue)
 
     def get_rendered_last_frame(self) -> int:
         return self._rendered_last_frame
@@ -440,7 +424,7 @@ class DefaultRenderer(Renderer):
 _default_render_manager_type = DefaultRenderManager
 
 
-def get_default_render_manager_type() -> type[Renderer]:
+def get_default_render_manager_type() -> type[RenderSystem]:
     return _default_render_manager_type
 
 
@@ -449,13 +433,13 @@ def set_default_render_manager_type(render_manager_type: type[RenderManager]):
     _default_render_manager_type = render_manager_type
 
 
-_default_renderer_type = DefaultRenderer
+_default_renderer_type = DefaultRenderSystem
 
 
-def get_default_renderer_type() -> type[Renderer]:
+def get_default_renderer_type() -> type[RenderSystem]:
     return _default_renderer_type
 
 
-def set_default_renderer_type(renderer_type: type[Renderer]):
+def set_default_renderer_type(renderer_type: type[RenderSystem]):
     global _default_renderer_type
     _default_renderer_type = renderer_type

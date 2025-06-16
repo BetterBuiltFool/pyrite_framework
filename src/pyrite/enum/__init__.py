@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import singledispatchmethod
 from typing import TYPE_CHECKING
 
-import pygame
+from pygame import Rect, Vector2
 
 if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
@@ -34,10 +34,6 @@ class RenderLayers:
     BACKGROUND = Layer(0, "Background")
     MIDGROUND = Layer(1, "Midground")
     FOREGROUND = Layer(2, "Foreground")
-    UI_LAYER = Layer(3, "UI Layer")
-    """
-    Special layer that is drawn in camera space, not world space.
-    """
     CAMERA = Layer(-1, "Camera")
     """
     Special layer for camera objects. Not in the layer sequence. Always draw last.
@@ -50,8 +46,7 @@ class RenderLayers:
     def add_layer(cls, layer: Layer):
         """
         Inserts the new layer into the enum. The layer is assigned based on its
-        render_index. If the render index is None, the layer is placed second to last,
-        just before the UI layer (To ensure UI is always drawn last.)
+        render_index. If the render index is None, the layer is placed last.
 
         :param layer: Layer object being inserted.
         """
@@ -90,7 +85,6 @@ class RenderLayers:
             item == cls.BACKGROUND,
             item == cls.MIDGROUND,
             item == cls.FOREGROUND,
-            item == cls.UI_LAYER,
             item == cls.CAMERA,
         ):
             raise ValueError(
@@ -144,21 +138,59 @@ class Anchor:
         Creates an anchor point, defining a relative point for the location of
         the position of a rectangle.
 
-        :param relative_position: (0, 0) is top left, and (1, 1) is bottom right.
+        :param relative_position: (0, 0) is bottom left, and (1, 1) is top right.
         """
-        self._relative_position = pygame.Vector2(relative_position)
+        self._relative_position = Vector2(relative_position)
 
-    def anchor_rect(self, rectangle: RectLike, position: Point) -> pygame.Rect:
-        rect = pygame.Rect(rectangle)
-        pivot: pygame.Vector2 = self._relative_position.elementwise() * rect.size
-        offset = pygame.Vector2(position) - pivot
-        rect.topleft = offset
-        return rect
+    def get_rect_center(
+        self,
+        rectangle: RectLike,
+        position: Point,
+        angle: float = 0,
+        scale: Point = (1, 1),
+    ) -> Vector2:
+        """
+        Calculates the new center of a rect with a given position, angle, and scaling.
 
-    def anchor_rect_ip(self, rectangle: pygame.Rect, position: Point) -> None:
-        pivot: pygame.Vector2 = self._relative_position.elementwise() * rectangle.size
-        offset = pygame.Vector2(position) - pivot
-        rectangle.topleft = offset
+        :param rectangle: A Rect-like pattern capturing the bounds of a raw Rect. The
+            location is unimportant.
+        :param position: The nominal position of the rectangle object, given the Anchor
+            point.
+        :param angle: The nominal rotation of the rectangle around its pivot, defaults
+            to 0
+        :param scale: The scaling factor of the rectangle, defaults to (1, 1)
+        :return: A point in space of the center of a rectangle with the rotation,
+            scaling, and position specified
+        """
+        rect = Rect(rectangle)
+        pivot = self.get_center_offset(rect)
+        pivot_scaled: Vector2 = pivot.elementwise() * scale
+        rot_pivot = pivot_scaled.rotate(angle)
+        return position - rot_pivot
+
+    def get_center_offset(self, rectangle: Rect) -> Vector2:
+        """
+        Calculates the center offset from the rectangle.
+
+        :return: Vector2 representing the difference between the rectangle's center and
+            the pivot point described by the anchor.
+        """
+        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot += rectangle.topleft
+        return pivot - rectangle.center
+
+
+class AbsoluteAnchor(Anchor):
+    """
+    Defines, relative to a rectangle, what spot is considered the position.
+    Unlike regular Anchor, uses pixel values instead of relative values.
+    """
+
+    def __init__(self, relative_position: Point) -> None:
+        self._pivot_point = relative_position
+
+    def get_center_offset(self, rectangle: Rect) -> Vector2:
+        return (self._pivot_point + rectangle.topleft) - rectangle.center
 
 
 class AnchorPoint:
@@ -166,12 +198,12 @@ class AnchorPoint:
     An enum for modifying the position of a rectangle for renderables.
     """
 
-    TOPLEFT = Anchor((0, 0))
-    MIDTOP = Anchor((0.5, 0))
-    TOPRIGHT = Anchor((1, 0))
+    TOPLEFT = Anchor((0, 1))
+    MIDTOP = Anchor((0.5, 1))
+    TOPRIGHT = Anchor((1, 1))
     MIDLEFT = Anchor((0, 0.5))
     CENTER = Anchor((0.5, 0.5))
     MIDRIGHT = Anchor((1, 0.5))
-    BOTTOMLEFT = Anchor((0, 1))
-    MIDBOTTOM = Anchor((0.5, 1))
-    BOTTOMRIGHT = Anchor((1, 1))
+    BOTTOMLEFT = Anchor((0, 0))
+    MIDBOTTOM = Anchor((0.5, 0))
+    BOTTOMRIGHT = Anchor((1, 0))

@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-
-import pygame
 from pygame import Vector2
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from . import CameraViewBounds, Renderable
     from ..enum import Layer
-    from .renderable import Renderable
+    from ..transform import Transform
 
 
-class CameraBase:
+class CameraBase(ABC):
     """
     Defines the important attributes of a camera for the sake of drawing onto its
     surface.
@@ -21,61 +20,96 @@ class CameraBase:
     Can be constructed from the window.
     """
 
-    def __init__(
-        self,
-        surface: pygame.Surface,
-        layer_mask: tuple[Layer] = None,
-    ) -> None:
-        self.surface = surface
-        if layer_mask is None:
-            layer_mask = ()
-        self.layer_mask = layer_mask
+    layer_mask: tuple[Layer]
 
-    def clear(self):
+    @abstractmethod
+    def refresh(self):
         """
-        Overwrite the surface to allow new drawing on top.
-        Default fill is solid black.
+        Returns the camera to a state that is ready for rendering.
         """
-        self.surface.fill((0, 0, 0, 0))
+        pass
 
-    def cull(self, items: Iterable[Renderable]) -> Iterable[Renderable]:
+    @abstractmethod
+    def cull(self, renderable: Renderable) -> bool:
         """
-        Removes any renderables that do not fall within view of the camera.
+        Compares the bounds of the renderable to the camera's view bounds to determine
+        if the renderable should be rendered.
 
-        :param items: Any iterable containing the renderable to be culled.
-        :return: A generator containing only renderables in view of the camera's
-        viewport.
+        :param renderable: Any renderable item to be drawn.
+        :return: True if the renderable is visible and should be drawn, otherwise False.
         """
-        return (item for item in items if self._in_view(item.get_rect()))
+        pass
 
-    def _in_view(self, rect: pygame.Rect) -> bool:
-        return self.surface.get_rect().colliderect(rect)
-
-    def to_local(self, point: Point) -> Vector2:
+    @abstractmethod
+    def get_view_bounds(self) -> CameraViewBounds:
         """
-        Converts a point in world space to local space (The camera'ssurface)
+        Gets the bounds object that represents the visible space of the camera.
 
-        :param point: A point, in world space
+        :return: A CameraViewBounds object describing the viewed space.
+        """
+
+    @abstractmethod
+    def to_local(self, point: Transform) -> Transform:
+        """
+        Converts a point in world space to local space of the camera
+
+        :param point: A transform, in world space
         :return: The local space equivalent of _point_
         """
-        return Vector2(point)
+        pass
 
-    def to_world(self, point: Point) -> Vector2:
+    @abstractmethod
+    def to_eye(self, point: Transform) -> Transform:
         """
-        Converts a point in local space (The camera's surface) to world space.
+        Converts a point in local space to the eye space of the camera, using the
+        camera's projection.
 
-        :param point: A point, in local space
+        :param point: A transform, in local space of the camera
+        :return: The eye space equivalent of _point_
+        """
+
+    @abstractmethod
+    def to_world(self, point: Transform) -> Transform:
+        """
+        Converts a point in local space of the camera to world space.
+
+        :param point: A transform, in local space
         :return: The world space equivalent of _point_
         """
+        pass
 
-        return Vector2(point)
+    @abstractmethod
+    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Vector2:
+        """
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface viewport, it will extrapolate to
+        find the equivalent space.
 
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param viewport_index: Index of the viewport to compare against, defaults to 0.
+        :raises IndexError: If the viewport_index is larger than the camera's
+        number of render_targets.
+        :return: The screen position, in world space relative to the camera
+        """
+        pass
 
-        return Vector2(point)
-
+    @abstractmethod
     def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
+        self, point: Point, viewport_index: int = 0
     ) -> Vector2 | None:
+        """
+        Variant of screen_to_world.
+        Converts a screen coordinate into world coordinates.
+        If the screen coordinate is outside the surface viewport, it will instead return
+        None.
 
-        return Vector2(point)
+        Use this when it needs to be clear that the mouse is outside the camera
+        view.
+
+        :param point: A location in screen space, usually pygame.mouse.get_pos()
+        :param viewport_index: Index of the viewport to compare against, defaults to 0.
+        :raises IndexError: If the viewport_index is larger than the camera's
+        number of render_targets.
+        :return: The screen position, in world space relative to the camera
+        """
+        pass

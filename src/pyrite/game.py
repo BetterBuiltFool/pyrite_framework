@@ -4,24 +4,24 @@ import asyncio
 import logging
 from typing import Self, TYPE_CHECKING
 
+from pygame import Rect
+
 from .core.display_settings import DisplaySettings
 from .core.entity_manager import EntityManager
 from .core.game_data import GameData
-from .core.renderer import Renderer, RenderManager
+from .core.render_system import RenderSystem, RenderManager
 from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
 from ._helper import defaults
-
+from .camera.camera import Camera
+from .camera.camera_service import CameraService
+from .rendering import OrthoProjection, Viewport
 from .transform import transform_system
-
 from .utils import threading
 
 if TYPE_CHECKING:
     from types import TracebackType
-
-    # from .types.entity import Entity
-    # from .types.renderable import Renderable
     from .types.system import System
 
 
@@ -101,7 +101,7 @@ class Game:
         # Both have a default version that will be spawned if none is provided.
         self.entity_manager: EntityManager = EntityManager.get_entity_manager(**kwds)
         self.render_manager = RenderManager.get_render_manager(**kwds)
-        self.renderer = Renderer.get_renderer(**kwds)
+        self.renderer = RenderSystem.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
         self.starting_systems: list[type[System]] = [
@@ -147,6 +147,16 @@ class Game:
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
+        # Ensure we have a default camera in case there are no others.
+        default_camera = Camera(
+            OrthoProjection(Rect(0, 0, *self.window.size)), enabled=False
+        )
+        CameraService._default_camera = default_camera
+        # Update the default camera so that it captures the new display.
+        CameraService.update_default_camera(self.window.size)
+
+        # Update the viewports so they are sized correctly
+        Viewport.update_viewports(self.window.size)
 
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)
@@ -155,8 +165,6 @@ class Game:
         """
         Initializes any systems that are indicated to be required when the game starts.
         """
-        # global get_system_manager
-        # get_system_manager = _retrieve_system_manager
         for system in self.starting_systems:
             system()
 
@@ -334,7 +342,7 @@ class Game:
         window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
-        self.renderer.render(window, delta_time, render_queue)
+        self.renderer.render(self.window, delta_time, render_queue)
 
         self.render(window, delta_time)
 

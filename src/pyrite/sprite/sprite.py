@@ -2,21 +2,19 @@ from __future__ import annotations
 
 import typing
 
-import pygame
+from ..enum import AnchorPoint
+from ..rendering.rect_bounds import rotate_rect
+from ..rendering import BoundsService, RectBounds, SpriteRenderer
+from ..transform import transform_component as transform
+from ..types import Renderable
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Container
-    from ..transform.transform import Transform
+    from ..types import Container, CameraBase
+    from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
-    from pygame import Surface, Rect, Vector2
+    from pygame import Surface, Vector2
     from pygame.typing import Point
-
-
-from ..types.renderable import Renderable
-from ..enum import AnchorPoint
-
-from ..transform import transform_component as transform
 
 
 class Sprite(Renderable):
@@ -51,7 +49,8 @@ class Sprite(Renderable):
         """
         super().__init__(container, enabled, layer, draw_index)
         self._reference_image = display_surface
-        self.display_surface = display_surface
+        # self.display_surface = display_surface
+        self.transform: TransformComponent
         if local_transform is not None:
             if isinstance(local_transform, transform.TransformComponent):
                 # If we're being passed something else's transform,
@@ -61,7 +60,7 @@ class Sprite(Renderable):
                 self.transform = transform.from_transform(self, local_transform)
         else:
             self.transform = transform.from_attributes(self, position)
-        # self.position = pygame.Vector2(position)
+
         self.anchor = anchor
 
         # Clients can update these easily enough.
@@ -116,6 +115,14 @@ class Sprite(Renderable):
         """
         self._flip_y = flag
 
+    @property
+    def is_dirty(self) -> bool:
+        return self._is_dirty
+
+    @is_dirty.setter
+    def is_dirty(self, flag: bool):
+        self._is_dirty = flag
+
     def set_surface(
         self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
     ):
@@ -137,32 +144,29 @@ class Sprite(Renderable):
 
         self._reference_image = sprite_image
 
-        self._is_dirty = True
+        self.is_dirty = True
 
-    def _force_update_surface(self) -> Surface:
-        new_surface = pygame.transform.flip(
-            self._reference_image, self.flip_x, self.flip_y
-        )
-        self._is_dirty = False
+    def get_bounds(self) -> RectBounds:
+        bounds, transform = BoundsService.get(self)
+        if bounds is None or transform != self.transform.world():
+            transform = self.transform.world()
+            display_rect = self._reference_image.get_rect()
 
-        # FIXME This really only works for centered renderables
+            center = self.anchor.get_rect_center(
+                display_rect, transform.position, transform.rotation, transform.scale
+            )
 
-        new_surface = pygame.transform.scale_by(new_surface, self.transform.world_scale)
+            display_rect.size *= transform.scale.elementwise()
+            pivot = self.anchor.get_center_offset(display_rect)
 
-        new_surface = pygame.transform.rotate(
-            new_surface, self.transform.world_rotation
-        )
+            bounds_rect = rotate_rect(display_rect, transform.rotation, pivot)
+            bounds_rect.center = center
 
-        self.transform._dirty = False
+            bounds = RectBounds(bounds_rect)
+            transform = self.transform.world()
+            BoundsService.set(self, (bounds, transform))
 
-        return new_surface
+        return bounds
 
-    def get_rect(self) -> Rect:
-        rect = self.display_surface.get_rect()
-        self.anchor.anchor_rect_ip(rect, self.transform.world_position)
-        return rect
-
-    def render(self, delta_time: float) -> pygame.Surface:
-        if self._is_dirty or self.transform.is_dirty():
-            self.display_surface = self._force_update_surface()
-        return self.display_surface
+    def render(self, delta_time: float, camera: CameraBase):
+        SpriteRenderer.render(delta_time, self, camera)

@@ -75,7 +75,7 @@ class DefaultTransformSystem(TransformSystem):
     def pre_render(self, delta_time: float) -> None:
         for component in transform_service.get_dirty():
             transform = transform_service.get_local(component)
-            transform_service.set_world(component, transform)
+            transform_service.set_world(component, transform.copy())
             transform_service.clean(component)
 
 

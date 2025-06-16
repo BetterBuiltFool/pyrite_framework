@@ -10,8 +10,8 @@ from ..types import Component
 
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
     from types import ModuleType
+    from pygame.typing import Point
 
 transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 

@@ -3,59 +3,55 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+from pyrite.types import Container
+
 from .camera import Camera
 from ..types.entity import Entity
-from .surface_sector import SurfaceSector
 
 from pygame import Vector2
-import pygame
 
 if TYPE_CHECKING:
-    from ..types import HasTransform
+    from .camera import Projection
+    from ..enum import Layer
+    from ..types import (
+        HasTransform,
+        TransformProtocol,
+    )
+    from ..rendering.viewport import Viewport
     from pygame.typing import Point
 
-    # from ..transform import TransformComponent
 
-
-class ChaseCamera(Entity):
-    """
-    A camera sub-type that can chase a target with a controllable easing factor and
-    maximum distance.
-    """
+class ChaseCamera(Entity, Camera):
 
     def __init__(
         self,
-        max_size: Point,
-        position: Point = None,
-        container=None,
-        surface_sectors: SurfaceSector | Sequence[SurfaceSector] = None,
-        smooth_scale: bool = False,
-        enabled=True,
-        draw_index=0,
+        projection: Projection,
+        position: Point = (0, 0),
+        transform: TransformProtocol = None,
+        render_targets: Viewport | Sequence[Viewport] = None,
+        layer_mask: tuple[Layer] = None,
         target: HasTransform = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
+        container: Container = None,
+        enabled=True,
     ) -> None:
         """
         A camera that is capable of chasing a target.
 
-        :param max_size: Largest, most zoomed out size of the camera.
-        :param position: Position of the center of the camera surface, defaults to None
-        None will give the center of the viewport.
-        :param surface_sectors: Defines sections of the screen to render to. If multiple
-        surface sectors are used, the camera will be rendered and scaled to each of
-        them.
-        :param viewport: A rectangle representing the actual viewable area of the
-        camera, defaults to None.
-        None will give the center of the viewport.
+        :param projection: A camera projection describing the type of camera.
+        :param position: Position of the origin of the projection, defaults to None
+            None will give the center of the viewport.
+        :param transform: A Transform or Transform Component for defining the location
+            of the camera. If another object's TransformComponent is used, the camera
+            will follow it. If a Transform is given, a new TransformComponent is given
+            to the camera based on that value. If None, a new Transform is made from
+            _position_.
+        :param render_targets: Defines targets to render to. If multiple render targets
+            are used, the camera will be rendered and scaled/cropped to each of them.
         :param layer_mask: Layers that the camera will exclude from rendering,
-        defaults to None
-        :param container: The instance of the game to which the rengerable belongs,
-        defaults to None. See Renderable.
-        :param enabled: Whether the Renderable will be drawn to the screen,
-        defaults to True
-        :param draw_index: Index determining draw order within a layer, defaults to 0
+            defaults to None
         :param target: Object with a position to chase.
         :param ease_factor: Determines the rate at which the camera pursues the target.
         Larger = slower.
@@ -64,26 +60,29 @@ class ChaseCamera(Entity):
         Negative numbers will disable.
         :param relative_lag: Bool determining if the max distance is relative to zoom
         level. If true, the max distance will be consistent within screen space.
+        :param container: The instance of the game to which the rengerable belongs,
+        defaults to None. See Renderable.
+        :param enabled: Whether the Renderable will be drawn to the screen,
+        defaults to True
         """
-        if target and position is None:
-            position = target.transform.position
-        self.camera = Camera(
-            max_size=max_size,
-            position=position,
-            surface_sectors=surface_sectors,
-            smooth_scale=smooth_scale,
-            container=container,
-            enabled=enabled,
-            draw_index=draw_index,
+        Entity.__init__(
+            self,
+            container,
+            enabled,
         )
-        super().__init__(container, enabled)
+        Camera.__init__(
+            self,
+            projection,
+            position,
+            transform,
+            render_targets,
+            layer_mask,
+            container,
+            enabled,
+        )
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
-        """
-        Maximum distance the camera may be from the target.
-        Negative numbers will disable.
-        """
         self.clamp_magnitude = (
             self._clamp_magnitude_invariant
             if not relative_lag
@@ -91,95 +90,23 @@ class ChaseCamera(Entity):
         )
 
     @property
-    def position(self) -> Point:
-        return self.camera.position
+    def enabled(self) -> bool:
+        return Camera.enabled.fget(self)
 
-    @position.setter
-    def position(self, position: Point):
-        self.camera.position = Vector2(position)
-
-    @property
-    def smooth_scale(self) -> bool:
-        return self.camera.smooth_scale
-
-    @smooth_scale.setter
-    def smooth_scale(self, flag: bool):
-        self.camera.smooth_scale = flag
-
-    def clear(self):
-        """
-        Overwrite the surface to allow new drawing on top.
-        Basic camera fills with transparent black.
-        """
-        self.camera.clear()
-
-    def get_surface_rect(self) -> pygame.Rect:
-        """
-        Gets the rect of the camera's surface, in worldspace, centered on the position.
-
-        :return: A Rectangle matching the size of the camera surface, in worldspace.
-        """
-        return self.camera.get_surface_rect()
-
-    def get_viewport_rect(self) -> pygame.Rect:
-        """
-        Gives the viewport converted to worldspace.
-
-        :return: A Rectangle matching the size of the viewport, with worldspace
-        coordinates.
-        """
-        return self.camera.get_viewport_rect()
-
-    def to_local(self, point: Point) -> Vector2:
-        return self.camera.to_local(point)
-
-    def to_world(self, point: Point) -> Vector2:
-        return self.camera.to_world(point)
-
-    def screen_to_world(self, point: Point, sector_index: int = 0) -> Vector2:
-        """
-        Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the surface sector, it will extrapolate to
-        find the equivalent space.
-
-        :param point: A location in screen space, usually pygame.mouse.get_pos()
-        :param sector_index: Index of the sector to compare against, defaults to 0.
-        :raises IndexError: If the sector_index is larger than the camera's
-        number of sectors.
-        :return: The screen position, in world space relative to the camera
-        """
-        return self.camera.screen_to_world(point, sector_index)
-
-    def screen_to_world_clamped(
-        self, point: Point, sector_index: int = 0
-    ) -> Vector2 | None:
-        """
-        Variant of screen_to_world.
-        Converts a screen coordinate into world coordinates.
-        If the screen coordinate is outside the surface sector, it will instead return
-        None.
-
-        Use this when it needs to be clear that the mouse is outside the camera
-        view.
-
-        :param point: A location in screen space, usually pygame.mouse.get_pos()
-        :param sector_index: Index of the sector to compare against, defaults to 0.
-        :raises IndexError: If the sector_index is larger than the camera's
-        number of sectors.
-        :return: The screen position, in world space relative to the camera
-        """
-
-        return self.camera.screen_to_world_clamped(point, sector_index)
+    @enabled.setter
+    def enabled(self, value: bool) -> None:
+        Camera.enabled.fset(self, value)
+        Entity.enabled.fset(self, value)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
             return
         delta = self.calculate_ease(
-            self.position - self.target.transform.position, delta_time
+            self.transform.world_position - self.target.transform.position, delta_time
         )
         if self.max_distance >= 0:
             delta = self.clamp_magnitude(delta)
-        self.position: Vector2 = self.target.transform.position + delta
+        self.transform.world_position = self.target.transform.position + delta
 
     def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
         distance = delta.magnitude()
@@ -199,7 +126,4 @@ class ChaseCamera(Entity):
         return delta.clamp_magnitude(0, self.max_distance)
 
     def _clamp_magnitude_scaled(self, delta: Vector2) -> Vector2:
-        return delta.clamp_magnitude(0, self.max_distance / self.camera._zoom_level)
-
-    def zoom(self, zoom_level: float):
-        self.camera.zoom(zoom_level)
+        return delta.clamp_magnitude(0, self.max_distance / self._zoom_level)

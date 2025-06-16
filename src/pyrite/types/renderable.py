@@ -3,13 +3,11 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
-from ..core import renderer
+from ..core import render_system
 from .._helper import defaults
 
-import pygame
-
 if TYPE_CHECKING:
-    from . import Container
+    from . import Container, CameraBase, CullingBounds
     from ..enum import Layer
 
 
@@ -41,7 +39,7 @@ class Renderable(ABC):
 
     @property
     def enabled(self) -> bool:
-        return renderer.is_enabled(self)
+        return render_system.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
@@ -50,11 +48,11 @@ class Renderable(ABC):
             return
         if value:
             self.on_preenable()
-            if renderer.enable(self):
+            if render_system.enable(self):
                 self.on_enable()
         else:
             self.on_predisable()
-            if renderer.disable(self):
+            if render_system.disable(self):
                 self.on_disable()
 
     @property
@@ -67,10 +65,10 @@ class Renderable(ABC):
             enabled = self.enabled
             # This allows us to update within the renderer without firing
             # on enable/disable events.
-            renderer.disable(self)
+            render_system.disable(self)
             self._layer = new_layer
             if enabled:
-                renderer.enable(self)
+                render_system.enable(self)
 
     def on_preenable(self):
         """
@@ -108,23 +106,21 @@ class Renderable(ABC):
         """
 
     @abstractmethod
-    def render(self, delta_time: float) -> pygame.Surface:
+    def get_bounds(self) -> CullingBounds:
         """
-        Supplies a surface ready to be blitted to another surface.
-
-        :param delta_time: Time passed since last frame. Can be ignored by the concrete
-        method but must be accepted.
-        :return: A tuple containing a ready-to-draw surface and a rect with the
-        position and size of the drawn area
+        Returns a Bounds object that describes the occupied space of the renderable for
+        the sake of camera culling.
         """
         pass
 
     @abstractmethod
-    def get_rect(self) -> pygame.Rect:
+    def render(self, delta_time: float, camera: CameraBase):
         """
-        Return a rectangle representing the area the rendered surface is expected to
-        take up.
+        Causes the Renderable to be rendered to the given camera. Typically calls upon
+        some renderer class that knows how to handle its data.
 
-        :return: _description_
+        :param delta_time: Time passed since last frame. Can be ignored by the concrete
+            method but must be accepted.
+        :param camera: A camera-type object to be drawn to.
         """
         pass

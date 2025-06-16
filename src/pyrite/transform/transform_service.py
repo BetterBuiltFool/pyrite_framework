@@ -8,8 +8,8 @@ from pygame import Vector2
 from .transform import Transform
 
 if TYPE_CHECKING:
-    from .transform_component import TransformComponent
     from pygame.typing import Point
+    from .transform_component import TransformComponent
 
 
 local_transforms: WeakKeyDictionary[TransformComponent, Transform] = WeakKeyDictionary()

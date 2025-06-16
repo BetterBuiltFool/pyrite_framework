@@ -18,7 +18,7 @@ from typing import Protocol
 
 import pyrite
 from pyrite.types import Container
-from pyrite.types.enums import Layer, RenderLayers
+from pyrite.types.enums import Layer, RenderLayers  # type: ignore
 
 import pygame
 
