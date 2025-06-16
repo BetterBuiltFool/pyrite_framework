@@ -105,6 +105,9 @@ class Camera(CameraBase):
     def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)
 
+    def to_eye(self, point: Transform) -> Transform:
+        return CameraService.to_eye(self, point)
+
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 

@@ -83,7 +83,7 @@ class SpriteRenderer(Renderer):
         cls, camera: Camera, sprite_surface: Surface, transform: Transform
     ):
         surface = CameraService._surfaces.get(camera)
-        local_position = camera.to_local(transform).position
+        local_position = camera.to_eye(camera.to_local(transform)).position
         local_position[1] = surface.size[1] - local_position[1]
         surface.blit(sprite_surface, local_position)
 

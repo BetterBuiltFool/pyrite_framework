@@ -175,14 +175,18 @@ class CameraService:
 
     @classmethod
     def to_local(cls, camera: Camera, point: Transform) -> Transform:
-        # TODO Make into `to_projection`, let users localize since it isn't hard.
-        local_transform = point.localize(camera.transform.world())
+        return point.localize(camera.transform.world())
+
+    @classmethod
+    def to_eye(cls, camera: Camera, point: Transform) -> Transform:
         far_plane_center = camera.projection.far_plane.center
         far_plane_center = (
             far_plane_center[0] / camera.zoom_level,
             far_plane_center[1] / camera.zoom_level,
         )
-        local_transform.position += far_plane_center
+        local_transform = Transform(
+            point.position + far_plane_center, point.rotation, point.scale
+        )
         return local_transform
 
     @classmethod
