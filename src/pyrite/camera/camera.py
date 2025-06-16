@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, TypeVar
 
-from .camera_service import CameraService
+from . import camera_service
 from ..rendering.viewport import Viewport
 from ..enum import Layer
 from ..rendering.camera_renderer import CameraRenderer
@@ -60,36 +60,36 @@ class Camera(CameraBase):
         if container is None:
             container = defaults.get_default_container()
         self.container = container
-        CameraService.add_camera(self)
+        camera_service.CameraService.add_camera(self)
 
     @property
     def enabled(self) -> bool:
-        return CameraService.is_enabled(self)
+        return camera_service.CameraService.is_enabled(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
         if value:
-            CameraService.enable(self)
+            camera_service.CameraService.enable(self)
         else:
-            CameraService.disable(self)
+            camera_service.CameraService.disable(self)
 
     @property
     def zoom_level(self):
         return self._zoom_level
 
     def refresh(self):
-        CameraService.refresh(self)
+        camera_service.CameraService.refresh(self)
 
     def cull(self, renderable: Renderable) -> bool:
         bounds = renderable.get_bounds()
         return self.get_view_bounds().contains(bounds)
 
     def get_bounds(self) -> RectBounds:
-        return CameraService.get_bounds(self)
+        return camera_service.CameraService.get_bounds(self)
 
     def get_view_bounds(self) -> CameraViewBounds:
-        return CameraService.get_view_bounds(self)
+        return camera_service.CameraService.get_view_bounds(self)
 
     def get_viewports(self) -> list[Viewport]:
         """
@@ -103,21 +103,23 @@ class Camera(CameraBase):
         CameraRenderer.render(delta_time, self, viewport)
 
     def to_local(self, point: Transform) -> Transform:
-        return CameraService.to_local(self, point)
+        return camera_service.CameraService.to_local(self, point)
 
     def to_eye(self, point: Transform) -> Transform:
-        return CameraService.to_eye(self, point)
+        return camera_service.CameraService.to_eye(self, point)
 
     def to_world(self, point: Transform) -> Transform:
-        return CameraService.to_world(self, point)
+        return camera_service.CameraService.to_world(self, point)
 
     def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
-        return CameraService.screen_to_world(self, point, viewport_index)
+        return camera_service.CameraService.screen_to_world(self, point, viewport_index)
 
     def screen_to_world_clamped(
         self, point: Point, viewport_index: int = 0
     ) -> Point | None:
-        return CameraService.screen_to_world_clamped(self, point, viewport_index)
+        return camera_service.CameraService.screen_to_world_clamped(
+            self, point, viewport_index
+        )
 
     def zoom(self, zoom_level: float):
-        CameraService.zoom(self, zoom_level)
+        camera_service.CameraService.zoom(self, zoom_level)
