@@ -14,7 +14,7 @@ from .camera.camera_service import CameraService
 
 if TYPE_CHECKING:
     from .camera import Camera
-    from .rendering.viewport import Viewport
+    from .rendering import Viewport
     from pygame.typing import ColorLike, Point
 
 

@@ -8,7 +8,7 @@ from pygame import Rect, Vector3
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.camera.camera_service import CameraService  # noqa:E402
-from src.pyrite.rendering.ortho_projection import OrthoProjection  # noqa: E402
+from src.pyrite.rendering import OrthoProjection  # noqa: E402
 from src.pyrite.types.projection import Projection  # noqa:E402
 from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 

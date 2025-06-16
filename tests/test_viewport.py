@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     pass
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.rendering.viewport import Viewport  # noqa:E402
+from src.pyrite.rendering import Viewport  # noqa:E402
 
 display_size = (600, 800)
 

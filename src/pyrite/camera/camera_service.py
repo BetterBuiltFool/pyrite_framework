@@ -6,14 +6,13 @@ from weakref import WeakKeyDictionary
 import pygame
 from pygame import Surface, Vector2, Vector3
 
-from ..rendering.view_plane import ViewPlane
-from ..rendering.rect_bounds import RectBounds
+from ..rendering import RectBounds, ViewPlane
 from ..transform import Transform
 
 if TYPE_CHECKING:
     from .camera import Camera
     from ..types import CameraViewBounds, CullingBounds
-    from ..rendering.viewport import Viewport
+    from ..rendering import Viewport
     from pygame import Rect
     from pygame.typing import Point
 

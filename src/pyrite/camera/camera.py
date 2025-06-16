@@ -4,10 +4,8 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING, TypeVar
 
 from . import camera_service
-from ..rendering.viewport import Viewport
 from ..enum import Layer
-from ..rendering.camera_renderer import CameraRenderer
-from ..rendering.rect_bounds import RectBounds
+from ..rendering import CameraRenderer, RectBounds, Viewport
 from ..transform import transform_component
 from ..types import CameraBase, Renderable
 from .._helper import defaults

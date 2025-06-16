@@ -3,9 +3,8 @@ from __future__ import annotations
 import typing
 
 from ..enum import AnchorPoint
-from ..rendering.sprite_renderer import SpriteRenderer
-from ..rendering.rect_bounds import RectBounds, rotate_rect
-from ..rendering.bounds_service import BoundsService
+from ..rendering.rect_bounds import rotate_rect
+from ..rendering import BoundsService, RectBounds, SpriteRenderer
 from ..transform import transform_component as transform
 from ..types import Renderable
 
