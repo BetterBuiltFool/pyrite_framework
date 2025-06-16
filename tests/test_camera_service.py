@@ -221,30 +221,32 @@ class TestCameraService(unittest.TestCase):
 
         self.assertEqual(local_transform, expected)
 
-        # 3/4 projection, local 0 coords
+    def test_to_eye(self):
 
         projection = OrthoProjection(Rect(-200, -150, 800, 600))
 
         assert projection.far_plane.center == (200, 150)
-        test_cam.projection = projection
 
-        world_transform = Transform((0, 0), 0, (0, 0))
+        # 3/4 projection, local 0 coords
+        test_cam = MockCamera(projection)
 
-        local_transform = CameraService.to_local(test_cam, world_transform)
+        local_transform = Transform((0, 0), 0, (0, 0))
+
+        eye_transform = CameraService.to_eye(test_cam, local_transform)
 
         expected = Transform((200, 150), 0, (0, 0))
 
-        self.assertEqual(local_transform, expected)
+        self.assertEqual(eye_transform, expected)
 
         # 3/4 projection, counter local coords
 
-        world_transform = Transform((-200, -150), 0, (0, 0))
+        local_transform = Transform((-200, -150), 0, (0, 0))
 
-        local_transform = CameraService.to_local(test_cam, world_transform)
+        eye_transform = CameraService.to_eye(test_cam, local_transform)
 
         expected = Transform((0, 0), 0, (0, 0))
 
-        self.assertEqual(local_transform, expected)
+        self.assertEqual(eye_transform, expected)
 
         # Centered projection, off center camera, origin test transform
         projection = OrthoProjection(Rect(-400, -300, 800, 600))
@@ -252,28 +254,13 @@ class TestCameraService(unittest.TestCase):
         assert projection.far_plane.center == (0, 0)
         test_cam.projection = projection
 
-        test_cam.transform.world_position = (100, 100)
+        local_transform = Transform((0, 0), 0, (0, 0))
 
-        world_transform = Transform((0, 0), 0, (0, 0))
+        eye_transform = CameraService.to_eye(test_cam, local_transform)
 
-        local_transform = CameraService.to_local(test_cam, world_transform)
+        expected = Transform((0, 0), 0, (0, 0))
 
-        expected = Transform((-100, -100), 0, (0, 0))
-
-        self.assertEqual(local_transform, expected)
-
-        # Centered projection, off center rotated camera, origin test transform
-
-        test_cam.transform.world_position = (100, 0)
-        test_cam.transform.world_rotation = 90
-
-        world_transform = Transform((0, 0), 0, (0, 0))
-
-        local_transform = CameraService.to_local(test_cam, world_transform)
-
-        expected = Transform((0, -100), -90, (0, 0))
-
-        self.assertEqual(local_transform, expected)
+        self.assertEqual(eye_transform, expected)
 
     def test_to_world(self):
         # Centered projection, both default transform
