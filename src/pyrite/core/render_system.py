@@ -6,7 +6,6 @@ from collections.abc import Sequence
 from typing import Any, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
-import pygame
 from pygame import Surface
 
 from ..enum import RenderLayers
@@ -349,18 +348,6 @@ class DefaultRenderSystem(RenderSystem):
         self._rendered_last_frame += len(layer_queue)
         for renderable in layer_queue:
             renderable.render(delta_time, camera)
-
-    def draw_bounds(
-        self,
-        delta_time: float,
-        layer_queue: Sequence[Renderable],
-        camera: CameraBase,
-    ):
-        for renderable in layer_queue:
-            # Render bounds
-            render_rect = renderable.get_bounds().get_rect().copy()
-            render_rect.center = camera.to_local(render_rect.center)
-            pygame.draw.rect(camera.surface, (0, 0, 255), render_rect, 2)
 
     def render_camera(
         self,
