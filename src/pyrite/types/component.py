@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 if TYPE_CHECKING:
-    from typing import Any, Self
+    from typing import Any
 
 T = TypeVar("T", bound="Component")
 
@@ -21,7 +21,7 @@ class Component(ABC):
     def __init_subclass__(cls: type[T]) -> None:
         cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
 
-    def __new__(cls: type[T], owner: Any, *args, **kwds) -> Self:
+    def __new__(cls: type[T], owner: Any, *args, **kwds) -> T:
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
         return new_component
