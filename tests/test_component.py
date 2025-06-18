@@ -130,6 +130,14 @@ class TestComponent(unittest.TestCase):
         }
         self.assertSetEqual(either_keys, goal_keys)
 
+    def test_contains(self):
+
+        self.assertTrue(self.object2 in ComponentA)
+
+        self.assertFalse(self.object3 in ComponentA)
+
+        self.assertTrue(self.object3 not in ComponentA)
+
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())
 
