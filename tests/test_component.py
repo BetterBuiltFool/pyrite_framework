@@ -97,6 +97,15 @@ class TestComponent(unittest.TestCase):
         goal_keys = {self.object2, self.object5, self.object6, self.object8}
         self.assertSetEqual(shared_keys, goal_keys)
 
+    def test_and(self):
+        shared_keys = ComponentA & ComponentB
+        goal_keys = {self.object5, self.object8}
+        self.assertSetEqual(shared_keys, goal_keys)
+
+        shared_keys = ComponentA & ComponentB & ComponentC
+        goal_keys = {self.object8}
+        self.assertSetEqual(shared_keys, goal_keys)
+
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())
 
