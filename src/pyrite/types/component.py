@@ -19,7 +19,7 @@ class ComponentMeta(ABCMeta):
     @staticmethod
     def _validate_other(other: set | type[Component]) -> set | None:
         if not isinstance(other, set):
-            if not isinstance(other, Component):
+            if not isinstance(other, ComponentMeta):
                 return None
             other = set(other.instances.keys())
         return other
