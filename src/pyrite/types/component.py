@@ -1,16 +1,58 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABCMeta
 from typing import TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 if TYPE_CHECKING:
-    from typing import Any, Self
+    from typing import Any
 
 T = TypeVar("T", bound="Component")
 
 
-class Component(ABC):
+class ComponentMeta(ABCMeta):
+    """
+    Metaclass for components to allow for things like set operations on the component
+    type.
+    """
+
+    @staticmethod
+    def _validate_other(other: set | type[Component]) -> set | None:
+        if not isinstance(other, set):
+            if not isinstance(other, ComponentMeta):
+                return None
+            other = set(other.instances.keys())
+        return other
+
+    def __and__(self: type[Component], other: set | type[Component]) -> set:
+        other = self._validate_other(other)
+        if other is None:
+            return NotImplemented
+        return set(self.instances.keys()) & other
+
+    def __rand__(self: type[Component], other: set | type[Component]) -> set:
+        other = self._validate_other(other)
+        if other is None:
+            return NotImplemented
+        return set(self.instances.keys()) & other
+
+    def __or__(self: type[Component], other: set | type[Component]) -> set:
+        other = self._validate_other(other)
+        if other is None:
+            return NotImplemented
+        return set(self.instances.keys()) | other
+
+    def __ror__(self: type[Component], other: set | type[Component]) -> set:
+        other = self._validate_other(other)
+        if other is None:
+            return NotImplemented
+        return set(self.instances.keys()) | other
+
+    def __contains__(self: type[Component], value: Any) -> bool:
+        return value in self.instances.keys()
+
+
+class Component(metaclass=ComponentMeta):
     """
     Components are objects that mark other object with attributes. Components can be
     intersected with other components to get a set of shared key objects.
@@ -21,7 +63,7 @@ class Component(ABC):
     def __init_subclass__(cls: type[T]) -> None:
         cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
 
-    def __new__(cls: type[T], owner: Any, *args, **kwds) -> Self:
+    def __new__(cls: type[T], owner: Any, *args, **kwds) -> T:
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
         return new_component
