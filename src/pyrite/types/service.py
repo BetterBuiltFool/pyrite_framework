@@ -15,6 +15,8 @@ class Service(ABC):
         Packages and transmits all pertinent stored data from the current service to
         the target service.
 
+        __init__ should take no parameters, as it may be spawned automatically.
+
         :param target_service: A Service that is compatible with the current service,
             usually by a shared parent.
         """
