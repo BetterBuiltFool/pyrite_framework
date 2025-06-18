@@ -106,6 +106,30 @@ class TestComponent(unittest.TestCase):
         goal_keys = {self.object8}
         self.assertSetEqual(shared_keys, goal_keys)
 
+    def test_or(self):
+        either_keys = ComponentA | ComponentB
+        goal_keys = {
+            self.object2,
+            self.object3,
+            self.object5,
+            self.object6,
+            self.object7,
+            self.object8,
+        }
+        self.assertSetEqual(either_keys, goal_keys)
+
+        either_keys = ComponentA | ComponentB | ComponentC
+        goal_keys = {
+            self.object2,
+            self.object3,
+            self.object4,
+            self.object5,
+            self.object6,
+            self.object7,
+            self.object8,
+        }
+        self.assertSetEqual(either_keys, goal_keys)
+
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())
 
