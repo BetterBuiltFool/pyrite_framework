@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 class CameraService(ServiceProvider):
-    _service: _CameraService
+    _service: _CameraService = DefaultCameraService()
     _active_cameras: set[Camera] = set()
     _default_camera: Camera = None
 
@@ -230,6 +230,3 @@ class CameraService(ServiceProvider):
         :param zoom: The new level of zoom for the camera.
         """
         cls._service.zoom(camera, zoom)
-
-
-CameraService._service = DefaultCameraService()
