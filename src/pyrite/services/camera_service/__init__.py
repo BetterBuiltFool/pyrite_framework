@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ...transform import Transform
 from ...types.service import ServiceProvider
-from .camera_service import CameraService as _CameraService
+from .camera_service import CameraService as _CameraService, DefaultCameraService
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -230,3 +230,6 @@ class CameraService(ServiceProvider):
         :param zoom: The new level of zoom for the camera.
         """
         cls._service.zoom(camera, zoom)
+
+
+CameraService._service = DefaultCameraService()
