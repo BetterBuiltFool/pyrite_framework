@@ -16,6 +16,7 @@ class ServiceProvider(ABC):
 
     _service: Service
 
+    @classmethod
     @abstractmethod
     def hotswap(cls, service: Service):
         """
