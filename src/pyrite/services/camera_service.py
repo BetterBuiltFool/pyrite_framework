@@ -214,6 +214,13 @@ class DefaultCameraService(CameraService):
         self._active_cameras: set[Camera] = set()
         self._default_camera: Camera = None
 
+    def transfer(self, target_service: CameraService):
+        for camera in self._active_cameras:
+            target_service.add_camera(camera)
+        target_service.update_default_camera(
+            self._default_camera.projection.far_plane.size()
+        )
+
     def add_camera(self, camera: Camera):
         return self._rebuild_surface(camera)
 
