@@ -7,7 +7,7 @@ from weakref import WeakKeyDictionary
 
 from pygame import Surface, Vector2, Vector3
 
-from ...rendering import ViewPlane
+from ...rendering.view_plane import ViewPlane
 from ...transform import Transform
 from ...types.service import Service
 
