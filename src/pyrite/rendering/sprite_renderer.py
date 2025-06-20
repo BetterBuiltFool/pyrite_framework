@@ -6,7 +6,7 @@ from weakref import WeakKeyDictionary
 import pygame
 
 from ..types import Renderer
-from ..camera import camera_service
+from ..services.camera_service import CameraService
 from ..transform import Transform
 
 if TYPE_CHECKING:
@@ -82,7 +82,7 @@ class SpriteRenderer(Renderer):
     def _draw_to_camera(
         cls, camera: Camera, sprite_surface: Surface, transform: Transform
     ):
-        surface = camera_service.CameraService._surfaces.get(camera)
+        surface = CameraService._service._surfaces.get(camera)
         local_position = camera.to_eye(camera.to_local(transform)).position
         local_position[1] = surface.size[1] - local_position[1]
         surface.blit(sprite_surface, local_position)

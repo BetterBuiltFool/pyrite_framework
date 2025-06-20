@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect
 
-from .camera.camera_service import CameraService
+from .services.camera_service import CameraService
 
 if TYPE_CHECKING:
     from .camera import Camera
