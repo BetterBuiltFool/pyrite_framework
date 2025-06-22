@@ -7,12 +7,11 @@ from weakref import WeakKeyDictionary, WeakSet
 
 from pygame import Vector2
 
-from ...transform import Transform
 from ...types.service import Service
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from ...transform.transform_component import TransformComponent
+    from ...transform import Transform, TransformComponent
 
 
 class TransformService(Service):
