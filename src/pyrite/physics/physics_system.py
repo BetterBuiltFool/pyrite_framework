@@ -8,7 +8,8 @@ import pymunk
 from ..types import System
 from .physics_service import PhysicsService
 from .collider_component import ColliderComponent
-from ..transform import TransformComponent, transform_service
+from ..transform import TransformComponent
+from ..services import TransformService
 
 if TYPE_CHECKING:
     from pymunk import (
@@ -114,5 +115,5 @@ class PhysicsSystem(System):
             ) % 360 - 180
             new_rot = angle_between / 2
 
-            transform_service.set_world_position(transform, new_pos)
-            transform_service.set_world_rotation(transform, new_rot)
+            TransformService.set_world_position(transform, new_pos)
+            TransformService.set_world_rotation(transform, new_rot)
