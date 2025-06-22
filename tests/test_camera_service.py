@@ -1,9 +1,17 @@
 from __future__ import annotations
 import pathlib
 import sys
+from typing import TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector3
+
+if TYPE_CHECKING:
+    from typing import TypeAlias
+
+    LocalCoords: TypeAlias = type[Vector3]
+    NDCCoords: TypeAlias = type[Vector3]
+    ZoomLevel: TypeAlias = type[float]
 
 
 sys.path.append(str(pathlib.Path.cwd()))
@@ -32,9 +40,9 @@ class TestCameraService(unittest.TestCase):
     def local_to_ndc(
         self,
         projection: OrthoProjection,
-        local_position: Vector3,
-        expected: Vector3,
-        zoom_level: float = 1,
+        local_position: LocalCoords,
+        expected: NDCCoords,
+        zoom_level: ZoomLevel = 1,
     ):
         test_cam = MockCamera(projection)
         test_cam.zoom_level = zoom_level
@@ -42,7 +50,7 @@ class TestCameraService(unittest.TestCase):
         self.assertEqual(ndc_coords, expected)
 
     def test_local_to_ndc(self):
-        test_params: list[tuple[OrthoProjection, Vector3, Vector3, float]] = [
+        test_params: list[tuple[OrthoProjection, LocalCoords, NDCCoords, ZoomLevel]] = [
             # Centered projection, center coords
             (centered_projection, zero_vector, zero_vector),
             # Centered projection, corner coords
@@ -65,9 +73,9 @@ class TestCameraService(unittest.TestCase):
     def ndc_to_local(
         self,
         projection: OrthoProjection,
-        ndc_coords: Vector3,
-        expected: Vector3,
-        zoom_level: float = 1,
+        ndc_coords: NDCCoords,
+        expected: LocalCoords,
+        zoom_level: ZoomLevel = 1,
     ):
         test_cam = MockCamera(projection)
         test_cam.zoom_level = zoom_level
@@ -75,7 +83,7 @@ class TestCameraService(unittest.TestCase):
         self.assertEqual(local_position, expected)
 
     def test_ndc_to_local(self):
-        test_params: list[tuple[OrthoProjection, Vector3, Vector3, float]] = [
+        test_params: list[tuple[OrthoProjection, NDCCoords, LocalCoords, ZoomLevel]] = [
             # Centered projection, center coords
             (centered_projection, zero_vector, zero_vector),
             # Centered projection, corner coords
