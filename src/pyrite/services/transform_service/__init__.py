@@ -5,6 +5,7 @@ from weakref import WeakSet
 
 from ...types.service import ServiceProvider
 from ...transform import Transform, TransformComponent
+from .transform_service import TransformService as _TransformService
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -15,37 +16,49 @@ class TransformService(ServiceProvider):
     Service that contains and maintains data for TransformComponents
     """
 
+    _service: _TransformService
+
     dirty_components: WeakSet[TransformComponent] = WeakSet()
 
-    def get_local(component: TransformComponent) -> Transform:
+    @classmethod
+    def hotswap(cls, service: _TransformService):
+        cls._service.transfer(service)
+        cls._service = service
+
+    @classmethod
+    def get_local(cls, component: TransformComponent) -> Transform:
         """
         :param component: Any transform component.
         :return: The Transform object representing _component_ in local space.
         """
         pass
 
-    def get_local_position(component: TransformComponent) -> Point:
+    @classmethod
+    def get_local_position(cls, component: TransformComponent) -> Point:
         """
         :param component: Any transform component.
         :return: The current position of _component_, in local space.
         """
         pass
 
-    def get_local_rotation(component: TransformComponent) -> float:
+    @classmethod
+    def get_local_rotation(cls, component: TransformComponent) -> float:
         """
         :param component: Any transform component.
         :return: The current rotation of _component_, in local space.
         """
         pass
 
-    def get_local_scale(component: TransformComponent) -> Point:
+    @classmethod
+    def get_local_scale(cls, component: TransformComponent) -> Point:
         """
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in local space.
         """
         pass
 
-    def set_local(component: TransformComponent, value: Transform):
+    @classmethod
+    def set_local(cls, component: TransformComponent, value: Transform):
         """
         Forces the local transform value of a transform component to a new value.
         Does not mark the component for updates.
@@ -55,7 +68,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_local_position(component: TransformComponent, position: Point):
+    @classmethod
+    def set_local_position(cls, component: TransformComponent, position: Point):
         """
         Sets the position of the transform component to the new position.
         The component will be marked for updating.
@@ -65,7 +79,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_local_rotation(component: TransformComponent, angle: Point):
+    @classmethod
+    def set_local_rotation(cls, component: TransformComponent, angle: Point):
         """
         Sets the rotation of the transform component to the new rotation.
         The component will be marked for updating.
@@ -75,7 +90,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_local_scale(component: TransformComponent, scale: Point):
+    @classmethod
+    def set_local_scale(cls, component: TransformComponent, scale: Point):
         """
         Sets the scale of the transform component to the new scaling factor.
         The component will be marked for updating.
@@ -86,35 +102,40 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def get_world(component: TransformComponent) -> Transform:
+    @classmethod
+    def get_world(cls, component: TransformComponent) -> Transform:
         """
         :param component: Any transform component.
         :return: A Transform object representing _component_ in world space.
         """
         pass
 
-    def get_world_position(component: TransformComponent) -> Point:
+    @classmethod
+    def get_world_position(cls, component: TransformComponent) -> Point:
         """
         :param component: Any transform component.
         :return: The current position of _component_, in world space.
         """
         pass
 
-    def get_world_rotation(component: TransformComponent) -> float:
+    @classmethod
+    def get_world_rotation(cls, component: TransformComponent) -> float:
         """
         :param component: Any transform component.
         :return: The current rotation of _component_, in world space.
         """
         pass
 
-    def get_world_scale(component: TransformComponent) -> Point:
+    @classmethod
+    def get_world_scale(cls, component: TransformComponent) -> Point:
         """
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in world space.
         """
         pass
 
-    def set_world(component: TransformComponent, value: Transform):
+    @classmethod
+    def set_world(cls, component: TransformComponent, value: Transform):
         """
         Forces the world transform value of a transform component to a new value.
 
@@ -124,7 +145,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_world_position(component: TransformComponent, position: Point):
+    @classmethod
+    def set_world_position(cls, component: TransformComponent, position: Point):
         """
         Sets the position of the transform component to the new position.
         The component will be marked for updating.
@@ -134,7 +156,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_world_rotation(component: TransformComponent, angle: Point):
+    @classmethod
+    def set_world_rotation(cls, component: TransformComponent, angle: Point):
         """
         Sets the rotation of the transform component to the new rotation.
         The component will be marked for updating.
@@ -144,7 +167,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def set_world_scale(component: TransformComponent, scale: Point):
+    @classmethod
+    def set_world_scale(cls, component: TransformComponent, scale: Point):
         """
         Sets the scale of the transform component to the new scaling factor.
         The component will be marked for updating.
@@ -155,7 +179,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def is_dirty(component: TransformComponent) -> bool:
+    @classmethod
+    def is_dirty(cls, component: TransformComponent) -> bool:
         """
         Checks if a transform component is in need of updating.
 
@@ -165,7 +190,8 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def clean(component: TransformComponent):
+    @classmethod
+    def clean(cls, component: TransformComponent):
         """
         Removes the mark from the component needing to be updated.
 
@@ -173,13 +199,15 @@ class TransformService(ServiceProvider):
         """
         pass
 
-    def get_dirty() -> set[TransformComponent]:
+    @classmethod
+    def get_dirty(cls) -> set[TransformComponent]:
         """
         :return: A set containing all transform components in need of updates.
         """
         pass
 
-    def initialize_component(component: TransformComponent, value: Transform):
+    @classmethod
+    def initialize_component(cls, component: TransformComponent, value: Transform):
         """
         Ensures that the transform component is recognized by the service.
 
