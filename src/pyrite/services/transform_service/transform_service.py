@@ -3,8 +3,6 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-# from weakref import WeakKeyDictionary, WeakSet
-
 # from pygame import Vector2
 
 from ...transform import Transform
@@ -18,83 +16,85 @@ if TYPE_CHECKING:
 class TransformService(Service):
 
     @abstractmethod
-    def get_local(component: TransformComponent) -> Transform:
+    def get_local(self, component: TransformComponent) -> Transform:
         pass
 
     @abstractmethod
-    def get_local_position(component: TransformComponent) -> Point:
+    def get_local_position(self, component: TransformComponent) -> Point:
         pass
 
     @abstractmethod
-    def get_local_rotation(component: TransformComponent) -> float:
+    def get_local_rotation(self, component: TransformComponent) -> float:
         pass
 
     @abstractmethod
-    def get_local_scale(component: TransformComponent) -> Point:
+    def get_local_scale(self, component: TransformComponent) -> Point:
         pass
 
     @abstractmethod
-    def set_local(component: TransformComponent, value: Transform):
+    def set_local(self, component: TransformComponent, value: Transform):
         pass
 
     @abstractmethod
-    def set_local_position(component: TransformComponent, position: Point):
+    def set_local_position(self, component: TransformComponent, position: Point):
         pass
 
     @abstractmethod
-    def set_local_rotation(component: TransformComponent, angle: Point):
+    def set_local_rotation(self, component: TransformComponent, angle: Point):
         pass
 
     @abstractmethod
-    def set_local_scale(component: TransformComponent, scale: Point):
+    def set_local_scale(self, component: TransformComponent, scale: Point):
         pass
 
     @abstractmethod
-    def get_world(component: TransformComponent) -> Transform:
+    def get_world(self, component: TransformComponent) -> Transform:
         pass
 
     @abstractmethod
-    def get_world_position(component: TransformComponent) -> Point:
+    def get_world_position(self, component: TransformComponent) -> Point:
         pass
 
     @abstractmethod
-    def get_world_rotation(component: TransformComponent) -> float:
+    def get_world_rotation(self, component: TransformComponent) -> float:
         pass
 
     @abstractmethod
-    def get_world_scale(component: TransformComponent) -> Point:
+    def get_world_scale(self, component: TransformComponent) -> Point:
         pass
 
     @abstractmethod
-    def set_world(component: TransformComponent, value: Transform):
+    def set_world(self, component: TransformComponent, value: Transform):
         pass
 
     @abstractmethod
-    def set_world_position(component: TransformComponent, position: Point):
+    def set_world_position(self, component: TransformComponent, position: Point):
         pass
 
     @abstractmethod
-    def set_world_rotation(component: TransformComponent, angle: Point):
+    def set_world_rotation(self, component: TransformComponent, angle: Point):
         pass
 
     @abstractmethod
-    def set_world_scale(component: TransformComponent, scale: Point):
+    def set_world_scale(self, component: TransformComponent, scale: Point):
         pass
 
     @abstractmethod
-    def is_dirty(component: TransformComponent) -> bool:
+    def is_dirty(self, component: TransformComponent) -> bool:
         pass
 
     @abstractmethod
-    def clean(component: TransformComponent):
+    def clean(self, component: TransformComponent):
         pass
 
     @abstractmethod
-    def get_dirty() -> set[TransformComponent]:
+    def get_dirty(
+        self,
+    ) -> set[TransformComponent]:
         pass
 
     @abstractmethod
-    def initialize_component(component: TransformComponent, value: Transform):
+    def initialize_component(self, component: TransformComponent, value: Transform):
         pass
 
 
