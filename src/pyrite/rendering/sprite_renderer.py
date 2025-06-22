@@ -6,7 +6,7 @@ from weakref import WeakKeyDictionary
 import pygame
 
 from ..types import Renderer
-from ..services.camera_service import CameraService
+from ..services import CameraService
 from ..transform import Transform
 
 if TYPE_CHECKING:
