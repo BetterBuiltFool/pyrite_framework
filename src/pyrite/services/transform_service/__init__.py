@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from weakref import WeakSet
 
 from ...types.service import ServiceProvider
 from ...transform import Transform, TransformComponent
@@ -20,8 +19,6 @@ class TransformServiceProvider(ServiceProvider):
     """
 
     _service: TransformService = DefaultTransformService()
-
-    dirty_components: WeakSet[TransformComponent] = WeakSet()
 
     @classmethod
     def hotswap(cls, service: TransformService):
