@@ -23,8 +23,20 @@ class BoundsServiceProvider(ServiceProvider):
 
     @classmethod
     def get(cls, renderable: Renderable) -> BoundsData | tuple[None, None]:
+        """
+        Gets the bounds data for a given renderable, if it exists.
+
+        :param renderable: A Renderable whose bounds data is to be fetched.
+        :return: The renderable's data, or (None, None) if not available.
+        """
         return cls._service.get(renderable)
 
     @classmethod
     def set(cls, renderable: Renderable, data: BoundsData):
+        """
+        Sets the bounds data for a given renderable
+
+        :param renderable: The Renderable whose data is being set.
+        :param data: The new data for the renderable
+        """
         cls._service.set(renderable, data)
