@@ -5,7 +5,10 @@ from weakref import WeakSet
 
 from ...types.service import ServiceProvider
 from ...transform import Transform, TransformComponent
-from .transform_service import TransformService as _TransformService
+from .transform_service import (
+    TransformService as _TransformService,
+    DefaultTransformService,
+)
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -16,7 +19,7 @@ class TransformService(ServiceProvider):
     Service that contains and maintains data for TransformComponents
     """
 
-    _service: _TransformService
+    _service: _TransformService = DefaultTransformService()
 
     dirty_components: WeakSet[TransformComponent] = WeakSet()
 

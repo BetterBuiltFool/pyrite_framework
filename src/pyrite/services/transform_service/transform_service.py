@@ -96,3 +96,7 @@ class TransformService(Service):
     @abstractmethod
     def initialize_component(component: TransformComponent, value: Transform):
         pass
+
+
+class DefaultTransformService(TransformService):
+    pass
