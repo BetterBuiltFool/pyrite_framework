@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .bounds_service import BoundsService  # noqa: F401
 from .ortho_projection import OrthoProjection  # noqa: F401
 from .rect_bounds import RectBounds  # noqa: F401
 from .render_texture import RenderTexture, RenderTextureComponent  # noqa: F401

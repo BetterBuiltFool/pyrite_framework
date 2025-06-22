@@ -4,8 +4,9 @@ import typing
 
 from ..enum import AnchorPoint
 from ..rendering.rect_bounds import rotate_rect
-from ..rendering import BoundsService, RectBounds
+from ..rendering import RectBounds
 from ..rendering.sprite_renderer import SpriteRenderer
+from ..services import BoundsService
 from ..transform import transform_component as transform
 from ..types import Renderable
 
