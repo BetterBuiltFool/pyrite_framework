@@ -35,3 +35,7 @@ class DefaultBoundsService(BoundsService):
 
     def set(self, renderable: Renderable, data: BoundsData):
         self._renderables.update({renderable: data})
+
+    def transfer(self, target_service: BoundsService):
+        for renderable, data in self._renderables.items():
+            target_service.set(renderable, data)
