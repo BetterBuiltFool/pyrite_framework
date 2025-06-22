@@ -7,7 +7,8 @@ from ...types.service import ServiceProvider
 from .bounds_service import BoundsService, DefaultBoundsService
 
 if TYPE_CHECKING:
-    pass
+    from ...types import Renderable
+    from .bounds_service import BoundsData
 
 
 class BoundsServiceProvider(ServiceProvider):
@@ -16,3 +17,13 @@ class BoundsServiceProvider(ServiceProvider):
     @classmethod
     def hotswap(cls, service: BoundsService):
         return super().hotswap(service)
+
+    # -----------------------Delegates-----------------------
+
+    @classmethod
+    def get(cls, renderable: Renderable) -> BoundsData | tuple[None, None]:
+        return cls._service.get(renderable)
+
+    @classmethod
+    def set(cls, renderable: Renderable, data: BoundsData):
+        cls._service.set(renderable, data)
