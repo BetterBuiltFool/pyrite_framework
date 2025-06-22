@@ -28,13 +28,15 @@ class TransformServiceProvider(ServiceProvider):
         cls._service.transfer(service)
         cls._service = service
 
+    # -----------------------Delegates-----------------------
+
     @classmethod
     def get_local(cls, component: TransformComponent) -> Transform:
         """
         :param component: Any transform component.
         :return: The Transform object representing _component_ in local space.
         """
-        pass
+        return cls._service.get_local(component)
 
     @classmethod
     def get_local_position(cls, component: TransformComponent) -> Point:
@@ -42,7 +44,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current position of _component_, in local space.
         """
-        pass
+        return cls._service.get_local_position(component)
 
     @classmethod
     def get_local_rotation(cls, component: TransformComponent) -> float:
@@ -50,7 +52,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current rotation of _component_, in local space.
         """
-        pass
+        return cls._service.get_local_rotation(component)
 
     @classmethod
     def get_local_scale(cls, component: TransformComponent) -> Point:
@@ -58,7 +60,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in local space.
         """
-        pass
+        return cls._service.get_local_scale(component)
 
     @classmethod
     def set_local(cls, component: TransformComponent, value: Transform):
@@ -69,7 +71,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param value: A Transform value, in local space.
         """
-        pass
+        return cls._service.set_local(component, value)
 
     @classmethod
     def set_local_position(cls, component: TransformComponent, position: Point):
@@ -80,7 +82,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param position: A point in local space.
         """
-        pass
+        return cls._service.set_local_position(component, position)
 
     @classmethod
     def set_local_rotation(cls, component: TransformComponent, angle: Point):
@@ -91,7 +93,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param angle: An angle in local space.
         """
-        pass
+        return cls._service.set_local_rotation(component, angle)
 
     @classmethod
     def set_local_scale(cls, component: TransformComponent, scale: Point):
@@ -103,7 +105,7 @@ class TransformServiceProvider(ServiceProvider):
         :param position: A tuple with scaling factors for each dimension, in local
             space.
         """
-        pass
+        return cls._service.set_local_scale(component, scale)
 
     @classmethod
     def get_world(cls, component: TransformComponent) -> Transform:
@@ -111,7 +113,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: A Transform object representing _component_ in world space.
         """
-        pass
+        return cls._service.get_world(component)
 
     @classmethod
     def get_world_position(cls, component: TransformComponent) -> Point:
@@ -119,7 +121,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current position of _component_, in world space.
         """
-        pass
+        return cls._service.get_world_position(component)
 
     @classmethod
     def get_world_rotation(cls, component: TransformComponent) -> float:
@@ -127,7 +129,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current rotation of _component_, in world space.
         """
-        pass
+        return cls._service.get_world_rotation(component)
 
     @classmethod
     def get_world_scale(cls, component: TransformComponent) -> Point:
@@ -135,7 +137,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in world space.
         """
-        pass
+        return cls._service.get_world_scale(component)
 
     @classmethod
     def set_world(cls, component: TransformComponent, value: Transform):
@@ -146,7 +148,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param value: A Transform value, in world space.
         """
-        pass
+        return cls._service.set_world(component, value)
 
     @classmethod
     def set_world_position(cls, component: TransformComponent, position: Point):
@@ -157,7 +159,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param position: A point in world space.
         """
-        pass
+        return cls._service.set_world_position(component, position)
 
     @classmethod
     def set_world_rotation(cls, component: TransformComponent, angle: Point):
@@ -168,7 +170,7 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param angle: An angle in world space.
         """
-        pass
+        return cls._service.set_world_rotation(component, angle)
 
     @classmethod
     def set_world_scale(cls, component: TransformComponent, scale: Point):
@@ -180,7 +182,7 @@ class TransformServiceProvider(ServiceProvider):
         :param position: A tuple with scaling factors for each dimension, in world
             space.
         """
-        pass
+        return cls._service.set_world_scale(component, scale)
 
     @classmethod
     def is_dirty(cls, component: TransformComponent) -> bool:
