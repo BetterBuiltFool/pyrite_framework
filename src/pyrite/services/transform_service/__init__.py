@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ...types.service import ServiceProvider
-from ...transform import Transform, TransformComponent
 from .transform_service import (
     TransformService,
     DefaultTransformService,
@@ -11,6 +10,7 @@ from .transform_service import (
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from ...transform import Transform, TransformComponent
 
 
 class TransformServiceProvider(ServiceProvider):
@@ -190,7 +190,7 @@ class TransformServiceProvider(ServiceProvider):
         :return: True if _component_ needs cleaning, False otherwise or if _component_
             is invalid.
         """
-        pass
+        return cls._service.is_dirty(component)
 
     @classmethod
     def clean(cls, component: TransformComponent):
@@ -199,14 +199,14 @@ class TransformServiceProvider(ServiceProvider):
 
         :param component: Any transform component.
         """
-        pass
+        cls._service.clean(component)
 
     @classmethod
     def get_dirty(cls) -> set[TransformComponent]:
         """
         :return: A set containing all transform components in need of updates.
         """
-        pass
+        return cls._service.get_dirty()
 
     @classmethod
     def initialize_component(cls, component: TransformComponent, value: Transform):
@@ -216,4 +216,4 @@ class TransformServiceProvider(ServiceProvider):
         :param component: Any transform component.
         :param value: The starting transform of _component_, in local space.
         """
-        pass
+        cls._service.initialize_component(component, value)

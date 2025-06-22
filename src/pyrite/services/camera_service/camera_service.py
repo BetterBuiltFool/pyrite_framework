@@ -8,15 +8,15 @@ from weakref import WeakKeyDictionary
 from pygame import Surface, Vector2, Vector3
 
 from ...rendering.view_plane import ViewPlane
-from ...transform import Transform
 from ...types.service import Service
 
 if TYPE_CHECKING:
-    from ...camera import Camera
-    from ...types import CameraViewBounds
-    from ...rendering import Viewport
     from pygame import Rect
     from pygame.typing import Point
+    from ...camera import Camera
+    from ...transform import Transform
+    from ...types import CameraViewBounds
+    from ...rendering import Viewport
 
 
 class CameraService(Service):
@@ -164,9 +164,8 @@ class DefaultCameraService(CameraService):
             far_plane_center[0] / camera.zoom_level,
             far_plane_center[1] / camera.zoom_level,
         )
-        local_transform = Transform(
-            point.position + far_plane_center, point.rotation, point.scale
-        )
+        local_transform = point.copy()
+        local_transform.position = point.position + far_plane_center
         return local_transform
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:

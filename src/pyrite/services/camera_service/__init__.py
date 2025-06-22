@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ...transform import Transform
 from ...types.service import ServiceProvider
 from .camera_service import CameraService, DefaultCameraService
 
@@ -10,6 +9,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from pygame import Vector3
     from ...camera import Camera
+    from ...transform import Transform
     from ...types import CameraViewBounds
     from ...rendering import Viewport
 
