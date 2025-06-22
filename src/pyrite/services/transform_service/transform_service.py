@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from weakref import WeakKeyDictionary
+from weakref import WeakKeyDictionary, WeakSet
 
 from pygame import Vector2
 
@@ -109,6 +109,8 @@ class DefaultTransformService(TransformService):
             WeakKeyDictionary()
         )
 
+        self.dirty_components: WeakSet[TransformComponent] = WeakSet()
+
     def transfer(self, target_service: TransformService):
         for component, transform in self.local_transforms.items():
             target_service.initialize_component(component, transform)
@@ -129,15 +131,15 @@ class DefaultTransformService(TransformService):
         self.local_transforms.update({component: value})
 
     def set_local_position(self, component: TransformComponent, position: Point):
-        # dirty_components.add(component)
+        self.dirty_components.add(component)
         self.local_transforms.get(component).position = Vector2(position)
 
     def set_local_rotation(self, component: TransformComponent, angle: Point):
-        # dirty_components.add(component)
+        self.dirty_components.add(component)
         self.local_transforms.get(component).rotation = angle
 
     def set_local_scale(self, component: TransformComponent, scale: Point):
-        # dirty_components.add(component)
+        self.dirty_components.add(component)
         self.local_transforms.get(component).scale = Vector2(scale)
 
     def get_world(self, component: TransformComponent) -> Transform:
@@ -167,3 +169,18 @@ class DefaultTransformService(TransformService):
     def set_world_scale(self, component: TransformComponent, scale: Point):
         # TODO Force update local
         self.world_transforms.get(component).scale = Vector2(scale)
+
+    def is_dirty(self, component: TransformComponent) -> bool:
+        return component in self.dirty_components
+
+    def clean(self, component: TransformComponent):
+        self.dirty_components.discard(component)
+
+    def get_dirty(self) -> set[TransformComponent]:
+        return set(self.dirty_components)
+
+    def initialize_component(self, component: TransformComponent, value: Transform):
+        self.dirty_components.add(component)
+        self.local_transforms.update({component: value})
+        # Temporary, will update w/ TransformComponent updates
+        self.world_transforms.update({component: value.copy()})
