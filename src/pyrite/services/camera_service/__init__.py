@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 
 
 class CameraService(ServiceProvider):
+    """
+    Service that contains and maintains data for Camera objects.
+    """
+
     _service: _CameraService = DefaultCameraService()
     _active_cameras: set[Camera] = set()
     _default_camera: Camera = None
