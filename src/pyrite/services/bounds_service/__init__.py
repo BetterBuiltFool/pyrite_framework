@@ -16,7 +16,8 @@ class BoundsServiceProvider(ServiceProvider):
 
     @classmethod
     def hotswap(cls, service: BoundsService):
-        return super().hotswap(service)
+        cls._service.transfer(service)
+        cls._service = service
 
     # -----------------------Delegates-----------------------
 
