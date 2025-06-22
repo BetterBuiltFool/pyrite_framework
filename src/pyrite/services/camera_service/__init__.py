@@ -130,7 +130,7 @@ class CameraServiceProvider(ServiceProvider):
         :param ndc_coords: A 3D point in ndc space.
         :return: A 3D point in clip coordinates of the projection.
         """
-        return cls._service.local_to_ndc(camera, ndc_coords)
+        return cls._service.ndc_to_local(camera, ndc_coords)
 
     @classmethod
     def to_local(cls, camera: Camera, point: Transform) -> Transform:
