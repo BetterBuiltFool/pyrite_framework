@@ -44,6 +44,10 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
+    def set_gravity(self, gravity: Point):
+        pass
+
+    @abstractmethod
     def step(self, delta_time: float):
         pass
 
@@ -82,6 +86,9 @@ class PymunkPhysicsService(PhysicsService):
     def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
         # TODO Implement this, just checking boxes right now
         pass
+
+    def set_gravity(self, gravity_pull: Point):
+        self.space.gravity = gravity_pull
 
     def step(self, delta_time: float):
         return self.space.step(delta_time)

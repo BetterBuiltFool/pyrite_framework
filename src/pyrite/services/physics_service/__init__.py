@@ -72,6 +72,15 @@ class PhysicsServiceProvider(ServiceProvider):
         cls._service.check_point(point, shape_filer)
 
     @classmethod
+    def set_gravity(cls, gravity_pull: Point):
+        """
+        Sets the gravity in the physics space.
+
+        :param gravity: A tuple of floats describing the direction of gravity's pull.
+        """
+        cls._service.set_gravity(gravity_pull)
+
+    @classmethod
     def step(cls, delta_time: float):
         """
         Steps the physics engine by the denoted amount.
