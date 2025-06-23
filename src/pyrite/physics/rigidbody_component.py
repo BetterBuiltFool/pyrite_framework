@@ -6,7 +6,7 @@ from pymunk import Body
 
 from ..transform import TransformComponent
 from ..types import Component
-from .physics_service import PhysicsService
+from ..services import PhysicsService
 
 if TYPE_CHECKING:
     pass
@@ -34,5 +34,4 @@ class RigidbodyComponent(Component):
             body = Body()
         self.transform = transform
         self.body = body
-        PhysicsService.bodies.update({body: owner})
-        PhysicsService.space.add(body)
+        PhysicsService.add_rigidbody(self)
