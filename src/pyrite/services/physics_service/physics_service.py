@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Callable
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
 
@@ -44,6 +45,16 @@ class PhysicsService(Service):
 
     @abstractmethod
     def set_gravity(self, gravity: Point):
+        pass
+
+    @abstractmethod
+    def set_component_handlers(
+        self,
+        begin: Callable = None,
+        pre_solve: Callable = None,
+        post_solve: Callable = None,
+        separate: Callable = None,
+    ):
         pass
 
     @abstractmethod
@@ -91,6 +102,18 @@ class PymunkPhysicsService(PhysicsService):
 
     def set_gravity(self, gravity_pull: Point):
         self.space.gravity = gravity_pull
+
+    def set_component_handlers(
+        self,
+        begin: Callable = None,
+        pre_solve: Callable = None,
+        post_solve: Callable = None,
+        separate: Callable = None,
+    ):
+        self.comp_handler.begin = begin
+        self.comp_handler.pre_solve = pre_solve
+        self.comp_handler.post_solve = post_solve
+        self.comp_handler.separate = separate
 
     def step(self, delta_time: float):
         return self.space.step(delta_time)
