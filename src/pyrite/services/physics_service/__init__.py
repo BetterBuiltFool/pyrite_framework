@@ -11,6 +11,7 @@ if TYPE_CHECKING:
         Body,
         PointQueryInfo,
         SegmentQueryInfo,
+        Shape,
         ShapeFilter,
     )
 
@@ -24,6 +25,10 @@ class PhysicsServiceProvider(ServiceProvider):
         cls._service = service
 
     # -----------------------Delegates-----------------------
+
+    @classmethod
+    def add_collision_shape(cls, collision_shape: Shape):
+        cls._service.add_collision_shape(collision_shape)
 
     @classmethod
     def cast_ray(

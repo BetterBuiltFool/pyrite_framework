@@ -15,11 +15,16 @@ if TYPE_CHECKING:
         Body,
         PointQueryInfo,
         SegmentQueryInfo,
+        Shape,
         ShapeFilter,
     )
 
 
 class PhysicsService(Service):
+
+    @abstractmethod
+    def add_collision_shape(self, collision_shape: Shape):
+        pass
 
     @abstractmethod
     def cast_ray(
@@ -64,6 +69,9 @@ class PymunkPhysicsService(PhysicsService):
         # engines, so I've not bothered with making things terribly abstract, meaning
         # that it's decidedly nontrivial to transfer physics data.
         pass
+
+    def add_collision_shape(self, collision_shape: Shape):
+        self.space.add(collision_shape)
 
     def cast_ray(
         self, start: Point, end: Point, shape_filter: ShapeFilter
