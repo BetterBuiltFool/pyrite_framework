@@ -17,16 +17,21 @@ if TYPE_CHECKING:
         Body,
         PointQueryInfo,
         SegmentQueryInfo,
-        Shape,
         ShapeFilter,
     )
+    from ...physics.collider_component import ColliderComponent
+    from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import TransformComponent
 
 
 class PhysicsService(Service):
 
     @abstractmethod
-    def add_collision_shape(self, collision_shape: Shape):
+    def add_rigidbody(self, rigidbody: RigidbodyComponent):
+        pass
+
+    @abstractmethod
+    def add_collider(self, collider: ColliderComponent):
         pass
 
     @abstractmethod
@@ -89,8 +94,12 @@ class PymunkPhysicsService(PhysicsService):
         # that it's decidedly nontrivial to transfer physics data.
         pass
 
-    def add_collision_shape(self, collision_shape: Shape):
-        self.space.add(collision_shape)
+    def add_rigidbody(self, rigidbody: RigidbodyComponent):
+        self.bodies.update({rigidbody.body: rigidbody.owner})
+        self.space.add(rigidbody.body)
+
+    def add_collider(self, collider: ColliderComponent):
+        self.space.add(*collider.shapes)
 
     def cast_ray(
         self, start: Point, end: Point, shape_filter: ShapeFilter

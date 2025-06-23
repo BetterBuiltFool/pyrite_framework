@@ -12,9 +12,10 @@ if TYPE_CHECKING:
         Body,
         PointQueryInfo,
         SegmentQueryInfo,
-        Shape,
         ShapeFilter,
     )
+    from ...physics.collider_component import ColliderComponent
+    from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import TransformComponent
 
 
@@ -27,10 +28,13 @@ class PhysicsServiceProvider(ServiceProvider):
         cls._service = service
 
     # -----------------------Delegates-----------------------
+    @classmethod
+    def add_rigidbody(cls, rigidbody: RigidbodyComponent):
+        cls._service.add_rigidbody(rigidbody)
 
     @classmethod
-    def add_collision_shape(cls, collision_shape: Shape):
-        cls._service.add_collision_shape(collision_shape)
+    def add_collider(cls, collider: ColliderComponent):
+        cls._service.add_collider(collider)
 
     @classmethod
     def cast_ray(
