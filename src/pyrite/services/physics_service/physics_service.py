@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Callable
+import math
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
 
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
         Shape,
         ShapeFilter,
     )
+    from ...transform import TransformComponent
 
 
 class PhysicsService(Service):
@@ -59,6 +61,12 @@ class PhysicsService(Service):
 
     @abstractmethod
     def step(self, delta_time: float):
+        pass
+
+    @abstractmethod
+    def sync_transforms_to_bodies(
+        self, tranform_component_class: type[TransformComponent]
+    ):
         pass
 
     @abstractmethod
@@ -117,6 +125,29 @@ class PymunkPhysicsService(PhysicsService):
 
     def step(self, delta_time: float):
         return self.space.step(delta_time)
+
+    def sync_transforms_to_bodies(
+        self, tranform_component_class: type[TransformComponent]
+    ):
+        # Passing TransformComponent class explicitly since we can't import it without
+        # causing a cycle
+        for body, key_object in self.bodies.items():
+            if (
+                not (transform := tranform_component_class.get(key_object))
+                or body.is_sleeping
+                or body.body_type == pymunk.Body.STATIC
+            ):
+                # No adjustments to sleeping, static, or transformless objects
+                continue
+            # TODO calculate an expected interpolation value?
+            new_pos = transform.world_position.lerp(body.position, 0.5)
+            angle_between = (
+                (math.degrees(body.angle) - transform.world_rotation) + 180
+            ) % 360 - 180
+            new_rot = angle_between / 2
+
+            transform.world_position = new_pos
+            transform.world_rotation = new_rot
 
     def get_owner_from_body(self, body: Body) -> Any | None:
         return self.bodies.get(body)

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
         Shape,
         ShapeFilter,
     )
+    from ...transform import TransformComponent
 
 
 class PhysicsServiceProvider(ServiceProvider):
@@ -112,6 +113,16 @@ class PhysicsServiceProvider(ServiceProvider):
         :param delta_time: The length of time to be simulated.
         """
         cls._service.step(delta_time)
+
+    @classmethod
+    def sync_transforms_to_bodies(
+        cls, tranform_component_class: type[TransformComponent]
+    ):
+        """
+        Takes all TransformComponents with a rigidbody and updates their position and
+        rotation with the new calculations.
+        """
+        cls._service.sync_transforms_to_bodies(tranform_component_class)
 
     @classmethod
     def get_owner_from_body(cls, body: Body) -> Any | None:
