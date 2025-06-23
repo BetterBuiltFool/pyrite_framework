@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Callable
 import math
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
@@ -14,10 +13,12 @@ from ...constants import COMPONENT_TYPE
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pymunk import (
+        Arbiter,
         Body,
         PointQueryInfo,
         SegmentQueryInfo,
         ShapeFilter,
+        Space,
     )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
@@ -55,16 +56,6 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
-    def set_component_handlers(
-        self,
-        begin: Callable = None,
-        pre_solve: Callable = None,
-        post_solve: Callable = None,
-        separate: Callable = None,
-    ):
-        pass
-
-    @abstractmethod
     def step(self, delta_time: float):
         pass
 
@@ -87,6 +78,8 @@ class PymunkPhysicsService(PhysicsService):
             COMPONENT_TYPE, COMPONENT_TYPE
         )
         self.bodies: WeakValueDictionary[Body, Any] = WeakValueDictionary()
+        self.comp_handler.post_solve = PymunkPhysicsService.post_solve
+        self.comp_handler.separate = PymunkPhysicsService.separate
 
     def transfer(self, target_service: PhysicsService):
         # Gotta figure out what to do here. I don't have any plans for other physics
@@ -120,18 +113,6 @@ class PymunkPhysicsService(PhysicsService):
     def set_gravity(self, gravity_pull: Point):
         self.space.gravity = gravity_pull
 
-    def set_component_handlers(
-        self,
-        begin: Callable = None,
-        pre_solve: Callable = None,
-        post_solve: Callable = None,
-        separate: Callable = None,
-    ):
-        self.comp_handler.begin = begin
-        self.comp_handler.pre_solve = pre_solve
-        self.comp_handler.post_solve = post_solve
-        self.comp_handler.separate = separate
-
     def step(self, delta_time: float):
         return self.space.step(delta_time)
 
@@ -160,3 +141,39 @@ class PymunkPhysicsService(PhysicsService):
 
     def get_owner_from_body(self, body: Body) -> Any | None:
         return self.bodies.get(body)
+
+    @staticmethod
+    def post_solve(arbiter: Arbiter, space: Space, data: Any):
+        collider1, collider2 = PymunkPhysicsService.get_collider_components(arbiter)
+        if arbiter.is_first_contact:
+            if collider1.compare_mask(collider2):
+                collider1.OnTouch(collider1, collider2)
+            if collider2.compare_mask(collider1):
+                collider2.OnTouch(collider2, collider1)
+        if collider1.compare_mask(collider2):
+            collider1.WhileTouching(collider1, collider2)
+        if collider2.compare_mask(collider1):
+            collider2.WhileTouching(collider2, collider1)
+
+    @staticmethod
+    def separate(arbiter: Arbiter, space: Space, data: Any):
+        collider1, collider2 = PymunkPhysicsService.get_collider_components(arbiter)
+        if collider1.compare_mask(collider2):
+            collider1.OnSeparate(collider1, collider2)
+        if collider2.compare_mask(collider1):
+            collider2.OnSeparate(collider2, collider1)
+
+    @staticmethod
+    def get_collider_components(
+        arbiter: Arbiter,
+    ) -> tuple[ColliderComponent, ColliderComponent]:
+        shape1, shape2 = arbiter.shapes
+        body1 = shape1.body
+        body2 = shape2.body
+        owner1 = PhysicsService.get_owner_from_body(body1)
+        owner2 = PhysicsService.get_owner_from_body(body2)
+        # TODO These don't exist at runtime, so this will break as soon as it is tried.
+        # Need a way to get these components while avoid import cycles.
+        # Add a reference to the ColliderComponent when the PhysicsSystem is
+        # instantiated?
+        return ColliderComponent.get(owner1), ColliderComponent.get(owner2)

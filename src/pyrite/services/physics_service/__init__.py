@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from typing import Any, TYPE_CHECKING
 
 from .physics_service import PhysicsService, PymunkPhysicsService
@@ -90,24 +89,6 @@ class PhysicsServiceProvider(ServiceProvider):
         :param gravity: A tuple of floats describing the direction of gravity's pull.
         """
         cls._service.set_gravity(gravity_pull)
-
-    @classmethod
-    def set_component_handlers(
-        cls,
-        begin: Callable = None,
-        pre_solve: Callable = None,
-        post_solve: Callable = None,
-        separate: Callable = None,
-    ):
-        """
-        Overrides the callbacks on the component handler.
-
-        :param begin: A Callback for the begin phase, defaults to None
-        :param pre_solve: A Callback for the pre-solve phase, defaults to None
-        :param post_solve: A Callback for the post-solve phase, defaults to None
-        :param separate: A Callback for the separate phase, defaults to None
-        """
-        cls._service.set_component_handlers(begin, pre_solve, post_solve, separate)
 
     @classmethod
     def step(cls, delta_time: float):
