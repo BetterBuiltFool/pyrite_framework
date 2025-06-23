@@ -4,10 +4,10 @@ from abc import abstractmethod
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
 
-import cffi
 import pymunk
 
 from ...types.service import Service
+from ...constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -17,12 +17,6 @@ if TYPE_CHECKING:
         SegmentQueryInfo,
         ShapeFilter,
     )
-
-# Calculating the system's max int value for setting the collision type of
-# ColliderComponents
-# Recalculated here to avoid circular import
-# TODO figure out an architecture that avoids this
-COMPONENT_TYPE: int = 2 ** (cffi.FFI().sizeof("int") * 8 - 1) - 1
 
 
 class PhysicsService(Service):
