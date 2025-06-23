@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from typing import Any, TYPE_CHECKING
+from weakref import WeakValueDictionary
+
+import cffi
+import pymunk
 
 from ...types.service import Service
 
@@ -13,6 +17,12 @@ if TYPE_CHECKING:
         SegmentQueryInfo,
         ShapeFilter,
     )
+
+# Calculating the system's max int value for setting the collision type of
+# ColliderComponents
+# Recalculated here to avoid circular import
+# TODO figure out an architecture that avoids this
+COMPONENT_TYPE: int = 2 ** (cffi.FFI().sizeof("int") * 8 - 1) - 1
 
 
 class PhysicsService(Service):
@@ -43,4 +53,38 @@ class PhysicsService(Service):
 
 
 class PymunkPhysicsService(PhysicsService):
-    pass
+
+    def __init__(self) -> None:
+        self.space = pymunk.Space()
+        self.comp_handler = self.space.add_collision_handler(
+            COMPONENT_TYPE, COMPONENT_TYPE
+        )
+        self.bodies: WeakValueDictionary[Body, Any] = WeakValueDictionary()
+
+    def transfer(self, target_service: PhysicsService):
+        # Gotta figure out what to do here. I don't have any plans for other physics
+        # engines, so I've not bothered with making things terribly abstract, meaning
+        # that it's decidedly nontrivial to transfer physics data.
+        pass
+
+    def cast_ray(
+        self, start: Point, end: Point, shape_filter: ShapeFilter
+    ) -> list[SegmentQueryInfo]:
+        # TODO Implement this, just checking boxes right now
+        pass
+
+    def cast_ray_single(
+        self, start: Point, end: Point, shape_filter: ShapeFilter
+    ) -> SegmentQueryInfo:
+        # TODO Implement this, just checking boxes right now
+        pass
+
+    def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
+        # TODO Implement this, just checking boxes right now
+        pass
+
+    def step(self, delta_time: float):
+        return self.space.step(delta_time)
+
+    def get_owner_from_body(self, body: Body) -> Any | None:
+        return self.bodies.get(body)
