@@ -13,7 +13,7 @@ class Renderer(ABC, Generic[RenderableType]):
 
     @classmethod
     @abstractmethod
-    def render(self, delta_time: float, renderable: RenderableType, camera: CameraBase):
+    def render(cls, delta_time: float, renderable: RenderableType, camera: CameraBase):
         """
         Draws the renderable to the screen via the camera object.
 
