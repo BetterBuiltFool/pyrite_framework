@@ -168,4 +168,4 @@ class ColliderComponent(Component):
         :param other: Another ColliderComponent.
         :return: True if the masks are overlapping, otherwise False.
         """
-        return self.collision_mask & other.category
+        return bool(self.collision_mask & other.category)
