@@ -82,10 +82,12 @@ class RenderLayers:
             item = cls._layers[item]
         # item is now always a layer object. It will have failed otherwise.
         if any(
-            item == cls.BACKGROUND,
-            item == cls.MIDGROUND,
-            item == cls.FOREGROUND,
-            item == cls.CAMERA,
+            [
+                item == cls.BACKGROUND,
+                item == cls.MIDGROUND,
+                item == cls.FOREGROUND,
+                item == cls.CAMERA,
+            ]
         ):
             raise ValueError(
                 f"Attempted to remove layer '{item.name}'; Cannot "
