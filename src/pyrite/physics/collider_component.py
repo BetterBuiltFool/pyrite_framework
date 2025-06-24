@@ -58,6 +58,8 @@ class ColliderComponent(Component):
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 
+        rigidbody.collider = self
+
         body = rigidbody.body
         for collision_shape in shape:
             collision_shape.collision_type = COMPONENT_TYPE
