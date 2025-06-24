@@ -25,7 +25,7 @@ class RigidbodyComponent(Component):
     TransformComponent is changed.
     """
 
-    def __init__(self, owner: Any, body: Body = None) -> None:
+    def __init__(self, owner: Any, body: Body | None = None) -> None:
         super().__init__(owner)
         if not (transform := TransformComponent.get(owner)):
             raise RuntimeError(
