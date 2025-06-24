@@ -21,6 +21,7 @@ class OrthoProjection(Projection):
         if projection_rect is None:
             # Default projection is the size of the screen
             display = pygame.display.get_surface()
+            assert display is not None
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
         self.projection_rect = projection_rect
