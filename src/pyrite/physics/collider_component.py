@@ -63,7 +63,7 @@ class ColliderComponent(Component):
             collision_shape.collision_type = COMPONENT_TYPE
             collision_shape.body = body
             collision_shape.filter = self.filter
-            PhysicsService.add_collider(self)
+        PhysicsService.add_collider(self)
 
         self.OnTouch = OnTouch(self)
         """
