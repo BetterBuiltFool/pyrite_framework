@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
-from ..camera import camera_service
+from ..services import CameraService
 from ..types import Renderer
 
 if TYPE_CHECKING:
@@ -25,7 +25,7 @@ class CameraRenderer(Renderer):
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
-        camera_view = camera_service.CameraService._surfaces.get(camera)
+        camera_view = CameraService._service._surfaces.get(camera)
         if not render_target.crop:
             # Not cropping, so scale the view instead.
             camera_view = cls._scale_view(camera_view, render_rect.size)

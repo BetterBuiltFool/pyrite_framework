@@ -15,8 +15,8 @@ from .core.system_manager import SystemManager
 
 from ._helper import defaults
 from .camera.camera import Camera
-from .camera.camera_service import CameraService
 from .rendering import OrthoProjection, Viewport
+from .services import CameraService
 from .transform import transform_system
 from .utils import threading
 

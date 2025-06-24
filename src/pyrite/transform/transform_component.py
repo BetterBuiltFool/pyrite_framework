@@ -5,15 +5,12 @@ from typing import Any, TYPE_CHECKING
 from pygame import Vector2
 
 from .transform import Transform
-from . import transform_service as ts
+from ..services import TransformService
 from ..types import Component
 
 
 if TYPE_CHECKING:
-    from types import ModuleType
     from pygame.typing import Point
-
-transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
 
 class TransformComponent(Component):
@@ -26,7 +23,7 @@ class TransformComponent(Component):
         scale: Point = (1, 1),
     ) -> None:
         super().__init__(owner)
-        transform_service.initialize_component(
+        TransformService.initialize_component(
             self, Transform(position, rotation, scale)
         )
         self._dirty = False
@@ -36,85 +33,85 @@ class TransformComponent(Component):
         """
         :return: Position in local space
         """
-        return transform_service.get_local_position(self)
+        return TransformService.get_local_position(self)
 
     @position.setter
     def position(self, new_position: Point):
-        transform_service.set_local_position(self, new_position)
+        TransformService.set_local_position(self, new_position)
 
     @property
     def world_position(self) -> Vector2:
         """
         :return: Position in world space.
         """
-        return transform_service.get_world_position(self)
+        return TransformService.get_world_position(self)
 
     @world_position.setter
     def world_position(self, new_position: Point):
-        transform_service.set_world_position(self, new_position)
+        TransformService.set_world_position(self, new_position)
 
     @property
     def rotation(self) -> float:
         """
         :return: Rotation in local space, in degrees.
         """
-        return transform_service.get_local_rotation(self)
+        return TransformService.get_local_rotation(self)
 
     @rotation.setter
     def rotation(self, angle: float):
-        transform_service.set_local_rotation(self, angle)
+        TransformService.set_local_rotation(self, angle)
 
     @property
     def world_rotation(self) -> float:
         """
         :Return: Rotation in world space, in degrees.
         """
-        return transform_service.get_world_rotation(self)
+        return TransformService.get_world_rotation(self)
 
     @world_rotation.setter
     def world_rotation(self, angle: float):
-        transform_service.set_world_rotation(self, angle)
+        TransformService.set_world_rotation(self, angle)
 
     @property
     def scale(self) -> Vector2:
         """
         :return: Local scaling factor.
         """
-        return transform_service.get_local_scale(self)
+        return TransformService.get_local_scale(self)
 
     @scale.setter
     def scale(self, new_scale: Point):
-        transform_service.set_local_scale(self, new_scale)
+        TransformService.set_local_scale(self, new_scale)
 
     @property
     def world_scale(self) -> Vector2:
         """
         :return: World scaling factor.
         """
-        return transform_service.get_world_scale(self)
+        return TransformService.get_world_scale(self)
 
     @world_scale.setter
     def world_scale(self, new_scale: Point):
-        transform_service.set_world_scale(self, new_scale)
+        TransformService.set_world_scale(self, new_scale)
 
     def is_dirty(self) -> bool:
         """
         :return: True if the component is in need of updates.
         """
-        return transform_service.is_dirty(self)
+        return TransformService.is_dirty(self)
 
     def raw(self) -> Transform:
         """
         Returns a transform object representing this component in local space.
         """
 
-        return transform_service.get_local(self)
+        return TransformService.get_local(self)
 
     def world(self) -> Transform:
         """
         Returns a transform object representing this component in world space.
         """
-        return transform_service.get_world(self)
+        return TransformService.get_world(self)
 
 
 def from_transform(owner: Any, transform: Transform) -> TransformComponent:
@@ -145,8 +142,3 @@ def from_attributes(
     """
     # This can be overridden to return a subclass of TransformComponent, if needed.
     return TransformComponent(owner, position, rotation, scale)
-
-
-def set_transform_service(module: ModuleType):
-    global transform_service
-    transform_service = module

@@ -1,16 +1,29 @@
 from __future__ import annotations
 import pathlib
 import sys
+from typing import TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector3
 
+if TYPE_CHECKING:
+    from typing import TypeAlias
+
+    LocalCoords: TypeAlias = type[Vector3]
+    NDCCoords: TypeAlias = type[Vector3]
+    ZoomLevel: TypeAlias = type[float]
+
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.camera.camera_service import CameraService  # noqa:E402
+from src.pyrite.services import CameraService  # noqa:E402
 from src.pyrite.rendering import OrthoProjection  # noqa: E402
 from src.pyrite.types.projection import Projection  # noqa:E402
 from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
+
+
+centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
+three_quart_projection = OrthoProjection(Rect(-200, -150, 800, 600))
+zero_vector = Vector3(0, 0, 0)
 
 
 class MockCamera:
@@ -24,169 +37,71 @@ class MockCamera:
 
 class TestCameraService(unittest.TestCase):
 
-    def test_local_to_ndc(self):
-        # Centered projection, center coords
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
+    def local_to_ndc(
+        self,
+        projection: OrthoProjection,
+        local_position: LocalCoords,
+        expected: NDCCoords,
+        zoom_level: ZoomLevel = 1,
+    ):
         test_cam = MockCamera(projection)
-
-        local_position = Vector3(0, 0, 0)
-
+        test_cam.zoom_level = zoom_level
         ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(0, 0, 0)
-
         self.assertEqual(ndc_coords, expected)
 
-        # Centered projection, corner coords
+    def test_local_to_ndc(self):
+        test_params: list[tuple[OrthoProjection, LocalCoords, NDCCoords, ZoomLevel]] = [
+            # Centered projection, center coords
+            (centered_projection, zero_vector, zero_vector),
+            # Centered projection, corner coords
+            (centered_projection, Vector3(-400, -300, 1), Vector3(-1, -1, 1)),
+            # 3/4 projection, local 0 coords
+            (three_quart_projection, zero_vector, Vector3(-0.5, -0.5, 0)),
+            # 3/4 projection, center coords
+            (three_quart_projection, Vector3(200, 150, 0), zero_vector),
+            # 3/4 projection, corner coords
+            (three_quart_projection, Vector3(-200, -150, 0), Vector3(-1, -1, 0)),
+            # Centered projection, center coords, zoom level 2
+            (centered_projection, zero_vector, zero_vector, 2),
+            # Centered projection, corner coords, zoom level 2
+            (centered_projection, Vector3(-200, -150, 1), Vector3(-1, -1, 1), 2),
+        ]
 
-        local_position = Vector3(-400, -300, 1)
+        for params in test_params:
+            self.local_to_ndc(*params)
 
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(-1, -1, 1)
-
-        self.assertEqual(ndc_coords, expected)
-
-        # 3/4 projection, local 0 coords
-
-        projection = OrthoProjection(Rect(-200, -150, 800, 600))
-        # center = (200, 150)
-        assert projection.far_plane.center == (200, 150)
-        test_cam.projection = projection
-
-        local_position = Vector3(0, 0, 0)
-
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(-0.5, -0.5, 0)
-
-        self.assertEqual(ndc_coords, expected)
-
-        # 3/4 projection, center coords
-
-        local_position = Vector3(200, 150, 0)
-
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(0, 0, 0)
-
-        self.assertEqual(ndc_coords, expected)
-
-        # 3/4 projection, corner coords
-
-        local_position = Vector3(-200, -150, 0)
-
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(-1, -1, 0)
-
-        self.assertEqual(ndc_coords, expected)
-
-        # Centered projection, center coords, zoom level 2
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
-        test_cam.projection = projection
-
-        test_cam.zoom_level = 2
-
-        local_position = Vector3(0, 0, 0)
-
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(0, 0, 0)
-
-        self.assertEqual(ndc_coords, expected)
-
-        # Centered projection, corner coords, zoom level 2
-
-        local_position = Vector3(-200, -150, 1)
-
-        ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-
-        expected = Vector3(-1, -1, 1)
-
-        self.assertEqual(ndc_coords, expected)
+    def ndc_to_local(
+        self,
+        projection: OrthoProjection,
+        ndc_coords: NDCCoords,
+        expected: LocalCoords,
+        zoom_level: ZoomLevel = 1,
+    ):
+        test_cam = MockCamera(projection)
+        test_cam.zoom_level = zoom_level
+        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
+        self.assertEqual(local_position, expected)
 
     def test_ndc_to_local(self):
-        # Centered projection, center coords
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
-        test_cam = MockCamera(projection)
+        test_params: list[tuple[OrthoProjection, NDCCoords, LocalCoords, ZoomLevel]] = [
+            # Centered projection, center coords
+            (centered_projection, zero_vector, zero_vector),
+            # Centered projection, corner coords
+            (centered_projection, Vector3(-1, -1, 1), Vector3(-400, -300, 1)),
+            # 3/4 projection, local 0 coords
+            (three_quart_projection, Vector3(-0.5, -0.5, 0), zero_vector),
+            # 3/4 projection, center coords
+            (three_quart_projection, zero_vector, Vector3(200, 150, 0)),
+            # 3/4 projection, corner coords
+            (three_quart_projection, Vector3(-1, -1, 0), Vector3(-200, -150, 0)),
+            # Centered projection, center coords, zoom level 2
+            (centered_projection, zero_vector, zero_vector, 2),
+            # Centered projection, corner coords, zoom level 2
+            (centered_projection, Vector3(-1, -1, 1), Vector3(-200, -150, 1), 2),
+        ]
 
-        ndc_coords = Vector3(0, 0, 0)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(0, 0, 0)
-
-        self.assertEqual(local_position, expected)
-
-        # Centered projection, corner coords
-
-        ndc_coords = Vector3(-1, -1, 1)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(-400, -300, 1)
-
-        self.assertEqual(local_position, expected)
-
-        # 3/4 projection, local 0 coords
-
-        projection = OrthoProjection(Rect(-200, -150, 800, 600))
-        # center = (200, 150)
-        assert projection.far_plane.center == (200, 150)
-        test_cam.projection = projection
-
-        ndc_coords = Vector3(-0.5, -0.5, 0)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(0, 0, 0)
-
-        self.assertEqual(local_position, expected)
-
-        # 3/4 projection, center coords
-
-        ndc_coords = Vector3(0, 0, 0)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(200, 150, 0)
-
-        self.assertEqual(local_position, expected)
-
-        # 3/4 projection, corner coords
-
-        ndc_coords = Vector3(-1, -1, 0)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(-200, -150, 0)
-
-        self.assertEqual(local_position, expected)
-
-        # Centered projection, center coords, zoom level 2
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
-        test_cam.projection = projection
-
-        test_cam.zoom_level = 2
-
-        ndc_coords = Vector3(0, 0, 0)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(0, 0, 0)
-
-        self.assertEqual(local_position, expected)
-
-        # Centered projection, corner coords, zoom level 2
-
-        ndc_coords = Vector3(-1, -1, 1)
-
-        local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-
-        expected = Vector3(-200, -150, 1)
-
-        self.assertEqual(local_position, expected)
+        for params in test_params:
+            self.ndc_to_local(*params)
 
     def test_to_local(self):
         # Centered projection, both default transform

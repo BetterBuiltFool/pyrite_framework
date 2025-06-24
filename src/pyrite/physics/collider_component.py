@@ -6,9 +6,10 @@ from weakref import WeakKeyDictionary
 
 from pymunk import ShapeFilter
 
+from ..constants import COMPONENT_TYPE
 from ..events import OnSeparate, OnTouch, WhileTouching
-from .physics_service import PhysicsService, COMPONENT_TYPE
 from .rigidbody_component import RigidbodyComponent
+from ..services import PhysicsService
 from ..types import Component
 
 if TYPE_CHECKING:
@@ -57,12 +58,14 @@ class ColliderComponent(Component):
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 
+        rigidbody.collider = self
+
         body = rigidbody.body
         for collision_shape in shape:
             collision_shape.collision_type = COMPONENT_TYPE
             collision_shape.body = body
             collision_shape.filter = self.filter
-            PhysicsService.space.add(collision_shape)
+        PhysicsService.add_collider(self)
 
         self.OnTouch = OnTouch(self)
         """

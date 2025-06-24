@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from types import ModuleType
 
+from ..services import TransformService
 from ..types import System
 from .transform import Transform
-from . import transform_service as ts
-
-
-transform_service: ModuleType = ts  # Default to pyrite.transform.transform_service
 
 
 class TransformSystem(System):
@@ -73,10 +69,10 @@ class DefaultTransformSystem(TransformSystem):
         return transform
 
     def pre_render(self, delta_time: float) -> None:
-        for component in transform_service.get_dirty():
-            transform = transform_service.get_local(component)
-            transform_service.set_world(component, transform.copy())
-            transform_service.clean(component)
+        for component in TransformService.get_dirty():
+            transform = TransformService.get_local(component)
+            TransformService.set_world(component, transform.copy())
+            TransformService.clean(component)
 
 
 _default_transform_system: type[TransformSystem] = DefaultTransformSystem
@@ -97,8 +93,3 @@ def set_default_transform_system_type(system_type: type[TransformSystem]):
     """
     global _default_transform_system
     _default_transform_system = system_type
-
-
-def set_transform_service(module: ModuleType):
-    global transform_service
-    transform_service = module
