@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import TypeAlias, TYPE_CHECKING
+from typing import cast, TypeAlias, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
 
 from ..types import Renderer
 from ..services import CameraService
+from ..services.camera_service import DefaultCameraService
 from ..transform import Transform
 
 if TYPE_CHECKING:
@@ -84,7 +85,8 @@ class SpriteRenderer(Renderer[Sprite]):
     def _draw_to_camera(
         cls, camera: Camera, sprite_surface: Surface, transform: Transform
     ):
-        surface = CameraService._service._surfaces.get(camera)
+        camera_service = cast(DefaultCameraService, CameraService._service)
+        surface = camera_service._surfaces[camera]
         local_position = camera.to_eye(camera.to_local(transform)).position
         local_position[1] = surface.size[1] - local_position[1]
         surface.blit(sprite_surface, local_position)
