@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 
 import pygame
 
 from ..services import CameraService
-
-# from ..types import Renderer
+from ..services.camera_service import DefaultCameraService
 
 if TYPE_CHECKING:
     from pygame import Surface
@@ -26,7 +25,11 @@ class CameraRenderer:
     def render(cls, delta_time: float, camera: Camera, render_target: RenderTarget):
         surface = render_target.get_target_surface()
         render_rect = render_target.get_target_rect()
-        camera_view = CameraService._service._surfaces.get(camera)
+        camera_service = cast(
+            DefaultCameraService,
+            CameraService._service,
+        )
+        camera_view = camera_service._surfaces[camera]
         if not render_target.crop:
             # Not cropping, so scale the view instead.
             camera_view = cls._scale_view(camera_view, render_rect.size)
