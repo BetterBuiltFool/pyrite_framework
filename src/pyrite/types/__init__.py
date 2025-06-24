@@ -53,14 +53,8 @@ class HasTransform(Protocol):
 
 
 class HasTexture(Protocol):
-
-    @property
-    def texture(self) -> Surface:
-        pass
-
-    @property
-    def is_dirty(self) -> bool:
-        pass
+    texture: Surface
+    is_dirty: bool
 
 
 class CanUpdate(Protocol):
