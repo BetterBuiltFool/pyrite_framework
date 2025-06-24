@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 import pygame
 
 from ..services import CameraService
-from ..types import Renderer
+
+# from ..types import Renderer
 
 if TYPE_CHECKING:
     from pygame import Surface
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
     from ..types.render_target import RenderTarget
 
 
-class CameraRenderer(Renderer):
+class CameraRenderer:
     """
     A Renderer responsible for rendering camera views to screen.
     """
