@@ -16,7 +16,7 @@ class OrthoProjection(Projection):
     """
 
     def __init__(
-        self, projection_rect: Rect = None, z_near: float = -1, z_far: float = 1
+        self, projection_rect: Rect | None = None, z_near: float = -1, z_far: float = 1
     ) -> None:
         if projection_rect is None:
             # Default projection is the size of the screen
