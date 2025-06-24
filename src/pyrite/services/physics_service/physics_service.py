@@ -52,7 +52,7 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
-    def set_gravity(self, gravity: Point):
+    def set_gravity(self, gravity_x: float, gravity_y: float):
         pass
 
     @abstractmethod
@@ -108,8 +108,8 @@ class PymunkPhysicsService(PhysicsService):
         # TODO Implement this, just checking boxes right now
         pass
 
-    def set_gravity(self, gravity_pull: Point):
-        self.space.gravity = gravity_pull
+    def set_gravity(self, gravity_x: float, gravity_y: float):
+        self.space.gravity = (gravity_x, gravity_y)
 
     def step(self, delta_time: float):
         return self.space.step(delta_time)
