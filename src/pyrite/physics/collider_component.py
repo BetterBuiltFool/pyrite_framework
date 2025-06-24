@@ -123,14 +123,18 @@ class ColliderComponent(Component):
         Takes a bitmask value and ensure that the Collider's category includes it.
         """
         self._categories[self] |= layer
-        self.filter.categories = self._categories[self]
+        self.filter = ShapeFilter(
+            categories=self._categories[self], mask=self._collision_masks[self]
+        )
 
     def remove_categories_layer(self, layer: int):
         """
         Takes a bitmask value and ensures that the Collider's category excludes it.
         """
         self._categories[self] &= ~layer
-        self.filter.categories = self._categories[self]
+        self.filter = ShapeFilter(
+            categories=self._categories[self], mask=self._collision_masks[self]
+        )
 
     @property
     def collision_mask(self) -> int:
