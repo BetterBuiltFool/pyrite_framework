@@ -183,7 +183,7 @@ class Anchor:
         """
         rect = Rect(rectangle)
         pivot = self.get_center_offset(rect)
-        pivot_scaled: Vector2 = pivot.elementwise() * scale
+        pivot_scaled: Vector2 = pivot.elementwise() * Vector2(scale)
         rot_pivot = pivot_scaled.rotate(angle)
         return position - rot_pivot
 
@@ -194,7 +194,7 @@ class Anchor:
         :return: Vector2 representing the difference between the rectangle's center and
             the pivot point described by the anchor.
         """
-        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot: Vector2 = self._relative_position.elementwise() * Vector2(rectangle.size)
         pivot += rectangle.topleft
         return pivot - rectangle.center
 
@@ -209,7 +209,7 @@ class AbsoluteAnchor(Anchor):
         self._pivot_point = relative_position
 
     def get_center_offset(self, rectangle: Rect) -> Vector2:
-        return (self._pivot_point + rectangle.topleft) - rectangle.center
+        return Vector2(self._pivot_point) + rectangle.topleft - rectangle.center
 
 
 class AnchorPoint:
