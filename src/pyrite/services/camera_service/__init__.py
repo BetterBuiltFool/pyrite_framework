@@ -21,7 +21,7 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
 
     _service: CameraService = DefaultCameraService()
     _active_cameras: set[Camera] = set()
-    _default_camera: Camera = None
+    _default_camera: Camera
 
     @classmethod
     def hotswap(cls, service: CameraService):
