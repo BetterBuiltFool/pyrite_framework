@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from .bounds_service import BoundsData
 
 
-class BoundsServiceProvider(ServiceProvider):
+class BoundsServiceProvider(ServiceProvider[BoundsService]):
     _service: BoundsService = DefaultBoundsService()
 
     @classmethod

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from ...physics.rigidbody_component import RigidbodyComponent
 
 
-class PhysicsServiceProvider(ServiceProvider):
+class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     _service: PhysicsService = PymunkPhysicsService()
 
     @classmethod

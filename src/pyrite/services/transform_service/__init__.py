@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from ...transform import Transform, TransformComponent
 
 
-class TransformServiceProvider(ServiceProvider):
+class TransformServiceProvider(ServiceProvider[TransformService]):
     """
     Service that contains and maintains data for TransformComponents
     """

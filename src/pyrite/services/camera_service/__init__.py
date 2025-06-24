@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from ...rendering import Viewport
 
 
-class CameraServiceProvider(ServiceProvider):
+class CameraServiceProvider(ServiceProvider[CameraService]):
     """
     Service that contains and maintains data for Camera objects.
     """
