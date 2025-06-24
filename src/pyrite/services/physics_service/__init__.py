@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from .physics_service import PhysicsService, PymunkPhysicsService
 from ...types.service import ServiceProvider
@@ -8,7 +8,6 @@ from ...types.service import ServiceProvider
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pymunk import (
-        Body,
         PointQueryInfo,
         SegmentQueryInfo,
         ShapeFilter,
@@ -108,13 +107,3 @@ class PhysicsServiceProvider(ServiceProvider):
         rotation with the new calculations.
         """
         cls._service.sync_transforms_to_bodies(tranform_component_class)
-
-    @classmethod
-    def get_owner_from_body(cls, body: Body) -> Any | None:
-        """
-        Finds an owning object for a given physics Body, if it exists.
-
-        :param body: A physics Body, belonging to a RigidbodyComponent
-        :return: The owning object of the RigidbodyComponent, if it exists.
-        """
-        cls._service.get_owner_from_body(body)

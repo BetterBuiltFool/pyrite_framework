@@ -65,10 +65,6 @@ class PhysicsService(Service):
     ):
         pass
 
-    @abstractmethod
-    def get_owner_from_body(self, body: Body) -> Any | None:
-        pass
-
 
 class PymunkPhysicsService(PhysicsService):
 
@@ -138,9 +134,6 @@ class PymunkPhysicsService(PhysicsService):
 
             transform.world_position = new_pos
             transform.world_rotation = new_rot
-
-    def get_owner_from_body(self, body: Body) -> Any | None:
-        return self.bodies.get(body)
 
     @staticmethod
     def post_solve(arbiter: Arbiter, space: Space, data: Any):
