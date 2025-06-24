@@ -127,7 +127,6 @@ class PymunkPhysicsService(PhysicsService):
             new_rot = angle_between / 2
 
             transform.world_position = new_pos
-            print(new_pos)
             transform.world_rotation = new_rot
 
     def post_solve(self, arbiter: Arbiter, space: Space, data: Any):
