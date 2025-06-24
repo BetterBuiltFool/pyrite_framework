@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
-    from ...transform import TransformComponent
 
 
 class PhysicsService(Service):
@@ -60,9 +59,7 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
-    def sync_transforms_to_bodies(
-        self, tranform_component_class: type[TransformComponent]
-    ):
+    def sync_transforms_to_bodies(self):
         pass
 
 
@@ -114,18 +111,12 @@ class PymunkPhysicsService(PhysicsService):
     def step(self, delta_time: float):
         return self.space.step(delta_time)
 
-    def sync_transforms_to_bodies(
-        self, tranform_component_class: type[TransformComponent]
-    ):
+    def sync_transforms_to_bodies(self):
         # Passing TransformComponent class explicitly since we can't import it without
         # causing a cycle
         for body, rigidbody in self.bodies.items():
-            key_object = rigidbody.owner
-            if (
-                not (transform := tranform_component_class.get(key_object))
-                or body.is_sleeping
-                or body.body_type == pymunk.Body.STATIC
-            ):
+            transform = rigidbody.transform
+            if body.is_sleeping or body.body_type == pymunk.Body.STATIC:
                 # No adjustments to sleeping, static, or transformless objects
                 continue
             # TODO calculate an expected interpolation value?
@@ -136,6 +127,7 @@ class PymunkPhysicsService(PhysicsService):
             new_rot = angle_between / 2
 
             transform.world_position = new_pos
+            print(new_pos)
             transform.world_rotation = new_rot
 
     def post_solve(self, arbiter: Arbiter, space: Space, data: Any):

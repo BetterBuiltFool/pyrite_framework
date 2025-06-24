@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from ..types import System
 
-from ..transform import TransformComponent
 from ..services import PhysicsService
 
 if TYPE_CHECKING:
@@ -28,4 +27,4 @@ class PhysicsSystem(System):
         PhysicsService.step(timestep * self.physics_mult)
 
     def update(self, delta_time: float) -> None:
-        PhysicsService.sync_transforms_to_bodies(TransformComponent)
+        PhysicsService.sync_transforms_to_bodies()

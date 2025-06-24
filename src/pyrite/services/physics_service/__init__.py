@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
-    from ...transform import TransformComponent
 
 
 class PhysicsServiceProvider(ServiceProvider):
@@ -100,11 +99,9 @@ class PhysicsServiceProvider(ServiceProvider):
         cls._service.step(delta_time)
 
     @classmethod
-    def sync_transforms_to_bodies(
-        cls, tranform_component_class: type[TransformComponent]
-    ):
+    def sync_transforms_to_bodies(cls):
         """
         Takes all TransformComponents with a rigidbody and updates their position and
         rotation with the new calculations.
         """
-        cls._service.sync_transforms_to_bodies(tranform_component_class)
+        cls._service.sync_transforms_to_bodies()
