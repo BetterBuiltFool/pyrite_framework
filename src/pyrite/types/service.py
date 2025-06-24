@@ -6,15 +6,17 @@ from typing import Generic, TypeVar, TYPE_CHECKING
 if TYPE_CHECKING:
     pass
 
+ServiceType = TypeVar("ServiceType")
 
-class Service(ABC):
+
+class Service(ABC, Generic[ServiceType]):
     """
     Controls data and provides methods for various objects in a way that is runtime
     swappable. Objects use the appropriate ServiceProvider to access a service.
     """
 
     @abstractmethod
-    def transfer(self, target_service: Service):
+    def transfer(self, target_service: ServiceType):
         """
         Packages and transmits all pertinent stored data from the current service to
         the target service.
@@ -26,21 +28,21 @@ class Service(ABC):
         """
 
 
-T = TypeVar("T", bound=Service)
+ProvidedService = TypeVar("ProvidedService", bound=Service)
 
 
-class ServiceProvider(ABC, Generic[T]):
+class ServiceProvider(ABC, Generic[ProvidedService]):
     """
     Class for providing access to a given service. The ServiceProvider will delegate
     out to the active version of the service. This way, services are runtime swappable,
     without changing the access point for users of that service.
     """
 
-    _service: T
+    _service: ProvidedService
 
     @classmethod
     @abstractmethod
-    def hotswap(cls, service: T):
+    def hotswap(cls, service: ProvidedService):
         """
         Changes the ServiceProvider's active service, transferring vital data to the
         new service instance.
