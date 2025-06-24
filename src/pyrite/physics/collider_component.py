@@ -109,6 +109,11 @@ class ColliderComponent(Component):
         touching: The collider component formerly in contact with _this_collider_
         """
 
+    def _force_update_filter(self):
+        self.filter = ShapeFilter(
+            categories=self._categories[self], mask=self._collision_masks[self]
+        )
+
     @property
     def category(self) -> int:
         """
@@ -123,18 +128,14 @@ class ColliderComponent(Component):
         Takes a bitmask value and ensure that the Collider's category includes it.
         """
         self._categories[self] |= layer
-        self.filter = ShapeFilter(
-            categories=self._categories[self], mask=self._collision_masks[self]
-        )
+        self._force_update_filter()
 
     def remove_categories_layer(self, layer: int):
         """
         Takes a bitmask value and ensures that the Collider's category excludes it.
         """
         self._categories[self] &= ~layer
-        self.filter = ShapeFilter(
-            categories=self._categories[self], mask=self._collision_masks[self]
-        )
+        self._force_update_filter()
 
     @property
     def collision_mask(self) -> int:
@@ -149,7 +150,7 @@ class ColliderComponent(Component):
         Takes a bitmask value and ensure that the Collider's collision mask includes it.
         """
         self._collision_masks[self] |= layer
-        self.filter.mask = self._collision_masks[self]
+        self._force_update_filter()
 
     def remove_collision_mask_layer(self, layer: int):
         """
@@ -157,7 +158,7 @@ class ColliderComponent(Component):
         it.
         """
         self._collision_masks[self] &= ~layer
-        self.filter.mask = self._collision_masks[self]
+        self._force_update_filter()
 
     def compare_mask(self, other: ColliderComponent) -> bool:
         """
