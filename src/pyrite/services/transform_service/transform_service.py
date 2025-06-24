@@ -21,7 +21,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_local_position(self, component: TransformComponent) -> Point:
+    def get_local_position(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -29,7 +29,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_local_scale(self, component: TransformComponent) -> Point:
+    def get_local_scale(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -41,7 +41,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def set_local_rotation(self, component: TransformComponent, angle: Point):
+    def set_local_rotation(self, component: TransformComponent, angle: float):
         pass
 
     @abstractmethod
@@ -53,7 +53,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_world_position(self, component: TransformComponent) -> Point:
+    def get_world_position(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -61,7 +61,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_world_scale(self, component: TransformComponent) -> Point:
+    def get_world_scale(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -73,7 +73,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def set_world_rotation(self, component: TransformComponent, angle: Point):
+    def set_world_rotation(self, component: TransformComponent, angle: float):
         pass
 
     @abstractmethod
@@ -117,13 +117,13 @@ class DefaultTransformService(TransformService):
     def get_local(self, component: TransformComponent) -> Transform:
         return self.local_transforms.get(component)
 
-    def get_local_position(self, component: TransformComponent) -> Point:
+    def get_local_position(self, component: TransformComponent) -> Vector2:
         return self.local_transforms.get(component).position
 
     def get_local_rotation(self, component: TransformComponent) -> float:
         return self.local_transforms.get(component).rotation
 
-    def get_local_scale(self, component: TransformComponent) -> Point:
+    def get_local_scale(self, component: TransformComponent) -> Vector2:
         return self.local_transforms.get(component).scale
 
     def set_local(self, component: TransformComponent, value: Transform):
@@ -133,7 +133,7 @@ class DefaultTransformService(TransformService):
         self.dirty_components.add(component)
         self.local_transforms.get(component).position = Vector2(position)
 
-    def set_local_rotation(self, component: TransformComponent, angle: Point):
+    def set_local_rotation(self, component: TransformComponent, angle: float):
         self.dirty_components.add(component)
         self.local_transforms.get(component).rotation = angle
 
@@ -144,13 +144,13 @@ class DefaultTransformService(TransformService):
     def get_world(self, component: TransformComponent) -> Transform:
         return self.world_transforms.get(component)
 
-    def get_world_position(self, component: TransformComponent) -> Point:
+    def get_world_position(self, component: TransformComponent) -> Vector2:
         return self.world_transforms.get(component).position
 
     def get_world_rotation(self, component: TransformComponent) -> float:
         return self.world_transforms.get(component).rotation
 
-    def get_world_scale(self, component: TransformComponent) -> Point:
+    def get_world_scale(self, component: TransformComponent) -> Vector2:
         return self.world_transforms.get(component).scale
 
     def set_world(self, component: TransformComponent, value: Transform):
@@ -161,7 +161,7 @@ class DefaultTransformService(TransformService):
         # TODO Force update local
         self.world_transforms.get(component).position = Vector2(position)
 
-    def set_world_rotation(self, component: TransformComponent, angle: Point):
+    def set_world_rotation(self, component: TransformComponent, angle: float):
         # TODO Force update local
         self.world_transforms.get(component).rotation = angle
 
