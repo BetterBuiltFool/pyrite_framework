@@ -26,7 +26,7 @@ class Layer:
     @property
     def name(self) -> str:
         if not self._name:
-            return self._render_index
+            return str(self._render_index)
         return self._name
 
 
