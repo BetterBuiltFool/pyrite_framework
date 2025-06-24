@@ -1,30 +1,10 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import Generic, TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
-
-
-class ServiceProvider(ABC):
-    """
-    Class for providing access to a given service. The ServiceProvider will delegate
-    out to the active version of the service. This way, services are runtime swappable,
-    without changing the access point for users of that service.
-    """
-
-    _service: Service
-
-    @classmethod
-    @abstractmethod
-    def hotswap(cls, service: Service):
-        """
-        Changes the ServiceProvider's active service, transferring vital data to the
-        new service instance.
-
-        :param service: The new instance of the service used by the service provider.
-        """
 
 
 class Service(ABC):
@@ -43,4 +23,27 @@ class Service(ABC):
 
         :param target_service: A Service that is compatible with the current service,
             usually by a shared parent.
+        """
+
+
+T = TypeVar("T", bound=Service)
+
+
+class ServiceProvider(ABC, Generic[T]):
+    """
+    Class for providing access to a given service. The ServiceProvider will delegate
+    out to the active version of the service. This way, services are runtime swappable,
+    without changing the access point for users of that service.
+    """
+
+    _service: T
+
+    @classmethod
+    @abstractmethod
+    def hotswap(cls, service: T):
+        """
+        Changes the ServiceProvider's active service, transferring vital data to the
+        new service instance.
+
+        :param service: The new instance of the service used by the service provider.
         """
