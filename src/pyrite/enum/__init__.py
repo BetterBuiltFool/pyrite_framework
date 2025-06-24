@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class Layer:
 
-    def __init__(self, render_index: int = None, name: str = "") -> None:
+    def __init__(self, render_index: int, name: str = "") -> None:
         self._render_index = render_index
         self._name = name
 
