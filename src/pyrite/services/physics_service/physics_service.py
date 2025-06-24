@@ -119,7 +119,8 @@ class PymunkPhysicsService(PhysicsService):
     ):
         # Passing TransformComponent class explicitly since we can't import it without
         # causing a cycle
-        for body, key_object in self.bodies.items():
+        for body, rigidbody in self.bodies.items():
+            key_object = rigidbody.owner
             if (
                 not (transform := tranform_component_class.get(key_object))
                 or body.is_sleeping
