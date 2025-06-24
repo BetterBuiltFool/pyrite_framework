@@ -73,7 +73,9 @@ class PymunkPhysicsService(PhysicsService):
         self.comp_handler = self.space.add_collision_handler(
             COMPONENT_TYPE, COMPONENT_TYPE
         )
-        self.bodies: WeakValueDictionary[Body, Any] = WeakValueDictionary()
+        self.bodies: WeakValueDictionary[Body, RigidbodyComponent] = (
+            WeakValueDictionary()
+        )
         self.comp_handler.post_solve = PymunkPhysicsService.post_solve
         self.comp_handler.separate = PymunkPhysicsService.separate
 
@@ -84,7 +86,7 @@ class PymunkPhysicsService(PhysicsService):
         pass
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
-        self.bodies.update({rigidbody.body: rigidbody.owner})
+        self.bodies.update({rigidbody.body: rigidbody})
         self.space.add(rigidbody.body)
 
     def add_collider(self, collider: ColliderComponent):
@@ -135,9 +137,8 @@ class PymunkPhysicsService(PhysicsService):
             transform.world_position = new_pos
             transform.world_rotation = new_rot
 
-    @staticmethod
-    def post_solve(arbiter: Arbiter, space: Space, data: Any):
-        collider1, collider2 = PymunkPhysicsService.get_collider_components(arbiter)
+    def post_solve(self, arbiter: Arbiter, space: Space, data: Any):
+        collider1, collider2 = self.get_collider_components(arbiter)
         if arbiter.is_first_contact:
             if collider1.compare_mask(collider2):
                 collider1.OnTouch(collider1, collider2)
@@ -148,25 +149,20 @@ class PymunkPhysicsService(PhysicsService):
         if collider2.compare_mask(collider1):
             collider2.WhileTouching(collider2, collider1)
 
-    @staticmethod
-    def separate(arbiter: Arbiter, space: Space, data: Any):
-        collider1, collider2 = PymunkPhysicsService.get_collider_components(arbiter)
+    def separate(self, arbiter: Arbiter, space: Space, data: Any):
+        collider1, collider2 = self.get_collider_components(arbiter)
         if collider1.compare_mask(collider2):
             collider1.OnSeparate(collider1, collider2)
         if collider2.compare_mask(collider1):
             collider2.OnSeparate(collider2, collider1)
 
-    @staticmethod
     def get_collider_components(
+        self,
         arbiter: Arbiter,
     ) -> tuple[ColliderComponent, ColliderComponent]:
         shape1, shape2 = arbiter.shapes
         body1 = shape1.body
         body2 = shape2.body
-        owner1 = PhysicsService.get_owner_from_body(body1)
-        owner2 = PhysicsService.get_owner_from_body(body2)
-        # TODO These don't exist at runtime, so this will break as soon as it is tried.
-        # Need a way to get these components while avoid import cycles.
-        # Add a reference to the ColliderComponent when the PhysicsSystem is
-        # instantiated?
-        return ColliderComponent.get(owner1), ColliderComponent.get(owner2)
+        rigidbody_1 = self.bodies[body1]
+        rigidbody_2 = self.bodies[body2]
+        return rigidbody_1.collider, rigidbody_2.collider
