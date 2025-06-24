@@ -77,27 +77,9 @@ class RenderLayers:
     @singledispatchmethod
     @classmethod
     def remove_layer(cls, item: Layer | int) -> Layer:
-        if isinstance(item, int):
-            # Throws IndexError if invalid
-            item = cls._layers[item]
-        # item is now always a layer object. It will have failed otherwise.
-        if any(
-            [
-                item == cls.BACKGROUND,
-                item == cls.MIDGROUND,
-                item == cls.FOREGROUND,
-                item == cls.CAMERA,
-            ]
-        ):
-            raise ValueError(
-                f"Attempted to remove layer '{item.name}'; Cannot "
-                "remove built-in layers"
-            )
-        layers = list(cls._layers)
-        layer = layers.remove(item)
-        cls._layers = tuple(layers)
-        cls._reorder_layers()
-        return layer
+        raise NotImplementedError(
+            f"method 'remove_layer' not implemented for type {type(item)}"
+        )
 
     @remove_layer.register
     @classmethod
@@ -113,6 +95,23 @@ class RenderLayers:
         :raises ValueError: Raised if the layer is not a part of the layer sequence, or
         if the layer to be removed is one of the built-in layers.
         """
+        if any(
+            [
+                layer == cls.BACKGROUND,
+                layer == cls.MIDGROUND,
+                layer == cls.FOREGROUND,
+                layer == cls.CAMERA,
+            ]
+        ):
+            raise ValueError(
+                f"Attempted to remove layer '{layer.name}'; Cannot "
+                "remove built-in layers"
+            )
+        layers = list(cls._layers)
+        layers.remove(layer)
+        cls._layers = tuple(layers)
+        cls._reorder_layers()
+        return layer
 
     @remove_layer.register
     @classmethod
@@ -128,6 +127,24 @@ class RenderLayers:
         :raises IndexError: Raised if the index is invalid.
         :raises ValueError: Raised if the index belongs to a built-in layer.
         """
+        layer = cls._layers[index]
+        if any(
+            [
+                layer == cls.BACKGROUND,
+                layer == cls.MIDGROUND,
+                layer == cls.FOREGROUND,
+                layer == cls.CAMERA,
+            ]
+        ):
+            raise ValueError(
+                f"Attempted to remove layer '{layer.name}'; Cannot "
+                "remove built-in layers"
+            )
+        layers = list(cls._layers)
+        layers.remove(layer)
+        cls._layers = tuple(layers)
+        cls._reorder_layers()
+        return layer
 
 
 class Anchor:
