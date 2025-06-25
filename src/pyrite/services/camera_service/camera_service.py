@@ -93,14 +93,14 @@ class DefaultCameraService(CameraService):
         return self._rebuild_surface(camera)
 
     def refresh(self, camera: Camera):
-        surface = self._surfaces.get(camera)
+        surface = self._surfaces[camera]
         surface.fill((0, 0, 0, 0))
 
     def get_view_bounds(self, camera: Camera) -> CameraViewBounds:
         return ViewPlane(self._get_view_rect(camera))
 
     def _get_view_rect(self, camera: Camera) -> Rect:
-        surface = self._surfaces.get(camera)
+        surface = self._surfaces[camera]
         surface_rect = surface.get_rect().copy()
         surface_rect.center = camera.transform.world_position
         return surface_rect
