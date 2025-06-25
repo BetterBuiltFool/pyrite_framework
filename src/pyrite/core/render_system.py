@@ -287,7 +287,10 @@ class DefaultRenderManager(RenderManager):
         return render_queue
 
     def precull(
-        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
+        self,
+        layer_set: set[Renderable],
+        layer: Layer,
+        cameras: Sequence[CameraBase] | None = None,
     ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
