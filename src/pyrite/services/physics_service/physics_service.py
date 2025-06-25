@@ -11,13 +11,13 @@ from ...types.service import Service
 from ...constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
+    # from pygame.typing import Point
     from pymunk import (
         Arbiter,
         Body,
-        PointQueryInfo,
-        SegmentQueryInfo,
-        ShapeFilter,
+        # PointQueryInfo,
+        # SegmentQueryInfo,
+        # ShapeFilter,
         Space,
     )
     from ...physics.collider_component import ColliderComponent
@@ -34,21 +34,23 @@ class PhysicsService(Service):
     def add_collider(self, collider: ColliderComponent):
         pass
 
-    @abstractmethod
-    def cast_ray(
-        self, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> list[SegmentQueryInfo]:
-        pass
+        # @abstractmethod
+        # def cast_ray(
+        #     self, start: Point, end: Point, shape_filter: ShapeFilter
+        # ) -> list[SegmentQueryInfo]:
+        #     pass
 
-    @abstractmethod
-    def cast_ray_single(
-        self, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> SegmentQueryInfo:
-        pass
+        # @abstractmethod
+        # def cast_ray_single(
+        #     self, start: Point, end: Point, shape_filter: ShapeFilter
+        # ) -> SegmentQueryInfo:
+        #     pass
 
-    @abstractmethod
-    def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-        pass
+        # @abstractmethod
+        # def check_point(
+        #     self, point: Point, shape_filer: ShapeFilter
+        # ) -> PointQueryInfo:
+        # pass
 
     @abstractmethod
     def set_gravity(self, gravity_x: float, gravity_y: float):
@@ -89,21 +91,21 @@ class PymunkPhysicsService(PhysicsService):
     def add_collider(self, collider: ColliderComponent):
         self.space.add(*collider.shapes)
 
-    def cast_ray(
-        self, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> list[SegmentQueryInfo]:
-        # TODO Implement this, just checking boxes right now
-        pass
+    # def cast_ray(
+    #     self, start: Point, end: Point, shape_filter: ShapeFilter
+    # ) -> list[SegmentQueryInfo]:
+    #     # TODO Implement this, just checking boxes right now
+    #     pass
 
-    def cast_ray_single(
-        self, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> SegmentQueryInfo:
-        # TODO Implement this, just checking boxes right now
-        pass
+    # def cast_ray_single(
+    #     self, start: Point, end: Point, shape_filter: ShapeFilter
+    # ) -> SegmentQueryInfo:
+    #     # TODO Implement this, just checking boxes right now
+    #     pass
 
-    def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-        # TODO Implement this, just checking boxes right now
-        pass
+    # def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
+    #     # TODO Implement this, just checking boxes right now
+    #     pass
 
     def set_gravity(self, gravity_x: float, gravity_y: float):
         self.space.gravity = (gravity_x, gravity_y)
