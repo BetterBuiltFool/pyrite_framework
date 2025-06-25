@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 SystemType = TypeVar("SystemType")
 
 
-_active_system_manager: SystemManager = None
+_active_system_manager: SystemManager
 
 
 def get_system_manager() -> SystemManager:
