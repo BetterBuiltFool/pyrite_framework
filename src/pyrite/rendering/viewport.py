@@ -156,7 +156,9 @@ class Viewport:
         Gets the target surface for the viewport. This will always be the current
         display.
         """
-        return pygame.display.get_surface()
+        surface = pygame.display.get_surface()
+        assert surface is not None
+        return surface
 
     def get_target_rect(self) -> Rect:
         """
