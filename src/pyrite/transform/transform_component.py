@@ -6,7 +6,7 @@ from pygame import Vector2
 
 from .transform import Transform
 from ..services import TransformService
-from ..types import Component
+from ..types import Component, TransformProtocol
 
 
 if TYPE_CHECKING:
@@ -114,7 +114,7 @@ class TransformComponent(Component):
         return TransformService.get_world(self)
 
 
-def from_transform(owner: Any, transform: Transform) -> TransformComponent:
+def from_transform(owner: Any, transform: TransformProtocol) -> TransformComponent:
     """
     Create a transform component based on another transform.
 
@@ -124,7 +124,7 @@ def from_transform(owner: Any, transform: Transform) -> TransformComponent:
     """
     # This can be overridden to return a subclass of TransformComponent, if needed.
     return TransformComponent(
-        owner, transform._position, transform._rotation, transform._scale
+        owner, transform.position, transform.rotation, transform.scale
     )
 
 
