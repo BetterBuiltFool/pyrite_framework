@@ -56,7 +56,7 @@ class Camera(CameraBase):
             layer_mask = ()
         self.layer_mask = layer_mask
         self.enabled = enabled
-        self._zoom_level = 1
+        self._zoom_level: float = 1
         if container is None:
             container = defaults.get_default_container()
         self.container = container
