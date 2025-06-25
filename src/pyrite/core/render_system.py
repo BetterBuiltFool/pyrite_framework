@@ -106,7 +106,7 @@ class RenderManager(ABC):
             self.enable(renderable)
 
     @abstractmethod
-    def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
+    def generate_render_queue(self) -> RenderQueue:
         """
         Generates a dict of renderables, in draw order.
 
