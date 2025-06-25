@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Sequence
-from typing import Any, Self, TypeAlias, TYPE_CHECKING
+from typing import Any, cast, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
 from pygame import Surface
@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
+EMPTY_LAYER_SET: set[Renderable] = set()
 
 _active_render_manager: RenderManager
 
@@ -279,7 +280,8 @@ class DefaultRenderManager(RenderManager):
         cameras = CameraService.get_active_cameras()
 
         for layer in RenderLayers._layers:
-            layer_dict = self.precull(self.renderables.get(layer, {}), layer, cameras)
+            layer_set = cast(set, self.renderables.get(layer, EMPTY_LAYER_SET))
+            layer_dict = self.precull(layer_set, layer, cameras)
             render_queue.update({layer: layer_dict})
 
         return render_queue
