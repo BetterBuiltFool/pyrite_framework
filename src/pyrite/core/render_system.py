@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 
-_active_render_manager: RenderManager = None
+_active_render_manager: RenderManager
 
 
 def get_render_manager() -> RenderManager:
@@ -35,7 +35,7 @@ def set_render_manager(manager: RenderManager):
     _active_render_manager = manager
 
 
-_active_renderer: RenderSystem = None
+_active_renderer: RenderSystem
 
 
 def get_renderer() -> RenderSystem:
