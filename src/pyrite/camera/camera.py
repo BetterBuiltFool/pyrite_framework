@@ -108,13 +108,13 @@ class Camera(CameraBase):
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 
-    def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
-        return CameraService.screen_to_world(self, point, viewport_index)
+    # def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
+    #     return CameraService.screen_to_world(self, point, viewport_index)
 
-    def screen_to_world_clamped(
-        self, point: Point, viewport_index: int = 0
-    ) -> Point | None:
-        return CameraService.screen_to_world_clamped(self, point, viewport_index)
+    # def screen_to_world_clamped(
+    #     self, point: Point, viewport_index: int = 0
+    # ) -> Point | None:
+    #     return CameraService.screen_to_world_clamped(self, point, viewport_index)
 
     def zoom(self, zoom_level: float):
         CameraService.zoom(self, zoom_level)
