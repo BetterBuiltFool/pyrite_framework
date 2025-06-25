@@ -15,7 +15,7 @@ class GameData:
     """
     The title of the game.
     """
-    caption: str = None
+    caption: str | None = None
     """
     Text displayed by the title bar. Defaults to the game's title.
     """
