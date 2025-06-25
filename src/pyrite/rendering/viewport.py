@@ -61,7 +61,7 @@ class Viewport:
 
     @classmethod
     def add_new_viewport(
-        cls, label: Any, relative_rect: FRect | RectLike = None, **kwds
+        cls, label: Any, relative_rect: FRect | RectLike | None = None, **kwds
     ) -> Viewport:
         """
         Adds a new viewport to the viewport dict.
