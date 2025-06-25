@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     SpriteData: TypeAlias = tuple[Surface, Transform]
 
 
-class SpriteRenderer(Renderer[Sprite]):
+class SpriteRenderer(Renderer):
     """
     Renderer class for rendering sprites to cameras.
     """
