@@ -48,7 +48,7 @@ class Camera(CameraBase):
             render_targets = [Viewport.DEFAULT]
         if not isinstance(render_targets, Sequence):
             render_targets = [render_targets]
-        self.render_targets: Sequence[Viewport] = render_targets
+        self.render_targets: Sequence[RenderTarget] = render_targets
         self._viewports = [
             viewport for viewport in render_targets if isinstance(viewport, Viewport)
         ]
