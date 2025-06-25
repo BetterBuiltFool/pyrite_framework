@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 # from pygame import Vector2
@@ -20,7 +21,7 @@ class CameraBase(ABC):
     Can be constructed from the window.
     """
 
-    layer_mask: tuple[Layer]
+    layer_mask: Sequence[Layer]
 
     @abstractmethod
     def refresh(self):

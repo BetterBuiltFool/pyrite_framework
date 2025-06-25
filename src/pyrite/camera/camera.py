@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, TypeVar
 
 from ..services import CameraService
 from ..enum import Layer
-from ..rendering import RectBounds
 from ..rendering.camera_renderer import CameraRenderer
 from ..rendering.viewport import Viewport
 from ..transform import transform_component
@@ -30,7 +29,7 @@ class Camera(CameraBase):
         position: Point = (0, 0),
         transform: TransformProtocol | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
-        layer_mask: tuple[Layer] | None = None,
+        layer_mask: Sequence[Layer] | None = None,
         container: Container | None = None,
         enabled=True,
     ) -> None:
@@ -54,7 +53,7 @@ class Camera(CameraBase):
         ]
         if layer_mask is None:
             layer_mask = ()
-        self.layer_mask = layer_mask
+        self.layer_mask: Sequence[Layer] = layer_mask
         self.enabled = enabled
         self._zoom_level: float = 1
         if container is None:
