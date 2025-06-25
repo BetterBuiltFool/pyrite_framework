@@ -182,7 +182,7 @@ class DefaultCameraService(CameraService):
             far_plane_center[0] / camera.zoom_level,
             far_plane_center[1] / camera.zoom_level,
         )
-        return point + far_plane_center
+        return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
         # TODO Implement
