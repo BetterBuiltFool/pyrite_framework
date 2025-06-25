@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from collections.abc import Sequence
+from collections.abc import Iterable
 from typing import Any, cast, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
@@ -186,7 +186,7 @@ class RenderSystem(ABC):
         self,
         window: Surface,
         delta_time: float,
-        render_queue: dict[Any, Sequence[Renderable]],
+        render_queue: dict[Any, Iterable[Renderable]],
     ):
         """
         Draws the items from the render queue onto the passed surface.
@@ -290,7 +290,7 @@ class DefaultRenderManager(RenderManager):
         self,
         layer_set: set[Renderable],
         layer: Layer,
-        cameras: Sequence[CameraBase] | None = None,
+        cameras: Iterable[CameraBase] | None = None,
     ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
@@ -310,7 +310,7 @@ class DefaultRenderManager(RenderManager):
             count += len(layer_set)
         return count
 
-    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
+    def sort_layer(self, renderables: Iterable[Renderable]) -> list[Renderable]:
         """
         Sorts a sequence of renderables by draw_index, such that they are ordered
         0 -> Infinity | -Infinity -> -1
@@ -339,7 +339,7 @@ class DefaultRenderSystem(RenderSystem):
     def render_layer(
         self,
         delta_time: float,
-        layer_queue: Sequence[Renderable],
+        layer_queue: Iterable[Renderable],
         camera: CameraBase,
     ):
         """
@@ -372,7 +372,7 @@ class DefaultRenderSystem(RenderSystem):
     def render_ui(
         self,
         delta_time: float,
-        ui_elements: Sequence[Renderable],
+        ui_elements: Iterable[Renderable],
         window: Surface,
     ):
         """
@@ -417,7 +417,7 @@ class DefaultRenderSystem(RenderSystem):
         # Render the UI last.
 
     def _debug_draw_to_screen(
-        self, cameras: Sequence[Camera], render_queue: RenderQueue
+        self, cameras: Iterable[Camera], render_queue: RenderQueue
     ):
         for renderer in self._debug_renderers:
             renderer.draw_to_screen(cameras, render_queue)
