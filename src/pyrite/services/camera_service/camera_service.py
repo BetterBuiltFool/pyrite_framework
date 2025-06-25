@@ -156,7 +156,7 @@ class DefaultCameraService(CameraService):
         self._surfaces.update({camera: surface})
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
-        return point.localize(camera.transform.world())
+        return point.localize(point, camera.transform.world())
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
         far_plane_center = camera.projection.far_plane.center
@@ -200,7 +200,7 @@ class DefaultCameraService(CameraService):
         # Apply the offset to return center to origin
         point.position -= far_plane_center
         # Generalize to world coords
-        return point.generalize(camera.transform.world())
+        return point.generalize(point, camera.transform.world())
 
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
