@@ -93,7 +93,7 @@ class Camera(CameraBase):
         """
         return self._viewports
 
-    def render(self, delta_time, viewport: Viewport):
+    def render(self, delta_time: float, viewport: RenderTarget):
         CameraRenderer.render(delta_time, self, viewport)
 
     def to_local(self, point: Transform) -> Transform:
