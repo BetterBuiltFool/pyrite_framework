@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 from ..services import CameraService
 from ..enum import Layer
@@ -13,12 +13,10 @@ from .._helper import defaults
 
 if TYPE_CHECKING:
     from ..types import CameraViewBounds, Container, TransformProtocol
-    from ..types.projection import Projection as ProjectionType
+    from ..types.projection import Projection
     from ..types.render_target import RenderTarget
     from ..transform import Transform
     from pygame.typing import Point
-
-    Projection = TypeVar("Projection", bound=ProjectionType)
 
 
 class Camera(CameraBase):
