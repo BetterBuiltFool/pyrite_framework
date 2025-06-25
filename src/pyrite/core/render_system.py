@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Iterable
-from typing import Any, cast, Self, TypeAlias, TYPE_CHECKING
+from typing import cast, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
 from pygame import Surface
@@ -186,7 +186,7 @@ class RenderSystem(ABC):
         self,
         window: Surface,
         delta_time: float,
-        render_queue: dict[Any, Iterable[Renderable]],
+        render_queue: RenderQueue,
     ):
         """
         Draws the items from the render queue onto the passed surface.
