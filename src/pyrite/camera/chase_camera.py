@@ -91,10 +91,13 @@ class ChaseCamera(Entity, Camera):
 
     @property
     def enabled(self) -> bool:
+        assert Camera.enabled.fget
         return Camera.enabled.fget(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
+        assert Camera.enabled.fset
+        assert Entity.enabled.fset
         Camera.enabled.fset(self, value)
         Entity.enabled.fset(self, value)
 
