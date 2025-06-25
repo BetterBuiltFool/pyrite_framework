@@ -16,9 +16,10 @@ class Entity:
     Base class for any class that exhibits behaviour during any of the update phases.
     """
 
-    def __init__(self, container: Container = None, enabled=True) -> None:
+    def __init__(self, container: Container | None = None, enabled=True) -> None:
         if container is None:
             container = defaults.get_default_container()
+            assert container is not None
         self.container: Container = container
         self.enabled = enabled
 
