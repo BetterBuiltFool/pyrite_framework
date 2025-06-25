@@ -44,9 +44,11 @@ class SpriteRenderer(Renderer[Sprite]):
 
     @classmethod
     def validate_sprite(
-        cls, sprite: Sprite, surface: Surface, transform: Transform
+        cls, sprite: Sprite, surface: Surface | None, transform: Transform | None
     ) -> bool:
         current_transform = sprite.transform.world()
+        if transform is None or surface is None:
+            return False
         return all(
             [
                 not sprite.is_dirty,
