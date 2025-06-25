@@ -210,7 +210,9 @@ class DefaultCameraService(CameraService):
             coords = viewport.local_to_screen(local_coords)
         else:
             eye_coords = self.local_point_to_projection(camera, local_coords)
-            ndc_coords = self.local_to_ndc(camera, Vector3(*eye_coords, 0))
+            ndc_coords = self.local_to_ndc(
+                camera, Vector3(eye_coords[0], eye_coords[1], 0)
+            )
             coords = viewport.ndc_to_screen(ndc_coords)
         return coords
 
