@@ -17,7 +17,7 @@ class Viewport:
 
     _viewports: dict[Any, Viewport] = {}
 
-    DEFAULT: Viewport = None
+    DEFAULT: Viewport
 
     def __init__(self, relative_rect: FRect | RectLike) -> None:
         self._relative_rect = FRect(relative_rect)
