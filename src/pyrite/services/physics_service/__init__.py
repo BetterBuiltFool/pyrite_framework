@@ -6,12 +6,12 @@ from .physics_service import PhysicsService, PymunkPhysicsService
 from ...types.service import ServiceProvider
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
-    from pymunk import (
-        PointQueryInfo,
-        SegmentQueryInfo,
-        ShapeFilter,
-    )
+    # from pygame.typing import Point
+    # from pymunk import (
+    #     PointQueryInfo,
+    #     SegmentQueryInfo,
+    #     ShapeFilter,
+    # )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
 
@@ -33,51 +33,51 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     def add_collider(cls, collider: ColliderComponent):
         cls._service.add_collider(collider)
 
-    @classmethod
-    def cast_ray(
-        cls, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> list[SegmentQueryInfo]:
-        """
-        Cast a ray from start to end, returning all collisions within.
-        Due to the nature of the physics engine, rays cannot be infinite so an end
-        point must be specifiied.
+    # @classmethod
+    # def cast_ray(
+    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
+    # ) -> list[SegmentQueryInfo]:
+    #     """
+    #     Cast a ray from start to end, returning all collisions within.
+    #     Due to the nature of the physics engine, rays cannot be infinite so an end
+    #     point must be specifiied.
 
-        :param start: A start point, in world space.
-        :param end: An end point, in world space.
-        :param shape_filter: A filter object used to filter out undesired shapes for
-        collision.
-        :return: A list of SegmentQueryInfos, one for each shape collided with.
-        """
-        cls._service.cast_ray(start, end, shape_filter)
+    #     :param start: A start point, in world space.
+    #     :param end: An end point, in world space.
+    #     :param shape_filter: A filter object used to filter out undesired shapes for
+    #     collision.
+    #     :return: A list of SegmentQueryInfos, one for each shape collided with.
+    #     """
+    #     cls._service.cast_ray(start, end, shape_filter)
 
-    @classmethod
-    def cast_ray_single(
-        cls, start: Point, end: Point, shape_filter: ShapeFilter
-    ) -> SegmentQueryInfo:
-        """
-        Cast a ray from start to end, returning the _first_ collision it finds.
-        Due to the nature of the physics engine, rays cannot be infinite so an end
-        point must be specifiied.
+    # @classmethod
+    # def cast_ray_single(
+    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
+    # ) -> SegmentQueryInfo:
+    #     """
+    #     Cast a ray from start to end, returning the _first_ collision it finds.
+    #     Due to the nature of the physics engine, rays cannot be infinite so an end
+    #     point must be specifiied.
 
-        :param start: A start point, in world space.
-        :param end: An end point, in world space.
-        :param shape_filter: A filter object used to filter out undesired shapes for
-        collision.
-        :return: A SegmentQueryInfo, denoting information about the collided shape.
-        """
-        cls._service.cast_ray_single(start, end, shape_filter)
+    #     :param start: A start point, in world space.
+    #     :param end: An end point, in world space.
+    #     :param shape_filter: A filter object used to filter out undesired shapes for
+    #     collision.
+    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
+    #     """
+    #     cls._service.cast_ray_single(start, end, shape_filter)
 
-    @classmethod
-    def check_point(cls, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-        """
-        Determines if a point in world space is within a shape.
+    # @classmethod
+    # def check_point(cls, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
+    #     """
+    #     Determines if a point in world space is within a shape.
 
-        :param point: A point in world space.
-        :param shape_filer: A filter object used to filter out undesired shapes for
-        collision.
-        :return: A SegmentQueryInfo, denoting information about the collided shape.
-        """
-        cls._service.check_point(point, shape_filer)
+    #     :param point: A point in world space.
+    #     :param shape_filer: A filter object used to filter out undesired shapes for
+    #     collision.
+    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
+    #     """
+    #     cls._service.check_point(point, shape_filer)
 
     @classmethod
     def set_gravity(cls, gravity_x: float, gravity_y: float):
