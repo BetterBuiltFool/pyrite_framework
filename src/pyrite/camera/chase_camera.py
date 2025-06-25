@@ -120,7 +120,7 @@ class ChaseCamera(Entity, Camera):
         return delta_normalized * distance
 
     def clamp_magnitude(self, delta: Vector2) -> Vector2:
-        pass
+        return self.clamp_magnitude(delta)
 
     def _clamp_magnitude_invariant(self, delta: Vector2) -> Vector2:
         return delta.clamp_magnitude(0, self.max_distance)
