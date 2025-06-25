@@ -28,11 +28,11 @@ class Sprite(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        local_transform: Transform = None,
+        local_transform: Transform | None = None,
         anchor: Anchor = AnchorPoint.CENTER,
-        container: Container = None,
+        container: Container | None = None,
         enabled=True,
-        layer: Layer = None,
+        layer: Layer | None = None,
         draw_index=0,
     ) -> None:
         """
@@ -126,7 +126,10 @@ class Sprite(Renderable):
         self._is_dirty = flag
 
     def set_surface(
-        self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
+        self,
+        sprite_image: Surface | None = None,
+        flip_x: bool | None = None,
+        flip_y: bool | None = None,
     ):
         """
         Changes the sprite's display to match the given properties.
