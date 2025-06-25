@@ -350,9 +350,11 @@ class DefaultRenderSystem(RenderSystem):
         :param layer_queue: The ordered sequence of renderables to be drawn.
         :param camera: The camera being drawn to.
         """
-        self._rendered_last_frame += len(layer_queue)
+        count = 0
         for renderable in layer_queue:
+            count += 1
             renderable.render(delta_time, camera)
+        self._rendered_last_frame += count
 
     def render_camera(
         self,
