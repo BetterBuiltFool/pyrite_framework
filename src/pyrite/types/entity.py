@@ -19,7 +19,6 @@ class Entity:
     def __init__(self, container: Container | None = None, enabled=True) -> None:
         if container is None:
             container = defaults.get_default_container()
-            assert container is not None
         self.container: Container = container
         self.enabled = enabled
 

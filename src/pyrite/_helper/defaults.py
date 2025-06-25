@@ -9,7 +9,8 @@ if TYPE_CHECKING:
 _default_container_getter = None
 
 
-def get_default_container() -> Container | None:
+def get_default_container() -> Container:
+    assert _default_container_getter is not None
     return _default_container_getter()
 
 
