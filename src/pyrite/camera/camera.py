@@ -85,9 +85,6 @@ class Camera(CameraBase):
         bounds = renderable.get_bounds()
         return self.get_view_bounds().contains(bounds)
 
-    def get_bounds(self) -> RectBounds:
-        return CameraService.get_bounds(self)
-
     def get_view_bounds(self) -> CameraViewBounds:
         return CameraService.get_view_bounds(self)
 
