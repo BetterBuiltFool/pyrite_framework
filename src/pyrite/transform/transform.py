@@ -64,7 +64,10 @@ class Transform:
     def copy(self) -> Transform:
         return Transform(self._position, self._rotation, self._scale)
 
-    def generalize(self, root: transform.TransformProtocol) -> Transform:
+    @staticmethod
+    def generalize(
+        branch: transform.TransformProtocol, root: transform.TransformProtocol
+    ) -> Transform:
         """
         Applies a root transform to a local transform, converting it into the same
         relative space.
@@ -81,20 +84,22 @@ class Transform:
         local_transform = Transform((5, 0), 0, (1, 1))
         root_transform = Transform((10, 10), 90, (2, 2))
 
-        local_transform.generalize(root_transform) == Transform((10, 0), 90, (2, 2))
+        Transform.generalize(local_transform, root_transform) == Transform((10, 0), 90,
+        (2, 2))
         ```
 
         _______________________________________________________________________________
 
+        :param branch: A local transform-like object, being
         :param root: A transform-like object being treated like the new origin for the
             local transform.
         :return: A new transform, representing the current transform in the local space
             of _root_.
         """
-        new_scale = self.scale.elementwise() * root.scale
-        new_rotation = self.rotation + root.rotation
+        new_scale = branch.scale.elementwise() * root.scale
+        new_rotation = branch.rotation + root.rotation
 
-        scaled_position = self.position.elementwise() * root.scale
+        scaled_position = branch.position.elementwise() * root.scale
         rotated_position = scaled_position.rotate(-root.rotation)
         new_position = root.position + rotated_position
 
@@ -127,7 +132,10 @@ class Transform:
     def __rmul__(self, other_transform: transform.TransformProtocol) -> Transform:
         return Transform.generalize(self, other_transform)
 
-    def localize(self, root: transform.TransformProtocol) -> Transform:
+    @staticmethod
+    def localize(
+        branch: transform.TransformProtocol, root: transform.TransformProtocol
+    ) -> Transform:
         """
         Given two Transforms in the same relative space, finds the Transform local to
         the root that is equivalent of this Transform.
@@ -142,23 +150,24 @@ class Transform:
         branch_transform = Transform((10, 0), 90, (2, 2))
         root_transform = Transform((10, 10), 90, (2, 2))
 
-        branch_transform.localize(root_transform) == Transform((5, 0), 0, (1, 1))
+        Transform.localize(branch_transform, root_transform) == Transform((5, 0), 0, (1,
+        1))
         ```
 
         _______________________________________________________________________________
-
-        :param root: A transform-like object in the same space as the current transform.
+        :param branch: A transform-like object to be made local to the _root_
+        :param root: A transform-like object in the same space as the _branch_.
         :return: A new transform, equivalent to the difference between the current
             transform and _root_.
         """
 
-        translated_position = self.position - root.position
+        translated_position = branch.position - root.position
         rotated_position = translated_position.rotate(root.rotation)
         new_position = rotated_position.elementwise() / root.scale
 
-        new_rotation = self.rotation - root.rotation
+        new_rotation = branch.rotation - root.rotation
 
-        new_scale = self.scale.elementwise() / root.scale
+        new_scale = branch.scale.elementwise() / root.scale
 
         return Transform(new_position, new_rotation, new_scale)
 
