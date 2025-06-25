@@ -28,10 +28,10 @@ class Camera(CameraBase):
         self,
         projection: Projection,
         position: Point = (0, 0),
-        transform: TransformProtocol = None,
-        render_targets: RenderTarget | Sequence[RenderTarget] = None,
-        layer_mask: tuple[Layer] = None,
-        container: Container = None,
+        transform: TransformProtocol | None = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
+        layer_mask: tuple[Layer] | None = None,
+        container: Container | None = None,
         enabled=True,
     ) -> None:
         if transform is not None:
