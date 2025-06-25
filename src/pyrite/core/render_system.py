@@ -424,7 +424,7 @@ class DefaultRenderSystem(RenderSystem):
 _default_render_manager_type = DefaultRenderManager
 
 
-def get_default_render_manager_type() -> type[RenderSystem]:
+def get_default_render_manager_type() -> type[RenderManager]:
     return _default_render_manager_type
 
 
