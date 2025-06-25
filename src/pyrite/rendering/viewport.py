@@ -47,7 +47,9 @@ class Viewport:
     @relative_rect.setter
     def relative_rect(self, new_relative_rect: FRect):
         self._relative_rect = new_relative_rect
-        self._update_display_rect(pygame.display.get_surface().size)
+        display_surf = pygame.display.get_surface()
+        assert display_surf is not None
+        self._update_display_rect(display_surf.size)
 
     @property
     def display_rect(self) -> Rect:
