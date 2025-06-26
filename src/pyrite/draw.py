@@ -327,7 +327,6 @@ def aalines(
     color: ColorLike,
     closed: bool,
     points: Sequence[Point],
-    width: int = 1,
 ) -> Rect:
     """
     Draws a series of anti-aliased lines over the screen, using a camera's view for
@@ -346,4 +345,4 @@ def aalines(
         CameraService.world_to_screen(point, camera, viewport) for point in points
     ]
 
-    return pygame.draw.aalines(display, color, closed, screen_points, width)
+    return pygame.draw.aalines(display, color, closed, screen_points)
