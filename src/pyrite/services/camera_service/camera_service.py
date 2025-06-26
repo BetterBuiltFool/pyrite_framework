@@ -220,5 +220,5 @@ class DefaultCameraService(CameraService):
         self._surfaces.update({default_camera: Surface(size)})
 
     def zoom(self, camera: Camera, zoom: float):
-        camera._zoom_level = zoom
+        camera.zoom_level = zoom
         self._rebuild_surface(camera)

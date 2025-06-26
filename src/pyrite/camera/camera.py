@@ -70,6 +70,10 @@ class Camera(CameraBase):
     def zoom_level(self):
         return self._zoom_level
 
+    @zoom_level.setter
+    def zoom_level(self, zoom: float):
+        self._zoom_level = zoom
+
     def refresh(self):
         CameraService.refresh(self)
 
@@ -88,8 +92,8 @@ class Camera(CameraBase):
         """
         return self._viewports
 
-    def render(self, delta_time: float, viewport: RenderTarget):
-        CameraRenderer.render(delta_time, self, viewport)
+    def render(self, delta_time: float, render_target: RenderTarget):
+        CameraRenderer.render(delta_time, self, render_target)
 
     def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)
