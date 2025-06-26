@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     # from pygame.typing import Point
     from . import CameraViewBounds, Renderable, Projection
     from .render_target import RenderTarget
+    from ..rendering import Viewport
     from ..enum import Layer
     from ..transform import Transform, TransformComponent
 
@@ -62,6 +63,15 @@ class CameraBase(ABC):
 
         :return: A CameraViewBounds object describing the viewed space.
         """
+
+    @abstractmethod
+    def get_viewports(self) -> Sequence[Viewport]:
+        """
+        Gets a sequence of viewports targeted by the camera.
+
+        :return: A sequence of viewports, empty if there are none.
+        """
+        pass
 
     @abstractmethod
     def render(self, delta_time: float, render_target: RenderTarget):
