@@ -11,7 +11,7 @@ from ..transform import transform_component as transform
 
 
 if typing.TYPE_CHECKING:
-    from ..types import CameraBase
+    from ..types import Camera
     from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
@@ -170,5 +170,5 @@ class Sprite(Renderable):
 
         return bounds
 
-    def render(self, delta_time: float, camera: CameraBase):
+    def render(self, delta_time: float, camera: Camera):
         SpriteRenderer.render(delta_time, self, camera)

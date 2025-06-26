@@ -11,7 +11,7 @@ from ..services.camera_service import DefaultCameraService
 from ..transform import Transform
 
 if TYPE_CHECKING:
-    from ..camera import Camera
+    from ..types import Camera
     from ..sprite import Sprite
     from pygame import Surface
 

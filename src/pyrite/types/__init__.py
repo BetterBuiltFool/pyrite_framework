@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Protocol, TYPE_CHECKING
 
 from .bounds import CullingBounds  # noqa: F401
-from .camera import CameraBase  # noqa: F401
+from .camera import CameraBase as Camera  # noqa: F401
 from .component import Component  # noqa: F401
 from .debug_renderer import DebugRenderer  # noqa: F401
 from .entity import Entity  # noqa: F401

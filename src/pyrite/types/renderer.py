@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..camera import Camera
+    from . import Camera
 
 RenderableType = TypeVar("RenderableType")
 

@@ -13,7 +13,7 @@ from ...types.service import Service
 if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
-    from ...camera import Camera
+    from ...types import Camera
     from ...transform import Transform
     from ...types import CameraViewBounds
     from ...rendering import Viewport

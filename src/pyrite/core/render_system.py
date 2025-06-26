@@ -16,10 +16,10 @@ from ..services import CameraService
 if TYPE_CHECKING:
     from ..camera import Camera
     from ..enum import Layer
-    from ..types import CameraBase, Renderable
+    from ..types import Camera, Renderable
     from ..types.debug_renderer import DebugRenderer
 
-    LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
+    LayerDict: TypeAlias = dict[Camera, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
 EMPTY_LAYER_SET: set[Renderable] = set()
@@ -290,7 +290,7 @@ class DefaultRenderManager(RenderManager):
         self,
         layer_set: set[Renderable],
         layer: Layer,
-        cameras: Iterable[CameraBase] | None = None,
+        cameras: Iterable[Camera] | None = None,
     ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
@@ -340,7 +340,7 @@ class DefaultRenderSystem(RenderSystem):
         self,
         delta_time: float,
         layer_queue: Iterable[Renderable],
-        camera: CameraBase,
+        camera: Camera,
     ):
         """
         Extracts the renderables from the layer_queue, and has them drawn to the

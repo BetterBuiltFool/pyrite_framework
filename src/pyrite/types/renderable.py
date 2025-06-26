@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from . import CameraBase, CullingBounds
+    from . import Camera, CullingBounds
     from ..enum import Layer
 
 
@@ -80,7 +80,7 @@ class Renderable(ABC):
         pass
 
     @abstractmethod
-    def render(self, delta_time: float, camera: CameraBase):
+    def render(self, delta_time: float, camera: Camera):
         """
         Causes the Renderable to be rendered to the given camera. Typically calls upon
         some renderer class that knows how to handle its data.
