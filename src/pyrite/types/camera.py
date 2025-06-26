@@ -8,9 +8,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # from pygame.typing import Point
-    from . import CameraViewBounds, Renderable
+    from . import CameraViewBounds, Renderable, Projection
+    from .render_target import RenderTarget
     from ..enum import Layer
-    from ..transform import Transform
+    from ..transform import Transform, TransformComponent
 
 
 class CameraBase(ABC):
@@ -22,6 +23,19 @@ class CameraBase(ABC):
     """
 
     layer_mask: Sequence[Layer]
+    render_targets: Sequence[RenderTarget]
+    projection: Projection
+    transform: TransformComponent
+
+    @property
+    @abstractmethod
+    def zoom_level(self) -> float:
+        pass
+
+    @zoom_level.setter
+    @abstractmethod
+    def zoom_level(self, zoom: float):
+        pass
 
     @abstractmethod
     def refresh(self):
@@ -48,6 +62,16 @@ class CameraBase(ABC):
 
         :return: A CameraViewBounds object describing the viewed space.
         """
+
+    @abstractmethod
+    def render(self, delta_time: float, render_target: RenderTarget):
+        """
+        Renders the camera view to the render target
+
+        :param delta_time: Time passed since last frame, in seconds.
+        :param render_target: _description_
+        """
+        pass
 
     @abstractmethod
     def to_local(self, point: Transform) -> Transform:
