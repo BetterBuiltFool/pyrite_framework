@@ -4,11 +4,10 @@ import typing
 
 from ..enum import AnchorPoint
 from ..rendering.rect_bounds import rotate_rect
-from ..rendering import RectBounds
+from ..rendering import RectBounds, BaseRenderable
 from ..rendering.sprite_renderer import SpriteRenderer
 from ..services import BoundsService
 from ..transform import transform_component as transform
-from ..types import Renderable
 
 
 if typing.TYPE_CHECKING:
@@ -19,7 +18,7 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class Sprite(Renderable):
+class Sprite(BaseRenderable):
     """
     A basic renderable with a world position and a surface to display.
     """
