@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class BaseSystem(System):
 
-    def __init__(self, enabled=True, order_index=0) -> None:
+    def __init__(self, enabled: bool = True, order_index: int = 0) -> None:
         """
         Base class for all systems.
 
