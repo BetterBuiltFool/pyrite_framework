@@ -85,11 +85,6 @@ class Camera(CameraBase):
         return CameraService.get_view_bounds(self)
 
     def get_viewports(self) -> list[Viewport]:
-        """
-        Gets a list of viewports targeted by the camera.
-
-        :return: A list of viewports, empty if there are none.
-        """
         return self._viewports
 
     def render(self, delta_time: float, render_target: RenderTarget):
