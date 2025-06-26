@@ -11,7 +11,7 @@ from ..transform import transform_component as transform
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Camera
+    from ..types import Camera, CullingBounds
     from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
@@ -148,7 +148,7 @@ class Sprite(Renderable):
 
         self.is_dirty = True
 
-    def get_bounds(self) -> RectBounds:
+    def get_bounds(self) -> CullingBounds:
         bounds, transform = BoundsService.get(self)
         if bounds is None or transform != self.transform.world():
             transform = self.transform.world()
