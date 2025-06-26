@@ -63,7 +63,7 @@ class SpriteMap(ABC):
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable = None
+        spritesheet_map_file: TextIO, decoder: Callable | None = None
     ) -> DictSpriteMap:
         """
         Creates a DictSpriteMap from the provided file.
@@ -86,7 +86,7 @@ class SpriteMap(ABC):
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable = None
+        spritesheet_map_path: os.PathLike | str, decoder: Callable | None = None
     ) -> DictSpriteMap:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
@@ -156,7 +156,7 @@ class DictSpriteMap(SpriteMap):
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable = None
+        spritesheet_map_file: TextIO, decoder: Callable | None = None
     ) -> DictSpriteMap:
         """
         Creates a DictSpriteMap from a text file, using a supplied decoder function.
@@ -190,7 +190,7 @@ class DictSpriteMap(SpriteMap):
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable = None
+        spritesheet_map_path: os.PathLike | str, decoder: Callable | None = None
     ) -> DictSpriteMap:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
