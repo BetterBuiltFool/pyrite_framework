@@ -16,6 +16,18 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point
 
 
+def default_decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
+    sprites: dict[str, Rect] = {}
+    for line in sprite_map_file.readlines():
+        key, value = line.split("=")
+        key = key.strip(" ")
+        value = value.strip("\n")
+        value = value.lstrip()
+        values = [int(subvalue) for subvalue in value.split(" ")]
+        sprites.update({key: Rect(*values)})
+    return sprites
+
+
 class SpriteMap(ABC):
     """
     A dictionary of rects for getting the subsurfaces for a spritesheet.
@@ -174,16 +186,7 @@ class DictSpriteMap(SpriteMap):
         """
         if not decoder:
 
-            def decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
-                sprites: dict[str, Rect] = {}
-                for line in sprite_map_file.readlines():
-                    key, value = line.split("=")
-                    key = key.strip(" ")
-                    value = value.strip("\n")
-                    value = value.lstrip()
-                    values = [int(subvalue) for subvalue in value.split(" ")]
-                    sprites.update({key: Rect(*values)})
-                return sprites
+            decoder = default_decoder
 
         map_dict = decoder(spritesheet_map_file)
         return DictSpriteMap(map_dict)
