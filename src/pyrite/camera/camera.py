@@ -9,10 +9,9 @@ from ..rendering.camera_renderer import CameraRenderer
 from ..rendering.viewport import Viewport
 from ..transform import transform_component
 from ..types import CameraBase, Renderable
-from .._helper import defaults
 
 if TYPE_CHECKING:
-    from ..types import CameraViewBounds, Container, TransformProtocol
+    from ..types import CameraViewBounds, TransformProtocol
     from ..types.projection import Projection
     from ..types.render_target import RenderTarget
     from ..transform import Transform
@@ -28,7 +27,6 @@ class Camera(CameraBase):
         transform: TransformProtocol | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
-        container: Container | None = None,
         enabled=True,
     ) -> None:
         if transform is not None:
@@ -54,9 +52,6 @@ class Camera(CameraBase):
         self.layer_mask: Sequence[Layer] = layer_mask
         self.enabled = enabled
         self._zoom_level: float = 1
-        if container is None:
-            container = defaults.get_default_container()
-        self.container = container
         CameraService.add_camera(self)
 
     @property

@@ -4,10 +4,9 @@ from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
 from ..core import render_system
-from .._helper import defaults
 
 if TYPE_CHECKING:
-    from . import Container, CameraBase, CullingBounds
+    from . import CameraBase, CullingBounds
     from ..enum import Layer
 
 
@@ -18,7 +17,6 @@ class Renderable(ABC):
 
     def __init__(
         self,
-        container: Container = None,
         enabled=True,
         layer: Layer = None,
         draw_index=0,
@@ -32,9 +30,6 @@ class Renderable(ABC):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
-        if container is None:
-            container = defaults.get_default_container()
-        self.container: Container = container
         self.enabled = enabled
 
     @property
@@ -44,8 +39,6 @@ class Renderable(ABC):
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
-        if self.container is None:
-            return
         if value:
             self.on_preenable()
             if render_system.enable(self):

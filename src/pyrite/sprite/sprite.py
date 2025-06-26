@@ -12,7 +12,7 @@ from ..types import Renderable
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Container, CameraBase
+    from ..types import CameraBase
     from ..transform import TransformComponent, Transform
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
@@ -30,7 +30,6 @@ class Sprite(Renderable):
         position: Point = (0, 0),
         local_transform: Transform | None = None,
         anchor: Anchor = AnchorPoint.CENTER,
-        container: Container | None = None,
         enabled=True,
         layer: Layer | None = None,
         draw_index=0,
@@ -43,13 +42,12 @@ class Sprite(Renderable):
         defaults to (0, 0)
         :param anchor: AnchorPoint that determines where on the object the position
         references, defaults to Anchor.CENTER
-        :param container: Container object for the renderable, defaults to None
         :param enabled: Whether or not the object should be active immediately upon
         spawn, defaults to True
         :param layer: Render layer to which the object belongs, defaults to None
         :param draw_index: Draw order for the renderable, defaults to 0
         """
-        super().__init__(container, enabled, layer, draw_index)
+        super().__init__(enabled, layer, draw_index)
         self._reference_image = display_surface
         # self.display_surface = display_surface
         self.transform: TransformComponent

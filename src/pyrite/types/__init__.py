@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable, TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 
 from .bounds import CullingBounds  # noqa: F401
 from .camera import CameraBase  # noqa: F401
@@ -22,19 +22,6 @@ if TYPE_CHECKING:
     Point3D = SequenceLike[float]
 
 import pygame
-
-
-@runtime_checkable
-class Container(Protocol):
-    """
-    An object that can forward Entities and Renderables to the active EntityManager and
-    RenderManager for enabling and disabling.
-    """
-
-    container: Container
-    """
-    A Container for the container. Needs to loop back into the game class eventually.
-    """
 
 
 class HasPosition(Protocol):

@@ -13,7 +13,6 @@ from .core.render_system import RenderSystem, RenderManager
 from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
-from ._helper import defaults
 from .camera.camera import Camera
 from .rendering import OrthoProjection, Viewport
 from .services import CameraService
@@ -47,9 +46,6 @@ def set_game_instance(instance: Game):
     _active_instance = instance
 
 
-defaults._default_container_getter = get_game_instance
-
-
 class Game:
     """
     Base Game object to serve as a parent for your game.
@@ -71,8 +67,6 @@ class Game:
         return active_instance
 
     def __init__(self, **kwds) -> None:
-
-        self.container = self  # To satisfy Container protocol
 
         suppress_init: bool = kwds.get("suppress_init", False)
         self.debug_mode: bool = kwds.get("debug_mode", False)

@@ -3,8 +3,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from pyrite.types import Container
-
 from .camera import Camera
 from ..types.entity import Entity
 
@@ -34,7 +32,6 @@ class ChaseCamera(Entity, Camera):
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
-        container: Container | None = None,
         enabled=True,
     ) -> None:
         """
@@ -60,14 +57,11 @@ class ChaseCamera(Entity, Camera):
         Negative numbers will disable.
         :param relative_lag: Bool determining if the max distance is relative to zoom
         level. If true, the max distance will be consistent within screen space.
-        :param container: The instance of the game to which the rengerable belongs,
-        defaults to None. See Renderable.
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
         """
         Entity.__init__(
             self,
-            container,
             enabled,
         )
         Camera.__init__(
@@ -77,7 +71,6 @@ class ChaseCamera(Entity, Camera):
             transform,
             render_targets,
             layer_mask,
-            container,
             enabled,
         )
         self.target = target
