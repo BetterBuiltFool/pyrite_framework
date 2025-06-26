@@ -48,7 +48,7 @@ def rect(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.rect(
         display,
@@ -193,7 +193,7 @@ def ellipse(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.ellipse(
         display,
@@ -230,7 +230,7 @@ def arc(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.arc(
         display,
