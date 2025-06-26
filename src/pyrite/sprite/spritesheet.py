@@ -216,7 +216,7 @@ class DictSpriteMap(SpriteMap):
             return DictSpriteMap.from_file(spritemap_file, decoder)
 
     def get(self, key: str) -> Rect:
-        return self._map.get(key)
+        return self._map[key]
 
 
 class SpriteSheet:
