@@ -1,41 +1,26 @@
 from __future__ import annotations
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import typing
-
-from ..core import system_manager
 
 if typing.TYPE_CHECKING:
     from pygame import Event
 
 
 class System(ABC):
-
-    def __init__(self, enabled=True, order_index=0) -> None:
-        """
-        Base class for all systems.
-
-        :param enabled: Whether the system should be running at instantiation,
-            defaults to True
-        :param order_index: Relative order in which the system should be run, with
-            priority going down as value increases, but negative numbers are
-            approximately distance from last, defaults to 0 (Tie for first)
-        """
-        self._enabled = None
-        self.enabled = enabled
-        self.order_index = order_index
+    """
+    Base class for all systems.
+    """
 
     @property
+    @abstractmethod
     def enabled(self) -> bool:
-        return system_manager.is_enabled(self)
+        pass
 
     @enabled.setter
+    @abstractmethod
     def enabled(self, value: bool):
-        self._enabled = value
-        if value:
-            system_manager.enable(self)
-        else:
-            system_manager.disable(self)
+        pass
 
     def pre_update(self, delta_time: float) -> None:
         """

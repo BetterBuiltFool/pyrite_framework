@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..types import System
+from ..systems import BaseSystem
 
 from ..services import PhysicsService
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     pass
 
 
-class PhysicsSystem(System):
+class PhysicsSystem(BaseSystem):
     """
     A system that manages the flow of physics in the world space.
     Syncs Rigidbodies and their transforms, and steps the simulation.
