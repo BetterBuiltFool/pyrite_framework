@@ -14,6 +14,7 @@ class Renderable(ABC):
     """
 
     draw_index: int
+    _layer: Layer
 
     @property
     @abstractmethod
