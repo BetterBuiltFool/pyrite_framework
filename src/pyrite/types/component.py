@@ -36,13 +36,19 @@ class ComponentMeta(ABCMeta):
             return NotImplemented
         return set(self.instances.keys()) & other
 
-    def __or__(self: type[Component], other: set | type[Component]) -> set:
+    def __or__(  # type: ignore[override]
+        self: type[Component],
+        other: set | type[Component],
+    ) -> set:
         other = self._validate_other(other)
         if other is None:
             return NotImplemented
         return set(self.instances.keys()) | other
 
-    def __ror__(self: type[Component], other: set | type[Component]) -> set:
+    def __ror__(  # type: ignore[override]
+        self: type[Component],
+        other: set | type[Component],
+    ) -> set:
         other = self._validate_other(other)
         if other is None:
             return NotImplemented
