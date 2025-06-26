@@ -12,6 +12,8 @@ class System(ABC):
     Base class for all systems.
     """
 
+    order_index: int
+
     @property
     @abstractmethod
     def enabled(self) -> bool:
