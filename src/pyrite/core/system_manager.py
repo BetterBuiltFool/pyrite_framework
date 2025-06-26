@@ -5,14 +5,14 @@ import bisect
 from typing import cast, Self, TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
+from ..types.system import System
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from ..types.system import System
     from pygame import Event
 
 
-SystemType = TypeVar("SystemType")
+SystemType = TypeVar("SystemType", bound=System)
 
 
 _active_system_manager: SystemManager
