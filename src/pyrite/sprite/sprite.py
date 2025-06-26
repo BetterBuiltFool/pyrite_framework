@@ -153,12 +153,16 @@ class Sprite(Renderable):
         if bounds is None or transform != self.transform.world():
             transform = self.transform.world()
             display_rect = self._reference_image.get_rect()
+            scale = transform.scale
 
             center = self.anchor.get_rect_center(
-                display_rect, transform.position, transform.rotation, transform.scale
+                display_rect, transform.position, transform.rotation, scale
             )
 
-            display_rect.size *= transform.scale.elementwise()
+            width, height = display_rect.size
+            width *= scale.x
+            height *= scale.y
+            display_rect.size = width, height
             pivot = self.anchor.get_center_offset(display_rect)
 
             bounds_rect = rotate_rect(display_rect, transform.rotation, pivot)
