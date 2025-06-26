@@ -14,7 +14,6 @@ from ..rendering import RenderTextureComponent
 from ..services import CameraService
 
 if TYPE_CHECKING:
-    from ..camera import Camera
     from ..enum import Layer
     from ..types import Camera, Renderable
     from ..types.debug_renderer import DebugRenderer
