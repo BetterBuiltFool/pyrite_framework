@@ -8,9 +8,9 @@ from .camera_service import CameraService, DefaultCameraService
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pygame import Vector3
-    from ...camera import Camera
+
     from ...transform import Transform
-    from ...types import CameraViewBounds
+    from ...types import Camera, CameraViewBounds
     from ...rendering import Viewport
 
 

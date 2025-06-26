@@ -13,7 +13,7 @@ from pygame import Rect
 from .services import CameraService
 
 if TYPE_CHECKING:
-    from .camera import Camera
+    from .types import Camera
     from .rendering import Viewport
     from pygame.typing import ColorLike, Point
 
