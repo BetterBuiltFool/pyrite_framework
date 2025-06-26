@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pygame.typing import ColorLike
     from ..core.render_system import RenderQueue
-    from ..camera import Camera
+    from ..types import Camera
 
 
 class BoundsRenderer(DebugRenderer):
