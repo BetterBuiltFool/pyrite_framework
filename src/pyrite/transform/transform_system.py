@@ -3,11 +3,11 @@ from __future__ import annotations
 from abc import abstractmethod
 
 from ..services import TransformService
-from ..systems import BaseSystem
+from ..systems import System
 from .transform import Transform
 
 
-class TransformSystem(BaseSystem):
+class TransformSystem(System):
 
     @staticmethod
     def to_world(transform: Transform, context: Transform) -> Transform:

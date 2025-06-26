@@ -1,1 +1,1 @@
-from .base_system import BaseSystem  # noqa:F401
+from .base_system import BaseSystem as System  # noqa:F401
