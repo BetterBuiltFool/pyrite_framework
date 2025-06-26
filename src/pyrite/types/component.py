@@ -101,7 +101,7 @@ class Component(metaclass=ComponentMeta):
         :param key: The owning object of a component.
         :return: The component instance belonging to _key_, if extantit exists
         """
-        return cls.get_instances().get(key)
+        return cls.get_instances()[key]
 
     @classmethod
     def remove_from(cls, key: Any):
