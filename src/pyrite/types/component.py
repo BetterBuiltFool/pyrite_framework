@@ -58,8 +58,6 @@ class Component(metaclass=ComponentMeta):
     intersected with other components to get a set of shared key objects.
     """
 
-    instances: WeakKeyDictionary[Any, Component] = WeakKeyDictionary()
-
     def __init_subclass__(cls: type[T]) -> None:
         cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
 
