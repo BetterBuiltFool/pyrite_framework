@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Self, TYPE_CHECKING, TypeVar
+from typing import Self, TYPE_CHECKING
 from weakref import ref, WeakKeyDictionary
 
 if TYPE_CHECKING:
     from typing import Any
-
-T = TypeVar("T", bound="Component")
 
 
 class Component:
@@ -35,7 +33,7 @@ class Component:
         return self._owner()
 
     @classmethod
-    def intersect(cls, *component_types: type[T]) -> set[Any]:
+    def intersect(cls, *component_types: type[Component]) -> set[Any]:
         """
         Generates a set of keys that are shared between the component and the supplied
         component types. Can take any number of component types.
@@ -51,7 +49,7 @@ class Component:
         return local_keys.intersection(*key_sets)
 
     @classmethod
-    def get(cls: type[T], key: Any) -> T:
+    def get(cls, key: Any) -> Self:
         """
         Returns the component instance belonging to the key.
 
@@ -76,7 +74,7 @@ class Component:
             cls._purge_component(component)
 
     @classmethod
-    def _purge_component(cls, component: T):
+    def _purge_component(cls, component: Self):
         """
         Method for cleaning up a component's data when the component is used.
         If the data is simple, a weak key dictionary with the components as keys may be
@@ -88,7 +86,7 @@ class Component:
         pass
 
     @classmethod
-    def get_instances(cls: type[T]) -> dict[Any, T]:
+    def get_instances(cls) -> dict[Any, Self]:
         """
         Gives a dictionary of all component instances and their owners.
 
