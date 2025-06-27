@@ -61,14 +61,14 @@ class TestComponent(unittest.TestCase):
         self.object2 = TestOwner(True, False, False)  # A
         self.object3 = TestOwner(False, True, False)  # B
         self.object4 = TestOwner(False, False, True)  # C
-        self.object4.components[0].data = "foo"
+        ComponentC.get(self.object4).data = "foo"
         self.object5 = TestOwner(True, True, False)  # A, B
         self.object6 = TestOwner(True, False, True)  # A, C
-        self.object6.components[1].data = "bar"
+        ComponentC.get(self.object6).data = "bar"
         self.object7 = TestOwner(False, True, True)  # B, C
-        self.object7.components[1].data = "baz"
+        ComponentC.get(self.object7).data = "baz"
         self.object8 = TestOwner(True, True, True)  # A, B, C
-        self.object8.components[2].data = "qux"
+        ComponentC.get(self.object8).data = "qux"
 
     def tearDown(self) -> None:
         ComponentA.instances = WeakKeyDictionary()
