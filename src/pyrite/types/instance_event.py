@@ -145,7 +145,7 @@ class InstanceEvent(ABC, Generic[T]):
         """
         raise NotImplementedError("Argument type not supported")
 
-    @add_listener.register(Callable)
+    @add_listener.register(Callable)  # type: ignore
     def _(self, listener: Callable) -> Callable:
         self._register(SENTINEL, listener)
         return listener
