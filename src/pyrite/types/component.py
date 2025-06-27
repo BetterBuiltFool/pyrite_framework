@@ -92,4 +92,4 @@ class Component:
 
         :return: The component's instance collection, as a dictionary.
         """
-        return cls.instances
+        return dict(cls.instances)
