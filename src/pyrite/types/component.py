@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABCMeta
 from typing import TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
@@ -10,51 +9,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="Component")
 
 
-class ComponentMeta(ABCMeta):
-    """
-    Metaclass for components to allow for things like set operations on the component
-    type.
-    """
-
-    @staticmethod
-    def _validate_other(other: set | type[Component]) -> set | None:
-        if not isinstance(other, set):
-            if not isinstance(other, ComponentMeta):
-                return None
-            other = set(other.instances.keys())
-        return other
-
-    def __and__(cls: type[Component], other: set | type[Component]) -> set:
-        if not (other_instances := cls._validate_other(other)):
-            return NotImplemented
-        return set(cls.instances.keys()) & other_instances
-
-    def __rand__(cls: type[Component], other: set | type[Component]) -> set:
-        if not (other_instances := cls._validate_other(other)):
-            return NotImplemented
-        return set(cls.instances.keys()) & other_instances
-
-    def __or__(  # type: ignore[override]
-        cls: type[Component],
-        other: set | type[Component],
-    ) -> set:
-        if not (other_instances := cls._validate_other(other)):
-            return NotImplemented
-        return set(cls.instances.keys()) | other_instances
-
-    def __ror__(  # type: ignore[override]
-        cls: type[Component],
-        other: set | type[Component],
-    ) -> set:
-        if not (other_instances := cls._validate_other(other)):
-            return NotImplemented
-        return set(cls.instances.keys()) | other_instances
-
-    def __contains__(cls: type[Component], value: Any) -> bool:
-        return value in cls.instances.keys()
-
-
-class Component(metaclass=ComponentMeta):
+class Component:
     """
     Components are objects that mark other object with attributes. Components can be
     intersected with other components to get a set of shared key objects.
@@ -104,6 +59,10 @@ class Component(metaclass=ComponentMeta):
         :return: The component instance belonging to _key_, if extantit exists
         """
         return cls.get_instances()[key]
+
+    @classmethod
+    def keys(cls) -> set[Any]:
+        return set(cls.instances.keys())
 
     @classmethod
     def remove_from(cls, key: Any):
