@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar
+from typing import Self, TYPE_CHECKING, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 if TYPE_CHECKING:
@@ -15,8 +15,8 @@ class Component:
     intersected with other components to get a set of shared key objects.
     """
 
-    def __init_subclass__(cls: type[T]) -> None:
-        cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
+    def __init_subclass__(cls) -> None:
+        cls.instances: WeakKeyDictionary[Any, Self] = WeakKeyDictionary()
 
     def __new__(cls, owner: Any, *args, **kwds):
         new_component = super().__new__(cls)
