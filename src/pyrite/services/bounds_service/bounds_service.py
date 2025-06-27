@@ -7,9 +7,9 @@ from weakref import WeakKeyDictionary
 from ...types.service import Service
 
 if TYPE_CHECKING:
-    from ...types import CullingBounds, Renderable, Transform
+    from ...types import CullingBounds, Renderable, TransformProtocol
 
-    BoundsData: TypeAlias = tuple[CullingBounds, Transform]
+    BoundsData: TypeAlias = tuple[CullingBounds, TransformProtocol]
 
 
 class BoundsService(Service):
