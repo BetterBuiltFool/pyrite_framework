@@ -21,7 +21,7 @@ class ComponentB(Component):
 
 
 class ComponentC(Component):
-    component_data: dict[ComponentC, str] = {}
+    component_data: dict[Component, str] = {}
 
     def __init__(self, data: str = "") -> None:
         # Super simple test data
@@ -29,14 +29,14 @@ class ComponentC(Component):
 
     @property
     def data(self) -> str:
-        return self.component_data.get(self)
+        return self.component_data[self]
 
     @data.setter
     def data(self, value: str):
         self.component_data.update({self: value})
 
     @classmethod
-    def _purge_component(cls, component: ComponentC):
+    def _purge_component(cls, component: Component):
         # This will raise without a valid component
         cls.component_data.pop(component)
 
