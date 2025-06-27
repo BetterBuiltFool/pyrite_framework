@@ -159,4 +159,6 @@ class PymunkPhysicsService(PhysicsService):
         body2 = shape2.body
         rigidbody_1 = self.bodies[body1]
         rigidbody_2 = self.bodies[body2]
+        assert rigidbody_1.collider
+        assert rigidbody_2.collider
         return rigidbody_1.collider, rigidbody_2.collider
