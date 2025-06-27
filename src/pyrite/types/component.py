@@ -24,38 +24,34 @@ class ComponentMeta(ABCMeta):
             other = set(other.instances.keys())
         return other
 
-    def __and__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
+    def __and__(cls: type[Component], other: set | type[Component]) -> set:
+        if not (other_instances := cls._validate_other(other)):
             return NotImplemented
-        return set(self.instances.keys()) & other
+        return set(cls.instances.keys()) & other_instances
 
-    def __rand__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
+    def __rand__(cls: type[Component], other: set | type[Component]) -> set:
+        if not (other_instances := cls._validate_other(other)):
             return NotImplemented
-        return set(self.instances.keys()) & other
+        return set(cls.instances.keys()) & other_instances
 
     def __or__(  # type: ignore[override]
-        self: type[Component],
+        cls: type[Component],
         other: set | type[Component],
     ) -> set:
-        other = self._validate_other(other)
-        if other is None:
+        if not (other_instances := cls._validate_other(other)):
             return NotImplemented
-        return set(self.instances.keys()) | other
+        return set(cls.instances.keys()) | other_instances
 
     def __ror__(  # type: ignore[override]
-        self: type[Component],
+        cls: type[Component],
         other: set | type[Component],
     ) -> set:
-        other = self._validate_other(other)
-        if other is None:
+        if not (other_instances := cls._validate_other(other)):
             return NotImplemented
-        return set(self.instances.keys()) | other
+        return set(cls.instances.keys()) | other_instances
 
-    def __contains__(self: type[Component], value: Any) -> bool:
-        return value in self.instances.keys()
+    def __contains__(cls: type[Component], value: Any) -> bool:
+        return value in cls.instances.keys()
 
 
 class Component(metaclass=ComponentMeta):
