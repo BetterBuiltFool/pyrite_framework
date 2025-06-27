@@ -103,7 +103,7 @@ class Game:
         ]
 
         # Create a placeholder for the window, and the create the actual window
-        self.window: pygame.Surface = None
+        self.window: pygame.Surface
         self.create_window()
 
     def __enter__(self) -> Self:
