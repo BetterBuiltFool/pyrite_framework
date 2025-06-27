@@ -23,7 +23,8 @@ class ComponentB(Component):
 class ComponentC(Component):
     component_data: dict[Component, str] = {}
 
-    def __init__(self, data: str = "") -> None:
+    def __init__(self, owner, data: str = "") -> None:
+        super().__init__(owner)
         # Super simple test data
         self.component_data.update({self: data})
 
