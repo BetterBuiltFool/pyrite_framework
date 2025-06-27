@@ -388,7 +388,7 @@ class AsyncGame(Game):
     Supports pygbag.
     """
 
-    async def start_game(self):
+    async def start_game_async(self):
         """
         Begins the game loop in async mode.
         Identical to Base game version, except with an asyncio sleep attached for
@@ -410,4 +410,4 @@ class AsyncGame(Game):
         Main entry point for the game. By default, starts a thread from start_game().
         """
         self.create_window()
-        asyncio.run(self.start_game())
+        asyncio.run(self.start_game_async())
