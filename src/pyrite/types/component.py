@@ -63,7 +63,7 @@ class Component(metaclass=ComponentMeta):
     def __init_subclass__(cls: type[T]) -> None:
         cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
 
-    def __new__(cls: type[T], owner: Any, *args, **kwds) -> T:
+    def __new__(cls, owner: Any, *args, **kwds):
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
         return new_component
