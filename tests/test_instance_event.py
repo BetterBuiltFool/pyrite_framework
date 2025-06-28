@@ -1,6 +1,7 @@
 import pathlib
 import sys
 import unittest
+from weakref import WeakKeyDictionary
 
 
 sys.path.append(str(pathlib.Path.cwd()))
@@ -50,8 +51,8 @@ class TestInstanceEvent(unittest.TestCase):
         self.test_object = TestObject()
 
     def tearDown(self) -> None:
-        self.test_object.OnTestEvent1.listeners = dict()
-        self.test_object.OnTestEvent2.listeners = dict()
+        self.test_object.OnTestEvent1.listeners = WeakKeyDictionary()
+        self.test_object.OnTestEvent2.listeners = WeakKeyDictionary()
 
     def test_register(self):
 
