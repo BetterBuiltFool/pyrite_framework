@@ -151,7 +151,7 @@ class SimpleSpriteMap(SpriteMap):
         ]
         self.sprite_size = sprite_size
 
-    def get(self, key: tuple[int, int]) -> Rect:
+    def get(self, key: tuple[int, int] | None) -> Rect:
         if key is None:
             key = (0, 0)
         row, column = key
