@@ -201,7 +201,8 @@ class TestDefaultRenderManager(unittest.TestCase):
                 self.render_manager.enable(new_element)
 
         render_queue = self.render_manager.generate_render_queue()
-        self.assertIsSorted(render_queue.get(RenderLayers.MIDGROUND), _get_draw_index)
+        render_elements = render_queue.get(RenderLayers.MIDGROUND, {})
+        self.assertIsSorted(render_elements.get(default_camera, []), _get_draw_index)
 
         self.render_manager.renderables = {}
 
