@@ -66,16 +66,18 @@ class TestDefaultRenderManager(unittest.TestCase):
     def assertIsSorted(
         self,
         sequence: Sequence[Any],
-        key: Callable = None,
+        key: Callable | None = None,
         ascending=True,
         msg: Any = None,
     ) -> None:
         if not ascending:
-            sequence = reversed(sequence)
+            sequence = list(reversed(sequence))
         if key is None:
 
-            def key(item: Any) -> Any:
+            def default_key(item: Any) -> Any:
                 return item
+
+            key = default_key
 
         previous = None
         for item in sequence:
