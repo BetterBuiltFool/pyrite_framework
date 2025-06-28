@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from collections.abc import Sequence
 import pathlib
-from typing import Generic, TypeVar, TYPE_CHECKING
+from typing import Generic, TypeAlias, TypeVar, TYPE_CHECKING
 
 from pygame import Rect
 
@@ -17,8 +17,11 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
 
+    RectDict: TypeAlias = dict[MapKeyT, Rect]
+    DecoderFunction: TypeAlias = Callable[[TextIO], RectDict | None]
 
-def default_decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
+
+def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
     sprites: dict[str, Rect] = {}
     for line in sprite_map_file.readlines():
         key, value = line.split("=")
@@ -77,8 +80,8 @@ class SpriteMap(ABC, Generic[MapKeyT]):
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable | None = None
-    ) -> DictSpriteMap:
+        spritesheet_map_file: TextIO, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Creates a DictSpriteMap from the provided file.
         The decoder must take a file-like object, and return a dictionary with string
@@ -100,8 +103,8 @@ class SpriteMap(ABC, Generic[MapKeyT]):
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable | None = None
-    ) -> DictSpriteMap:
+        spritesheet_map_path: os.PathLike | str, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
         using a supplied decoder function.
@@ -165,17 +168,20 @@ class DictSpriteMap(SpriteMap[MapKeyT]):
     Version of SpriteMap that uses a dictionary of Rects. Can be generated from file.
     """
 
-    def __init__(self, string_dict: dict[MapKeyT, Rect]) -> None:
-        self._map = string_dict
+    def __init__(self, key_dict: RectDict | None) -> None:
+        if not key_dict:
+            key_dict = {}
+        self._map = key_dict
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable | None = None
-    ) -> DictSpriteMap:
+        spritesheet_map_file: TextIO,
+        decoder: DecoderFunction | None = None,
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Creates a DictSpriteMap from a text file, using a supplied decoder function.
-        The decoder must take a file-like object, and return a dictionary with string
-        keys and pygame rectangles as values.
+        The decoder must take a file-like object, and returns a dictionary with pygame
+        rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
         line, with no blank lines, and each line takes the form of "[key] = x y w h"
@@ -191,17 +197,17 @@ class DictSpriteMap(SpriteMap[MapKeyT]):
             decoder = default_decoder
 
         map_dict = decoder(spritesheet_map_file)
-        return DictSpriteMap(map_dict)
+        return DictSpriteMap[MapKeyT](map_dict)
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable | None = None
-    ) -> DictSpriteMap:
+        spritesheet_map_path: os.PathLike | str, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
         using a supplied decoder function.
-        The decoder must take a file-like object, and return a dictionary with string
-        keys and pygame rectangles as values.
+        The decoder must take a file-like object, and returns a dictionary with pygame
+        rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
         line, with no blank lines, and each line takes the form of "[key] = x y w h"
