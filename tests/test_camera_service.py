@@ -9,9 +9,9 @@ from pygame import Rect, Vector3
 if TYPE_CHECKING:
     from typing import TypeAlias
 
-    LocalCoords: TypeAlias = type[Vector3]
-    NDCCoords: TypeAlias = type[Vector3]
-    ZoomLevel: TypeAlias = type[float]
+    LocalCoords: TypeAlias = Vector3
+    NDCCoords: TypeAlias = Vector3
+    ZoomLevel: TypeAlias = float
 
 
 sys.path.append(str(pathlib.Path.cwd()))
@@ -31,7 +31,7 @@ class MockCamera:
     def __init__(self, projection: Projection) -> None:
         self.projection = projection
         self.transform: TransformComponent = TransformComponent(self)
-        self.zoom_level = 1
+        self.zoom_level: ZoomLevel = 1
         CameraService.add_camera(self)
 
 
@@ -52,15 +52,15 @@ class TestCameraService(unittest.TestCase):
     def test_local_to_ndc(self):
         test_params: list[tuple[OrthoProjection, LocalCoords, NDCCoords, ZoomLevel]] = [
             # Centered projection, center coords
-            (centered_projection, zero_vector, zero_vector),
+            (centered_projection, zero_vector, zero_vector, 1),
             # Centered projection, corner coords
-            (centered_projection, Vector3(-400, -300, 1), Vector3(-1, -1, 1)),
+            (centered_projection, Vector3(-400, -300, 1), Vector3(-1, -1, 1), 1),
             # 3/4 projection, local 0 coords
-            (three_quart_projection, zero_vector, Vector3(-0.5, -0.5, 0)),
+            (three_quart_projection, zero_vector, Vector3(-0.5, -0.5, 0), 1),
             # 3/4 projection, center coords
-            (three_quart_projection, Vector3(200, 150, 0), zero_vector),
+            (three_quart_projection, Vector3(200, 150, 0), zero_vector, 1),
             # 3/4 projection, corner coords
-            (three_quart_projection, Vector3(-200, -150, 0), Vector3(-1, -1, 0)),
+            (three_quart_projection, Vector3(-200, -150, 0), Vector3(-1, -1, 0), 1),
             # Centered projection, center coords, zoom level 2
             (centered_projection, zero_vector, zero_vector, 2),
             # Centered projection, corner coords, zoom level 2
@@ -85,15 +85,15 @@ class TestCameraService(unittest.TestCase):
     def test_ndc_to_local(self):
         test_params: list[tuple[OrthoProjection, NDCCoords, LocalCoords, ZoomLevel]] = [
             # Centered projection, center coords
-            (centered_projection, zero_vector, zero_vector),
+            (centered_projection, zero_vector, zero_vector, 1),
             # Centered projection, corner coords
-            (centered_projection, Vector3(-1, -1, 1), Vector3(-400, -300, 1)),
+            (centered_projection, Vector3(-1, -1, 1), Vector3(-400, -300, 1), 1),
             # 3/4 projection, local 0 coords
-            (three_quart_projection, Vector3(-0.5, -0.5, 0), zero_vector),
+            (three_quart_projection, Vector3(-0.5, -0.5, 0), zero_vector, 1),
             # 3/4 projection, center coords
-            (three_quart_projection, zero_vector, Vector3(200, 150, 0)),
+            (three_quart_projection, zero_vector, Vector3(200, 150, 0), 1),
             # 3/4 projection, corner coords
-            (three_quart_projection, Vector3(-1, -1, 0), Vector3(-200, -150, 0)),
+            (three_quart_projection, Vector3(-1, -1, 0), Vector3(-200, -150, 0), 1),
             # Centered projection, center coords, zoom level 2
             (centered_projection, zero_vector, zero_vector, 2),
             # Centered projection, corner coords, zoom level 2
