@@ -62,13 +62,13 @@ class TestRowColumnSpriteMap(unittest.TestCase):
 
         # Invalid key
         with self.assertRaises(TypeError):
-            sprite_map.get(True)
+            sprite_map.get(True)  # type:ignore[argument]
             # Not subscriptable, expected tuple
         with self.assertRaises(TypeError):
-            sprite_map.get("up")
+            sprite_map.get("up")  # type:ignore[argument]
             # Cannot use substrings for list indices
         with self.assertRaises(ValueError):
-            sprite_map.get("five")
+            sprite_map.get("five")  # type:ignore[argument]
             # Cannot unpack string that long
 
 
