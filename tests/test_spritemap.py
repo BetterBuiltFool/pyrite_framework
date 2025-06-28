@@ -123,13 +123,11 @@ class TestStringSpriteMap(unittest.TestCase):
 
         self.assertEqual(rect, rects["one"])
 
-        # Default Case
+        # Bad key
 
-        rect = sprite_map.get("Caboose")
+        with self.assertRaises(KeyError):
 
-        self.assertIsNone(rect)
-
-        # No error cases, though default likely will cause errors.
+            sprite_map.get("Caboose")
 
 
 if __name__ == "__main__":
