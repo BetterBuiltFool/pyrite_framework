@@ -49,14 +49,14 @@ class Component:
         return local_keys.intersection(*key_sets)
 
     @classmethod
-    def get(cls, key: Any) -> Self:
+    def get(cls, key: Any) -> Self | None:
         """
         Returns the component instance belonging to the key.
 
         :param key: The owning object of a component.
         :return: The component instance belonging to _key_, if extantit exists
         """
-        return cls.get_instances()[key]
+        return cls.get_instances().get(key)
 
     @classmethod
     def keys(cls) -> set[Any]:
