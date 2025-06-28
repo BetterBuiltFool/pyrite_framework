@@ -17,7 +17,7 @@ class MockSurface:
     A simple singleton object to fill in for a surface.
     """
 
-    _instance: MockSurface = None
+    _instance: Self
 
     def __new__(cls, *args, **kwds) -> Self:
         if not cls._instance:
