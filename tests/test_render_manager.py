@@ -10,6 +10,8 @@ from pygame.rect import Rect as Rect
 from pygame.surface import Surface as Surface
 from pygame.typing import Point
 
+from pyrite.types.camera import CameraBase
+
 
 sys.path.append(str(pathlib.Path.cwd()))
 
@@ -39,8 +41,8 @@ class MockRenderable(Renderable):
         self._layer = layer
         self.draw_index = draw_index
 
-    def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
-        return super().render(delta_time)
+    def render(self, delta_time: float, camera: CameraBase):
+        return super().render(delta_time, camera)
 
     def get_bounds(self) -> CullingBounds:
         return super().get_bounds()
@@ -109,7 +111,7 @@ class TestDefaultRenderManager(unittest.TestCase):
 
         # Renderable, no layer
         with make_renderable() as renderable:
-            self.assertIs(renderable.layer, None)
+            self.assertIs(renderable.layer, TEST_LAYER)
 
             self.render_manager.enable(renderable)
             self.assertIn(
