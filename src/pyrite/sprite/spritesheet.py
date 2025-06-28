@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from collections.abc import Sequence
 import pathlib
 import typing
 
@@ -151,7 +152,7 @@ class SimpleSpriteMap(SpriteMap):
         ]
         self.sprite_size = sprite_size
 
-    def get(self, key: tuple[int, int] | None) -> Rect:
+    def get(self, key: Sequence[int] | None) -> Rect:
         if key is None:
             key = (0, 0)
         row, column = key
