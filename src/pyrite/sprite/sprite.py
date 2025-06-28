@@ -11,7 +11,7 @@ from ..transform import transform_component as transform
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Camera, CullingBounds, TransformProtocol
+    from ..types import Camera, CullingBounds, TransformLike
     from ..transform import TransformComponent
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
@@ -27,7 +27,7 @@ class Sprite(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        local_transform: TransformProtocol | None = None,
+        local_transform: TransformLike | None = None,
         anchor: Anchor = AnchorPoint.CENTER,
         enabled=True,
         layer: Layer | None = None,

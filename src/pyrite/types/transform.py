@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 @runtime_checkable
-class TransformProtocol(Protocol):
+class TransformLike(Protocol):
 
     @property
     def position(self) -> Vector2: ...

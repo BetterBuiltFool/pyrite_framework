@@ -53,7 +53,7 @@ class Transform:
         self._scale = Vector2(new_scale)
 
     def __eq__(self, value: object) -> bool:
-        if not isinstance(value, transform.TransformProtocol):
+        if not isinstance(value, transform.TransformLike):
             return False
         return (
             value.position == self._position
@@ -66,7 +66,7 @@ class Transform:
 
     @staticmethod
     def generalize(
-        branch: transform.TransformProtocol, root: transform.TransformProtocol
+        branch: transform.TransformLike, root: transform.TransformLike
     ) -> Transform:
         """
         Applies a root transform to a local transform, converting it into the same
@@ -126,15 +126,15 @@ class Transform:
         rotated_position = scaled_position.rotate(-self.rotation)
         return self.position + rotated_position
 
-    def __mul__(self, other_transform: transform.TransformProtocol) -> Transform:
+    def __mul__(self, other_transform: transform.TransformLike) -> Transform:
         return Transform.generalize(other_transform, self)
 
-    def __rmul__(self, other_transform: transform.TransformProtocol) -> Transform:
+    def __rmul__(self, other_transform: transform.TransformLike) -> Transform:
         return Transform.generalize(self, other_transform)
 
     @staticmethod
     def localize(
-        branch: transform.TransformProtocol, root: transform.TransformProtocol
+        branch: transform.TransformLike, root: transform.TransformLike
     ) -> Transform:
         """
         Given two Transforms in the same relative space, finds the Transform local to

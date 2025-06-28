@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ..enum import Layer
     from ..types import (
         HasTransform,
-        TransformProtocol,
+        TransformLike,
     )
     from ..rendering.viewport import Viewport
     from pygame.typing import Point
@@ -25,7 +25,7 @@ class ChaseCamera(Entity, Camera):
         self,
         projection: Projection,
         position: Point = (0, 0),
-        transform: TransformProtocol | None = None,
+        transform: TransformLike | None = None,
         render_targets: Viewport | Sequence[Viewport] | None = None,
         layer_mask: tuple[Layer] | None = None,
         target: HasTransform | None = None,

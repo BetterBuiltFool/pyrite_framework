@@ -11,7 +11,7 @@ from ..transform import transform_component
 from ..types import Camera as CameraBase, Renderable
 
 if TYPE_CHECKING:
-    from ..types import CameraViewBounds, TransformProtocol
+    from ..types import CameraViewBounds, TransformLike
     from ..types.projection import Projection
     from ..types.render_target import RenderTarget
     from ..transform import Transform
@@ -24,7 +24,7 @@ class Camera(CameraBase):
         self,
         projection: Projection,
         position: Point = (0, 0),
-        transform: TransformProtocol | None = None,
+        transform: TransformLike | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
