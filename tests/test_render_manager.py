@@ -7,7 +7,6 @@ import unittest
 from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
-from pygame.surface import Surface as Surface
 
 
 sys.path.append(str(pathlib.Path.cwd()))
