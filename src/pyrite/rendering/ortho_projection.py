@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
+from pygame import Rect
 
 from ..types.projection import Projection
 
 if TYPE_CHECKING:
-    from pygame import Rect
     from pygame.typing import RectLike
 
 
