@@ -18,13 +18,16 @@ from src.pyrite.core.render_system import (  # noqa:E402
     _get_draw_index,
 )
 from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
-from src.pyrite.rendering import Renderable, OrthoProjection, RectBounds  # noqa:E402
+from src.pyrite.rendering import OrthoProjection, RectBounds  # noqa:E402
+from src.pyrite.rendering.base_renderable import BaseRenderable  # noqa:E402
 from src.pyrite.services import CameraService  # noqa:E402
 from src.pyrite.types import CullingBounds, Entity  # noqa:E402
 from src.pyrite.types.camera import CameraBase  # noqa:E402
 
+from src.pyrite.types.renderable import Renderable  # noqa:E402
 
-class MockRenderable(Renderable):
+
+class MockRenderable(BaseRenderable):
 
     def __init__(
         self,
@@ -181,7 +184,7 @@ class TestDefaultRenderManager(unittest.TestCase):
         self.maxDiff = None
         for layer, dict_elements in element_dict.items():
             render_elements = render_queue.get(layer, {})
-            renderables = render_elements.get(None, [])
+            renderables = render_elements.get(default_camera, [])
             self.assertListEqual(dict_elements, renderables)
 
         self.render_manager.renderables = {}
