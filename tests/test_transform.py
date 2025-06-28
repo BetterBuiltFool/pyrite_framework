@@ -20,7 +20,7 @@ class TestTransform(unittest.TestCase):
 
         local_transform = Transform((5, 0), 0, (1, 1))
 
-        modified = local_transform.generalize(world_transform)
+        modified = Transform.generalize(local_transform, world_transform)
 
         expected = Transform((10, 0), 90, (2, 2))
 
@@ -66,7 +66,7 @@ class TestTransform(unittest.TestCase):
         branch_transform = Transform((10, 0), 90, (2, 2))
 
         expected = Transform((5, 0), 0, (1, 1))
-        modified = branch_transform.localize(root_transform)
+        modified = Transform.localize(branch_transform, root_transform)
 
         # Literally just the inverse of generalize()
 
