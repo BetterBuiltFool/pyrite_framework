@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 import pathlib
 import sys
 import unittest
@@ -23,7 +24,9 @@ class TestSpriteSheet(unittest.TestCase):
 
     def setUp(self) -> None:
         sprite_map = SimpleSpriteMap(8, 8, (8, 8))
-        self.spritesheet = SpriteSheet(test_image, sprite_map, start_state=(0, 0))
+        self.spritesheet = SpriteSheet[Sequence[int]](
+            test_image, sprite_map, start_state=(0, 0)
+        )
 
     def test_get_subsurface(self):
         key = (1, 1)
