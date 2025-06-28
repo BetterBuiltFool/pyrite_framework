@@ -61,7 +61,11 @@ class TestInstanceEvent(unittest.TestCase):
 
         self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
+        callables = self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+
+        assert callables is not None
+
+        self.assertIn(test_dummy, callables)
 
     def test_deregister(self):
 
@@ -70,13 +74,19 @@ class TestInstanceEvent(unittest.TestCase):
 
         self.test_object.OnTestEvent1._register(SENTINEL, test_dummy)
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
+        callables = self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+
+        assert callables is not None
+
+        self.assertIn(test_dummy, callables)
 
         self.test_object.OnTestEvent1._deregister(test_dummy)
 
-        self.assertNotIn(
-            test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL)
-        )
+        callables = self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+
+        assert callables is not None
+
+        self.assertNotIn(test_dummy, callables)
 
     def test_add_listener(self):
 
@@ -84,7 +94,11 @@ class TestInstanceEvent(unittest.TestCase):
         def test_dummy(param1: bool):
             pass
 
-        self.assertIn(test_dummy, self.test_object.OnTestEvent1.listeners.get(SENTINEL))
+        callables = self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+
+        assert callables is not None
+
+        self.assertIn(test_dummy, callables)
 
         event1 = self.test_object.OnTestEvent1
 
@@ -108,14 +122,18 @@ class TestInstanceEvent(unittest.TestCase):
 
         event1.add_listener(test_item_2.test_method)
 
+        callables = self.test_object.OnTestEvent1.listeners.get(SENTINEL)
+
+        assert callables is not None
+
         self.assertIn(
             test_item_2.test_method,
-            self.test_object.OnTestEvent1.listeners.get(SENTINEL),
+            callables,
             # Bound methods go under SENTINEL
         )
         self.assertNotIn(
             test_item_3.test_method,
-            self.test_object.OnTestEvent1.listeners.get(SENTINEL),
+            callables,
         )
 
     def test_notify(self):
