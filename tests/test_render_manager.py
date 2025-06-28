@@ -19,16 +19,22 @@ from src.pyrite.core.render_system import (  # noqa:E402
     DefaultRenderManager,
     _get_draw_index,
 )
-from src.pyrite.types.renderable import Renderable  # noqa:E402
+from src.pyrite.rendering import Renderable  # noqa:E402
 from src.pyrite.types.entity import Entity  # noqa:E402
 
 # from src.pyrite.types._base_type import _BaseType  # noqa:E402
+
+TEST_LAYER = Layer(0)
 
 
 class MockRenderable(Renderable):
 
     def __init__(
-        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
+        self,
+        game_instance=None,
+        enabled=True,
+        layer: Layer = TEST_LAYER,
+        draw_index=-1,
     ) -> None:
         self._layer = layer
         self.draw_index = draw_index
