@@ -8,34 +8,31 @@ from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
 from pygame.surface import Surface as Surface
-from pygame.typing import Point
-
-from pyrite.types.camera import CameraBase
 
 
 sys.path.append(str(pathlib.Path.cwd()))
 
-from pyrite.types import CullingBounds  # noqa:E402
-from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
+from src.pyrite.camera import Camera  # noqa:E402
 from src.pyrite.core.render_system import (  # noqa:E402
     DefaultRenderManager,
     _get_draw_index,
 )
-from src.pyrite.rendering import Renderable  # noqa:E402
-from src.pyrite.types.entity import Entity  # noqa:E402
-
-# from src.pyrite.types._base_type import _BaseType  # noqa:E402
+from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
+from src.pyrite.rendering import Renderable, OrthoProjection, RectBounds  # noqa:E402
+from src.pyrite.services import CameraService  # noqa:E402
+from src.pyrite.types import CullingBounds, Entity  # noqa:E402
+from src.pyrite.types.camera import CameraBase  # noqa:E402
 
 
 class MockRenderable(Renderable):
 
     def __init__(
         self,
-        game_instance=None,
         enabled=True,
         layer: Layer = RenderLayers.MIDGROUND,
         draw_index=-1,
     ) -> None:
+        self._enabled = enabled
         self._layer = layer
         self.draw_index = draw_index
 
@@ -43,7 +40,7 @@ class MockRenderable(Renderable):
         return super().render(delta_time, camera)
 
     def get_bounds(self) -> CullingBounds:
-        return super().get_bounds()
+        return RectBounds(Rect(-1024, -1024, 2048, 2048))
 
 
 class MockEntity(Entity):
@@ -176,6 +173,9 @@ class TestDefaultRenderManager(unittest.TestCase):
         ]
         for renderable in all_elements:
             self.render_manager.enable(renderable)
+
+        default_camera = Camera(OrthoProjection((0, 0, 100, 100)))
+        CameraService._default_camera = default_camera
 
         render_queue = self.render_manager.generate_render_queue()
         self.maxDiff = None
