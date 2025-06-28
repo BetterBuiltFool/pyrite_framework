@@ -26,8 +26,6 @@ from src.pyrite.types.entity import Entity  # noqa:E402
 
 # from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
-TEST_LAYER = Layer(0)
-
 
 class MockRenderable(Renderable):
 
@@ -35,7 +33,7 @@ class MockRenderable(Renderable):
         self,
         game_instance=None,
         enabled=True,
-        layer: Layer = TEST_LAYER,
+        layer: Layer = RenderLayers.MIDGROUND,
         draw_index=-1,
     ) -> None:
         self._layer = layer
@@ -111,7 +109,6 @@ class TestDefaultRenderManager(unittest.TestCase):
 
         # Renderable, no layer
         with make_renderable() as renderable:
-            self.assertIs(renderable.layer, TEST_LAYER)
 
             self.render_manager.enable(renderable)
             self.assertIn(
