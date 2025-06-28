@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pathlib
 import sys
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector3
@@ -18,6 +18,7 @@ sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.services import CameraService  # noqa:E402
 from src.pyrite.rendering import OrthoProjection  # noqa: E402
 from src.pyrite.types.projection import Projection  # noqa:E402
+from src.pyrite.types.camera import CameraBase  # noqa:E402
 from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 
 
@@ -28,11 +29,14 @@ zero_vector = Vector3(0, 0, 0)
 
 class MockCamera:
 
+    def __new__(cls, *args, **kwds) -> CameraBase:
+        return cast(CameraBase, super().__new__(cls))
+
     def __init__(self, projection: Projection) -> None:
         self.projection = projection
         self.transform: TransformComponent = TransformComponent(self)
         self.zoom_level: ZoomLevel = 1
-        CameraService.add_camera(self)
+        CameraService.add_camera(cast(CameraBase, self))
 
 
 class TestCameraService(unittest.TestCase):
