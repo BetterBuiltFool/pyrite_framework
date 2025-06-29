@@ -1,33 +1,40 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
+from weakref import ref, WeakKeyDictionary
+
+from ..types import Component
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping
     from typing import Any, Self
-    from weakref import WeakKeyDictionary
 
 
-class Component(ABC):
+class BaseComponent(Component):
     """
     Components are objects that mark other object with attributes. Components can be
     intersected with other components to get a set of shared key objects.
     """
 
-    instances: WeakKeyDictionary[Any, Self]
+    def __init_subclass__(cls) -> None:
+        cls.instances = WeakKeyDictionary()
+
+    def __new__(cls, owner: Any, *args, **kwds):
+        new_component = super().__new__(cls)
+        cls.instances.update({owner: new_component})
+        return new_component
+
+    def __init__(self, owner: Any) -> None:
+        self._owner = ref(owner)
 
     @property
-    @abstractmethod
     def owner(self) -> Any:
         """
         The owning object for the component.
         Property returns a strong reference.
         """
-        ...
+        return self._owner()
 
     @classmethod
-    @abstractmethod
     def intersect(cls, *component_types: type[Component]) -> set[Any]:
         """
         Generates a set of keys that are shared between the component and the supplied
@@ -36,10 +43,14 @@ class Component(ABC):
         :component_types: Any number of component classes.
         :return: A set of objects that exist as keys for all involved components.
         """
-        ...
+
+        key_sets = (
+            set(component_type.instances.keys()) for component_type in component_types
+        )
+        local_keys = set(cls.instances.keys())
+        return local_keys.intersection(*key_sets)
 
     @classmethod
-    @abstractmethod
     def get(cls, key: Any) -> Self | None:
         """
         Returns the component instance belonging to the key.
@@ -47,28 +58,40 @@ class Component(ABC):
         :param key: The owning object of a component.
         :return: The component instance belonging to _key_, if extantit exists
         """
-        ...
+        return cls.get_instances().get(key)
 
     @classmethod
-    @abstractmethod
-    def keys(cls) -> set[Any]: ...
+    def keys(cls) -> set[Any]:
+        return set(cls.instances.keys())
 
     @classmethod
-    @abstractmethod
     def remove_from(cls, key: Any):
         """
         Removes the component instance belonging to _key_, if it exists.
 
         :param key: The owning object of a component.
         """
-        ...
+        component = cls.instances.pop(key, None)
+        if component is not None:
+            cls._purge_component(component)
 
     @classmethod
-    @abstractmethod
-    def get_instances(cls) -> Mapping[Any, Self]:
+    def _purge_component(cls, component: Self):
+        """
+        Method for cleaning up a component's data when the component is used.
+        If the data is simple, a weak key dictionary with the components as keys may be
+        sufficient, but for complex data storage (i.e. numpy arrays as storage), it may
+        be necessary to implement this for a subclass.
+
+        :param component: The component instance to be purged.
+        """
+        pass
+
+    @classmethod
+    def get_instances(cls) -> dict[Any, Self]:
         """
         Gives a dictionary of all component instances and their owners.
 
         :return: The component's instance collection, as a dictionary.
         """
-        ...
+        return dict(cls.instances)
