@@ -24,6 +24,7 @@ from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 if TYPE_CHECKING:
     WorldTransform: TypeAlias = Transform
     LocalTransform: TypeAlias = Transform
+    EyeTransform: TypeAlias = Transform
 
 
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
@@ -149,46 +150,45 @@ class TestCameraService(unittest.TestCase):
         for params in test_params:
             self.to_local(*params)
 
+    def to_eye(
+        self,
+        projection: Projection,
+        local_transform: LocalTransform,
+        expected: EyeTransform,
+        zoom_level: ZoomLevel = 1,
+    ):
+        test_cam = MockCamera(projection)
+        test_cam.zoom_level = zoom_level
+
+        eye_transform = CameraService.to_eye(test_cam, local_transform)
+
+        self.assertEqual(eye_transform, expected)
+
     def test_to_eye(self):
 
-        projection = OrthoProjection(Rect(-200, -150, 800, 600))
+        test_params: list[
+            tuple[Projection, LocalTransform, EyeTransform, ZoomLevel]
+        ] = [
+            # 3/4 projection, local 0 coords
+            (
+                three_quart_projection,
+                zero_transform,
+                Transform((200, 150), 0, (1, 1)),
+                1,
+            ),
+            # 3/4 projection, counter local coords
+            (
+                three_quart_projection,
+                Transform((-200, -150), 0, (1, 1)),
+                zero_transform,
+                1,
+            ),
+            # Centered projection, off center camera, origin test transform
+            (centered_projection, zero_transform, zero_transform, 1),
+        ]
 
-        assert projection.far_plane.center == (200, 150)
-
-        # 3/4 projection, local 0 coords
-        test_cam = MockCamera(projection)
-
-        local_transform = Transform((0, 0), 0, (0, 0))
-
-        eye_transform = CameraService.to_eye(test_cam, local_transform)
-
-        expected = Transform((200, 150), 0, (0, 0))
-
-        self.assertEqual(eye_transform, expected)
-
-        # 3/4 projection, counter local coords
-
-        local_transform = Transform((-200, -150), 0, (0, 0))
-
-        eye_transform = CameraService.to_eye(test_cam, local_transform)
-
-        expected = Transform((0, 0), 0, (0, 0))
-
-        self.assertEqual(eye_transform, expected)
-
-        # Centered projection, off center camera, origin test transform
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
-
-        assert projection.far_plane.center == (0, 0)
-        test_cam.projection = projection
-
-        local_transform = Transform((0, 0), 0, (0, 0))
-
-        eye_transform = CameraService.to_eye(test_cam, local_transform)
-
-        expected = Transform((0, 0), 0, (0, 0))
-
-        self.assertEqual(eye_transform, expected)
+        for params in test_params:
+            self.to_eye(*params)
 
     def test_to_world(self):
         # Centered projection, both default transform
