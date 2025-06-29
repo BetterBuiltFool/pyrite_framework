@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from ..types.instance_event import InstanceEvent  # noqa:F401
+
+from .instance_event import BaseInstanceEvent as InstanceEvent
 
 if TYPE_CHECKING:
     from ..physics.collider_component import ColliderComponent
