@@ -21,10 +21,15 @@ from src.pyrite.types.projection import Projection  # noqa:E402
 from src.pyrite.types.camera import CameraBase  # noqa:E402
 from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 
+if TYPE_CHECKING:
+    WorldTransform: TypeAlias = Transform
+    LocalTransform: TypeAlias = Transform
+
 
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
 three_quart_projection = OrthoProjection(Rect(-200, -150, 800, 600))
 zero_vector = Vector3(0, 0, 0)
+zero_transform = Transform((0, 0), 0, (0, 0))
 
 
 class MockCamera:
@@ -107,38 +112,41 @@ class TestCameraService(unittest.TestCase):
         for params in test_params:
             self.ndc_to_local(*params)
 
+    def to_local(
+        self,
+        camera_transform: WorldTransform,
+        world_transform: WorldTransform,
+        expected: LocalTransform,
+    ):
+        test_cam = MockCamera(centered_projection)
+        test_cam.transform.position = camera_transform.position
+        test_cam.transform.rotation = camera_transform.rotation
+        test_cam.transform.scale = camera_transform.scale
+        local_transform = CameraService.to_local(test_cam, world_transform)
+
+        self.assertEqual(local_transform, expected)
+
     def test_to_local(self):
-        # Centered projection, both default transform
-        projection = OrthoProjection(Rect(-400, -300, 800, 600))
-        test_cam = MockCamera(projection)
 
-        world_transform = Transform((0, 0), 0, (0, 0))
+        test_params: list[tuple[WorldTransform, WorldTransform, LocalTransform]] = [
+            # Both default transform
+            (zero_transform, zero_transform, zero_transform),
+            # Default camera, Different test position,
+            (
+                zero_transform,
+                Transform((10, 0), 0, (0, 0)),
+                Transform((10, 0), 0, (0, 0)),
+            ),
+            # Default camera, Different test position, rotation,
+            (
+                zero_transform,
+                Transform((10, 0), 90, (0, 0)),
+                Transform((10, 0), 90, (0, 0)),
+            ),
+        ]
 
-        local_transform = CameraService.to_local(test_cam, world_transform)
-
-        expected = Transform((0, 0), 0, (0, 0))
-
-        self.assertEqual(local_transform, expected)
-
-        # Centered Projection, Default camera, Different test position,
-
-        world_transform = Transform((10, 0), 0, (0, 0))
-
-        local_transform = CameraService.to_local(test_cam, world_transform)
-
-        expected = Transform((10, 0), 0, (0, 0))
-
-        self.assertEqual(local_transform, expected)
-
-        # Centered Projection, Default camera, Different test position, rotation,
-
-        world_transform = Transform((10, 0), 90, (0, 0))
-
-        local_transform = CameraService.to_local(test_cam, world_transform)
-
-        expected = Transform((10, 0), 90, (0, 0))
-
-        self.assertEqual(local_transform, expected)
+        for params in test_params:
+            self.to_local(*params)
 
     def test_to_eye(self):
 
