@@ -5,7 +5,7 @@ import unittest
 from weakref import WeakKeyDictionary
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.types import Component  # noqa:E402
+from src.pyrite.component import Component  # noqa:E402
 
 
 class ComponentA(Component):

@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
 from functools import singledispatchmethod
-from typing import Any, Generic, TypeVar
-from weakref import ref, WeakKeyDictionary
+from typing import Generic, TypeVar, TYPE_CHECKING
 
-# This is NOT the standard library threading module.
-from ..utils import threading
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from typing import Any
 
 
 T = TypeVar("T")
-E = TypeVar("E", bound="InstanceEvent")
 
 
 class _Sentinel:
@@ -47,24 +45,8 @@ class InstanceEvent(ABC, Generic[T]):
     Instance event classes should start with "On" to convey that they are events.
     """
 
-    def __init__(self, instance: T) -> None:
-        """
-        Creates a new instance of the Instance Event.
-
-        :param instance: The object the instance event is tied to. This allows access
-        to the owning instance if needed.
-        """
-        self._instance = ref(instance)
-        self.listeners: WeakKeyDictionary[Any, list[Callable]] = WeakKeyDictionary()
-        """
-        A set containing all listeners for this event instance.
-
-        TODO: Consider who should be responsible for tracking listeners.
-        Currently, the object creating the listener is responsible, with this set only
-        being for calling them.
-        """
-
     @property
+    @abstractmethod
     def instance(self) -> T | None:
         """
         The owning instance of the event.
@@ -72,14 +54,13 @@ class InstanceEvent(ABC, Generic[T]):
         Weakly stored to so garbage collection can happen normally, but this property
         allows direct access to the instance as long as it still exists.
         """
-        # Provides dereferenced access to the owning instance
-        return self._instance()
+        ...
 
     @abstractmethod
-    def __call__(self, *args: Any, **kwds: Any) -> None:
-        self._notify(*args, **kwds)
+    def __call__(self, *args: Any, **kwds: Any) -> None: ...
 
     @singledispatchmethod
+    @abstractmethod
     def add_listener(self, arg) -> Callable:
         """
         Adds a function, method, or other callable to this InstanceEvent's listeners.
@@ -143,62 +124,4 @@ class InstanceEvent(ABC, Generic[T]):
 
         :return: The original listener, to be available for reuse and access.
         """
-        raise NotImplementedError("Argument type not supported")
-
-    @add_listener.register(Callable)  # type: ignore
-    def _(self, listener: Callable) -> Callable:
-        self._register(SENTINEL, listener)
-        return listener
-
-    @add_listener.register(object)
-    def _(self, caller: object) -> Callable:
-
-        def inner(listener: Callable):
-            self._register(caller, listener)
-            return listener
-
-        return inner
-
-    def _register(self, caller, listener: Callable):
-        listeners = self.listeners.setdefault(caller, [])
-        # TODO Test if method, keep methods and function in two different sets?
-        listeners.append(listener)
-
-    def _deregister(self, listener: Callable):
-        for caller, listeners in self.listeners.items():
-            if listener in listeners:
-                listeners.remove(listener)
-                # Note: if a listener managed to get in there multiple times,
-                # this will only remove one occurence.
-                # If that happens, though, something went horribly wrong.
-                # See you in 2 years!
-                break
-
-    def _notify(self, *args, **kwds):
-        """
-        Calls all registered listeners, passing along the args and kwds.
-        This is never called directly, the instance event subclass will have its own
-        defined call method that defines its parameters, which are passed on to the
-        listeners.
-        """
-
-        # Decision was made for all instance event listeners to be async.
-        # The risk of race conditions is inevitable, and while synchronous calls can't
-        # technically form race conditions, the fact that they can be called at any
-        # time means it's always possible to have even a sync event make a change at an
-        # unexpected time, mirorring a race condition.
-
-        # Threads also adds the benefit of an exception not necessarily crashing the
-        # entire game, just the thread.
-
-        # TODO If there is demand for sync listeners, make them the exception, not the
-        # rule. Add a separate list and registration method for those.
-        for caller, listeners in self.listeners.items():
-            # The pyrite threading module can be set to run regular threads or asyncio
-            # threads.
-            if caller is not SENTINEL:
-                for listener in listeners:
-                    threading.start_thread(listener, *(caller, *args))
-                continue
-            for listener in listeners:
-                threading.start_thread(listener, *args)
+        ...
