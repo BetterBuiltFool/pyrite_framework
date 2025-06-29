@@ -188,3 +188,6 @@ class Transform:
         translated_position = position - self.position
         rotated_position = translated_position.rotate(self.rotation)
         return rotated_position / self.scale.elementwise()
+
+    def __repr__(self) -> str:
+        return f"Transform({self.position}, {self.rotation}, {self.scale})"
