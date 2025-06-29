@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
 three_quart_projection = OrthoProjection(Rect(-200, -150, 800, 600))
 zero_vector = Vector3(0, 0, 0)
-zero_transform = Transform((0, 0), 0, (0, 0))
+zero_transform = Transform((0, 0), 0, (1, 1))
 
 
 class MockCamera:
@@ -119,14 +119,17 @@ class TestCameraService(unittest.TestCase):
         expected: LocalTransform,
     ):
         test_cam = MockCamera(centered_projection)
-        test_cam.transform.position = camera_transform.position
-        test_cam.transform.rotation = camera_transform.rotation
-        test_cam.transform.scale = camera_transform.scale
+        test_cam.transform.world_position = camera_transform.position
+        test_cam.transform.world_rotation = camera_transform.rotation
+        test_cam.transform.world_scale = camera_transform.scale
+
         local_transform = CameraService.to_local(test_cam, world_transform)
 
         self.assertEqual(local_transform, expected)
 
     def test_to_local(self):
+        shifted_pos_transform = Transform((10, 0), 0, (1, 1))
+        shifted_post_rot_transform = Transform((10, 0), 90, (1, 1))
 
         test_params: list[tuple[WorldTransform, WorldTransform, LocalTransform]] = [
             # Both default transform
@@ -134,15 +137,13 @@ class TestCameraService(unittest.TestCase):
             # Default camera, Different test position,
             (
                 zero_transform,
-                Transform((10, 0), 0, (0, 0)),
-                Transform((10, 0), 0, (0, 0)),
+                shifted_pos_transform,
+                shifted_pos_transform,
             ),
             # Default camera, Different test position, rotation,
-            (
-                zero_transform,
-                Transform((10, 0), 90, (0, 0)),
-                Transform((10, 0), 90, (0, 0)),
-            ),
+            (zero_transform, shifted_post_rot_transform, shifted_post_rot_transform),
+            # Shifted camera, Default test position
+            (shifted_pos_transform, zero_transform, Transform((-10, 0), 0, (1, 1))),
         ]
 
         for params in test_params:
