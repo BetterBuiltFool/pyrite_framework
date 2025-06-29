@@ -4,9 +4,10 @@ from typing import Any, TYPE_CHECKING
 
 from pygame import Vector2
 
+from ..component import Component
 from .transform import Transform
 from ..services import TransformService
-from ..types import Component, TransformLike
+from ..types import TransformLike
 
 
 if TYPE_CHECKING:

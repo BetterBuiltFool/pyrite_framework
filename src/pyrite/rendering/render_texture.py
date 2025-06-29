@@ -4,7 +4,8 @@ from typing import cast, TYPE_CHECKING
 
 from pygame import Rect, Surface
 
-from ..types import Component, HasTexture
+from ..component import Component
+from ..types import HasTexture
 
 if TYPE_CHECKING:
     from pygame.typing import Point

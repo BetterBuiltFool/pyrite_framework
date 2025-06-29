@@ -10,7 +10,7 @@ from ..constants import COMPONENT_TYPE
 from ..events import OnSeparate, OnTouch, WhileTouching
 from .rigidbody_component import RigidbodyComponent
 from ..services import PhysicsService
-from ..types import Component
+from ..component import Component
 
 if TYPE_CHECKING:
     from pymunk import Shape

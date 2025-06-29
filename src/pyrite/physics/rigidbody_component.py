@@ -6,7 +6,7 @@ from weakref import ref
 from pymunk import Body
 
 from ..transform import TransformComponent
-from ..types import Component
+from ..component import Component
 from ..services import PhysicsService
 
 if TYPE_CHECKING:

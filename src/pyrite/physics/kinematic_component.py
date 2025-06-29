@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from pygame import Vector2
 
-from ..types import Component
+from ..component import Component
 from .rigidbody_component import RigidbodyComponent
 
 if TYPE_CHECKING:
