@@ -8,6 +8,7 @@ from .game import (  # noqa: F401
 )
 
 from .camera import Camera, ChaseCamera  # noqa: F401
+from .entity import Entity  # noqa:F401
 from .enum import RenderLayers, AnchorPoint  # noqa: F401
 from .physics import (  # noqa: F401
     ColliderComponent,
@@ -19,4 +20,3 @@ from .sprite.sprite import Sprite  # noqa: F401
 from .sprite.spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .systems import System  # noqa: F401
 from .transform import Transform, TransformComponent  # noqa: F401
-from .types.entity import Entity  # noqa:F401

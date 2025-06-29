@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from .camera import Camera
-from ..types.entity import Entity
+from ..entity import Entity
 
 from pygame import Vector2
 
