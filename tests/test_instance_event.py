@@ -5,7 +5,8 @@ from weakref import WeakKeyDictionary
 
 
 sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.types.instance_event import InstanceEvent, SENTINEL  # noqa:E402
+from src.pyrite.events import InstanceEvent  # noqa:E402
+from src.pyrite.events.instance_event import SENTINEL  # noqa:E402
 from src.pyrite.utils import threading  # noqa:E402
 
 
