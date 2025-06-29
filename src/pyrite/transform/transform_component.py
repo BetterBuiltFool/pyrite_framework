@@ -113,6 +113,9 @@ class TransformComponent(Component):
         """
         return TransformService.get_world(self)
 
+    def __str__(self) -> str:
+        return f"Local: {self.raw()}, World: {self.world()}"
+
 
 def from_transform(owner: Any, transform: TransformLike) -> TransformComponent:
     """
