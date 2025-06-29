@@ -12,11 +12,13 @@ class RenderTarget(Protocol):
         """
         Gets the surface to be drawn to.
         """
+        ...
 
     def get_target_rect(self) -> Rect:
         """
         Gets the Rect that represents the surface space of the RenderTarget.
         """
+        ...
 
     @property
     def crop(self) -> bool:
@@ -24,3 +26,4 @@ class RenderTarget(Protocol):
         Determines if the rendering should be cropped or not.
         If False, the rendering will be scaled to fit the target.
         """
+        ...

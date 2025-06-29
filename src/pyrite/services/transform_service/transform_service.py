@@ -21,7 +21,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_local_position(self, component: TransformComponent) -> Point:
+    def get_local_position(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -29,7 +29,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_local_scale(self, component: TransformComponent) -> Point:
+    def get_local_scale(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -41,7 +41,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def set_local_rotation(self, component: TransformComponent, angle: Point):
+    def set_local_rotation(self, component: TransformComponent, angle: float):
         pass
 
     @abstractmethod
@@ -53,7 +53,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_world_position(self, component: TransformComponent) -> Point:
+    def get_world_position(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -61,7 +61,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_world_scale(self, component: TransformComponent) -> Point:
+    def get_world_scale(self, component: TransformComponent) -> Vector2:
         pass
 
     @abstractmethod
@@ -73,7 +73,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def set_world_rotation(self, component: TransformComponent, angle: Point):
+    def set_world_rotation(self, component: TransformComponent, angle: float):
         pass
 
     @abstractmethod
@@ -115,43 +115,43 @@ class DefaultTransformService(TransformService):
             target_service.initialize_component(component, transform)
 
     def get_local(self, component: TransformComponent) -> Transform:
-        return self.local_transforms.get(component)
+        return self.local_transforms[component]
 
-    def get_local_position(self, component: TransformComponent) -> Point:
-        return self.local_transforms.get(component).position
+    def get_local_position(self, component: TransformComponent) -> Vector2:
+        return self.local_transforms[component].position
 
     def get_local_rotation(self, component: TransformComponent) -> float:
-        return self.local_transforms.get(component).rotation
+        return self.local_transforms[component].rotation
 
-    def get_local_scale(self, component: TransformComponent) -> Point:
-        return self.local_transforms.get(component).scale
+    def get_local_scale(self, component: TransformComponent) -> Vector2:
+        return self.local_transforms[component].scale
 
     def set_local(self, component: TransformComponent, value: Transform):
         self.local_transforms.update({component: value})
 
     def set_local_position(self, component: TransformComponent, position: Point):
         self.dirty_components.add(component)
-        self.local_transforms.get(component).position = Vector2(position)
+        self.local_transforms[component].position = Vector2(position)
 
-    def set_local_rotation(self, component: TransformComponent, angle: Point):
+    def set_local_rotation(self, component: TransformComponent, angle: float):
         self.dirty_components.add(component)
-        self.local_transforms.get(component).rotation = angle
+        self.local_transforms[component].rotation = angle
 
     def set_local_scale(self, component: TransformComponent, scale: Point):
         self.dirty_components.add(component)
-        self.local_transforms.get(component).scale = Vector2(scale)
+        self.local_transforms[component].scale = Vector2(scale)
 
     def get_world(self, component: TransformComponent) -> Transform:
-        return self.world_transforms.get(component)
+        return self.world_transforms[component]
 
-    def get_world_position(self, component: TransformComponent) -> Point:
-        return self.world_transforms.get(component).position
+    def get_world_position(self, component: TransformComponent) -> Vector2:
+        return self.world_transforms[component].position
 
     def get_world_rotation(self, component: TransformComponent) -> float:
-        return self.world_transforms.get(component).rotation
+        return self.world_transforms[component].rotation
 
-    def get_world_scale(self, component: TransformComponent) -> Point:
-        return self.world_transforms.get(component).scale
+    def get_world_scale(self, component: TransformComponent) -> Vector2:
+        return self.world_transforms[component].scale
 
     def set_world(self, component: TransformComponent, value: Transform):
         # TODO Force update local
@@ -159,15 +159,15 @@ class DefaultTransformService(TransformService):
 
     def set_world_position(self, component: TransformComponent, position: Point):
         # TODO Force update local
-        self.world_transforms.get(component).position = Vector2(position)
+        self.world_transforms[component].position = Vector2(position)
 
-    def set_world_rotation(self, component: TransformComponent, angle: Point):
+    def set_world_rotation(self, component: TransformComponent, angle: float):
         # TODO Force update local
-        self.world_transforms.get(component).rotation = angle
+        self.world_transforms[component].rotation = angle
 
     def set_world_scale(self, component: TransformComponent, scale: Point):
         # TODO Force update local
-        self.world_transforms.get(component).scale = Vector2(scale)
+        self.world_transforms[component].scale = Vector2(scale)
 
     def is_dirty(self, component: TransformComponent) -> bool:
         return component in self.dirty_components

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable, TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 
 from .bounds import CullingBounds  # noqa: F401
-from .camera import CameraBase  # noqa: F401
+from .camera import CameraBase as Camera  # noqa: F401
 from .component import Component  # noqa: F401
 from .debug_renderer import DebugRenderer  # noqa: F401
 from .entity import Entity  # noqa: F401
@@ -11,30 +11,16 @@ from .projection import Projection  # noqa: F401
 from .renderable import Renderable  # noqa: F401
 from .renderer import Renderer  # noqa: F401
 from .system import System  # noqa: F401
-from .transform import TransformProtocol  # noqa:F401
+from .transform import TransformLike  # noqa:F401
 from .view_bounds import CameraViewBounds  # noqa: F401
 
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import SequenceLike
-    from ..transform import Transform
 
     Point3D = SequenceLike[float]
 
 import pygame
-
-
-@runtime_checkable
-class Container(Protocol):
-    """
-    An object that can forward Entities and Renderables to the active EntityManager and
-    RenderManager for enabling and disabling.
-    """
-
-    container: Container
-    """
-    A Container for the container. Needs to loop back into the game class eventually.
-    """
 
 
 class HasPosition(Protocol):
@@ -49,18 +35,17 @@ class HasPosition(Protocol):
 
 
 class HasTransform(Protocol):
-    transform: Transform
+
+    @property
+    def transform(self) -> TransformLike: ...
+
+    @transform.setter
+    def transform(self, value: TransformLike): ...
 
 
 class HasTexture(Protocol):
-
-    @property
-    def texture(self) -> Surface:
-        pass
-
-    @property
-    def is_dirty(self) -> bool:
-        pass
+    texture: Surface
+    is_dirty: bool
 
 
 class CanUpdate(Protocol):

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from functools import singledispatchmethod
-from typing import Any, TypeVar
+from typing import Any, Generic, TypeVar
 from weakref import ref, WeakKeyDictionary
 
 # This is NOT the standard library threading module.
@@ -22,7 +22,7 @@ class _Sentinel:
 SENTINEL = _Sentinel()
 
 
-class InstanceEvent(ABC):
+class InstanceEvent(ABC, Generic[T]):
     """
     Events that are bound to an instance of an object. They accumulate listeners, which
     respond when the event fires.
@@ -145,7 +145,7 @@ class InstanceEvent(ABC):
         """
         raise NotImplementedError("Argument type not supported")
 
-    @add_listener.register(Callable)
+    @add_listener.register(Callable)  # type: ignore
     def _(self, listener: Callable) -> Callable:
         self._register(SENTINEL, listener)
         return listener

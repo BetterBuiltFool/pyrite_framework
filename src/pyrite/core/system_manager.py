@@ -2,20 +2,20 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from typing import Self, TYPE_CHECKING, TypeVar
+from typing import cast, Self, TYPE_CHECKING, TypeVar
 from weakref import WeakSet
 
+from ..types.system import System
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from ..types.system import System
+    from collections.abc import Iterable
     from pygame import Event
 
 
-SystemType = TypeVar("SystemType")
+SystemType = TypeVar("SystemType", bound=System)
 
 
-_active_system_manager: SystemManager = None
+_active_system_manager: SystemManager
 
 
 def get_system_manager() -> SystemManager:
@@ -231,11 +231,16 @@ class DefaultSystemManager(SystemManager):
             self.systems.update({system.__class__: system})
 
     def get_system(self, system_type: type[SystemType]) -> SystemType | None:
-        return self.systems.get(system_type)
+        system = self.systems.get(system_type)
+        if system is not None:
+            system = cast(SystemType, system)
+        return system
 
     def remove_system(self, system_type: type[SystemType]) -> SystemType:
         system = self.systems.pop(system_type)
         self.active_systems.discard(system)
+        if system is not None:
+            system = cast(SystemType, system)
         return system
 
     def prepare_systems(self):
@@ -265,7 +270,7 @@ class DefaultSystemManager(SystemManager):
         for system in self.current_systems:
             system.on_event(event)
 
-    def sort_systems(self, systems: Sequence[System]) -> list[System]:
+    def sort_systems(self, systems: Iterable[System]) -> list[System]:
         """
         Converts the incoming sequence to a sorted list, where the order goes as
         follows:

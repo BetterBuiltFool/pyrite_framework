@@ -17,7 +17,7 @@ class Viewport:
 
     _viewports: dict[Any, Viewport] = {}
 
-    DEFAULT: Viewport = None
+    DEFAULT: Viewport
 
     def __init__(self, relative_rect: FRect | RectLike) -> None:
         self._relative_rect = FRect(relative_rect)
@@ -47,7 +47,9 @@ class Viewport:
     @relative_rect.setter
     def relative_rect(self, new_relative_rect: FRect):
         self._relative_rect = new_relative_rect
-        self._update_display_rect(pygame.display.get_surface().size)
+        display_surf = pygame.display.get_surface()
+        assert display_surf is not None
+        self._update_display_rect(display_surf.size)
 
     @property
     def display_rect(self) -> Rect:
@@ -59,7 +61,7 @@ class Viewport:
 
     @classmethod
     def add_new_viewport(
-        cls, label: Any, relative_rect: FRect | RectLike = None, **kwds
+        cls, label: Any, relative_rect: FRect | RectLike | None = None, **kwds
     ) -> Viewport:
         """
         Adds a new viewport to the viewport dict.
@@ -154,7 +156,9 @@ class Viewport:
         Gets the target surface for the viewport. This will always be the current
         display.
         """
-        return pygame.display.get_surface()
+        surface = pygame.display.get_surface()
+        assert surface is not None
+        return surface
 
     def get_target_rect(self) -> Rect:
         """

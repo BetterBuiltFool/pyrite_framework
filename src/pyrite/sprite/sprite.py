@@ -4,16 +4,15 @@ import typing
 
 from ..enum import AnchorPoint
 from ..rendering.rect_bounds import rotate_rect
-from ..rendering import RectBounds
+from ..rendering import RectBounds, Renderable
 from ..rendering.sprite_renderer import SpriteRenderer
 from ..services import BoundsService
 from ..transform import transform_component as transform
-from ..types import Renderable
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Container, CameraBase
-    from ..transform import TransformComponent, Transform
+    from ..types import Camera, CullingBounds, TransformLike
+    from ..transform import TransformComponent
     from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
     from pygame.typing import Point
@@ -28,11 +27,10 @@ class Sprite(Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        local_transform: Transform = None,
+        local_transform: TransformLike | None = None,
         anchor: Anchor = AnchorPoint.CENTER,
-        container: Container = None,
         enabled=True,
-        layer: Layer = None,
+        layer: Layer | None = None,
         draw_index=0,
     ) -> None:
         """
@@ -43,13 +41,12 @@ class Sprite(Renderable):
         defaults to (0, 0)
         :param anchor: AnchorPoint that determines where on the object the position
         references, defaults to Anchor.CENTER
-        :param container: Container object for the renderable, defaults to None
         :param enabled: Whether or not the object should be active immediately upon
         spawn, defaults to True
         :param layer: Render layer to which the object belongs, defaults to None
         :param draw_index: Draw order for the renderable, defaults to 0
         """
-        super().__init__(container, enabled, layer, draw_index)
+        super().__init__(enabled, layer, draw_index)
         self._reference_image = display_surface
         # self.display_surface = display_surface
         self.transform: TransformComponent
@@ -126,7 +123,10 @@ class Sprite(Renderable):
         self._is_dirty = flag
 
     def set_surface(
-        self, sprite_image: Surface = None, flip_x: bool = None, flip_y: bool = None
+        self,
+        sprite_image: Surface | None = None,
+        flip_x: bool | None = None,
+        flip_y: bool | None = None,
     ):
         """
         Changes the sprite's display to match the given properties.
@@ -148,17 +148,21 @@ class Sprite(Renderable):
 
         self.is_dirty = True
 
-    def get_bounds(self) -> RectBounds:
+    def get_bounds(self) -> CullingBounds:
         bounds, transform = BoundsService.get(self)
         if bounds is None or transform != self.transform.world():
             transform = self.transform.world()
             display_rect = self._reference_image.get_rect()
+            scale = transform.scale
 
             center = self.anchor.get_rect_center(
-                display_rect, transform.position, transform.rotation, transform.scale
+                display_rect, transform.position, transform.rotation, scale
             )
 
-            display_rect.size *= transform.scale.elementwise()
+            width, height = display_rect.size
+            width *= scale.x
+            height *= scale.y
+            display_rect.size = width, height
             pivot = self.anchor.get_center_offset(display_rect)
 
             bounds_rect = rotate_rect(display_rect, transform.rotation, pivot)
@@ -170,5 +174,5 @@ class Sprite(Renderable):
 
         return bounds
 
-    def render(self, delta_time: float, camera: CameraBase):
+    def render(self, delta_time: float, camera: Camera):
         SpriteRenderer.render(delta_time, self, camera)

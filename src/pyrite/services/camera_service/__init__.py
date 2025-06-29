@@ -8,20 +8,20 @@ from .camera_service import CameraService, DefaultCameraService
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pygame import Vector3
-    from ...camera import Camera
+
     from ...transform import Transform
-    from ...types import CameraViewBounds
+    from ...types import Camera, CameraViewBounds
     from ...rendering import Viewport
 
 
-class CameraServiceProvider(ServiceProvider):
+class CameraServiceProvider(ServiceProvider[CameraService]):
     """
     Service that contains and maintains data for Camera objects.
     """
 
     _service: CameraService = DefaultCameraService()
     _active_cameras: set[Camera] = set()
-    _default_camera: Camera = None
+    _default_camera: Camera
 
     @classmethod
     def hotswap(cls, service: CameraService):

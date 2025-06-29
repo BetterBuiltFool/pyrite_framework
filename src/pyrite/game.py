@@ -13,7 +13,6 @@ from .core.render_system import RenderSystem, RenderManager
 from .core.rate_settings import RateSettings
 from .core.system_manager import SystemManager
 
-from ._helper import defaults
 from .camera.camera import Camera
 from .rendering import OrthoProjection, Viewport
 from .services import CameraService
@@ -47,9 +46,6 @@ def set_game_instance(instance: Game):
     _active_instance = instance
 
 
-defaults._default_container_getter = get_game_instance
-
-
 class Game:
     """
     Base Game object to serve as a parent for your game.
@@ -71,8 +67,6 @@ class Game:
         return active_instance
 
     def __init__(self, **kwds) -> None:
-
-        self.container = self  # To satisfy Container protocol
 
         suppress_init: bool = kwds.get("suppress_init", False)
         self.debug_mode: bool = kwds.get("debug_mode", False)
@@ -109,7 +103,7 @@ class Game:
         ]
 
         # Create a placeholder for the window, and the create the actual window
-        self.window: pygame.Surface = None
+        self.window: pygame.Surface
         self.create_window()
 
     def __enter__(self) -> Self:
@@ -394,7 +388,7 @@ class AsyncGame(Game):
     Supports pygbag.
     """
 
-    async def start_game(self):
+    async def start_game_async(self):
         """
         Begins the game loop in async mode.
         Identical to Base game version, except with an asyncio sleep attached for
@@ -416,4 +410,4 @@ class AsyncGame(Game):
         Main entry point for the game. By default, starts a thread from start_game().
         """
         self.create_window()
-        asyncio.run(self.start_game())
+        asyncio.run(self.start_game_async())

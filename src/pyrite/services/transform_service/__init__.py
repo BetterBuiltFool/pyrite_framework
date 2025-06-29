@@ -10,10 +10,11 @@ from .transform_service import (
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from pygame import Vector2
     from ...transform import Transform, TransformComponent
 
 
-class TransformServiceProvider(ServiceProvider):
+class TransformServiceProvider(ServiceProvider[TransformService]):
     """
     Service that contains and maintains data for TransformComponents
     """
@@ -36,7 +37,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.get_local(component)
 
     @classmethod
-    def get_local_position(cls, component: TransformComponent) -> Point:
+    def get_local_position(cls, component: TransformComponent) -> Vector2:
         """
         :param component: Any transform component.
         :return: The current position of _component_, in local space.
@@ -52,7 +53,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.get_local_rotation(component)
 
     @classmethod
-    def get_local_scale(cls, component: TransformComponent) -> Point:
+    def get_local_scale(cls, component: TransformComponent) -> Vector2:
         """
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in local space.
@@ -82,7 +83,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.set_local_position(component, position)
 
     @classmethod
-    def set_local_rotation(cls, component: TransformComponent, angle: Point):
+    def set_local_rotation(cls, component: TransformComponent, angle: float):
         """
         Sets the rotation of the transform component to the new rotation.
         The component will be marked for updating.
@@ -113,7 +114,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.get_world(component)
 
     @classmethod
-    def get_world_position(cls, component: TransformComponent) -> Point:
+    def get_world_position(cls, component: TransformComponent) -> Vector2:
         """
         :param component: Any transform component.
         :return: The current position of _component_, in world space.
@@ -129,7 +130,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.get_world_rotation(component)
 
     @classmethod
-    def get_world_scale(cls, component: TransformComponent) -> Point:
+    def get_world_scale(cls, component: TransformComponent) -> Vector2:
         """
         :param component: Any transform component.
         :return: The current scaling factor of _component_, in world space.
@@ -159,7 +160,7 @@ class TransformServiceProvider(ServiceProvider):
         return cls._service.set_world_position(component, position)
 
     @classmethod
-    def set_world_rotation(cls, component: TransformComponent, angle: Point):
+    def set_world_rotation(cls, component: TransformComponent, angle: float):
         """
         Sets the rotation of the transform component to the new rotation.
         The component will be marked for updating.

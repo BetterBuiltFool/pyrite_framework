@@ -2,27 +2,44 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from collections.abc import Sequence
 import pathlib
-import typing
+from typing import Generic, TypeAlias, TypeVar, TYPE_CHECKING
 
 from pygame import Rect
 
+MapKeyT = TypeVar("MapKeyT")
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     import os
     from collections.abc import Callable
-    from typing import Any, TextIO
+    from typing import TextIO
     from pygame import Surface
     from pygame.typing import Point
 
+    RectDict: TypeAlias = dict[MapKeyT, Rect]
+    DecoderFunction: TypeAlias = Callable[[TextIO], RectDict | None]
 
-class SpriteMap(ABC):
+
+def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
+    sprites: dict[str, Rect] = {}
+    for line in sprite_map_file.readlines():
+        key, value = line.split("=")
+        key = key.strip(" ")
+        value = value.strip("\n")
+        value = value.lstrip()
+        values = [int(subvalue) for subvalue in value.split(" ")]
+        sprites.update({key: Rect(*values)})
+    return sprites
+
+
+class SpriteMap(ABC, Generic[MapKeyT]):
     """
     A dictionary of rects for getting the subsurfaces for a spritesheet.
     """
 
     @abstractmethod
-    def get(self, key: Any) -> Rect:
+    def get(self, key: MapKeyT) -> Rect:
         """
         Returns a rect matching the provided key.
 
@@ -63,8 +80,8 @@ class SpriteMap(ABC):
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable = None
-    ) -> DictSpriteMap:
+        spritesheet_map_file: TextIO, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Creates a DictSpriteMap from the provided file.
         The decoder must take a file-like object, and return a dictionary with string
@@ -86,8 +103,8 @@ class SpriteMap(ABC):
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable = None
-    ) -> DictSpriteMap:
+        spritesheet_map_path: os.PathLike | str, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
         using a supplied decoder function.
@@ -106,7 +123,7 @@ class SpriteMap(ABC):
         return DictSpriteMap.from_path(spritesheet_map_path, decoder)
 
 
-class SimpleSpriteMap(SpriteMap):
+class SimpleSpriteMap(SpriteMap[Sequence[int]]):
     """
     Version of SpriteMap that uses rows and columns and a constant size for each
     sprite.
@@ -139,29 +156,32 @@ class SimpleSpriteMap(SpriteMap):
         ]
         self.sprite_size = sprite_size
 
-    def get(self, key: tuple[int, int]) -> Rect:
+    def get(self, key: Sequence[int] | None) -> Rect:
         if key is None:
             key = (0, 0)
         row, column = key
         return self._map[row][column]
 
 
-class DictSpriteMap(SpriteMap):
+class DictSpriteMap(SpriteMap[MapKeyT]):
     """
     Version of SpriteMap that uses a dictionary of Rects. Can be generated from file.
     """
 
-    def __init__(self, string_dict: dict[str, Rect]) -> None:
-        self._map = string_dict
+    def __init__(self, key_dict: RectDict | None) -> None:
+        if not key_dict:
+            key_dict = {}
+        self._map = key_dict
 
     @staticmethod
     def from_file(
-        spritesheet_map_file: TextIO, decoder: Callable = None
-    ) -> DictSpriteMap:
+        spritesheet_map_file: TextIO,
+        decoder: DecoderFunction | None = None,
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Creates a DictSpriteMap from a text file, using a supplied decoder function.
-        The decoder must take a file-like object, and return a dictionary with string
-        keys and pygame rectangles as values.
+        The decoder must take a file-like object, and returns a dictionary with pygame
+        rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
         line, with no blank lines, and each line takes the form of "[key] = x y w h"
@@ -174,29 +194,20 @@ class DictSpriteMap(SpriteMap):
         """
         if not decoder:
 
-            def decoder(sprite_map_file: TextIO) -> dict[str, Rect]:
-                sprites: dict[str, Rect] = {}
-                for line in sprite_map_file.readlines():
-                    key, value = line.split("=")
-                    key = key.strip(" ")
-                    value = value.strip("\n")
-                    value = value.lstrip()
-                    values = [int(subvalue) for subvalue in value.split(" ")]
-                    sprites.update({key: Rect(*values)})
-                return sprites
+            decoder = default_decoder
 
         map_dict = decoder(spritesheet_map_file)
-        return DictSpriteMap(map_dict)
+        return DictSpriteMap[MapKeyT](map_dict)
 
     @staticmethod
     def from_path(
-        spritesheet_map_path: os.PathLike | str, decoder: Callable = None
-    ) -> DictSpriteMap:
+        spritesheet_map_path: os.PathLike | str, decoder: DecoderFunction | None = None
+    ) -> DictSpriteMap[MapKeyT]:
         """
         Opens the files at the specified location, and creates a DictSpriteMap from it,
         using a supplied decoder function.
-        The decoder must take a file-like object, and return a dictionary with string
-        keys and pygame rectangles as values.
+        The decoder must take a file-like object, and returns a dictionary with pygame
+        rectangles as values.
 
         The default decoder function assumes a layout where each subrect is on its own
         line, with no blank lines, and each line takes the form of "[key] = x y w h"
@@ -212,11 +223,11 @@ class DictSpriteMap(SpriteMap):
         with open(path) as spritemap_file:
             return DictSpriteMap.from_file(spritemap_file, decoder)
 
-    def get(self, key: str) -> Rect:
-        return self._map.get(key)
+    def get(self, key: MapKeyT) -> Rect:
+        return self._map[key]
 
 
-class SpriteSheet:
+class SpriteSheet(Generic[MapKeyT]):
     """
     A tool that can select subsections of a larger surface for display.
     Useful for animations, or otherwise collecting multiple images
@@ -229,7 +240,7 @@ class SpriteSheet:
         self,
         reference_sprite: Surface,
         sprite_map: SpriteMap,
-        start_state: Any = None,
+        start_state: MapKeyT | None = None,
     ) -> None:
         """
         Creates a new Spritesheet.
@@ -247,7 +258,7 @@ class SpriteSheet:
         self._sprite_key = start_state
 
     @property
-    def sprite_key(self) -> Any:
+    def sprite_key(self) -> MapKeyT | None:
         """
         A value used by the SpriteMap to select the subsurface to be displayed.
 
@@ -255,7 +266,7 @@ class SpriteSheet:
         """
         return self._sprite_key
 
-    def get_sprite(self, sprite_key: Any = None) -> Surface | None:
+    def get_sprite(self, sprite_key: MapKeyT | None = None) -> Surface | None:
         """
         Gets the sprite image that matches the given key, updating the stored key.
         Returns the sprite image that matches the key.
@@ -273,18 +284,16 @@ class SpriteSheet:
         self._sprite_key = sprite_key
         return self.get_subsurface(sprite_key)
 
-    def get_subsurface(self, sprite_key: Any = None) -> Surface | None:
+    def get_subsurface(self, sprite_key: MapKeyT | None = None) -> Surface:
         """
         Gets a subsurface of the reference sheet based on the supplied sprite_key.
         Does not change the state of the sprite sheet.
 
-        If the key is invalid, returns the current surface.
+        If the key is invalid, returns the subsurface for the default key (fail safe).
 
         :param sprite_key: Key value appropriate for the spritesheet's SpriteMap
-        :return: The subsurface matching the sprite key, or None if the key is not
-        valid.
+        :return: The subsurface matching the sprite key, or matching the default key if
+            invalid.
         """
         rect = self.sprite_map.get(sprite_key)
-        if rect is None:
-            return None
         return self._reference_sprite.subsurface(rect)

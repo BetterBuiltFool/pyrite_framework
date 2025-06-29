@@ -13,7 +13,7 @@ from pygame import Rect
 from .services import CameraService
 
 if TYPE_CHECKING:
-    from .camera import Camera
+    from .types import Camera
     from .rendering import Viewport
     from pygame.typing import ColorLike, Point
 
@@ -48,7 +48,7 @@ def rect(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.rect(
         display,
@@ -193,7 +193,7 @@ def ellipse(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.ellipse(
         display,
@@ -230,7 +230,7 @@ def arc(
 
     rect_width = screen_bottomright[0] - screen_topleft[0]
     rect_height = screen_bottomright[1] - screen_topleft[1]
-    draw_rect = Rect(*screen_topleft, rect_width, rect_height)
+    draw_rect = Rect(screen_topleft[0], screen_topleft[1], rect_width, rect_height)
 
     return pygame.draw.arc(
         display,
@@ -327,7 +327,6 @@ def aalines(
     color: ColorLike,
     closed: bool,
     points: Sequence[Point],
-    width: int = 1,
 ) -> Rect:
     """
     Draws a series of anti-aliased lines over the screen, using a camera's view for
@@ -346,4 +345,4 @@ def aalines(
         CameraService.world_to_screen(point, camera, viewport) for point in points
     ]
 
-    return pygame.draw.aalines(display, color, closed, screen_points, width)
+    return pygame.draw.aalines(display, color, closed, screen_points)

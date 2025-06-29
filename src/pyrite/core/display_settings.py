@@ -50,7 +50,7 @@ class DisplaySettings:
         """
         Boolean indicating fullscreen status of the display.
         """
-        return self.flags & pygame.FULLSCREEN
+        return bool(self.flags & pygame.FULLSCREEN)
 
     @staticmethod
     def create_window(

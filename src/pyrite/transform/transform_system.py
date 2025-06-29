@@ -3,31 +3,31 @@ from __future__ import annotations
 from abc import abstractmethod
 
 from ..services import TransformService
-from ..types import System
+from ..systems import System
 from .transform import Transform
 
 
 class TransformSystem(System):
 
-    @staticmethod
-    def to_world(transform: Transform, context: Transform) -> Transform:
-        """
-        :param transform: A Transform in local space
-        :param context: A Transform representing the local space of _transform_,
-            in world space
-        :return: Equivalent to _transform_, in world space.
-        """
-        pass
+    # @staticmethod
+    # def to_world(transform: Transform, context: Transform) -> Transform:
+    #     """
+    #     :param transform: A Transform in local space
+    #     :param context: A Transform representing the local space of _transform_,
+    #         in world space
+    #     :return: Equivalent to _transform_, in world space.
+    #     """
+    #     pass
 
-    @staticmethod
-    def to_local(transform: Transform, context: Transform) -> Transform:
-        """
-        :param transform: A Transform in world space
-        :param context: A Transform representing the local space _transform_ is being
-            converted to, in world space
-        :return: Equivalent to _transform_, in local space.
-        """
-        pass
+    # @staticmethod
+    # def to_local(transform: Transform, context: Transform) -> Transform:
+    #     """
+    #     :param transform: A Transform in world space
+    #     :param context: A Transform representing the local space _transform_ is being
+    #         converted to, in world space
+    #     :return: Equivalent to _transform_, in local space.
+    #     """
+    #     pass
 
     @staticmethod
     @abstractmethod

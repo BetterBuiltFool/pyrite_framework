@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from collections.abc import Sequence
-from typing import Any, Self, TypeAlias, TYPE_CHECKING
+from collections.abc import Iterable
+from typing import cast, Self, TypeAlias, TYPE_CHECKING
 from weakref import WeakSet
 
 from pygame import Surface
@@ -14,16 +14,16 @@ from ..rendering import RenderTextureComponent
 from ..services import CameraService
 
 if TYPE_CHECKING:
-    from ..camera import Camera
     from ..enum import Layer
-    from ..types import CameraBase, Renderable
+    from ..types import Camera, Renderable
     from ..types.debug_renderer import DebugRenderer
 
-    LayerDict: TypeAlias = dict[CameraBase, list[Renderable]]
+    LayerDict: TypeAlias = dict[Camera, list[Renderable]]
     RenderQueue: TypeAlias = dict[Layer, LayerDict]
 
+EMPTY_LAYER_SET: set[Renderable] = set()
 
-_active_render_manager: RenderManager = None
+_active_render_manager: RenderManager
 
 
 def get_render_manager() -> RenderManager:
@@ -35,7 +35,7 @@ def set_render_manager(manager: RenderManager):
     _active_render_manager = manager
 
 
-_active_renderer: RenderSystem = None
+_active_renderer: RenderSystem
 
 
 def get_renderer() -> RenderSystem:
@@ -105,7 +105,7 @@ class RenderManager(ABC):
             self.enable(renderable)
 
     @abstractmethod
-    def generate_render_queue(self) -> dict[Any, Sequence[Renderable]]:
+    def generate_render_queue(self) -> RenderQueue:
         """
         Generates a dict of renderables, in draw order.
 
@@ -185,7 +185,7 @@ class RenderSystem(ABC):
         self,
         window: Surface,
         delta_time: float,
-        render_queue: dict[Any, Sequence[Renderable]],
+        render_queue: RenderQueue,
     ):
         """
         Draws the items from the render queue onto the passed surface.
@@ -279,13 +279,17 @@ class DefaultRenderManager(RenderManager):
         cameras = CameraService.get_active_cameras()
 
         for layer in RenderLayers._layers:
-            layer_dict = self.precull(self.renderables.get(layer, {}), layer, cameras)
+            layer_set = cast(set, self.renderables.get(layer, EMPTY_LAYER_SET))
+            layer_dict = self.precull(layer_set, layer, cameras)
             render_queue.update({layer: layer_dict})
 
         return render_queue
 
     def precull(
-        self, layer_set: set[Renderable], layer: Layer, cameras: set[CameraBase] = None
+        self,
+        layer_set: set[Renderable],
+        layer: Layer,
+        cameras: Iterable[Camera] | None = None,
     ) -> LayerDict:
         if not cameras:
             # Just give the full layer set if there's no camera, pygame will handle
@@ -305,7 +309,7 @@ class DefaultRenderManager(RenderManager):
             count += len(layer_set)
         return count
 
-    def sort_layer(self, renderables: Sequence[Renderable]) -> list[Renderable]:
+    def sort_layer(self, renderables: Iterable[Renderable]) -> list[Renderable]:
         """
         Sorts a sequence of renderables by draw_index, such that they are ordered
         0 -> Infinity | -Infinity -> -1
@@ -334,8 +338,8 @@ class DefaultRenderSystem(RenderSystem):
     def render_layer(
         self,
         delta_time: float,
-        layer_queue: Sequence[Renderable],
-        camera: CameraBase,
+        layer_queue: Iterable[Renderable],
+        camera: Camera,
     ):
         """
         Extracts the renderables from the layer_queue, and has them drawn to the
@@ -345,9 +349,11 @@ class DefaultRenderSystem(RenderSystem):
         :param layer_queue: The ordered sequence of renderables to be drawn.
         :param camera: The camera being drawn to.
         """
-        self._rendered_last_frame += len(layer_queue)
+        count = 0
         for renderable in layer_queue:
+            count += 1
             renderable.render(delta_time, camera)
+        self._rendered_last_frame += count
 
     def render_camera(
         self,
@@ -367,7 +373,7 @@ class DefaultRenderSystem(RenderSystem):
     def render_ui(
         self,
         delta_time: float,
-        ui_elements: Sequence[Renderable],
+        ui_elements: Iterable[Renderable],
         window: Surface,
     ):
         """
@@ -412,7 +418,7 @@ class DefaultRenderSystem(RenderSystem):
         # Render the UI last.
 
     def _debug_draw_to_screen(
-        self, cameras: Sequence[Camera], render_queue: RenderQueue
+        self, cameras: Iterable[Camera], render_queue: RenderQueue
     ):
         for renderer in self._debug_renderers:
             renderer.draw_to_screen(cameras, render_queue)
@@ -424,7 +430,7 @@ class DefaultRenderSystem(RenderSystem):
 _default_render_manager_type = DefaultRenderManager
 
 
-def get_default_render_manager_type() -> type[RenderSystem]:
+def get_default_render_manager_type() -> type[RenderManager]:
     return _default_render_manager_type
 
 

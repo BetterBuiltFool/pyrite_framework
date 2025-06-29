@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 import sys
-from typing import Self
+from typing import cast, Self
 import unittest
 
 import pygame
@@ -17,12 +17,13 @@ class MockSurface:
     A simple singleton object to fill in for a surface.
     """
 
-    _instance: MockSurface = None
+    _instance: Self | None = None
 
-    def __new__(cls, *args, **kwds) -> Self:
+    def __new__(cls, *args, **kwds) -> pygame.Surface:
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwds)
-        return cls._instance
+        # We need to claim we're returning a surface to make static checkers happy.
+        return cast(pygame.Surface, cls._instance)
 
 
 class TestDisplay(unittest.TestCase):
@@ -37,8 +38,7 @@ class TestDisplay(unittest.TestCase):
             if not display_settings.vsync == 1 or (
                 vsync_allowed and display_settings.vsync == 1
             ):
-                # Cast our mock as a surface to satisfy Mypy
-                surf: pygame.Surface = MockSurface()
+                surf = MockSurface()
                 return surf
             raise pygame.error()
 

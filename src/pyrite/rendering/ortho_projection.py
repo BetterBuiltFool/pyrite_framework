@@ -3,11 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
+from pygame import Rect
 
 from ..types.projection import Projection
 
 if TYPE_CHECKING:
-    from pygame import Rect
+    from pygame.typing import RectLike
 
 
 class OrthoProjection(Projection):
@@ -16,14 +17,18 @@ class OrthoProjection(Projection):
     """
 
     def __init__(
-        self, projection_rect: Rect = None, z_near: float = -1, z_far: float = 1
+        self,
+        projection_rect: RectLike | None = None,
+        z_near: float = -1,
+        z_far: float = 1,
     ) -> None:
         if projection_rect is None:
             # Default projection is the size of the screen
             display = pygame.display.get_surface()
+            assert display is not None
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
-        self.projection_rect = projection_rect
+        self.projection_rect = Rect(projection_rect)
         self._z_near = z_near
         self._z_far = z_far
 

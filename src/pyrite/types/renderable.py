@@ -3,11 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
-from ..core import render_system
-from .._helper import defaults
-
 if TYPE_CHECKING:
-    from . import Container, CameraBase, CullingBounds
+    from . import Camera, CullingBounds
     from ..enum import Layer
 
 
@@ -16,59 +13,28 @@ class Renderable(ABC):
     Base class for any renderable object in pyrite.
     """
 
-    def __init__(
-        self,
-        container: Container = None,
-        enabled=True,
-        layer: Layer = None,
-        draw_index=0,
-    ) -> None:
-        self._layer: Layer = layer
-        self.draw_index = draw_index
-        """
-        (The following is only true for default renderer; Others may vary)
-
-        Indexer for draw order within a layer.
-        Negative indexes are relative to the end.
-        Renderables in the same layer with the same index may be drawn in any order.
-        """
-        if container is None:
-            container = defaults.get_default_container()
-        self.container: Container = container
-        self.enabled = enabled
+    draw_index: int
+    _layer: Layer
 
     @property
+    @abstractmethod
     def enabled(self) -> bool:
-        return render_system.is_enabled(self)
+        pass
 
     @enabled.setter
+    @abstractmethod
     def enabled(self, value: bool) -> None:
-        self._enabled = value
-        if self.container is None:
-            return
-        if value:
-            self.on_preenable()
-            if render_system.enable(self):
-                self.on_enable()
-        else:
-            self.on_predisable()
-            if render_system.disable(self):
-                self.on_disable()
+        pass
 
     @property
+    @abstractmethod
     def layer(self) -> Layer:
-        return self._layer
+        pass
 
     @layer.setter
+    @abstractmethod
     def layer(self, new_layer: Layer):
-        if self._layer is not new_layer:
-            enabled = self.enabled
-            # This allows us to update within the renderer without firing
-            # on enable/disable events.
-            render_system.disable(self)
-            self._layer = new_layer
-            if enabled:
-                render_system.enable(self)
+        pass
 
     def on_preenable(self):
         """
@@ -114,7 +80,7 @@ class Renderable(ABC):
         pass
 
     @abstractmethod
-    def render(self, delta_time: float, camera: CameraBase):
+    def render(self, delta_time: float, camera: Camera):
         """
         Causes the Renderable to be rendered to the given camera. Typically calls upon
         some renderer class that knows how to handle its data.

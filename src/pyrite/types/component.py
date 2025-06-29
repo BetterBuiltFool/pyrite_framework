@@ -1,69 +1,22 @@
 from __future__ import annotations
 
-from abc import ABCMeta
-from typing import TYPE_CHECKING, TypeVar
+from typing import Self, TYPE_CHECKING
 from weakref import ref, WeakKeyDictionary
 
 if TYPE_CHECKING:
     from typing import Any
 
-T = TypeVar("T", bound="Component")
 
-
-class ComponentMeta(ABCMeta):
-    """
-    Metaclass for components to allow for things like set operations on the component
-    type.
-    """
-
-    @staticmethod
-    def _validate_other(other: set | type[Component]) -> set | None:
-        if not isinstance(other, set):
-            if not isinstance(other, ComponentMeta):
-                return None
-            other = set(other.instances.keys())
-        return other
-
-    def __and__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
-            return NotImplemented
-        return set(self.instances.keys()) & other
-
-    def __rand__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
-            return NotImplemented
-        return set(self.instances.keys()) & other
-
-    def __or__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
-            return NotImplemented
-        return set(self.instances.keys()) | other
-
-    def __ror__(self: type[Component], other: set | type[Component]) -> set:
-        other = self._validate_other(other)
-        if other is None:
-            return NotImplemented
-        return set(self.instances.keys()) | other
-
-    def __contains__(self: type[Component], value: Any) -> bool:
-        return value in self.instances.keys()
-
-
-class Component(metaclass=ComponentMeta):
+class Component:
     """
     Components are objects that mark other object with attributes. Components can be
     intersected with other components to get a set of shared key objects.
     """
 
-    instances: WeakKeyDictionary[Any, Component] = WeakKeyDictionary()
+    def __init_subclass__(cls) -> None:
+        cls.instances: WeakKeyDictionary[Any, Self] = WeakKeyDictionary()
 
-    def __init_subclass__(cls: type[T]) -> None:
-        cls.instances: WeakKeyDictionary[Any, T] = WeakKeyDictionary()
-
-    def __new__(cls: type[T], owner: Any, *args, **kwds) -> T:
+    def __new__(cls, owner: Any, *args, **kwds):
         new_component = super().__new__(cls)
         cls.instances.update({owner: new_component})
         return new_component
@@ -80,7 +33,7 @@ class Component(metaclass=ComponentMeta):
         return self._owner()
 
     @classmethod
-    def intersect(cls, *component_types: type[T]) -> set[Any]:
+    def intersect(cls, *component_types: type[Component]) -> set[Any]:
         """
         Generates a set of keys that are shared between the component and the supplied
         component types. Can take any number of component types.
@@ -96,7 +49,7 @@ class Component(metaclass=ComponentMeta):
         return local_keys.intersection(*key_sets)
 
     @classmethod
-    def get(cls: type[T], key: Any) -> T:
+    def get(cls, key: Any) -> Self | None:
         """
         Returns the component instance belonging to the key.
 
@@ -104,6 +57,10 @@ class Component(metaclass=ComponentMeta):
         :return: The component instance belonging to _key_, if extantit exists
         """
         return cls.get_instances().get(key)
+
+    @classmethod
+    def keys(cls) -> set[Any]:
+        return set(cls.instances.keys())
 
     @classmethod
     def remove_from(cls, key: Any):
@@ -117,7 +74,7 @@ class Component(metaclass=ComponentMeta):
             cls._purge_component(component)
 
     @classmethod
-    def _purge_component(cls, component: T):
+    def _purge_component(cls, component: Self):
         """
         Method for cleaning up a component's data when the component is used.
         If the data is simple, a weak key dictionary with the components as keys may be
@@ -129,10 +86,10 @@ class Component(metaclass=ComponentMeta):
         pass
 
     @classmethod
-    def get_instances(cls: type[T]) -> dict[Any, T]:
+    def get_instances(cls) -> dict[Any, Self]:
         """
         Gives a dictionary of all component instances and their owners.
 
         :return: The component's instance collection, as a dictionary.
         """
-        return cls.instances
+        return dict(cls.instances)

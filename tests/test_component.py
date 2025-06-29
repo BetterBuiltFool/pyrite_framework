@@ -21,22 +21,23 @@ class ComponentB(Component):
 
 
 class ComponentC(Component):
-    component_data: dict[ComponentC, str] = {}
+    component_data: dict[Component, str] = {}
 
-    def __init__(self, data: str = "") -> None:
+    def __init__(self, owner, data: str = "") -> None:
+        super().__init__(owner)
         # Super simple test data
         self.component_data.update({self: data})
 
     @property
     def data(self) -> str:
-        return self.component_data.get(self)
+        return self.component_data[self]
 
     @data.setter
     def data(self, value: str):
         self.component_data.update({self: value})
 
     @classmethod
-    def _purge_component(cls, component: ComponentC):
+    def _purge_component(cls, component: Component):
         # This will raise without a valid component
         cls.component_data.pop(component)
 
@@ -60,14 +61,22 @@ class TestComponent(unittest.TestCase):
         self.object2 = TestOwner(True, False, False)  # A
         self.object3 = TestOwner(False, True, False)  # B
         self.object4 = TestOwner(False, False, True)  # C
-        self.object4.components[0].data = "foo"
+        component4 = ComponentC.get(self.object4)
+        assert component4
+        component4.data = "foo"
         self.object5 = TestOwner(True, True, False)  # A, B
         self.object6 = TestOwner(True, False, True)  # A, C
-        self.object6.components[1].data = "bar"
+        component6 = ComponentC.get(self.object6)
+        assert component6
+        component6.data = "bar"
         self.object7 = TestOwner(False, True, True)  # B, C
-        self.object7.components[1].data = "baz"
+        component7 = ComponentC.get(self.object7)
+        assert component7
+        component7.data = "baz"
         self.object8 = TestOwner(True, True, True)  # A, B, C
-        self.object8.components[2].data = "qux"
+        component8 = ComponentC.get(self.object8)
+        assert component8
+        component8.data = "qux"
 
     def tearDown(self) -> None:
         ComponentA.instances = WeakKeyDictionary()
@@ -96,47 +105,6 @@ class TestComponent(unittest.TestCase):
         shared_keys = ComponentA.intersect()
         goal_keys = {self.object2, self.object5, self.object6, self.object8}
         self.assertSetEqual(shared_keys, goal_keys)
-
-    def test_and(self):
-        shared_keys = ComponentA & ComponentB
-        goal_keys = {self.object5, self.object8}
-        self.assertSetEqual(shared_keys, goal_keys)
-
-        shared_keys = ComponentA & ComponentB & ComponentC
-        goal_keys = {self.object8}
-        self.assertSetEqual(shared_keys, goal_keys)
-
-    def test_or(self):
-        either_keys = ComponentA | ComponentB
-        goal_keys = {
-            self.object2,
-            self.object3,
-            self.object5,
-            self.object6,
-            self.object7,
-            self.object8,
-        }
-        self.assertSetEqual(either_keys, goal_keys)
-
-        either_keys = ComponentA | ComponentB | ComponentC
-        goal_keys = {
-            self.object2,
-            self.object3,
-            self.object4,
-            self.object5,
-            self.object6,
-            self.object7,
-            self.object8,
-        }
-        self.assertSetEqual(either_keys, goal_keys)
-
-    def test_contains(self):
-
-        self.assertTrue(self.object2 in ComponentA)
-
-        self.assertFalse(self.object3 in ComponentA)
-
-        self.assertTrue(self.object3 not in ComponentA)
 
     def test_remove_from(self):
         self.assertIn(self.object8, ComponentA.get_instances())

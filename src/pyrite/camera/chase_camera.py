@@ -3,8 +3,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from pyrite.types import Container
-
 from .camera import Camera
 from ..types.entity import Entity
 
@@ -15,7 +13,7 @@ if TYPE_CHECKING:
     from ..enum import Layer
     from ..types import (
         HasTransform,
-        TransformProtocol,
+        TransformLike,
     )
     from ..rendering.viewport import Viewport
     from pygame.typing import Point
@@ -27,14 +25,13 @@ class ChaseCamera(Entity, Camera):
         self,
         projection: Projection,
         position: Point = (0, 0),
-        transform: TransformProtocol = None,
-        render_targets: Viewport | Sequence[Viewport] = None,
-        layer_mask: tuple[Layer] = None,
-        target: HasTransform = None,
+        transform: TransformLike | None = None,
+        render_targets: Viewport | Sequence[Viewport] | None = None,
+        layer_mask: tuple[Layer] | None = None,
+        target: HasTransform | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
-        container: Container = None,
         enabled=True,
     ) -> None:
         """
@@ -60,14 +57,11 @@ class ChaseCamera(Entity, Camera):
         Negative numbers will disable.
         :param relative_lag: Bool determining if the max distance is relative to zoom
         level. If true, the max distance will be consistent within screen space.
-        :param container: The instance of the game to which the rengerable belongs,
-        defaults to None. See Renderable.
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
         """
         Entity.__init__(
             self,
-            container,
             enabled,
         )
         Camera.__init__(
@@ -77,7 +71,6 @@ class ChaseCamera(Entity, Camera):
             transform,
             render_targets,
             layer_mask,
-            container,
             enabled,
         )
         self.target = target
@@ -91,10 +84,13 @@ class ChaseCamera(Entity, Camera):
 
     @property
     def enabled(self) -> bool:
+        assert Camera.enabled.fget
         return Camera.enabled.fget(self)
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
+        assert Camera.enabled.fset
+        assert Entity.enabled.fset
         Camera.enabled.fset(self, value)
         Entity.enabled.fset(self, value)
 
@@ -120,7 +116,7 @@ class ChaseCamera(Entity, Camera):
         return delta_normalized * distance
 
     def clamp_magnitude(self, delta: Vector2) -> Vector2:
-        pass
+        return self.clamp_magnitude(delta)
 
     def _clamp_magnitude_invariant(self, delta: Vector2) -> Vector2:
         return delta.clamp_magnitude(0, self.max_distance)

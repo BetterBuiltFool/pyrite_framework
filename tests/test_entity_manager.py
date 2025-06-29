@@ -2,6 +2,7 @@
 from contextlib import contextmanager
 import pathlib
 import sys
+from weakref import WeakSet
 
 # from typing import Any
 import unittest
@@ -40,7 +41,7 @@ class TestDefaultEntityManager(unittest.TestCase):
             self.entity_manager.flush_buffer()
 
             self.assertIn(entity, self.entity_manager.entities)
-            self.entity_manager.entities = set()
+            self.entity_manager.entities = WeakSet()
 
     def test_disable(self):
         entities = [MockEntity() for _ in range(5)]

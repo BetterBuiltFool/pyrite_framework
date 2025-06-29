@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 import pygame
 
 
-_active_entity_manager: EntityManager = None
+_active_entity_manager: EntityManager
 
 
 def get_entity_manager() -> EntityManager:

@@ -7,37 +7,42 @@ import unittest
 from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
-from pygame.surface import Surface as Surface
-from pygame.typing import Point
 
 
 sys.path.append(str(pathlib.Path.cwd()))
 
-from pyrite.types import CullingBounds  # noqa:E402
-from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
+from src.pyrite.camera import Camera  # noqa:E402
 from src.pyrite.core.render_system import (  # noqa:E402
     DefaultRenderManager,
     _get_draw_index,
 )
+from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
+from src.pyrite.rendering import OrthoProjection, RectBounds  # noqa:E402
+from src.pyrite.rendering.base_renderable import BaseRenderable  # noqa:E402
+from src.pyrite.services import CameraService  # noqa:E402
+from src.pyrite.types import CullingBounds, Entity  # noqa:E402
+from src.pyrite.types.camera import CameraBase  # noqa:E402
+
 from src.pyrite.types.renderable import Renderable  # noqa:E402
-from src.pyrite.types.entity import Entity  # noqa:E402
-
-# from src.pyrite.types._base_type import _BaseType  # noqa:E402
 
 
-class MockRenderable(Renderable):
+class MockRenderable(BaseRenderable):
 
     def __init__(
-        self, game_instance=None, enabled=True, layer: Layer = None, draw_index=-1
+        self,
+        enabled=True,
+        layer: Layer = RenderLayers.MIDGROUND,
+        draw_index=-1,
     ) -> None:
+        self._enabled = enabled
         self._layer = layer
         self.draw_index = draw_index
 
-    def render(self, delta_time: float) -> tuple[Surface, Point | Rect]:
-        return super().render(delta_time)
+    def render(self, delta_time: float, camera: CameraBase):
+        return super().render(delta_time, camera)
 
     def get_bounds(self) -> CullingBounds:
-        return super().get_bounds()
+        return RectBounds(Rect(-1024, -1024, 2048, 2048))
 
 
 class MockEntity(Entity):
@@ -60,16 +65,18 @@ class TestDefaultRenderManager(unittest.TestCase):
     def assertIsSorted(
         self,
         sequence: Sequence[Any],
-        key: Callable = None,
+        key: Callable | None = None,
         ascending=True,
         msg: Any = None,
     ) -> None:
         if not ascending:
-            sequence = reversed(sequence)
+            sequence = list(reversed(sequence))
         if key is None:
 
-            def key(item: Any) -> Any:
+            def default_key(item: Any) -> Any:
                 return item
+
+            key = default_key
 
         previous = None
         for item in sequence:
@@ -103,7 +110,6 @@ class TestDefaultRenderManager(unittest.TestCase):
 
         # Renderable, no layer
         with make_renderable() as renderable:
-            self.assertIs(renderable.layer, None)
 
             self.render_manager.enable(renderable)
             self.assertIn(
@@ -172,11 +178,14 @@ class TestDefaultRenderManager(unittest.TestCase):
         for renderable in all_elements:
             self.render_manager.enable(renderable)
 
+        default_camera = Camera(OrthoProjection((0, 0, 100, 100)))
+        CameraService._default_camera = default_camera
+
         render_queue = self.render_manager.generate_render_queue()
         self.maxDiff = None
         for layer, dict_elements in element_dict.items():
             render_elements = render_queue.get(layer, {})
-            renderables = render_elements.get(None, [])
+            renderables = render_elements.get(default_camera, [])
             self.assertListEqual(dict_elements, renderables)
 
         self.render_manager.renderables = {}
@@ -193,7 +202,8 @@ class TestDefaultRenderManager(unittest.TestCase):
                 self.render_manager.enable(new_element)
 
         render_queue = self.render_manager.generate_render_queue()
-        self.assertIsSorted(render_queue.get(RenderLayers.MIDGROUND), _get_draw_index)
+        render_elements = render_queue.get(RenderLayers.MIDGROUND, {})
+        self.assertIsSorted(render_elements.get(default_camera, []), _get_draw_index)
 
         self.render_manager.renderables = {}
 

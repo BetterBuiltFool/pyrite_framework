@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from typing import TypeAlias, TYPE_CHECKING
+from typing import cast, TypeAlias, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
 
 from ..types import Renderer
 from ..services import CameraService
+from ..services.camera_service import DefaultCameraService
 from ..transform import Transform
 
 if TYPE_CHECKING:
-    from ..camera import Camera
+    from ..types import Camera
     from ..sprite import Sprite
     from pygame import Surface
 
@@ -43,9 +44,11 @@ class SpriteRenderer(Renderer):
 
     @classmethod
     def validate_sprite(
-        cls, sprite: Sprite, surface: Surface, transform: Transform
+        cls, sprite: Sprite, surface: Surface | None, transform: Transform | None
     ) -> bool:
         current_transform = sprite.transform.world()
+        if transform is None or surface is None:
+            return False
         return all(
             [
                 not sprite.is_dirty,
@@ -55,20 +58,22 @@ class SpriteRenderer(Renderer):
         )
 
     @classmethod
-    def render(cls, delta_time: float, sprite: Sprite, camera: Camera):
-        surface, transform = cls.get(sprite)
-        if surface is None or not cls.validate_sprite(sprite, surface, transform):
+    def render(cls, delta_time: float, renderable: Sprite, camera: Camera):
+        surface, transform = cls.get(renderable)
+        if surface is None or not cls.validate_sprite(renderable, surface, transform):
             # Update the cache. This will save us redraws when the sprite is unchanged.
             # surface = sprite.draw_sprite()
-            surface = cls.redraw_sprite(sprite)
-            cls._sprite_cache.update({sprite: (surface, sprite.transform.world())})
-            sprite.is_dirty = False
+            surface = cls.redraw_sprite(renderable)
+            cls._sprite_cache.update(
+                {renderable: (surface, renderable.transform.world())}
+            )
+            renderable.is_dirty = False
 
-        position = sprite.anchor.get_rect_center(
-            sprite._reference_image.get_rect(),
-            sprite.transform.world_position,
-            sprite.transform.world_rotation,
-            sprite.transform.world_scale,
+        position = renderable.anchor.get_rect_center(
+            renderable._reference_image.get_rect(),
+            renderable.transform.world_position,
+            renderable.transform.world_rotation,
+            renderable.transform.world_scale,
         )
         surface_rect = surface.get_rect()
         surface_rect.center = position
@@ -82,7 +87,8 @@ class SpriteRenderer(Renderer):
     def _draw_to_camera(
         cls, camera: Camera, sprite_surface: Surface, transform: Transform
     ):
-        surface = CameraService._service._surfaces.get(camera)
+        camera_service = cast(DefaultCameraService, CameraService._service)
+        surface = camera_service._surfaces[camera]
         local_position = camera.to_eye(camera.to_local(transform)).position
         local_position[1] = surface.size[1] - local_position[1]
         surface.blit(sprite_surface, local_position)

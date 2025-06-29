@@ -25,7 +25,7 @@ class RigidbodyComponent(Component):
     TransformComponent is changed.
     """
 
-    def __init__(self, owner: Any, body: Body = None) -> None:
+    def __init__(self, owner: Any, body: Body | None = None) -> None:
         super().__init__(owner)
         if not (transform := TransformComponent.get(owner)):
             raise RuntimeError(
@@ -52,5 +52,8 @@ class RigidbodyComponent(Component):
     @collider.setter
     def collider(self, collider_component: ColliderComponent | None):
         if collider_component is not None:
-            collider_component = ref(collider_component)
-        self._collider = collider_component
+            component_reference = ref(collider_component)
+        else:
+            component_reference = None
+
+        self._collider = component_reference

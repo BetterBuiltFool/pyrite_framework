@@ -3,10 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ..core import entity_manager
-from .._helper import defaults
 
 if TYPE_CHECKING:
-    from . import Container
+    pass
 
 import pygame
 
@@ -16,10 +15,7 @@ class Entity:
     Base class for any class that exhibits behaviour during any of the update phases.
     """
 
-    def __init__(self, container: Container = None, enabled=True) -> None:
-        if container is None:
-            container = defaults.get_default_container()
-        self.container: Container = container
+    def __init__(self, enabled=True) -> None:
         self.enabled = enabled
 
     @property
@@ -29,8 +25,6 @@ class Entity:
     @enabled.setter
     def enabled(self, value: bool) -> None:
         self._enabled = value
-        if self.container is None:
-            return
         if value:
             self.on_preenable()
             if entity_manager.enable(self):

@@ -13,7 +13,7 @@ from ...types.service import Service
 if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
-    from ...camera import Camera
+    from ...types import Camera
     from ...transform import Transform
     from ...types import CameraViewBounds
     from ...rendering import Viewport
@@ -93,14 +93,14 @@ class DefaultCameraService(CameraService):
         return self._rebuild_surface(camera)
 
     def refresh(self, camera: Camera):
-        surface = self._surfaces.get(camera)
+        surface = self._surfaces[camera]
         surface.fill((0, 0, 0, 0))
 
     def get_view_bounds(self, camera: Camera) -> CameraViewBounds:
         return ViewPlane(self._get_view_rect(camera))
 
     def _get_view_rect(self, camera: Camera) -> Rect:
-        surface = self._surfaces.get(camera)
+        surface = self._surfaces[camera]
         surface_rect = surface.get_rect().copy()
         surface_rect.center = camera.transform.world_position
         return surface_rect
@@ -156,7 +156,7 @@ class DefaultCameraService(CameraService):
         self._surfaces.update({camera: surface})
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
-        return point.localize(camera.transform.world())
+        return point.localize(point, camera.transform.world())
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
         far_plane_center = camera.projection.far_plane.center
@@ -182,7 +182,7 @@ class DefaultCameraService(CameraService):
             far_plane_center[0] / camera.zoom_level,
             far_plane_center[1] / camera.zoom_level,
         )
-        return point + far_plane_center
+        return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
         # TODO Implement
@@ -200,7 +200,7 @@ class DefaultCameraService(CameraService):
         # Apply the offset to return center to origin
         point.position -= far_plane_center
         # Generalize to world coords
-        return point.generalize(camera.transform.world())
+        return point.generalize(point, camera.transform.world())
 
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
@@ -210,7 +210,9 @@ class DefaultCameraService(CameraService):
             coords = viewport.local_to_screen(local_coords)
         else:
             eye_coords = self.local_point_to_projection(camera, local_coords)
-            ndc_coords = self.local_to_ndc(camera, Vector3(*eye_coords, 0))
+            ndc_coords = self.local_to_ndc(
+                camera, Vector3(eye_coords[0], eye_coords[1], 0)
+            )
             coords = viewport.ndc_to_screen(ndc_coords)
         return coords
 
@@ -218,5 +220,5 @@ class DefaultCameraService(CameraService):
         self._surfaces.update({default_camera: Surface(size)})
 
     def zoom(self, camera: Camera, zoom: float):
-        camera._zoom_level = zoom
+        camera.zoom_level = zoom
         self._rebuild_surface(camera)

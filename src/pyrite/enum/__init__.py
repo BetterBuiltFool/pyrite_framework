@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class Layer:
 
-    def __init__(self, render_index: int = None, name: str = "") -> None:
+    def __init__(self, render_index: int, name: str = "") -> None:
         self._render_index = render_index
         self._name = name
 
@@ -26,7 +26,7 @@ class Layer:
     @property
     def name(self) -> str:
         if not self._name:
-            return self._render_index
+            return str(self._render_index)
         return self._name
 
 
@@ -77,25 +77,9 @@ class RenderLayers:
     @singledispatchmethod
     @classmethod
     def remove_layer(cls, item: Layer | int) -> Layer:
-        if isinstance(item, int):
-            # Throws IndexError if invalid
-            item = cls._layers[item]
-        # item is now always a layer object. It will have failed otherwise.
-        if any(
-            item == cls.BACKGROUND,
-            item == cls.MIDGROUND,
-            item == cls.FOREGROUND,
-            item == cls.CAMERA,
-        ):
-            raise ValueError(
-                f"Attempted to remove layer '{item.name}'; Cannot "
-                "remove built-in layers"
-            )
-        layers = list(cls._layers)
-        layer = layers.remove(item)
-        cls._layers = tuple(layers)
-        cls._reorder_layers()
-        return layer
+        raise NotImplementedError(
+            f"method 'remove_layer' not implemented for type {type(item)}"
+        )
 
     @remove_layer.register
     @classmethod
@@ -111,6 +95,23 @@ class RenderLayers:
         :raises ValueError: Raised if the layer is not a part of the layer sequence, or
         if the layer to be removed is one of the built-in layers.
         """
+        if any(
+            [
+                layer == cls.BACKGROUND,
+                layer == cls.MIDGROUND,
+                layer == cls.FOREGROUND,
+                layer == cls.CAMERA,
+            ]
+        ):
+            raise ValueError(
+                f"Attempted to remove layer '{layer.name}'; Cannot "
+                "remove built-in layers"
+            )
+        layers = list(cls._layers)
+        layers.remove(layer)
+        cls._layers = tuple(layers)
+        cls._reorder_layers()
+        return layer
 
     @remove_layer.register
     @classmethod
@@ -126,6 +127,24 @@ class RenderLayers:
         :raises IndexError: Raised if the index is invalid.
         :raises ValueError: Raised if the index belongs to a built-in layer.
         """
+        layer = cls._layers[index]
+        if any(
+            [
+                layer == cls.BACKGROUND,
+                layer == cls.MIDGROUND,
+                layer == cls.FOREGROUND,
+                layer == cls.CAMERA,
+            ]
+        ):
+            raise ValueError(
+                f"Attempted to remove layer '{layer.name}'; Cannot "
+                "remove built-in layers"
+            )
+        layers = list(cls._layers)
+        layers.remove(layer)
+        cls._layers = tuple(layers)
+        cls._reorder_layers()
+        return layer
 
 
 class Anchor:
@@ -164,7 +183,7 @@ class Anchor:
         """
         rect = Rect(rectangle)
         pivot = self.get_center_offset(rect)
-        pivot_scaled: Vector2 = pivot.elementwise() * scale
+        pivot_scaled: Vector2 = pivot.elementwise() * Vector2(scale)
         rot_pivot = pivot_scaled.rotate(angle)
         return position - rot_pivot
 
@@ -175,7 +194,7 @@ class Anchor:
         :return: Vector2 representing the difference between the rectangle's center and
             the pivot point described by the anchor.
         """
-        pivot: Vector2 = self._relative_position.elementwise() * rectangle.size
+        pivot: Vector2 = self._relative_position.elementwise() * Vector2(rectangle.size)
         pivot += rectangle.topleft
         return pivot - rectangle.center
 
@@ -190,7 +209,7 @@ class AbsoluteAnchor(Anchor):
         self._pivot_point = relative_position
 
     def get_center_offset(self, rectangle: Rect) -> Vector2:
-        return (self._pivot_point + rectangle.topleft) - rectangle.center
+        return Vector2(self._pivot_point) + rectangle.topleft - rectangle.center
 
 
 class AnchorPoint:

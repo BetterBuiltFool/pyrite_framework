@@ -4,8 +4,8 @@ from abc import ABC
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from ..camera import Camera
+    from collections.abc import Iterable
+    from ..types import Camera
     from ..core.render_system import RenderQueue
 
 
@@ -15,7 +15,7 @@ class DebugRenderer(ABC):
     useful for overlaying debug info on the screen.
     """
 
-    def draw_to_screen(self, cameras: Sequence[Camera], render_queue: RenderQueue):
+    def draw_to_screen(self, cameras: Iterable[Camera], render_queue: RenderQueue):
         """
         Gives the option to draw directly to the screen.
 

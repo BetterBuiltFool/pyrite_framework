@@ -10,10 +10,10 @@ from ..enum import RenderLayers
 from .. import draw
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable
     from pygame.typing import ColorLike
     from ..core.render_system import RenderQueue
-    from ..camera import Camera
+    from ..types import Camera
 
 
 class BoundsRenderer(DebugRenderer):
@@ -22,7 +22,7 @@ class BoundsRenderer(DebugRenderer):
         self.color = Color(draw_color)
         self.font = pygame.font.Font()
 
-    def draw_to_screen(self, cameras: Sequence[Camera], render_queue: RenderQueue):
+    def draw_to_screen(self, cameras: Iterable[Camera], render_queue: RenderQueue):
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
             for renderables in layer_dict.values():
