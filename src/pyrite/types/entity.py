@@ -1,39 +1,26 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from ..core import entity_manager
-
 if TYPE_CHECKING:
-    pass
-
-import pygame
+    from pygame import Event
 
 
-class Entity:
+class Entity(ABC):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
     """
 
-    def __init__(self, enabled=True) -> None:
-        self.enabled = enabled
-
     @property
-    def enabled(self) -> bool:
-        return entity_manager.is_enabled(self)
+    @abstractmethod
+    def enabled(self) -> bool: ...
 
     @enabled.setter
-    def enabled(self, value: bool) -> None:
-        self._enabled = value
-        if value:
-            self.on_preenable()
-            if entity_manager.enable(self):
-                self.on_enable()
-        else:
-            self.on_predisable()
-            if entity_manager.disable(self):
-                self.on_disable()
+    @abstractmethod
+    def enabled(self, value: bool) -> None: ...
 
+    @abstractmethod
     def on_preenable(self):
         """
         Event called just before the object is enabled.
@@ -42,7 +29,9 @@ class Entity:
         Does NOT guarantee the object is not already enabled.
 
         """
+        ...
 
+    @abstractmethod
     def on_enable(self):
         """
         Event called just after the object has been enabled.
@@ -51,7 +40,9 @@ class Entity:
         Guarantees the object is now enabled, and only runs when the object was
         previously disabled.
         """
+        ...
 
+    @abstractmethod
     def on_predisable(self):
         """
         Event called just before the object is disabled.
@@ -59,7 +50,9 @@ class Entity:
         disabling.
         Does NOT guarantee the object has not already been disabled.
         """
+        ...
 
+    @abstractmethod
     def on_disable(self):
         """
         Event called just after the object has been disabled.
@@ -68,7 +61,9 @@ class Entity:
         Guarantees the object is now disabled, and that the object was previously
         disabled.
         """
+        ...
 
+    @abstractmethod
     def pre_update(self, delta_time: float) -> None:
         """
         A method that is called during the pre_update phase.
@@ -76,8 +71,9 @@ class Entity:
 
         :param delta_time: Time passed since last frame.
         """
-        pass
+        ...
 
+    @abstractmethod
     def update(self, delta_time: float) -> None:
         """
         A method that is called during the main update phase.
@@ -85,8 +81,9 @@ class Entity:
 
         :param delta_time: Time passed since last frame.
         """
-        pass
+        ...
 
+    @abstractmethod
     def post_update(self, delta_time: float) -> None:
         """
         A method that is called during the post_update phase.
@@ -94,8 +91,9 @@ class Entity:
 
         :param delta_time: Time passed since last frame.
         """
-        pass
+        ...
 
+    @abstractmethod
     def const_update(self, timestep: float) -> None:
         """
         A method that is called during the const_update phase.
@@ -109,13 +107,14 @@ class Entity:
 
         :param timestep: Length of the timestep being simulated.
         """
-        pass
+        ...
 
-    def on_event(self, event: pygame.Event):
+    @abstractmethod
+    def on_event(self, event: Event):
         """
         An event hook. Events will be passed to the entity when it's enabled, and can
         be handled here.
 
         :param event: A pygame event.
         """
-        pass
+        ...
