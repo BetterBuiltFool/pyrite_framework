@@ -1,0 +1,130 @@
+from __future__ import annotations
+
+from abc import abstractmethod
+from typing import cast, TypeAlias, TYPE_CHECKING
+from weakref import WeakKeyDictionary
+
+import pygame
+from pygame import Surface
+
+from ...services import CameraService
+from ...services.camera_service import DefaultCameraService
+from ...types import Renderer
+from ... import (
+    Sprite,
+    Transform,
+)  # Almost certainly need to create a Sprite type in types
+
+if TYPE_CHECKING:
+    from ...types import Camera, TransformLike
+
+    SpriteData: TypeAlias = tuple[Surface, Transform]
+
+
+class SpriteRenderer(Renderer[Sprite]):
+
+    @abstractmethod
+    def validate_sprite(
+        self, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
+    ) -> bool:
+        pass
+
+
+class DefaultSpriteRenderer(SpriteRenderer):
+
+    def __init__(self) -> None:
+        self._sprite_cache: WeakKeyDictionary[Sprite, SpriteData] = WeakKeyDictionary()
+        self._debug = False
+
+    def validate_sprite(
+        self, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
+    ) -> bool:
+        current_transform = sprite.transform.world()
+        if transform is None or surface is None:
+            return False
+        return all(
+            [
+                not sprite.is_dirty,
+                transform.rotation == current_transform.rotation,
+                transform.scale == current_transform.scale,
+            ]
+        )
+
+    def set_debug(self, flag: bool):
+        self._debug = flag
+        if flag:
+            self.redraw_sprite = self._redraw_sprite_debug
+        else:
+            self.redraw_sprite = self._redraw_sprite
+
+    def get_debug(self) -> bool:
+        return self._debug
+
+    def get(self, key: Sprite) -> SpriteData | tuple[None, None]:
+        return self._sprite_cache.get(key, (None, None))
+
+    def render(self, delta_time: float, renderable: Sprite, camera: Camera):
+        surface, transform = self.get(renderable)
+        if surface is None or not self.validate_sprite(renderable, surface, transform):
+            # Update the cache. This will save us redraws when the sprite is unchanged.
+            # surface = sprite.draw_sprite()
+            surface = self.redraw_sprite(renderable)
+            self._sprite_cache.update(
+                {renderable: (surface, renderable.transform.world())}
+            )
+            renderable.is_dirty = False
+
+        position = renderable.anchor.get_rect_center(
+            renderable._reference_image.get_rect(),
+            renderable.transform.world_position,
+            renderable.transform.world_rotation,
+            renderable.transform.world_scale,
+        )
+        surface_rect = surface.get_rect()
+        surface_rect.center = position
+
+        self._draw_to_camera(
+            camera, surface, Transform(position=surface_rect.bottomleft)
+        )
+
+    def _draw_to_camera(
+        self, camera: Camera, sprite_surface: Surface, transform: Transform
+    ):
+        camera_service = cast(DefaultCameraService, CameraService._service)
+        surface = camera_service._surfaces[camera]
+        local_position = camera.to_eye(camera.to_local(transform)).position
+        local_position[1] = surface.size[1] - local_position[1]
+        surface.blit(sprite_surface, local_position)
+
+    def redraw_sprite(self, sprite: Sprite) -> Surface:
+        return self._redraw_sprite(sprite)
+
+    def _redraw_sprite(self, sprite: Sprite) -> Surface:
+        new_surface = pygame.transform.flip(
+            sprite._reference_image, sprite.flip_x, sprite.flip_y
+        )
+
+        new_surface = pygame.transform.scale_by(
+            new_surface, sprite.transform.world_scale
+        )
+
+        new_surface = pygame.transform.rotate(
+            new_surface, sprite.transform.world_rotation
+        )
+        return new_surface
+
+    def _redraw_sprite_debug(self, sprite: Sprite) -> Surface:
+        new_surface = pygame.transform.flip(
+            sprite._reference_image, sprite.flip_x, sprite.flip_y
+        )
+        # Draw a white border on our image for debug purposes
+        pygame.draw.rect(new_surface, (255, 255, 255), new_surface.get_rect(), 1)
+
+        new_surface = pygame.transform.scale_by(
+            new_surface, sprite.transform.world_scale
+        )
+
+        new_surface = pygame.transform.rotate(
+            new_surface, sprite.transform.world_rotation
+        )
+        return new_surface
