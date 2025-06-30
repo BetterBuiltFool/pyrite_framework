@@ -10,6 +10,7 @@ from .entity import Entity  # noqa: F401
 from .projection import Projection  # noqa: F401
 from .renderable import Renderable  # noqa: F401
 from .renderer import Renderer, RendererProvider  # noqa: F401
+from .sprite import BaseSprite as Sprite  # noqa: F401
 from .system import System  # noqa: F401
 from .transform import TransformLike  # noqa:F401
 from .view_bounds import CameraViewBounds  # noqa: F401
