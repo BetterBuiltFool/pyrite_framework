@@ -9,8 +9,14 @@ if TYPE_CHECKING:
     from pygame import Surface, Vector2
     from pygame.typing import Point
 
+    from ..enum import Anchor
+    from ..transform import TransformComponent
+
 
 class BaseSprite(Renderable):
+
+    anchor: Anchor
+    transform: TransformComponent
 
     @property
     @abstractmethod
@@ -84,5 +90,12 @@ class BaseSprite(Renderable):
         :param sprite_image: The raw surface being used, defaults to None
         :param flip_x: Whether to flip along the x axis, defaults to None
         :param flip_y: Whether to flip along the y axis, defaults to None
+        """
+        pass
+
+    @abstractmethod
+    def get_surface(self) -> Surface:
+        """
+        Returns the reference surface used by the sprite.
         """
         pass
