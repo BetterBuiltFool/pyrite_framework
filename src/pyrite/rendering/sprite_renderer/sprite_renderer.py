@@ -9,11 +9,8 @@ from pygame import Surface
 
 from ...services import CameraService
 from ...services.camera_service import DefaultCameraService
-from ...types import Renderer
-from ... import (
-    Sprite,
-    Transform,
-)  # Almost certainly need to create a Sprite type in types
+from ...types import Renderer, Sprite
+from ... import Transform
 
 if TYPE_CHECKING:
     from ...types import Camera, TransformLike
@@ -75,7 +72,7 @@ class DefaultSpriteRenderer(SpriteRenderer):
             renderable.is_dirty = False
 
         position = renderable.anchor.get_rect_center(
-            renderable._reference_image.get_rect(),
+            renderable.get_surface().get_rect(),
             renderable.transform.world_position,
             renderable.transform.world_rotation,
             renderable.transform.world_scale,
@@ -101,7 +98,7 @@ class DefaultSpriteRenderer(SpriteRenderer):
 
     def _redraw_sprite(self, sprite: Sprite) -> Surface:
         new_surface = pygame.transform.flip(
-            sprite._reference_image, sprite.flip_x, sprite.flip_y
+            sprite.get_surface(), sprite.flip_x, sprite.flip_y
         )
 
         new_surface = pygame.transform.scale_by(
@@ -115,7 +112,7 @@ class DefaultSpriteRenderer(SpriteRenderer):
 
     def _redraw_sprite_debug(self, sprite: Sprite) -> Surface:
         new_surface = pygame.transform.flip(
-            sprite._reference_image, sprite.flip_x, sprite.flip_y
+            sprite.get_surface(), sprite.flip_x, sprite.flip_y
         )
         # Draw a white border on our image for debug purposes
         pygame.draw.rect(new_surface, (255, 255, 255), new_surface.get_rect(), 1)
