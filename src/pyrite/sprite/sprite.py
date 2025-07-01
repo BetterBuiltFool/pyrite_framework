@@ -149,6 +149,9 @@ class Sprite(BaseSprite, Renderable):
 
         self.is_dirty = True
 
+    def get_surface(self) -> Surface:
+        return self._reference_image
+
     def get_bounds(self) -> CullingBounds:
         bounds, transform = BoundsService.get(self)
         if bounds is None or transform != self.transform.world():
