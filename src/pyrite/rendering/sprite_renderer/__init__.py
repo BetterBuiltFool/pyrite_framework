@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 
-from .sprite_renderer import SpriteRenderer
+from .sprite_renderer import SpriteRenderer, DefaultSpriteRenderer
 from ...types import Camera, RendererProvider
 
 
@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class SpriteRendererProvider(RendererProvider[SpriteRenderer]):
+
+    _renderer: SpriteRenderer = DefaultSpriteRenderer()
 
     @classmethod
     def render(cls, delta_time: float, sprite: Sprite, camera: Camera):
