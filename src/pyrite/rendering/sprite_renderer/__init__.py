@@ -27,3 +27,11 @@ class SpriteRendererProvider(RendererProvider[SpriteRenderer]):
         cls, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
     ) -> bool:
         return cls._renderer.validate_sprite(sprite, surface, transform)
+
+    @classmethod
+    def get_debug(cls) -> bool:
+        return cls._renderer.get_debug()
+
+    @classmethod
+    def set_debug(cls, flag: bool):
+        cls._renderer.set_debug(flag)
