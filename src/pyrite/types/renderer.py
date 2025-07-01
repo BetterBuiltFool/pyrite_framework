@@ -4,21 +4,24 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from . import Camera
+    pass
 
 RenderableTypeT = TypeVar("RenderableTypeT")
+RenderTargetT = TypeVar("RenderTargetT")
 
 
-class Renderer(ABC, Generic[RenderableTypeT]):
+class Renderer(ABC, Generic[RenderableTypeT, RenderTargetT]):
 
     @abstractmethod
-    def render(self, delta_time: float, renderable: RenderableTypeT, camera: Camera):
+    def render(
+        self, delta_time: float, renderable: RenderableTypeT, target: RenderTargetT
+    ):
         """
-        Draws the renderable to the screen via the camera object.
+        Draws the renderable to the screen.
 
         :param delta_time: Time passed since last frame
         :param renderable: The renderable item, of the type handled by the renderer.
-        :param camera: A Camera object, used for determining screen space position.
+        :param target: An object to render to.
         """
         pass
 
