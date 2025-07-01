@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from ..services import CameraService
 from ..enum import Layer
-from ..rendering.camera_renderer import CameraRenderer
+from ..rendering import CameraRenderer
 from ..rendering.viewport import Viewport
 from ..transform import transform_component
 from ..types import Camera as CameraBase, Renderable
