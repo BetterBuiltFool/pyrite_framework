@@ -10,10 +10,10 @@ from pygame import Surface
 from ...services import CameraService
 from ...services.camera_service import DefaultCameraService
 from ...types import Renderer, Sprite
-from ... import Transform
 
 if TYPE_CHECKING:
     from ...types import Camera, TransformLike
+    from ... import Transform
 
     SpriteData: TypeAlias = tuple[Surface, Transform]
 
@@ -65,11 +65,12 @@ class DefaultSpriteRenderer(SpriteRenderer):
         if surface is None or not self.validate_sprite(renderable, surface, transform):
             # Update the cache. This will save us redraws when the sprite is unchanged.
             # surface = sprite.draw_sprite()
+            transform = renderable.transform.world()
             surface = self.redraw_sprite(renderable)
-            self._sprite_cache.update(
-                {renderable: (surface, renderable.transform.world())}
-            )
+            self._sprite_cache.update({renderable: (surface, transform)})
             renderable.is_dirty = False
+
+        assert transform
 
         position = renderable.anchor.get_rect_center(
             renderable.get_surface().get_rect(),
@@ -80,9 +81,10 @@ class DefaultSpriteRenderer(SpriteRenderer):
         surface_rect = surface.get_rect()
         surface_rect.center = position
 
-        self._draw_to_camera(
-            camera, surface, Transform(position=surface_rect.bottomleft)
-        )
+        draw_transform = transform.copy()
+        draw_transform.position = position = surface_rect.bottomleft
+
+        self._draw_to_camera(camera, surface, draw_transform)
 
     def _draw_to_camera(
         self, camera: Camera, sprite_surface: Surface, transform: Transform
