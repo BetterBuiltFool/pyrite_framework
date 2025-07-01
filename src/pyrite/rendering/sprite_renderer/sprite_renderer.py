@@ -26,6 +26,14 @@ class SpriteRenderer(Renderer[Sprite]):
     ) -> bool:
         pass
 
+    @abstractmethod
+    def get_debug(self) -> bool:
+        pass
+
+    @abstractmethod
+    def set_debug(self, flag: bool):
+        pass
+
 
 class DefaultSpriteRenderer(SpriteRenderer):
 
