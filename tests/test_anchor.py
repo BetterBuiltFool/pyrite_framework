@@ -19,31 +19,23 @@ rect_size: RectLike = (0, 0, 8, 4)
 
 class TestAnchor(unittest.TestCase):
 
-    def get_center_offset(
-        self, anchor_point: Point, rect_size: RectLike, expected: Point
-    ):
-        anchor = Anchor(anchor_point)
-        rect = Rect(rect_size)
-        pivot = anchor.get_center_offset(rect)
-
-        expected_vector = Vector2(expected)
-
-        self.assertEqual(pivot, expected_vector)
-
     def test_get_center_offset(self):
-        test_params: list[tuple[Point, RectLike, Point]] = [
-            # Center Anchor
-            (anchor_center, rect_size, (0, 0)),
-            # Center X, 3/4 Y
-            ((0.5, 0.75), rect_size, (0, 1)),
-            # 3/4 X, Center Y
-            ((0.75, 0.5), rect_size, (2, 0)),
-            # 1/4 X, 1/4 Y
-            ((0.25, 0.25), rect_size, (-2, -1)),
-        ]
+        test_params: dict[str, tuple[Point, RectLike, Point]] = {
+            "Center Anchor": (anchor_center, rect_size, (0, 0)),
+            "Center X, 3/4 Y": ((0.5, 0.75), rect_size, (0, 1)),
+            "3/4 X, Center Y": ((0.75, 0.5), rect_size, (2, 0)),
+            "1/4 X, 1/4 Y": ((0.25, 0.25), rect_size, (-2, -1)),
+        }
 
-        for params in test_params:
-            self.get_center_offset(*params)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                anchor = Anchor(params[0])
+                rect = Rect(params[1])
+                expected = Vector2(params[2])
+
+                pivot = anchor.get_center_offset(rect)
+
+                self.assertEqual(pivot, expected)
 
     def test_get_rect_center(self):
         # Case: (Center X, Center Y), 0 C
