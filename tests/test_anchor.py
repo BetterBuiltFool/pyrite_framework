@@ -1,53 +1,49 @@
 from __future__ import annotations
 import pathlib
 import sys
+from typing import TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector2
+
+if TYPE_CHECKING:
+    from pygame.typing import Point, RectLike
 
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.enum import Anchor  # noqa:E402
 
+anchor_center: Point = (0.5, 0.5)
+rect_size: RectLike = (0, 0, 8, 4)
+
 
 class TestAnchor(unittest.TestCase):
 
+    def get_center_offset(
+        self, anchor_point: Point, rect_size: RectLike, expected: Point
+    ):
+        anchor = Anchor(anchor_point)
+        rect = Rect(rect_size)
+        pivot = anchor.get_center_offset(rect)
+
+        expected_vector = Vector2(expected)
+
+        self.assertEqual(pivot, expected_vector)
+
     def test_get_center_offset(self):
-        # Center anchor
-        anchor = Anchor((0.5, 0.5))
-        rect = Rect(0, 0, 8, 4)
+        test_params: list[tuple[Point, RectLike, Point]] = [
+            # Center Anchor
+            (anchor_center, rect_size, (0, 0)),
+            # Center X, 3/4 Y
+            ((0.5, 0.75), rect_size, (0, 1)),
+            # 3/4 X, Center Y
+            ((0.75, 0.5), rect_size, (2, 0)),
+            # 1/4 X, 1/4 Y
+            ((0.25, 0.25), rect_size, (-2, -1)),
+        ]
 
-        pivot = anchor.get_center_offset(rect)
-
-        self.assertEqual(pivot.x, 0)
-        self.assertEqual(pivot.y, 0)
-
-        # Center X, 3/4 Y
-
-        anchor = Anchor((0.5, 0.75))
-
-        pivot = anchor.get_center_offset(rect)
-
-        self.assertEqual(pivot.x, 0)
-        self.assertEqual(pivot.y, 1)
-
-        # 3/4 X, Center Y
-
-        anchor = Anchor((0.75, 0.5))
-
-        pivot = anchor.get_center_offset(rect)
-
-        self.assertEqual(pivot.x, 2)
-        self.assertEqual(pivot.y, 0)
-
-        # 1/4 X, 1/4 Y
-
-        anchor = Anchor((0.25, 0.25))
-
-        pivot = anchor.get_center_offset(rect)
-
-        self.assertEqual(pivot.x, -2)
-        self.assertEqual(pivot.y, -1)
+        for params in test_params:
+            self.get_center_offset(*params)
 
     def test_get_rect_center(self):
         # Case: (Center X, Center Y), 0 C
