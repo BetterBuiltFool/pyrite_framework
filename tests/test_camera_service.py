@@ -159,42 +159,43 @@ class TestCameraService(unittest.TestCase):
                 local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
                 self.assertEqual(local_position, expected)
 
-    def to_local(
-        self,
-        camera_transform: WorldTransform,
-        world_transform: WorldTransform,
-        expected: LocalTransform,
-    ):
-        test_cam = MockCamera(centered_projection)
-        test_cam.transform.world_position = camera_transform.position
-        test_cam.transform.world_rotation = camera_transform.rotation
-        test_cam.transform.world_scale = camera_transform.scale
-
-        local_transform = CameraService.to_local(test_cam, world_transform)
-
-        self.assertEqual(local_transform, expected)
-
     def test_to_local(self):
         shifted_pos_transform = Transform((10, 0), 0, (1, 1))
         shifted_post_rot_transform = Transform((10, 0), 90, (1, 1))
 
-        test_params: list[tuple[WorldTransform, WorldTransform, LocalTransform]] = [
-            # Both default transform
-            (zero_transform, zero_transform, zero_transform),
-            # Default camera, Different test position,
-            (
+        test_params: dict[
+            str, tuple[WorldTransform, WorldTransform, LocalTransform]
+        ] = {
+            "Both default transform": (zero_transform, zero_transform, zero_transform),
+            "Default camera, Different test position": (
                 zero_transform,
                 shifted_pos_transform,
                 shifted_pos_transform,
             ),
-            # Default camera, Different test position, rotation,
-            (zero_transform, shifted_post_rot_transform, shifted_post_rot_transform),
-            # Shifted camera, Default test position
-            (shifted_pos_transform, zero_transform, Transform((-10, 0), 0, (1, 1))),
-        ]
+            "Default camera, Different test position, rotation": (
+                zero_transform,
+                shifted_post_rot_transform,
+                shifted_post_rot_transform,
+            ),
+            "Shifted camera, Default test position": (
+                shifted_pos_transform,
+                zero_transform,
+                Transform((-10, 0), 0, (1, 1)),
+            ),
+        }
 
-        for params in test_params:
-            self.to_local(*params)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                camera_transform, world_transform, expected = params
+
+                test_cam = MockCamera(centered_projection)
+                test_cam.transform.world_position = camera_transform.position
+                test_cam.transform.world_rotation = camera_transform.rotation
+                test_cam.transform.world_scale = camera_transform.scale
+
+                local_transform = CameraService.to_local(test_cam, world_transform)
+
+                self.assertEqual(local_transform, expected)
 
     def to_eye(
         self,
