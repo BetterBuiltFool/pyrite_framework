@@ -197,45 +197,41 @@ class TestCameraService(unittest.TestCase):
 
                 self.assertEqual(local_transform, expected)
 
-    def to_eye(
-        self,
-        projection: Projection,
-        local_transform: LocalTransform,
-        expected: EyeTransform,
-        zoom_level: ZoomLevel = 1,
-    ):
-        test_cam = MockCamera(projection)
-        test_cam.zoom_level = zoom_level
-
-        eye_transform = CameraService.to_eye(test_cam, local_transform)
-
-        self.assertEqual(eye_transform, expected)
-
     def test_to_eye(self):
 
-        test_params: list[
-            tuple[Projection, LocalTransform, EyeTransform, ZoomLevel]
-        ] = [
-            # 3/4 projection, local 0 coords
-            (
+        test_params: dict[
+            str, tuple[Projection, LocalTransform, EyeTransform, ZoomLevel]
+        ] = {
+            "3/4 projection, local 0 coords": (
                 three_quart_projection,
                 zero_transform,
                 Transform((200, 150), 0, (1, 1)),
                 1,
             ),
-            # 3/4 projection, counter local coords
-            (
+            "3/4 projection, counter local coords": (
                 three_quart_projection,
                 Transform((-200, -150), 0, (1, 1)),
                 zero_transform,
                 1,
             ),
-            # Centered projection, off center camera, origin test transform
-            (centered_projection, zero_transform, zero_transform, 1),
-        ]
+            "Centered projection, off center camera, origin test transform": (
+                centered_projection,
+                zero_transform,
+                zero_transform,
+                1,
+            ),
+        }
 
-        for params in test_params:
-            self.to_eye(*params)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                projection, local_transform, expected, zoom_level = params
+
+                test_cam = MockCamera(projection)
+                test_cam.zoom_level = zoom_level
+
+                eye_transform = CameraService.to_eye(test_cam, local_transform)
+
+                self.assertEqual(eye_transform, expected)
 
     def test_to_world(self):
         # Centered projection, both default transform
