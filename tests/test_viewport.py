@@ -84,65 +84,37 @@ class TestViewport(unittest.TestCase):
                 self.assertEqual(screen_coords, expected_coords)
 
     def test_screen_to_ndc(self):
-        # Full screen, top left point
-        viewport_rect = FRect(-1, 1, 2, 2)
-        viewport = Viewport(viewport_rect)
-        viewport._update_display_rect(display_size)
-        screen_coords = (0, 0)
 
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
+        test_params: dict[str, tuple[FRect, ScreenCoords, NDCCoords]] = {
+            "Full screen, top left point": (fullscreen, (0, 0), (-1, 1)),
+            "Full screen, bottom right point": (fullscreen, display_size, (1, -1)),
+            "Full screen, center point": (fullscreen, screen_center, (0, 0)),
+            "Bottomright quadrant screen, top left point": (
+                bottom_right,
+                screen_center,
+                (-1, 1),
+            ),
+            "Bottomright quadrant screen, bottom right point": (
+                bottom_right,
+                display_size,
+                (1, -1),
+            ),
+            "Bottomright quadrant screen, center point": (
+                bottom_right,
+                (3 * display_size[0] / 4, 3 * display_size[1] / 4),
+                (0, 0),
+            ),
+        }
 
-        expected_coords = (-1, 1)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                viewport_rect, screen_coords, expected_coords = params
+                viewport = Viewport(viewport_rect)
+                viewport._update_display_rect(display_size)
 
-        self.assertEqual(ndc_coords, expected_coords)
+                ndc_coords = viewport.screen_to_ndc(screen_coords)
 
-        # Full screen, bottom right point
-        screen_coords = display_size
-
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
-
-        expected_coords = (1, -1)
-
-        self.assertEqual(ndc_coords, expected_coords)
-
-        # Full screen, center point
-        screen_coords = display_size[0] / 2, display_size[1] / 2
-
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
-
-        expected_coords = (0, 0)
-
-        self.assertEqual(ndc_coords, expected_coords)
-
-        # Bottomright quadrant screen, top left point
-        viewport_rect = FRect(0, 0, 1, 1)
-        viewport = Viewport(viewport_rect)
-        viewport._update_display_rect(display_size)
-        screen_coords = display_size[0] / 2, display_size[1] / 2
-
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
-
-        expected_coords = (-1, 1)
-
-        self.assertEqual(ndc_coords, expected_coords)
-
-        # Bottomright quadrant screen, bottom right point
-        screen_coords = display_size
-
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
-
-        expected_coords = (1, -1)
-
-        self.assertEqual(ndc_coords, expected_coords)
-
-        # Bottomright quadrant screen, center point
-        screen_coords = 3 * display_size[0] / 4, 3 * display_size[1] / 4
-
-        ndc_coords = viewport.screen_to_ndc(screen_coords)
-
-        expected_coords = (0, 0)
-
-        self.assertEqual(ndc_coords, expected_coords)
+                self.assertEqual(ndc_coords, expected_coords)
 
 
 if __name__ == "__main__":
