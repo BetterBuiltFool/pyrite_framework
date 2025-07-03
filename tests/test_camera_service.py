@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
 three_quart_projection = OrthoProjection(Rect(-200, -150, 800, 600))
 zero_vector = Vector3(0, 0, 0)
-zero_transform = Transform((0, 0), 0, (1, 1))
+zero_transform = Transform()
 
 
 class MockCamera:
@@ -160,8 +160,8 @@ class TestCameraService(unittest.TestCase):
                 self.assertEqual(local_position, expected)
 
     def test_to_local(self):
-        shifted_pos_transform = Transform((10, 0), 0, (1, 1))
-        shifted_post_rot_transform = Transform((10, 0), 90, (1, 1))
+        shifted_pos_transform = Transform((10, 0))
+        shifted_post_rot_transform = Transform((10, 0), 90)
 
         test_params: dict[
             str, tuple[WorldTransform, WorldTransform, LocalTransform]
@@ -180,7 +180,7 @@ class TestCameraService(unittest.TestCase):
             "Shifted camera, Default test position": (
                 shifted_pos_transform,
                 zero_transform,
-                Transform((-10, 0), 0, (1, 1)),
+                Transform((-10, 0)),
             ),
         }
 
@@ -205,12 +205,12 @@ class TestCameraService(unittest.TestCase):
             "3/4 projection, local 0 coords": (
                 three_quart_projection,
                 zero_transform,
-                Transform((200, 150), 0, (1, 1)),
+                Transform((200, 150)),
                 1,
             ),
             "3/4 projection, counter local coords": (
                 three_quart_projection,
-                Transform((-200, -150), 0, (1, 1)),
+                Transform((-200, -150)),
                 zero_transform,
                 1,
             ),
