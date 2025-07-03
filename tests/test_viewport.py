@@ -16,36 +16,29 @@ from src.pyrite.rendering import Viewport  # noqa:E402
 display_size = (600, 800)
 
 
+fullscreen = FRect(-1, 1, 2, 2)
+lower_right = FRect(-1, 1, 1, 1)
+upper_left = FRect(-1, 1, 1, 1)
+
+
 class TestViewport(unittest.TestCase):
 
     def test_get_subrect(self):
-        # Full screen
-        display = (600, 800)
-        viewport_rect = FRect(-1, 1, 2, 2)
 
-        display_rect = Viewport._get_subrect(viewport_rect, display)
+        test_params: dict[str, tuple[FRect, Rect]] = {
+            "Full screen": (fullscreen, Rect(0, 0, 600, 800)),
+            "Lower Right": (lower_right, Rect(0, 0, 300, 400)),
+            "Upper left": (upper_left, Rect(0, 0, 300, 400)),
+        }
 
-        expected_rect = Rect(0, 0, 600, 800)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                display = (600, 800)
+                viewport_rect, expected_rect = params
 
-        self.assertEqual(display_rect, expected_rect)
+                display_rect = Viewport._get_subrect(viewport_rect, display)
 
-        # Lower Right
-        viewport_rect = FRect(0, 0, 1, 1)
-
-        display_rect = Viewport._get_subrect(viewport_rect, display)
-
-        expected_rect = Rect(300, 400, 300, 400)
-
-        self.assertEqual(display_rect, expected_rect)
-
-        # Upper left
-        viewport_rect = FRect(-1, 1, 1, 1)
-
-        display_rect = Viewport._get_subrect(viewport_rect, display)
-
-        expected_rect = Rect(0, 0, 300, 400)
-
-        self.assertEqual(display_rect, expected_rect)
+                self.assertEqual(display_rect, expected_rect)
 
     def test_ndc_to_screen(self):
         # Full screen, top left point
