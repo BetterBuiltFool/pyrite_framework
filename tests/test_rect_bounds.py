@@ -11,32 +11,27 @@ from src.pyrite.rendering.rect_bounds import rotate_rect  # noqa:E402
 from src.pyrite.enum import Anchor  # noqa:E402
 
 
+anchor_center = Anchor((0.5, 0.5))
+anchor_75x_5y = Anchor((0.75, 0.5))
+rect = Rect(-4, -2, 8, 4)
+
+
 class TestRectBounds(unittest.TestCase):
 
     def test_rotate_rect(self):
-        # Centered anchor, 90 rotation.
-        anchor = Anchor((0.5, 0.5))
 
-        rect = Rect(-4, -2, 8, 4)
+        test_params: dict[str, tuple[Anchor, float, Rect]] = {
+            "Centered anchor, 90 rotation": (anchor_center, 90, Rect(-2, -4, 4, 8)),
+            "3/4 X, Center Y, 90 rotation": (anchor_75x_5y, 90, Rect(0, -2, 4, 8)),
+        }
 
-        rotated_rect = rotate_rect(rect, 90, anchor.get_center_offset(rect))
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                anchor, angle, expected = params
 
-        self.assertEqual(rotated_rect.left, -2)
-        self.assertEqual(rotated_rect.top, -4)
-        self.assertEqual(rotated_rect.width, 4)
-        self.assertEqual(rotated_rect.height, 8)
+                rotated_rect = rotate_rect(rect, angle, anchor.get_center_offset(rect))
 
-        # 3/4 X, Center Y, 90 rotation.
-        anchor = Anchor((0.75, 0.5))
-
-        rect = Rect(-4, -2, 8, 4)
-
-        rotated_rect = rotate_rect(rect, 90, anchor.get_center_offset(rect))
-
-        self.assertEqual(rotated_rect.left, 0)
-        self.assertEqual(rotated_rect.top, -2)
-        self.assertEqual(rotated_rect.width, 4)
-        self.assertEqual(rotated_rect.height, 8)
+                self.assertEqual(rotated_rect, expected)
 
 
 if __name__ == "__main__":
