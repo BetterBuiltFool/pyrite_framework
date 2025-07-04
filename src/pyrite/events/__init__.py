@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .instance_event import BaseInstanceEvent as InstanceEvent
 
@@ -52,3 +52,15 @@ class OnSeparate(InstanceEvent):
         self, this_collider: ColliderComponent, touching: ColliderComponent
     ) -> None:
         return super().__call__(this_collider, touching)
+
+
+class OnEnable(InstanceEvent):
+    """
+    Called when an object move from the disabled state to the enabled state. Does not
+    fire if the object is already enabled.
+
+    :param this: The object being enabled.
+    """
+
+    def __call__(self, this: Any) -> None:
+        return super().__call__(this)
