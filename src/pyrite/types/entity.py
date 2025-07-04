@@ -5,12 +5,15 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame import Event
+    from ..events import OnEnable as EventOnEnable
 
 
 class Entity(ABC):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
     """
+
+    OnEnable: EventOnEnable
 
     @property
     @abstractmethod

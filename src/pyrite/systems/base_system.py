@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 
 from ..core import system_manager
+from ..events import OnEnable
 from ..types import System
 
 if TYPE_CHECKING:
@@ -22,6 +23,7 @@ class BaseSystem(System):
             priority going down as value increases, but negative numbers are
             approximately distance from last, defaults to 0 (Tie for first)
         """
+        self.OnEnable = OnEnable(self)
         self._enabled = None
         self.enabled = enabled
         self.order_index = order_index
@@ -35,5 +37,6 @@ class BaseSystem(System):
         self._enabled = value
         if value:
             system_manager.enable(self)
+            self.OnEnable(self)
         else:
             system_manager.disable(self)

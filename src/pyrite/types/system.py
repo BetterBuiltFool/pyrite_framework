@@ -6,6 +6,8 @@ import typing
 if typing.TYPE_CHECKING:
     from pygame import Event
 
+    from ..events import OnEnable as EventOnEnable
+
 
 class System(ABC):
     """
@@ -13,6 +15,7 @@ class System(ABC):
     """
 
     order_index: int
+    OnEnable: EventOnEnable
 
     @property
     @abstractmethod

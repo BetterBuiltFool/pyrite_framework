@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ..core import entity_manager
+from ..events import OnEnable
 from ..types import Entity
 
 if TYPE_CHECKING:
@@ -15,6 +16,7 @@ class BaseEntity(Entity):
     """
 
     def __init__(self, enabled=True) -> None:
+        self.OnEnable = OnEnable(self)
         self.enabled = enabled
 
     @property
@@ -27,6 +29,7 @@ class BaseEntity(Entity):
         if value:
             self.on_preenable()
             if entity_manager.enable(self):
+                self.OnEnable(self)
                 self.on_enable()
         else:
             self.on_predisable()
