@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ..enum import RenderLayers
-from ..events import OnEnable
+from ..events import OnEnable, OnDisable
 from ..core import render_system
 from ..types import Renderable
 
@@ -31,6 +31,7 @@ class BaseRenderable(Renderable):
         Renderables in the same layer with the same index may be drawn in any order.
         """
         self.OnEnable = OnEnable(self)
+        self.OnDisable = OnDisable(self)
         self.enabled = enabled
 
     @property
@@ -48,6 +49,7 @@ class BaseRenderable(Renderable):
         else:
             self.on_predisable()
             if render_system.disable(self):
+                self.OnDisable(self)
                 self.on_disable()
 
     @property

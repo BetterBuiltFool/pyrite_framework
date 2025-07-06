@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 
 from ..core import system_manager
-from ..events import OnEnable
+from ..events import OnEnable, OnDisable
 from ..types import System
 
 if TYPE_CHECKING:
@@ -24,6 +24,7 @@ class BaseSystem(System):
             approximately distance from last, defaults to 0 (Tie for first)
         """
         self.OnEnable = OnEnable(self)
+        self.OnDisable = OnDisable(self)
         self._enabled = None
         self.enabled = enabled
         self.order_index = order_index
@@ -40,3 +41,4 @@ class BaseSystem(System):
             self.OnEnable(self)
         else:
             system_manager.disable(self)
+            self.OnDisable(self)

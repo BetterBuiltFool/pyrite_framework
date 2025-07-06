@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from .render_target import RenderTarget
     from ..rendering import Viewport
     from ..enum import Layer
+    from ..events import OnEnable as EventOnEnable
+    from ..events import OnDisable as EventOnDisable
     from ..transform import Transform, TransformComponent
 
 
@@ -27,6 +29,9 @@ class CameraBase(ABC):
     render_targets: Sequence[RenderTarget]
     projection: Projection
     transform: TransformComponent
+
+    OnEnable: EventOnEnable
+    OnDisable: EventOnDisable
 
     @property
     @abstractmethod
