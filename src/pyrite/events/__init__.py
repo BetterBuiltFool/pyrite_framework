@@ -64,3 +64,14 @@ class OnEnable(InstanceEvent):
 
     def __call__(self, this: Any) -> None:
         return super().__call__(this)
+
+
+class OnDisable(InstanceEvent):
+    """
+    Called when an object moves from the enabled state to the disabled state.
+
+    :param this: The object being disnabled.
+    """
+
+    def __call__(self, this: Any) -> None:
+        return super().__call__(this)
