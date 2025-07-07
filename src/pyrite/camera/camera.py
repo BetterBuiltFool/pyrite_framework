@@ -63,13 +63,15 @@ class Camera(CameraBase):
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
-        self._enabled = value
         if value:
             CameraService.enable(self)
-            self.OnEnable(self)
+            if not self._enabled:
+                self.OnEnable(self)
         else:
             CameraService.disable(self)
-            self.OnDisable(self)
+            if self._enabled:
+                self.OnDisable(self)
+        self._enabled = value
 
     @property
     def zoom_level(self):
