@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from ..services import CameraService
 from ..enum import Layer
+from ..events import OnEnable, OnDisable
 from ..rendering import CameraRenderer
 from ..rendering.viewport import Viewport
 from ..transform import transform_component
@@ -19,6 +20,13 @@ if TYPE_CHECKING:
 
 
 class Camera(CameraBase):
+    """
+    Object for rendering a view to the display.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(
         self,
@@ -50,6 +58,8 @@ class Camera(CameraBase):
         if layer_mask is None:
             layer_mask = ()
         self.layer_mask: Sequence[Layer] = layer_mask
+        self.OnEnable = OnEnable(self)
+        self.OnDisable = OnDisable(self)
         self.enabled = enabled
         self._zoom_level: float = 1
         CameraService.add_camera(self)
@@ -60,11 +70,15 @@ class Camera(CameraBase):
 
     @enabled.setter
     def enabled(self, value: bool) -> None:
-        self._enabled = value
         if value:
             CameraService.enable(self)
+            if not self._enabled:
+                self.OnEnable(self)
         else:
             CameraService.disable(self)
+            if self._enabled:
+                self.OnDisable(self)
+        self._enabled = value
 
     @property
     def zoom_level(self):

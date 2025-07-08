@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from ..enum import RenderLayers
+from ..events import OnEnable, OnDisable
 from ..core import render_system
 from ..types import Renderable
 
@@ -11,6 +12,13 @@ if TYPE_CHECKING:
 
 
 class BaseRenderable(Renderable):
+    """
+    Base class for any object that renders to the screen.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(
         self,
@@ -29,6 +37,8 @@ class BaseRenderable(Renderable):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
+        self.OnEnable = OnEnable(self)
+        self.OnDisable = OnDisable(self)
         self.enabled = enabled
 
     @property
@@ -41,10 +51,12 @@ class BaseRenderable(Renderable):
         if value:
             self.on_preenable()
             if render_system.enable(self):
+                self.OnEnable(self)
                 self.on_enable()
         else:
             self.on_predisable()
             if render_system.disable(self):
+                self.OnDisable(self)
                 self.on_disable()
 
     @property

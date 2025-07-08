@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 
 from ..core import system_manager
+from ..events import OnEnable, OnDisable
 from ..types import System
 
 if TYPE_CHECKING:
@@ -11,6 +12,13 @@ if TYPE_CHECKING:
 
 
 class BaseSystem(System):
+    """
+    Base class for all systems that perform actions on components.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(self, enabled: bool = True, order_index: int = 0) -> None:
         """
@@ -22,6 +30,8 @@ class BaseSystem(System):
             priority going down as value increases, but negative numbers are
             approximately distance from last, defaults to 0 (Tie for first)
         """
+        self.OnEnable = OnEnable(self)
+        self.OnDisable = OnDisable(self)
         self._enabled = None
         self.enabled = enabled
         self.order_index = order_index
@@ -32,8 +42,12 @@ class BaseSystem(System):
 
     @enabled.setter
     def enabled(self, value: bool):
-        self._enabled = value
         if value:
             system_manager.enable(self)
+            if not self._enabled:
+                self.OnEnable(self)
         else:
             system_manager.disable(self)
+            if self._enabled:
+                self.OnDisable(self)
+        self._enabled = value

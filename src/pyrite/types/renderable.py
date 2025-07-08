@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from . import Camera, CullingBounds
     from ..enum import Layer
+    from ..events import OnEnable as EventOnEnable
+    from ..events import OnDisable as EventOnDisable
 
 
 class Renderable(ABC):
@@ -15,6 +17,8 @@ class Renderable(ABC):
 
     draw_index: int
     _layer: Layer
+    OnEnable: EventOnEnable
+    OnDisable: EventOnDisable
 
     @property
     @abstractmethod
