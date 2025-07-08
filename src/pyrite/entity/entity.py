@@ -13,6 +13,10 @@ if TYPE_CHECKING:
 class BaseEntity(Entity):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
     """
 
     def __init__(self, enabled=True) -> None:

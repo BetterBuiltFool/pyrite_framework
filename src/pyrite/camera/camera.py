@@ -20,6 +20,13 @@ if TYPE_CHECKING:
 
 
 class Camera(CameraBase):
+    """
+    Object for rendering a view to the display.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(
         self,

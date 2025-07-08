@@ -12,6 +12,13 @@ if TYPE_CHECKING:
 
 
 class BaseSystem(System):
+    """
+    Base class for all systems that perform actions on components.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(self, enabled: bool = True, order_index: int = 0) -> None:
         """

@@ -12,6 +12,13 @@ if TYPE_CHECKING:
 
 
 class BaseRenderable(Renderable):
+    """
+    Base class for any object that renders to the screen.
+
+    ### Events:
+    - OnEnable: Called when the object becomes enabled.
+    - OnDisable: Called when the object becomes disabled.
+    """
 
     def __init__(
         self,
