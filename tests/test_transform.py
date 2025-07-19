@@ -22,7 +22,7 @@ class TestTransform(unittest.TestCase):
 
         modified = Transform.generalize(local_transform, world_transform)
 
-        expected = Transform((10, 0), 90, (2, 2))
+        expected = Transform((10, 20), 90, (2, 2))
 
         self.assertEqual(modified.position, expected.position)
         self.assertEqual(modified.rotation, expected.rotation)
@@ -36,7 +36,7 @@ class TestTransform(unittest.TestCase):
 
         modified: Transform = world_transform * local_transform
 
-        expected = Transform((10, 0), 90, (2, 2))
+        expected = Transform((10, 20), 90, (2, 2))
 
         self.assertEqual(modified.position, expected.position)
         self.assertEqual(modified.rotation, expected.rotation)
@@ -54,7 +54,7 @@ class TestTransform(unittest.TestCase):
         # treats it like a transform.
         modified: Transform = world_transform * local_transform
 
-        expected = Transform((10, 0), 90, (2, 2))
+        expected = Transform((10, 20), 90, (2, 2))
 
         self.assertEqual(modified.position, expected.position)
         self.assertEqual(modified.rotation, expected.rotation)
