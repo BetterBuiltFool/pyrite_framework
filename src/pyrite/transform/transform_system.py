@@ -69,10 +69,17 @@ class DefaultTransformSystem(TransformSystem):
         return transform
 
     def pre_render(self, delta_time: float) -> None:
-        for component in TransformService.get_dirty():
-            transform = TransformService.get_local(component)
-            TransformService.set_world(component, transform.copy())
-            TransformService.clean(component)
+        for component in TransformService.traverse_transforms():
+            assert component
+            if not component.is_dirty():
+                continue
+            # world_transform = self.convert_to_world(component)
+            # TransformService.set_world(component, world_transform)
+
+            # We need to mark all descending nodes as dirty, since they are depending
+            # on this node.
+            # for subcomponent in TransformService.get_descendants(component):
+            #     TransformService.make_dirty(subcomponent)
 
 
 _default_transform_system: type[TransformSystem] = DefaultTransformSystem
