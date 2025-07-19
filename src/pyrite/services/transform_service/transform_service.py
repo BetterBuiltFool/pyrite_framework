@@ -91,6 +91,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def get_parent(self, component: TransformComponent) -> TransformComponent | None:
+        pass
+
+    @abstractmethod
     def set_parent(
         self, component: TransformComponent, parent: TransformComponent
     ) -> None:
@@ -190,6 +194,12 @@ class DefaultTransformService(TransformService):
     def set_world_scale(self, component: TransformComponent, scale: Point):
         # TODO Force update local
         self.world_transforms[component].scale = Vector2(scale)
+
+    def get_parent(self, component: TransformComponent) -> TransformComponent | None:
+        node = self.transform_nodes[component]
+        if not (node_trunk := node.trunk):
+            return None
+        return node_trunk.data
 
     def set_parent(
         self, component: TransformComponent, parent: TransformComponent

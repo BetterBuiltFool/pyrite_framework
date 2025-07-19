@@ -184,6 +184,16 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.set_world_scale(component, scale)
 
     @classmethod
+    def get_parent(cls, component: TransformComponent) -> TransformComponent | None:
+        """
+        Finds the next higher transform component, if it exists.
+
+        :param component: A TransformComponent somewhere in the hierarchy
+        :return: The parent TransformComponent, if it exists, or None
+        """
+        return cls._service.get_parent(component)
+
+    @classmethod
     def set_parent(
         cls, component: TransformComponent, parent: TransformComponent
     ) -> None:
