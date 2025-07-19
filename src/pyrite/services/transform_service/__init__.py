@@ -183,6 +183,19 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.set_world_scale(component, scale)
 
     @classmethod
+    def set_parent(
+        cls, component: TransformComponent, parent: TransformComponent
+    ) -> None:
+        """
+        Marks the given component as being relative to another. The parent component
+        should not be a descendant of the child component.
+
+        :param component: A TransformComponent
+        :param parent: Another TransformComponent
+        """
+        return cls._service.set_parent(component, parent)
+
+    @classmethod
     def is_dirty(cls, component: TransformComponent) -> bool:
         """
         Checks if a transform component is in need of updating.
