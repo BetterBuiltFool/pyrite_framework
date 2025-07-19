@@ -176,6 +176,17 @@ class DefaultTransformService(TransformService):
         # TODO Force update local
         self.world_transforms[component].scale = Vector2(scale)
 
+    def set_parent(
+        self, component: TransformComponent, parent: TransformComponent
+    ) -> None:
+        component_node = self.transform_nodes[component]
+        parent_node = self.transform_nodes[parent]
+
+        # TODO: This permits parent loops, which is undesireable. Add a validation
+        # method.
+        component_node.trunk = parent_node
+        self.root_transforms.remove(component_node)
+
     def is_dirty(self, component: TransformComponent) -> bool:
         return component in self.dirty_components
 
