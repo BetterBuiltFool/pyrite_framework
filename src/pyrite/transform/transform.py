@@ -100,7 +100,7 @@ class Transform:
         new_rotation = branch.rotation + root.rotation
 
         scaled_position = branch.position.elementwise() * root.scale
-        rotated_position = scaled_position.rotate(-root.rotation)
+        rotated_position = scaled_position.rotate(root.rotation)
         new_position = root.position + rotated_position
 
         return Transform(new_position, new_rotation, new_scale)
@@ -123,7 +123,7 @@ class Transform:
         :return: A new Vector2 position in the same relative space as this Transform.
         """
         scaled_position = self.scale.elementwise() * position
-        rotated_position = scaled_position.rotate(-self.rotation)
+        rotated_position = scaled_position.rotate(self.rotation)
         return self.position + rotated_position
 
     def __mul__(self, other_transform: transform.TransformLike) -> Transform:
