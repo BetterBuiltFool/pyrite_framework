@@ -60,10 +60,6 @@ class ChaseCamera(Entity, Camera):
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
         """
-        Entity.__init__(
-            self,
-            enabled,
-        )
         Camera.__init__(
             self,
             projection,
@@ -71,6 +67,10 @@ class ChaseCamera(Entity, Camera):
             transform,
             render_targets,
             layer_mask,
+            enabled,
+        )
+        Entity.__init__(
+            self,
             enabled,
         )
         self.target = target

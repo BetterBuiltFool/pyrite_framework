@@ -60,6 +60,7 @@ class Camera(CameraBase):
         self.layer_mask: Sequence[Layer] = layer_mask
         self.OnEnable = OnEnable(self)
         self.OnDisable = OnDisable(self)
+        self._enabled = False
         self.enabled = enabled
         self._zoom_level: float = 1
         CameraService.add_camera(self)
