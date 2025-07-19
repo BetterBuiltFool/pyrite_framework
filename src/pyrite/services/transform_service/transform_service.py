@@ -135,7 +135,7 @@ class DefaultTransformService(TransformService):
         self.local_transforms: WeakKeyDictionary[TransformComponent, Transform] = (
             WeakKeyDictionary()
         )
-        self.root_transforms: list[WeakTreeNode[TransformComponent]] = []
+        self.root_transforms: WeakSet[WeakTreeNode[TransformComponent]] = WeakSet()
         self.transform_nodes: NodeDict = WeakKeyDictionary()
 
         self.dirty_components: WeakSet[TransformComponent] = WeakSet()
@@ -249,4 +249,4 @@ class DefaultTransformService(TransformService):
 
         node = WeakTreeNode(component, cleanup_mode=WeakTreeNode.REPARENT)
         self.transform_nodes[component] = node
-        self.root_transforms.append(node)
+        self.root_transforms.add(node)
