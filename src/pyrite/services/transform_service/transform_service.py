@@ -1,17 +1,22 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING
+from typing import TypeAlias, TYPE_CHECKING
 
 from weakref import WeakKeyDictionary, WeakSet
 
 from pygame import Vector2
+from weaktree import WeakTreeNode
 
 from ...types.service import Service
 
 if TYPE_CHECKING:
     from pygame.typing import Point
     from ...transform import Transform, TransformComponent
+
+    NodeDict: TypeAlias = WeakKeyDictionary[
+        TransformComponent, WeakTreeNode[TransformComponent]
+    ]
 
 
 class TransformService(Service):
@@ -107,6 +112,8 @@ class DefaultTransformService(TransformService):
         self.local_transforms: WeakKeyDictionary[TransformComponent, Transform] = (
             WeakKeyDictionary()
         )
+        self.root_transforms: list[WeakTreeNode[TransformComponent]] = []
+        self.transform_nodes: NodeDict = WeakKeyDictionary()
 
         self.dirty_components: WeakSet[TransformComponent] = WeakSet()
 
@@ -183,3 +190,7 @@ class DefaultTransformService(TransformService):
         self.local_transforms.update({component: value})
         # Temporary, will update w/ TransformComponent updates
         self.world_transforms.update({component: value.copy()})
+
+        node = WeakTreeNode(component, cleanup_mode=WeakTreeNode.REPARENT)
+        self.transform_nodes[component] = node
+        self.root_transforms.append(node)
