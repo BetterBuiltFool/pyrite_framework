@@ -9,6 +9,7 @@ from .transform_service import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pygame.typing import Point
     from pygame import Vector2
     from ...transform import Transform, TransformComponent
@@ -194,6 +195,16 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         :param parent: Another TransformComponent
         """
         return cls._service.set_parent(component, parent)
+
+    @classmethod
+    def traverse_transforms(cls) -> Iterator[TransformComponent | None]:
+        """
+        Provides an iterator walks down the tree of transform components, depth-first.
+
+        :yield: The next TransformComponent in the tree, or None, if the
+        TransformComponent has since expired.
+        """
+        yield from cls._service
 
     @classmethod
     def is_dirty(cls, component: TransformComponent) -> bool:

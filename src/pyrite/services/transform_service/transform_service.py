@@ -11,6 +11,7 @@ from weaktree import WeakTreeNode
 from ...types.service import Service
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pygame.typing import Point
     from ...transform import Transform, TransformComponent
 
@@ -20,6 +21,10 @@ if TYPE_CHECKING:
 
 
 class TransformService(Service):
+
+    @abstractmethod
+    def __iter__(self) -> Iterator[TransformComponent | None]:
+        pass
 
     @abstractmethod
     def get_local(self, component: TransformComponent) -> Transform:
@@ -122,6 +127,10 @@ class DefaultTransformService(TransformService):
         self.transform_nodes: NodeDict = WeakKeyDictionary()
 
         self.dirty_components: WeakSet[TransformComponent] = WeakSet()
+
+    def __iter__(self) -> Iterator[TransformComponent | None]:
+        for node in self.root_transforms:
+            yield from node.values().depth()
 
     def transfer(self, target_service: TransformService):
         for component, transform in self.local_transforms.items():
