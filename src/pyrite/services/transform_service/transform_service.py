@@ -101,6 +101,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def get_descendants(self, component: TransformComponent) -> set[TransformComponent]:
+        pass
+
+    @abstractmethod
     def make_dirty(self, component: TransformComponent) -> None:
         pass
 
@@ -215,6 +219,15 @@ class DefaultTransformService(TransformService):
         # method.
         component_node.trunk = parent_node
         self.root_transforms.remove(component_node)
+
+    def get_descendants(self, component: TransformComponent) -> set[TransformComponent]:
+        node = self.transform_nodes[component]
+        descendants: set[TransformComponent] = set()
+        for branch in node.branches:
+            if not (descendant := branch.data):
+                continue
+            descendants.add(descendant)
+        return descendants
 
     def make_dirty(self, component: TransformComponent) -> None:
         self.dirty_components.add(component)
