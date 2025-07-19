@@ -86,6 +86,12 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def set_parent(
+        self, component: TransformComponent, parent: TransformComponent
+    ) -> None:
+        pass
+
+    @abstractmethod
     def is_dirty(self, component: TransformComponent) -> bool:
         pass
 
