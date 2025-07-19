@@ -101,6 +101,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def make_dirty(self, component: TransformComponent) -> None:
+        pass
+
+    @abstractmethod
     def is_dirty(self, component: TransformComponent) -> bool:
         pass
 
@@ -211,6 +215,9 @@ class DefaultTransformService(TransformService):
         # method.
         component_node.trunk = parent_node
         self.root_transforms.remove(component_node)
+
+    def make_dirty(self, component: TransformComponent) -> None:
+        self.dirty_components.add(component)
 
     def is_dirty(self, component: TransformComponent) -> bool:
         return component in self.dirty_components

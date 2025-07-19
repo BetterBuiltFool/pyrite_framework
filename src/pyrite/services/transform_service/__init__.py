@@ -217,6 +217,15 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         yield from cls._service
 
     @classmethod
+    def make_dirty(cls, component: TransformComponent) -> None:
+        """
+        Forces the component to be marked as dirty.
+
+        :param component: A TransformComponent that will be marked as dirty.
+        """
+        cls._service.make_dirty(component)
+
+    @classmethod
     def is_dirty(cls, component: TransformComponent) -> bool:
         """
         Checks if a transform component is in need of updating.
