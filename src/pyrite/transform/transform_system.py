@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from typing import TYPE_CHECKING
 
 from ..services import TransformService
 from ..systems import System
 from .transform import Transform
+
+
+if TYPE_CHECKING:
+    from .transform_component import TransformComponent
 
 
 class TransformSystem(System):
@@ -31,13 +36,13 @@ class TransformSystem(System):
 
     @staticmethod
     @abstractmethod
-    def convert_to_world(transform: Transform) -> Transform:
+    def convert_to_world(transform: TransformComponent) -> Transform:
         """
-        Converts the transform into world space, with context defined by the system
-        implementation.
+        Converts the transform component into world space, with context defined by the
+        system implementation.
 
-        :param transform: A Transform object in local space.
-        :return: A Transform that represents _transform_ in world space.
+        :param transform: A TransformComponent object.
+        :return: A Transform that represents the world space value of _transform_.
         """
         pass
 
@@ -61,8 +66,12 @@ class DefaultTransformSystem(TransformSystem):
     """
 
     @staticmethod
-    def convert_to_world(transform: Transform) -> Transform:
-        return transform
+    def convert_to_world(transform: TransformComponent) -> Transform:
+        if not (parent := TransformService.get_parent(transform)):
+            # We are dealing with a root component
+            return transform.raw()
+
+        return parent.world() * transform
 
     @staticmethod
     def convert_to_local(transform: Transform) -> Transform:
@@ -73,13 +82,13 @@ class DefaultTransformSystem(TransformSystem):
             assert component
             if not component.is_dirty():
                 continue
-            # world_transform = self.convert_to_world(component)
-            # TransformService.set_world(component, world_transform)
+            world_transform = self.convert_to_world(component)
+            TransformService.set_world(component, world_transform)
 
             # We need to mark all descending nodes as dirty, since they are depending
             # on this node.
-            # for subcomponent in TransformService.get_descendants(component):
-            #     TransformService.make_dirty(subcomponent)
+            for subcomponent in TransformService.get_descendants(component):
+                TransformService.make_dirty(subcomponent)
 
 
 _default_transform_system: type[TransformSystem] = DefaultTransformSystem
