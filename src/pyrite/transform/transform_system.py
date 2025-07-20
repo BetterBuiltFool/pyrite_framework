@@ -89,6 +89,7 @@ class DefaultTransformSystem(TransformSystem):
             # on this node.
             for subcomponent in TransformService.get_descendants(component):
                 TransformService.make_dirty(subcomponent)
+            TransformService.clean(component)
 
 
 _default_transform_system: type[TransformSystem] = DefaultTransformSystem
