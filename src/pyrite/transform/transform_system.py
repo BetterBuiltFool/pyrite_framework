@@ -69,7 +69,7 @@ class DefaultTransformSystem(TransformSystem):
     def convert_to_world(transform: TransformComponent) -> Transform:
         if not (parent := TransformService.get_parent(transform)):
             # We are dealing with a root component
-            return transform.raw()
+            return transform.raw().copy()
 
         return parent.world() * transform
 
