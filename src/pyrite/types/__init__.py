@@ -18,6 +18,7 @@ from .view_bounds import CameraViewBounds  # noqa: F401
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import SequenceLike
+    from ..transform.transform_component import TransformComponent
 
     Point3D = SequenceLike[float]
 
@@ -36,12 +37,7 @@ class HasPosition(Protocol):
 
 
 class HasTransform(Protocol):
-
-    @property
-    def transform(self) -> TransformLike: ...
-
-    @transform.setter
-    def transform(self, value: TransformLike): ...
+    transform: TransformComponent
 
 
 class HasTexture(Protocol):
