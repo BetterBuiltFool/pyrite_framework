@@ -98,11 +98,12 @@ class ChaseCamera(Entity, Camera):
         if not self.target:
             return
         delta = self.calculate_ease(
-            self.transform.world_position - self.target.transform.position, delta_time
+            self.transform.world_position - self.target.transform.world_position,
+            delta_time,
         )
         if self.max_distance >= 0:
             delta = self.clamp_magnitude(delta)
-        self.transform.world_position = self.target.transform.position + delta
+        self.transform.world_position = self.target.transform.world_position + delta
 
     def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
         distance = delta.magnitude()
