@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..enum import Layer
     from ..types import (
         HasTransform,
+        HasTransformProperty,
         TransformLike,
     )
     from ..rendering.viewport import Viewport
@@ -28,7 +29,7 @@ class ChaseCamera(Entity, Camera):
         transform: TransformLike | None = None,
         render_targets: Viewport | Sequence[Viewport] | None = None,
         layer_mask: tuple[Layer] | None = None,
-        target: HasTransform | None = None,
+        target: HasTransform | HasTransformProperty | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
