@@ -37,7 +37,23 @@ class HasPosition(Protocol):
 
 
 class HasTransform(Protocol):
+    """
+    An object with a TransformComponent attribute called _transform_.
+    """
+
     transform: TransformComponent
+
+
+class HasTransformProperty(Protocol):
+    """
+    An object with a TransformComponent property called _transform_.
+    """
+
+    @property
+    def transform(self) -> TransformComponent: ...
+
+    @transform.setter
+    def transform(self, new_transform: TransformComponent) -> None: ...
 
 
 class HasTexture(Protocol):
