@@ -150,6 +150,10 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.set_world(component, value)
 
     @classmethod
+    def _set_world_no_update(cls, component: TransformComponent, value: Transform):
+        cls._service._set_world_no_update(component, value)
+
+    @classmethod
     def set_world_position(cls, component: TransformComponent, position: Point):
         """
         Sets the position of the transform component to the new position.

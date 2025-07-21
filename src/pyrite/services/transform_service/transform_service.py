@@ -79,6 +79,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def _set_world_no_update(self, component: TransformComponent, value: Transform):
+        pass
+
+    @abstractmethod
     def set_world_position(self, component: TransformComponent, position: Point):
         pass
 
@@ -200,6 +204,9 @@ class DefaultTransformService(TransformService):
 
         local_transform = self._calc_local_from_world(component, value)
         self.local_transforms[component] = local_transform
+
+    def _set_world_no_update(self, component: TransformComponent, value: Transform):
+        self.world_transforms[component] = value
 
     def set_world_position(self, component: TransformComponent, position: Point):
         world_transform = self.world_transforms[component]
