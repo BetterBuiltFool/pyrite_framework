@@ -175,6 +175,14 @@ class DefaultTransformService(TransformService):
         self.dirty_components.add(component)
         self.local_transforms[component].scale = Vector2(scale)
 
+    def _calc_local_from_world(
+        self, component: TransformComponent, value: Transform
+    ) -> Transform:
+        node = self.transform_nodes[component]
+        if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
+            return value.copy()
+        return value / trunk_transform.world()
+
     def get_world(self, component: TransformComponent) -> Transform:
         return self.world_transforms[component]
 
@@ -188,20 +196,29 @@ class DefaultTransformService(TransformService):
         return self.world_transforms[component].scale
 
     def set_world(self, component: TransformComponent, value: Transform):
-        # TODO Force update local
-        self.world_transforms.update({component: value})
+        self.world_transforms[component] = value
+        local_transform = self._calc_local_from_world(component, value)
+        self.local_transforms[component] = local_transform
 
     def set_world_position(self, component: TransformComponent, position: Point):
-        # TODO Force update local
-        self.world_transforms[component].position = Vector2(position)
+        world_transform = self.world_transforms[component]
+        world_transform.position = Vector2(position)
+        local_transform = self._calc_local_from_world(component, world_transform)
+        self.local_transforms[component] = local_transform
+        self.dirty_components.discard(component)
 
     def set_world_rotation(self, component: TransformComponent, angle: float):
-        # TODO Force update local
-        self.world_transforms[component].rotation = angle
+        world_transform = self.world_transforms[component]
+        world_transform.rotation = angle
+        local_transform = self._calc_local_from_world(component, world_transform)
+        self.local_transforms[component] = local_transform
+        self.dirty_components.discard(component)
 
     def set_world_scale(self, component: TransformComponent, scale: Point):
-        # TODO Force update local
-        self.world_transforms[component].scale = Vector2(scale)
+        world_transform = self.world_transforms[component]
+        world_transform.scale = Vector2(scale)
+        local_transform = self._calc_local_from_world(component, world_transform)
+        self.local_transforms[component] = local_transform
 
     def get_parent(self, component: TransformComponent) -> TransformComponent | None:
         node = self.transform_nodes[component]
