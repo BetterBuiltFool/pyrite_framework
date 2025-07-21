@@ -189,5 +189,11 @@ class Transform:
         rotated_position = translated_position.rotate(self.rotation)
         return rotated_position / self.scale.elementwise()
 
+    def __truediv__(self, other: transform.TransformLike) -> Transform:
+        return Transform.localize(self, other)
+
+    def __rtruediv__(self, other: transform.TransformLike) -> Transform:
+        return Transform.localize(other, self)
+
     def __repr__(self) -> str:
         return f"Transform({self.position}, {self.rotation}, {self.scale})"
