@@ -197,26 +197,28 @@ class DefaultTransformService(TransformService):
 
     def set_world(self, component: TransformComponent, value: Transform):
         self.world_transforms[component] = value
+
         local_transform = self._calc_local_from_world(component, value)
         self.local_transforms[component] = local_transform
 
     def set_world_position(self, component: TransformComponent, position: Point):
         world_transform = self.world_transforms[component]
         world_transform.position = Vector2(position)
+
         local_transform = self._calc_local_from_world(component, world_transform)
         self.local_transforms[component] = local_transform
-        self.dirty_components.discard(component)
 
     def set_world_rotation(self, component: TransformComponent, angle: float):
         world_transform = self.world_transforms[component]
         world_transform.rotation = angle
+
         local_transform = self._calc_local_from_world(component, world_transform)
         self.local_transforms[component] = local_transform
-        self.dirty_components.discard(component)
 
     def set_world_scale(self, component: TransformComponent, scale: Point):
         world_transform = self.world_transforms[component]
         world_transform.scale = Vector2(scale)
+
         local_transform = self._calc_local_from_world(component, world_transform)
         self.local_transforms[component] = local_transform
 
