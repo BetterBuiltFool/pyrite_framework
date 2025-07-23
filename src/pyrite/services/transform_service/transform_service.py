@@ -200,7 +200,7 @@ class DefaultTransformService(TransformService):
         return self.world_transforms[component].scale
 
     def set_world(self, component: TransformComponent, value: Transform):
-        self.world_transforms[component] = value
+        self._set_world_no_update(component, value)
 
         local_transform = self._calc_local_from_world(component, value)
         self.local_transforms[component] = local_transform
