@@ -213,15 +213,15 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.set_relative_to(dependent, relative)
 
     @classmethod
-    def get_descendants(cls, component: TransformComponent) -> set[TransformComponent]:
+    def get_dependents(cls, component: TransformComponent) -> set[TransformComponent]:
         """
         Provides a set of all immediate descendants of the given transform component.
-        If it has no descendants, the set will be empty.
+        If it has no dependents, the set will be empty.
 
         :param component: A TransformComponent.
         :return: The immediately descending transform components of _component_.
         """
-        return cls._service.get_descendants(component)
+        return cls._service.get_dependents(component)
 
     @classmethod
     def traverse_transforms(cls) -> Iterator[TransformComponent | None]:

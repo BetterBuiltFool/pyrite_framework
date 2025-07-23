@@ -105,7 +105,7 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_descendants(self, component: TransformComponent) -> set[TransformComponent]:
+    def get_dependents(self, component: TransformComponent) -> set[TransformComponent]:
         pass
 
     @abstractmethod
@@ -247,7 +247,7 @@ class DefaultTransformService(TransformService):
                 return False
         return True
 
-    def get_descendants(self, component: TransformComponent) -> set[TransformComponent]:
+    def get_dependents(self, component: TransformComponent) -> set[TransformComponent]:
         node = self.transform_nodes[component]
         descendants: set[TransformComponent] = set()
         for branch in node.branches:

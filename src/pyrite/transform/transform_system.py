@@ -87,7 +87,7 @@ class DefaultTransformSystem(TransformSystem):
 
             # We need to mark all descending nodes as dirty, since they are depending
             # on this node.
-            for subcomponent in TransformService.get_descendants(component):
+            for subcomponent in TransformService.get_dependents(component):
                 TransformService.make_dirty(subcomponent)
             TransformService.clean(component)
 
