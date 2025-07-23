@@ -95,7 +95,9 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def get_parent(self, component: TransformComponent) -> TransformComponent | None:
+    def get_relative_of(
+        self, component: TransformComponent
+    ) -> TransformComponent | None:
         pass
 
     @abstractmethod
@@ -217,7 +219,9 @@ class DefaultTransformService(TransformService):
     def set_world_scale(self, component: TransformComponent, scale: Point):
         self.world_transforms[component].scale = Vector2(scale)
 
-    def get_parent(self, component: TransformComponent) -> TransformComponent | None:
+    def get_relative_of(
+        self, component: TransformComponent
+    ) -> TransformComponent | None:
         node = self.transform_nodes[component]
         if not (node_trunk := node.trunk):
             return None

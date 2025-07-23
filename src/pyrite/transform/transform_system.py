@@ -67,7 +67,7 @@ class DefaultTransformSystem(TransformSystem):
 
     @staticmethod
     def convert_to_world(transform: TransformComponent) -> Transform:
-        if not (parent := TransformService.get_parent(transform)):
+        if not (parent := TransformService.get_relative_of(transform)):
             # We are dealing with a root component
             return transform.raw().copy()
 
