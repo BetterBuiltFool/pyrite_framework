@@ -34,66 +34,78 @@ class TransformComponent(Component):
         """
         :return: Position in local space
         """
-        return TransformService.get_local_position(self)
+        return TransformService.get_local(self).position
 
     @position.setter
     def position(self, new_position: Point):
-        TransformService.set_local_position(self, new_position)
+        local = TransformService.get_local(self)
+        local.position = new_position
+        TransformService.set_local(self, local)
 
     @property
     def world_position(self) -> Vector2:
         """
         :return: Position in world space.
         """
-        return TransformService.get_world_position(self)
+        return TransformService.get_world(self).position
 
     @world_position.setter
     def world_position(self, new_position: Point):
-        TransformService.set_world_position(self, new_position)
+        world = TransformService.get_world(self)
+        world.position = new_position
+        TransformService.set_world(self, world)
 
     @property
     def rotation(self) -> float:
         """
         :return: Rotation in local space, in degrees.
         """
-        return TransformService.get_local_rotation(self)
+        return TransformService.get_local(self).rotation
 
     @rotation.setter
     def rotation(self, angle: float):
-        TransformService.set_local_rotation(self, angle)
+        local = TransformService.get_local(self)
+        local.rotation = angle
+        TransformService.set_local(self, local)
 
     @property
     def world_rotation(self) -> float:
         """
         :Return: Rotation in world space, in degrees.
         """
-        return TransformService.get_world_rotation(self)
+        return TransformService.get_world(self).rotation
 
     @world_rotation.setter
     def world_rotation(self, angle: float):
-        TransformService.set_world_rotation(self, angle)
+        world = TransformService.get_world(self)
+        world.rotation = angle
+        TransformService.set_world(self, world)
 
     @property
     def scale(self) -> Vector2:
         """
         :return: Local scaling factor.
         """
-        return TransformService.get_local_scale(self)
+        return TransformService.get_local(self).scale
 
     @scale.setter
     def scale(self, new_scale: Point):
-        TransformService.set_local_scale(self, new_scale)
+        local = TransformService.get_local(self)
+        local.scale = new_scale
+        TransformService.set_local(self, local)
 
     @property
     def world_scale(self) -> Vector2:
         """
         :return: World scaling factor.
         """
-        return TransformService.get_world_scale(self)
+        return TransformService.get_world(self).scale
 
     @world_scale.setter
     def world_scale(self, new_scale: Point):
-        TransformService.set_world_scale(self, new_scale)
+        world = TransformService.get_world(self)
+        world.scale = new_scale
+        TransformService.set_world(self, world)
 
     def is_dirty(self) -> bool:
         """
