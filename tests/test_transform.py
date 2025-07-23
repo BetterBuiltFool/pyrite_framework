@@ -1,10 +1,7 @@
 from __future__ import annotations
-import pathlib
-import sys
 import unittest
 
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.transform import Transform, TransformComponent  # noqa:E402
+from pyrite.transform import Transform, TransformComponent  # noqa:E402
 
 
 class Empty:
