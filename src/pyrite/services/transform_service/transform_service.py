@@ -209,25 +209,13 @@ class DefaultTransformService(TransformService):
         self.world_transforms[component] = value
 
     def set_world_position(self, component: TransformComponent, position: Point):
-        world_transform = self.world_transforms[component]
-        world_transform.position = Vector2(position)
-
-        local_transform = self._calc_local_from_world(component, world_transform)
-        self.local_transforms[component] = local_transform
+        self.world_transforms[component].position = Vector2(position)
 
     def set_world_rotation(self, component: TransformComponent, angle: float):
-        world_transform = self.world_transforms[component]
-        world_transform.rotation = angle
-
-        local_transform = self._calc_local_from_world(component, world_transform)
-        self.local_transforms[component] = local_transform
+        self.world_transforms[component].rotation = angle
 
     def set_world_scale(self, component: TransformComponent, scale: Point):
-        world_transform = self.world_transforms[component]
-        world_transform.scale = Vector2(scale)
-
-        local_transform = self._calc_local_from_world(component, world_transform)
-        self.local_transforms[component] = local_transform
+        self.world_transforms[component].scale = Vector2(scale)
 
     def get_parent(self, component: TransformComponent) -> TransformComponent | None:
         node = self.transform_nodes[component]
