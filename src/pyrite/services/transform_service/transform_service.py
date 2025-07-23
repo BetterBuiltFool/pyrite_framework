@@ -99,8 +99,8 @@ class TransformService(Service):
         pass
 
     @abstractmethod
-    def set_parent(
-        self, component: TransformComponent, parent: TransformComponent
+    def set_relative_to(
+        self, dependent: TransformComponent, relative: TransformComponent
     ) -> None:
         pass
 
@@ -223,16 +223,16 @@ class DefaultTransformService(TransformService):
             return None
         return node_trunk.data
 
-    def set_parent(
-        self, component: TransformComponent, parent: TransformComponent
+    def set_relative_to(
+        self, dependent: TransformComponent, relative: TransformComponent
     ) -> None:
-        component_node = self.transform_nodes[component]
-        parent_node = self.transform_nodes[parent]
+        component_node = self.transform_nodes[dependent]
+        parent_node = self.transform_nodes[relative]
 
         if not self._validate_parent(component_node, parent_node):
             raise ValueError(
-                f"Cannot set {parent} as parent to {component}; {component} is an"
-                f" ancestor to {parent}"
+                f"Cannot set {relative} as parent to {dependent}; {dependent} is an"
+                f" ancestor to {relative}"
             )
         component_node.trunk = parent_node
         self.root_transforms.remove(component_node)

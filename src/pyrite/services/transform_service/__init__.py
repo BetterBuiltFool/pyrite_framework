@@ -199,17 +199,17 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.get_parent(component)
 
     @classmethod
-    def set_parent(
-        cls, component: TransformComponent, parent: TransformComponent
+    def set_relative_to(
+        cls, dependent: TransformComponent, relative: TransformComponent
     ) -> None:
         """
         Marks the given component as being relative to another. The parent component
         should not be a descendant of the child component.
 
-        :param component: A TransformComponent
-        :param parent: Another TransformComponent
+        :param dependent: A TransformComponent
+        :param relative: Another TransformComponent
         """
-        return cls._service.set_parent(component, parent)
+        return cls._service.set_relative_to(dependent, relative)
 
     @classmethod
     def get_descendants(cls, component: TransformComponent) -> set[TransformComponent]:
