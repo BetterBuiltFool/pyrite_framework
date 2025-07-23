@@ -229,10 +229,23 @@ class DefaultTransformService(TransformService):
         component_node = self.transform_nodes[component]
         parent_node = self.transform_nodes[parent]
 
-        # TODO: This permits parent loops, which is undesireable. Add a validation
-        # method.
+        if not self._validate_parent(component_node, parent_node):
+            raise ValueError(
+                f"Cannot set {parent} as parent to {component}; {component} is an"
+                f" ancestor to {parent}"
+            )
         component_node.trunk = parent_node
         self.root_transforms.remove(component_node)
+
+    def _validate_parent(
+        self,
+        node: WeakTreeNode[TransformComponent],
+        parent: WeakTreeNode[TransformComponent],
+    ) -> bool:
+        for trunk_node in parent.towards_root():
+            if trunk_node is node:
+                return False
+        return True
 
     def get_descendants(self, component: TransformComponent) -> set[TransformComponent]:
         node = self.transform_nodes[component]
