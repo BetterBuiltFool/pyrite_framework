@@ -54,6 +54,7 @@ class TransformComponent(Component):
         world = TransformService.get_world(self)
         world.position = new_position
         TransformService.set_world(self, world)
+        TransformService.make_dirty(self)
 
     @property
     def rotation(self) -> float:
@@ -67,6 +68,7 @@ class TransformComponent(Component):
         local = TransformService.get_local(self)
         local.rotation = angle
         TransformService.set_local(self, local)
+        TransformService.make_dirty(self)
 
     @property
     def world_rotation(self) -> float:
@@ -80,6 +82,7 @@ class TransformComponent(Component):
         world = TransformService.get_world(self)
         world.rotation = angle
         TransformService.set_world(self, world)
+        TransformService.make_dirty(self)
 
     @property
     def scale(self) -> Vector2:
