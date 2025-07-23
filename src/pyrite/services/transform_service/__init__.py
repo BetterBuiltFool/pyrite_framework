@@ -203,11 +203,12 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         cls, dependent: TransformComponent, relative: TransformComponent
     ) -> None:
         """
-        Marks the given component as being relative to another. The parent component
-        should not be a descendant of the child component.
+        Marks the given component as being relative to another. The relative component
+        cannot be a descendant of the dependnent component.
 
         :param dependent: A TransformComponent
         :param relative: Another TransformComponent
+        :raises ValueError: Raised if _dependent_ is in the ancestry of _relative_.
         """
         return cls._service.set_relative_to(dependent, relative)
 
