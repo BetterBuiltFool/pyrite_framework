@@ -142,6 +142,7 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     def set_world(cls, component: TransformComponent, value: Transform):
         """
         Forces the world transform value of a transform component to a new value.
+        The local transform will be updated to match.
 
 
         :param component: Any transform component.
