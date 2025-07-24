@@ -228,9 +228,15 @@ class DefaultTransformService(TransformService):
         return node_trunk.data
 
     def set_relative_to(
-        self, dependent: TransformComponent, relative: TransformComponent
+        self, dependent: TransformComponent, relative: TransformComponent | None
     ) -> None:
         component_node = self.transform_nodes[dependent]
+
+        if not relative:
+            component_node.trunk = None
+            self.root_transforms.add(component_node)
+            return
+
         parent_node = self.transform_nodes[relative]
 
         if not self._validate_parent(component_node, parent_node):
