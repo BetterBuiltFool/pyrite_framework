@@ -59,6 +59,19 @@ class TestDefaultTransformService(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.transform_service.set_relative_to(root_component, branch_component)
 
+    def test_make_dirty(self):
+        root_component = TransformComponent(Empty())
+
+        self.assertTrue(root_component.is_dirty())
+
+        self.transform_service.dirty_components.clear()
+
+        self.assertFalse(root_component.is_dirty())
+
+        TransformService.make_dirty(root_component)
+
+        self.assertTrue(root_component.is_dirty())
+
 
 if __name__ == "__main__":
     unittest.main()
