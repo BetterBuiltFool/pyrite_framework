@@ -167,7 +167,7 @@ class DefaultTransformService(TransformService):
         return self.local_transforms[component].scale
 
     def set_local(self, component: TransformComponent, value: Transform):
-        self.local_transforms.update({component: value})
+        self.local_transforms[component] = value
 
     def set_local_position(self, component: TransformComponent, position: Point):
         self.dirty_components.add(component)
