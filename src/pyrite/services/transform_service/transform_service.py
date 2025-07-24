@@ -245,7 +245,7 @@ class DefaultTransformService(TransformService):
                 f" ancestor to {relative}"
             )
         component_node.trunk = parent_node
-        self.root_transforms.remove(component_node)
+        self.root_transforms.discard(component_node)
 
     def _validate_parent(
         self,
