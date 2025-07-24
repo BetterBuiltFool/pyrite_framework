@@ -46,6 +46,19 @@ class TestDefaultTransformService(unittest.TestCase):
             self.transform_service._validate_parent(root_node, branch_node)
         )
 
+    def test_set_relative_to(self):
+        root_component = TransformComponent(Empty())
+        branch_component = TransformComponent(Empty())
+
+        TransformService.set_relative_to(branch_component, root_component)
+
+        self.assertIs(
+            TransformService.get_relative_of(branch_component), root_component
+        )
+
+        with self.assertRaises(ValueError):
+            self.transform_service.set_relative_to(root_component, branch_component)
+
 
 if __name__ == "__main__":
     unittest.main()
