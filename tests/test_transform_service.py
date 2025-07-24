@@ -82,6 +82,16 @@ class TestDefaultTransformService(unittest.TestCase):
 
         self.assertEqual(TransformService.get_dependents(root_component), expected)
 
+    def test_get_relative_of(self):
+        root_component = TransformComponent(Empty())
+        branch_component = TransformComponent(Empty())
+
+        TransformService.set_relative_to(branch_component, root_component)
+
+        expected = root_component
+
+        self.assertIs(TransformService.get_relative_of(branch_component), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
