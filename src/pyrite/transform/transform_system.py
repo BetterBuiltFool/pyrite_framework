@@ -82,8 +82,6 @@ class DefaultTransformSystem(TransformSystem):
             assert component
             if not component.is_dirty():
                 continue
-            world_transform = self.convert_to_world(component)
-            TransformService._set_world_no_update(component, world_transform)
 
             # We need to mark all descending nodes as dirty, since they are depending
             # on this node.

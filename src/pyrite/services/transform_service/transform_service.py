@@ -181,14 +181,6 @@ class DefaultTransformService(TransformService):
         self.dirty_components.add(component)
         self.local_transforms[component].scale = Vector2(scale)
 
-    def _calc_local_from_world(
-        self, component: TransformComponent, value: Transform
-    ) -> Transform:
-        node = self.transform_nodes[component]
-        if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
-            return value.copy()
-        return value / trunk_transform.world()
-
     def get_world(self, component: TransformComponent) -> Transform:
         return self.world_transforms[component]
 
@@ -218,6 +210,22 @@ class DefaultTransformService(TransformService):
 
     def set_world_scale(self, component: TransformComponent, scale: Point):
         self.world_transforms[component].scale = Vector2(scale)
+
+    def _calc_local_from_world(
+        self, component: TransformComponent, value: Transform
+    ) -> Transform:
+        node = self.transform_nodes[component]
+        if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
+            return value.copy()
+        return value / trunk_transform.world()
+
+    def _calc_world_from_local(
+        self, component: TransformComponent, value: Transform
+    ) -> Transform:
+        node = self.transform_nodes[component]
+        if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
+            return value.copy()
+        return trunk_transform.world() * value
 
     def get_relative_of(
         self, component: TransformComponent
@@ -273,6 +281,8 @@ class DefaultTransformService(TransformService):
         return component in self.dirty_components
 
     def clean(self, component: TransformComponent):
+        world_transform = self._calc_world_from_local(component, component.raw())
+        self._set_world_no_update(component, world_transform)
         self.dirty_components.discard(component)
 
     def get_dirty(self) -> set[TransformComponent]:
