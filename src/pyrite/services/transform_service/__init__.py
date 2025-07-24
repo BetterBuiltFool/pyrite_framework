@@ -207,7 +207,7 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     ) -> None:
         """
         Marks the given component as being relative to another. The relative component
-        cannot be a descendant of the dependnent component.
+        cannot be a descendant of the dependent component.
 
         :param dependent: A TransformComponent
         :param relative: Another TransformComponent
