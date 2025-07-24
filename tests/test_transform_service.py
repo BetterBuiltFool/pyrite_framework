@@ -32,6 +32,20 @@ class TestDefaultTransformService(unittest.TestCase):
 
         self.assertIn(root_node, self.transform_service.root_transforms)
 
+    def test_validate_parent(self):
+        root_component = TransformComponent(Empty())
+        branch_component = TransformComponent(Empty())
+
+        self.transform_service.set_relative_to(branch_component, root_component)
+
+        root_node = self.transform_service.transform_nodes[root_component]
+        branch_node = self.transform_service.transform_nodes[branch_component]
+
+        self.assertTrue(self.transform_service._validate_parent(branch_node, root_node))
+        self.assertFalse(
+            self.transform_service._validate_parent(root_node, branch_node)
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
