@@ -41,6 +41,7 @@ class TransformComponent(Component):
         local = TransformService.get_local(self)
         local.position = new_position
         TransformService.set_local(self, local)
+        TransformService.make_dirty(self)
 
     @property
     def world_position(self) -> Vector2:
@@ -96,6 +97,7 @@ class TransformComponent(Component):
         local = TransformService.get_local(self)
         local.scale = new_scale
         TransformService.set_local(self, local)
+        TransformService.make_dirty(self)
 
     @property
     def world_scale(self) -> Vector2:
