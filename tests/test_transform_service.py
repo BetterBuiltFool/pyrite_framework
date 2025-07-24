@@ -72,6 +72,16 @@ class TestDefaultTransformService(unittest.TestCase):
 
         self.assertTrue(root_component.is_dirty())
 
+    def test_get_dependents(self):
+        root_component = TransformComponent(Empty())
+        branch_component = TransformComponent(Empty())
+
+        TransformService.set_relative_to(branch_component, root_component)
+
+        expected = set([branch_component])
+
+        self.assertEqual(TransformService.get_dependents(root_component), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
