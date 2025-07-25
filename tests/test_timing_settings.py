@@ -1,16 +1,10 @@
 from __future__ import annotations
 
 import logging
-import pathlib
-import sys
 import unittest
 
-# import pygame
-
-
-sys.path.append(str(pathlib.Path.cwd()))
-import src.pyrite.core.rate_settings as rate_settings  # noqa:E402
-from src.pyrite.core.rate_settings import RateSettings  # noqa:E402
+import pyrite.core.rate_settings as rate_settings
+from pyrite.core.rate_settings import RateSettings
 
 settings_logger = logging.getLogger(rate_settings.__name__)
 
