@@ -1,10 +1,6 @@
-import pathlib
-import sys
 import unittest
 
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.core.game_data import GameData  # noqa:E402
+from pyrite.core.game_data import GameData
 
 
 class Test_GameData(unittest.TestCase):

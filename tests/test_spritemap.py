@@ -1,13 +1,10 @@
 from io import StringIO
-import pathlib
-import sys
 import unittest
 
 import pygame
 
 
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.sprite.spritesheet import (  # noqa:E402
+from pyrite.sprite.spritesheet import (
     SimpleSpriteMap,
     DictSpriteMap,
 )

@@ -1,17 +1,14 @@
 from __future__ import annotations
-import pathlib
-import sys
+
 from typing import TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector2
 
+from pyrite.enum import Anchor
+
 if TYPE_CHECKING:
     from pygame.typing import Point, RectLike
-
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.enum import Anchor  # noqa:E402
 
 anchor_center: Point = (0.5, 0.5)
 anchor_75x_5y: Point = (0.75, 0.5)
