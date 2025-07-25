@@ -1,18 +1,11 @@
-# from collections.abc import Callable, Sequence
 from contextlib import contextmanager
-import pathlib
-import sys
 from typing import cast
 from weakref import WeakSet
 
-# from typing import Any
 import unittest
 
-
-sys.path.append(str(pathlib.Path.cwd()))
-
-from src.pyrite.core.entity_manager import DefaultEntityManager  # noqa:E402
-from src.pyrite.entity import Entity  # noqa:E402
+from pyrite.core.entity_manager import DefaultEntityManager
+from pyrite.entity import Entity
 
 
 class MockEntity(Entity):
