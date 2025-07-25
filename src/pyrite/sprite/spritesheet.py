@@ -4,11 +4,9 @@ from abc import ABC, abstractmethod
 
 from collections.abc import Sequence
 import pathlib
-from typing import TypeAlias, TypeVar, TYPE_CHECKING
+from typing import TypeAlias, TYPE_CHECKING
 
 from pygame import Rect
-
-MapKeyT = TypeVar("MapKeyT")
 
 if TYPE_CHECKING:
     import os
@@ -17,7 +15,7 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
 
-    RectDict: TypeAlias = dict[MapKeyT, Rect]
+    type RectDict[MapKeyT] = dict[MapKeyT, Rect]
     DecoderFunction: TypeAlias = Callable[[TextIO], RectDict | None]
 
 
