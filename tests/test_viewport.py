@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pathlib
 import sys
-from typing import TypeAlias, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import unittest
 
 from pygame import FRect, Rect
@@ -10,8 +10,8 @@ from pygame import FRect, Rect
 if TYPE_CHECKING:
     from pygame.typing import Point
 
-    NDCCoords: TypeAlias = Point
-    ScreenCoords: TypeAlias = Point
+    type NDCCoords = Point
+    type ScreenCoords = Point
 
 sys.path.append(str(pathlib.Path.cwd()))
 from src.pyrite.rendering import Viewport  # noqa:E402
