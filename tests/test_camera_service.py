@@ -4,11 +4,11 @@ import unittest
 
 from pygame import Rect, Vector3
 
-from src.pyrite.services import CameraService
-from src.pyrite.rendering import OrthoProjection
-from src.pyrite.types.projection import Projection
-from src.pyrite.types.camera import CameraBase
-from src.pyrite.transform import TransformComponent, Transform
+from pyrite.services import CameraService
+from pyrite.rendering import OrthoProjection
+from pyrite.types.projection import Projection
+from pyrite.types.camera import CameraBase
+from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
 
