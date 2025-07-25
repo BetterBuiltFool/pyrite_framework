@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from collections.abc import Sequence
 import pathlib
-from typing import TypeAlias, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pygame import Rect
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
     type RectDict[MapKeyT] = dict[MapKeyT, Rect]
-    DecoderFunction: TypeAlias = Callable[[TextIO], RectDict | None]
+    type DecoderFunction = Callable[[TextIO], RectDict | None]
 
 
 def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
