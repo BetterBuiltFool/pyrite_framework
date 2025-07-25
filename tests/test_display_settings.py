@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import pathlib
-import sys
 from typing import cast, Self
 import unittest
 
 import pygame
 
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.core.display_settings import DisplaySettings  # noqa:E402
+from pyrite.core.display_settings import DisplaySettings
 
 
 class MockSurface:
