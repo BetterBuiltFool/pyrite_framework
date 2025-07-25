@@ -1,20 +1,17 @@
 from __future__ import annotations
 
-import pathlib
-import sys
 from typing import TYPE_CHECKING
 import unittest
 
 from pygame import FRect, Rect
+
+from pyrite.rendering import Viewport
 
 if TYPE_CHECKING:
     from pygame.typing import Point
 
     type NDCCoords = Point
     type ScreenCoords = Point
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.rendering import Viewport  # noqa:E402
 
 display_size: Point = (600, 800)
 
