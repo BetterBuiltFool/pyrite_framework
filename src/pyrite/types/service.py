@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
 
-ServiceType = TypeVar("ServiceType")
 
-
-class Service(ABC, Generic[ServiceType]):
+class Service[ServiceType](ABC):
     """
     Controls data and provides methods for various objects in a way that is runtime
     swappable. Objects use the appropriate ServiceProvider to access a service.
@@ -28,10 +26,7 @@ class Service(ABC, Generic[ServiceType]):
         """
 
 
-ProvidedService = TypeVar("ProvidedService", bound=Service)
-
-
-class ServiceProvider(ABC, Generic[ProvidedService]):
+class ServiceProvider[ProvidedService: Service](ABC):
     """
     Class for providing access to a given service. The ServiceProvider will delegate
     out to the active version of the service. This way, services are runtime swappable,
