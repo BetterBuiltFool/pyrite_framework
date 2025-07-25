@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..enum import Layer
     from ..types import (
         HasTransform,
+        HasTransformProperty,
         TransformLike,
     )
     from ..rendering.viewport import Viewport
@@ -28,7 +29,7 @@ class ChaseCamera(Entity, Camera):
         transform: TransformLike | None = None,
         render_targets: Viewport | Sequence[Viewport] | None = None,
         layer_mask: tuple[Layer] | None = None,
-        target: HasTransform | None = None,
+        target: HasTransform | HasTransformProperty | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         relative_lag: bool = False,
@@ -98,11 +99,12 @@ class ChaseCamera(Entity, Camera):
         if not self.target:
             return
         delta = self.calculate_ease(
-            self.transform.world_position - self.target.transform.position, delta_time
+            self.transform.world_position - self.target.transform.world_position,
+            delta_time,
         )
         if self.max_distance >= 0:
             delta = self.clamp_magnitude(delta)
-        self.transform.world_position = self.target.transform.position + delta
+        self.transform.world_position = self.target.transform.world_position + delta
 
     def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
         distance = delta.magnitude()

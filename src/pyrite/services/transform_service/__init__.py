@@ -9,6 +9,7 @@ from .transform_service import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from pygame.typing import Point
     from pygame import Vector2
     from ...transform import Transform, TransformComponent
@@ -141,12 +142,17 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     def set_world(cls, component: TransformComponent, value: Transform):
         """
         Forces the world transform value of a transform component to a new value.
+        The local transform will be updated to match.
 
 
         :param component: Any transform component.
         :param value: A Transform value, in world space.
         """
         return cls._service.set_world(component, value)
+
+    @classmethod
+    def _set_world_no_update(cls, component: TransformComponent, value: Transform):
+        cls._service._set_world_no_update(component, value)
 
     @classmethod
     def set_world_position(cls, component: TransformComponent, position: Point):
@@ -181,6 +187,63 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
             space.
         """
         return cls._service.set_world_scale(component, scale)
+
+    @classmethod
+    def get_relative_of(
+        cls, component: TransformComponent
+    ) -> TransformComponent | None:
+        """
+        Finds the next higher transform component, if it exists.
+
+        :param component: A TransformComponent somewhere in the hierarchy
+        :return: The relative TransformComponent of _component_, if it exists, or None
+        if _component_ is root.
+        """
+        return cls._service.get_relative_of(component)
+
+    @classmethod
+    def set_relative_to(
+        cls, dependent: TransformComponent, relative: TransformComponent
+    ) -> None:
+        """
+        Marks the given component as being relative to another. The relative component
+        cannot be a descendant of the dependent component.
+
+        :param dependent: A TransformComponent
+        :param relative: Another TransformComponent
+        :raises ValueError: Raised if _dependent_ is in the ancestry of _relative_.
+        """
+        return cls._service.set_relative_to(dependent, relative)
+
+    @classmethod
+    def get_dependents(cls, component: TransformComponent) -> set[TransformComponent]:
+        """
+        Provides a set of all immediate descendants of the given transform component.
+        If it has no dependents, the set will be empty.
+
+        :param component: A TransformComponent.
+        :return: The immediately descending transform components of _component_.
+        """
+        return cls._service.get_dependents(component)
+
+    @classmethod
+    def traverse_transforms(cls) -> Iterator[TransformComponent | None]:
+        """
+        Provides an iterator walks down the tree of transform components, depth-first.
+
+        :yield: The next TransformComponent in the tree, or None, if the
+        TransformComponent has since expired.
+        """
+        yield from cls._service
+
+    @classmethod
+    def make_dirty(cls, component: TransformComponent) -> None:
+        """
+        Forces the component to be marked as dirty.
+
+        :param component: A TransformComponent that will be marked as dirty.
+        """
+        cls._service.make_dirty(component)
 
     @classmethod
     def is_dirty(cls, component: TransformComponent) -> bool:
