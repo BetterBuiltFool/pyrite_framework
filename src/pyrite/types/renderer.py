@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
 
-RenderableTypeT = TypeVar("RenderableTypeT")
-RenderTargetT = TypeVar("RenderTargetT")
 
-
-class Renderer(ABC, Generic[RenderableTypeT, RenderTargetT]):
+class Renderer[RenderableTypeT, RenderTargetT](ABC):
 
     @abstractmethod
     def render(
@@ -26,10 +23,7 @@ class Renderer(ABC, Generic[RenderableTypeT, RenderTargetT]):
         pass
 
 
-ProvidedRendererT = TypeVar("ProvidedRendererT", bound=Renderer)
-
-
-class RendererProvider(ABC, Generic[ProvidedRendererT]):
+class RendererProvider[ProvidedRendererT: Renderer](ABC):
     """
     Accessor class for a given renderer. Delegates methods to the renderer instance,
     providing an access point to the users of that renderer while allowing the instance
