@@ -2,14 +2,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from functools import singledispatchmethod
-from typing import Generic, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from typing import Any
-
-
-T = TypeVar("T")
 
 
 class _Sentinel:
@@ -20,7 +17,7 @@ class _Sentinel:
 SENTINEL = _Sentinel()
 
 
-class InstanceEvent(ABC, Generic[T]):
+class InstanceEvent[T](ABC):
     """
     Events that are bound to an instance of an object. They accumulate listeners, which
     respond when the event fires.

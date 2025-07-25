@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import bisect
-from typing import cast, Self, TYPE_CHECKING, TypeVar
+from typing import cast, Self, TYPE_CHECKING
 from weakref import WeakSet
 
 from ..types.system import System
@@ -10,9 +10,6 @@ from ..types.system import System
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pygame import Event
-
-
-SystemType = TypeVar("SystemType", bound=System)
 
 
 _active_system_manager: SystemManager
@@ -114,7 +111,9 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def get_system(self, system_type: type[SystemType]) -> SystemType | None:
+    def get_system[SystemType: System](
+        self, system_type: type[SystemType]
+    ) -> SystemType | None:
         """
         Returns the instance that matches the system type.
 
@@ -124,7 +123,9 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def remove_system(self, system_type: type[SystemType]) -> SystemType:
+    def remove_system[SystemType: System](
+        self, system_type: type[SystemType]
+    ) -> SystemType:
         """
         Removes a system instance from all parts of the system manager,
         based on the system type.
@@ -230,13 +231,17 @@ class DefaultSystemManager(SystemManager):
         if system.__class__ not in self.systems:  # I don't this is needed?
             self.systems.update({system.__class__: system})
 
-    def get_system(self, system_type: type[SystemType]) -> SystemType | None:
+    def get_system[SystemType: System](
+        self, system_type: type[SystemType]
+    ) -> SystemType | None:
         system = self.systems.get(system_type)
         if system is not None:
             system = cast(SystemType, system)
         return system
 
-    def remove_system(self, system_type: type[SystemType]) -> SystemType:
+    def remove_system[SystemType: System](
+        self, system_type: type[SystemType]
+    ) -> SystemType:
         system = self.systems.pop(system_type)
         self.active_systems.discard(system)
         if system is not None:

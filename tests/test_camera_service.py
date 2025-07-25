@@ -1,30 +1,23 @@
 from __future__ import annotations
-import pathlib
-import sys
 from typing import cast, TYPE_CHECKING
 import unittest
 
 from pygame import Rect, Vector3
 
-if TYPE_CHECKING:
-    from typing import TypeAlias
-
-    LocalCoords: TypeAlias = Vector3
-    NDCCoords: TypeAlias = Vector3
-    ZoomLevel: TypeAlias = float
-
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.services import CameraService  # noqa:E402
-from src.pyrite.rendering import OrthoProjection  # noqa: E402
-from src.pyrite.types.projection import Projection  # noqa:E402
-from src.pyrite.types.camera import CameraBase  # noqa:E402
-from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
+from pyrite.services import CameraService
+from pyrite.rendering import OrthoProjection
+from pyrite.types.projection import Projection
+from pyrite.types.camera import CameraBase
+from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
-    WorldTransform: TypeAlias = Transform
-    LocalTransform: TypeAlias = Transform
-    EyeTransform: TypeAlias = Transform
+
+    type LocalCoords = Vector3
+    type NDCCoords = Vector3
+    type ZoomLevel = float
+    type WorldTransform = Transform
+    type LocalTransform = Transform
+    type EyeTransform = Transform
 
 
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))

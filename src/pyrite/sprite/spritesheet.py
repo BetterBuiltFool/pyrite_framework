@@ -4,11 +4,9 @@ from abc import ABC, abstractmethod
 
 from collections.abc import Sequence
 import pathlib
-from typing import Generic, TypeAlias, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pygame import Rect
-
-MapKeyT = TypeVar("MapKeyT")
 
 if TYPE_CHECKING:
     import os
@@ -17,8 +15,8 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point
 
-    RectDict: TypeAlias = dict[MapKeyT, Rect]
-    DecoderFunction: TypeAlias = Callable[[TextIO], RectDict | None]
+    type RectDict[MapKeyT] = dict[MapKeyT, Rect]
+    type DecoderFunction = Callable[[TextIO], RectDict | None]
 
 
 def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
@@ -33,7 +31,7 @@ def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
     return sprites
 
 
-class SpriteMap(ABC, Generic[MapKeyT]):
+class SpriteMap[MapKeyT](ABC):
     """
     A dictionary of rects for getting the subsurfaces for a spritesheet.
     """
@@ -163,7 +161,7 @@ class SimpleSpriteMap(SpriteMap[Sequence[int]]):
         return self._map[row][column]
 
 
-class DictSpriteMap(SpriteMap[MapKeyT]):
+class DictSpriteMap[MapKeyT](SpriteMap):
     """
     Version of SpriteMap that uses a dictionary of Rects. Can be generated from file.
     """
@@ -227,7 +225,7 @@ class DictSpriteMap(SpriteMap[MapKeyT]):
         return self._map[key]
 
 
-class SpriteSheet(Generic[MapKeyT]):
+class SpriteSheet[MapKeyT]:
     """
     A tool that can select subsections of a larger surface for display.
     Useful for animations, or otherwise collecting multiple images

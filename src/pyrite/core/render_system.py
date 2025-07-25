@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import bisect
 from collections.abc import Iterable
-from typing import cast, Self, TypeAlias, TYPE_CHECKING
+from typing import cast, Self, TYPE_CHECKING
 from weakref import WeakSet
 
 from pygame import Surface
@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from ..types import Camera, Renderable
     from ..types.debug_renderer import DebugRenderer
 
-    LayerDict: TypeAlias = dict[Camera, list[Renderable]]
-    RenderQueue: TypeAlias = dict[Layer, LayerDict]
+    type LayerDict = dict[Camera, list[Renderable]]
+    type RenderQueue = dict[Layer, LayerDict]
 
 EMPTY_LAYER_SET: set[Renderable] = set()
 

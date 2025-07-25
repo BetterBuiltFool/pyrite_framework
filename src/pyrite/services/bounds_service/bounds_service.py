@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeAlias, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 from ...types.service import Service
@@ -9,7 +9,7 @@ from ...types.service import Service
 if TYPE_CHECKING:
     from ...types import CullingBounds, Renderable, TransformLike
 
-    BoundsData: TypeAlias = tuple[CullingBounds, TransformLike]
+    type BoundsData = tuple[CullingBounds, TransformLike]
 
 
 class BoundsService(Service):

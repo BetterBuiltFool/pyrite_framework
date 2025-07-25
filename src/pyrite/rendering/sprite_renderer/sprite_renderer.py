@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import cast, TypeAlias, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ...types import TransformLike
     from ... import Transform
 
-    SpriteData: TypeAlias = tuple[Surface, Transform]
+    type SpriteData = tuple[Surface, Transform]
 
 
 class SpriteRenderer(Renderer[Sprite, Camera]):

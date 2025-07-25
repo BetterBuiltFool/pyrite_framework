@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TypeAlias, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from weakref import WeakKeyDictionary, WeakSet
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from ...transform import Transform, TransformComponent
 
-    NodeDict: TypeAlias = WeakKeyDictionary[
+    type NodeDict = WeakKeyDictionary[
         TransformComponent, WeakTreeNode[TransformComponent]
     ]
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from collections.abc import Callable
 from functools import singledispatchmethod
-from typing import Any, Generic, TypeVar, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 from weakref import ref, WeakKeyDictionary
 
 from ..types.instance_event import InstanceEvent
@@ -14,8 +14,6 @@ from ..utils import threading
 if TYPE_CHECKING:
     pass
 
-T = TypeVar("T")
-
 
 class _Sentinel:
 
@@ -25,7 +23,7 @@ class _Sentinel:
 SENTINEL = _Sentinel()
 
 
-class BaseInstanceEvent(InstanceEvent, Generic[T]):
+class BaseInstanceEvent[T](InstanceEvent):
     """
     Events that are bound to an instance of an object. They accumulate listeners, which
     respond when the event fires.
