@@ -7,11 +7,10 @@ import unittest
 from pygame import Rect, Vector3
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
 
-    LocalCoords: TypeAlias = Vector3
-    NDCCoords: TypeAlias = Vector3
-    ZoomLevel: TypeAlias = float
+    type LocalCoords = Vector3
+    type NDCCoords = Vector3
+    type ZoomLevel = float
 
 
 sys.path.append(str(pathlib.Path.cwd()))
@@ -22,9 +21,9 @@ from src.pyrite.types.camera import CameraBase  # noqa:E402
 from src.pyrite.transform import TransformComponent, Transform  # noqa: E402
 
 if TYPE_CHECKING:
-    WorldTransform: TypeAlias = Transform
-    LocalTransform: TypeAlias = Transform
-    EyeTransform: TypeAlias = Transform
+    type WorldTransform = Transform
+    type LocalTransform = Transform
+    type EyeTransform = Transform
 
 
 centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
