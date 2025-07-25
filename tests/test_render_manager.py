@@ -1,29 +1,23 @@
 from collections.abc import Callable, Sequence
 from contextlib import contextmanager
-import pathlib
-import sys
 from typing import Any
 import unittest
 from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
 
-
-sys.path.append(str(pathlib.Path.cwd()))
-
-from src.pyrite.camera import Camera  # noqa:E402
-from src.pyrite.core.render_system import (  # noqa:E402
+from pyrite.camera import Camera
+from pyrite.core.render_system import (
     DefaultRenderManager,
     _get_draw_index,
 )
-from src.pyrite.enum import Layer, RenderLayers  # noqa:E402
-from src.pyrite.rendering import OrthoProjection, RectBounds  # noqa:E402
-from src.pyrite.rendering.base_renderable import BaseRenderable  # noqa:E402
-from src.pyrite.services import CameraService  # noqa:E402
-from src.pyrite.types import CullingBounds, Entity  # noqa:E402
-from src.pyrite.types.camera import CameraBase  # noqa:E402
-
-from src.pyrite.types.renderable import Renderable  # noqa:E402
+from pyrite.enum import Layer, RenderLayers
+from pyrite.rendering import OrthoProjection, RectBounds
+from pyrite.rendering.base_renderable import BaseRenderable
+from pyrite.services import CameraService
+from pyrite.types import CullingBounds, Entity
+from pyrite.types.camera import CameraBase
+from pyrite.types.renderable import Renderable
 
 
 class MockRenderable(BaseRenderable):
