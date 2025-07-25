@@ -1,14 +1,11 @@
 from __future__ import annotations
-import pathlib
-import sys
+
 import unittest
 
 from pygame import Rect
 
-
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.rendering.rect_bounds import rotate_rect  # noqa:E402
-from src.pyrite.enum import Anchor  # noqa:E402
+from pyrite.rendering.rect_bounds import rotate_rect
+from pyrite.enum import Anchor
 
 
 anchor_center = Anchor((0.5, 0.5))
