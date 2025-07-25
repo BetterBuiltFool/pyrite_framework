@@ -1,11 +1,8 @@
 from __future__ import annotations
-import pathlib
-import sys
 import unittest
 from weakref import WeakKeyDictionary
 
-sys.path.append(str(pathlib.Path.cwd()))
-from src.pyrite.component import Component  # noqa:E402
+from pyrite.component import Component
 
 
 class ComponentA(Component):
