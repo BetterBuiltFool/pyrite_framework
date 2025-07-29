@@ -85,7 +85,7 @@ class PymunkPhysicsService(PhysicsService):
         pass
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
-        self.bodies.update({rigidbody.body: rigidbody})
+        self.bodies[rigidbody.body] = rigidbody
         self.space.add(rigidbody.body)
 
     def add_collider(self, collider: ColliderComponent):
