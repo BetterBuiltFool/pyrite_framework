@@ -17,6 +17,7 @@ class TransformSystem(System):
     """
 
     def pre_render(self, delta_time: float) -> None:
+        TransformService.frame_reset()
         for component in TransformService.traverse_transforms():
             assert component
             if not component.is_dirty():
