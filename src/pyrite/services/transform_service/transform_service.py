@@ -27,6 +27,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def frame_reset(self) -> None:
+        pass
+
+    @abstractmethod
     def get_local(self, component: TransformComponent) -> Transform:
         pass
 
@@ -159,6 +163,9 @@ class DefaultTransformService(TransformService):
     def __iter__(self) -> Iterator[TransformComponent | None]:
         for node in self.root_transforms:
             yield from node.values().depth()
+
+    def frame_reset(self) -> None:
+        self.changed_components = WeakSet()
 
     def transfer(self, target_service: TransformService):
         for component, transform in self.local_transforms.items():

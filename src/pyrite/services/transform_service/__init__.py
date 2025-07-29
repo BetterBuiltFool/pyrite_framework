@@ -30,6 +30,14 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     # -----------------------Delegates-----------------------
 
     @classmethod
+    def frame_reset(cls) -> None:
+        """
+        Informs the service that the frame has ended, and any cleanup should be
+        performed.
+        """
+        cls._service.frame_reset()
+
+    @classmethod
     def get_local(cls, component: TransformComponent) -> Transform:
         """
         :param component: Any transform component.
