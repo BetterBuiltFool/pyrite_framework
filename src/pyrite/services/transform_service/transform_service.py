@@ -129,6 +129,14 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def mark_changed(self, transform: TransformComponent) -> None:
+        pass
+
+    @abstractmethod
+    def get_changed(self) -> set[TransformComponent]:
+        pass
+
+    @abstractmethod
     def initialize_component(self, component: TransformComponent, value: Transform):
         pass
 
@@ -145,6 +153,8 @@ class DefaultTransformService(TransformService):
         self.transform_nodes: NodeDict = WeakKeyDictionary()
 
         self.dirty_components: WeakSet[TransformComponent] = WeakSet()
+
+        self.changed_components: WeakSet[TransformComponent] = WeakSet()
 
     def __iter__(self) -> Iterator[TransformComponent | None]:
         for node in self.root_transforms:
@@ -287,6 +297,12 @@ class DefaultTransformService(TransformService):
 
     def get_dirty(self) -> set[TransformComponent]:
         return set(self.dirty_components)
+
+    def mark_changed(self, transform: TransformComponent) -> None:
+        self.changed_components.add(transform)
+
+    def get_changed(self) -> set[TransformComponent]:
+        return set(self.changed_components)
 
     def initialize_component(self, component: TransformComponent, value: Transform):
         self.dirty_components.add(component)

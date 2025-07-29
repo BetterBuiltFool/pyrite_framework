@@ -273,6 +273,25 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.get_dirty()
 
     @classmethod
+    def mark_changed(cls, transform: TransformComponent) -> None:
+        """
+        Marks the passed TransformComponent as having been changed in the previous
+        frame.
+
+        :param transform: A TransformComponent that has been modified in the passed
+        frame.
+        """
+        cls._service.mark_changed(transform)
+
+    @classmethod
+    def get_changed(cls) -> set[TransformComponent]:
+        """
+        :return: A set containing all transform components that have been altered in
+        the most recent frame.
+        """
+        return cls._service.get_changed()
+
+    @classmethod
     def initialize_component(cls, component: TransformComponent, value: Transform):
         """
         Ensures that the transform component is recognized by the service.
