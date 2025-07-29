@@ -79,10 +79,10 @@ class PymunkPhysicsService(PhysicsService):
         self.comp_handler.separate = PymunkPhysicsService.separate
 
     def transfer(self, target_service: PhysicsService):
-        # Gotta figure out what to do here. I don't have any plans for other physics
-        # engines, so I've not bothered with making things terribly abstract, meaning
-        # that it's decidedly nontrivial to transfer physics data.
-        pass
+        for body in self.bodies.values():
+            target_service.add_rigidbody(body)
+            if body.collider:
+                target_service.add_collider(body.collider)
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
         self.bodies[rigidbody.body] = rigidbody
