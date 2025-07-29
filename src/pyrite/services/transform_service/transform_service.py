@@ -217,6 +217,7 @@ class DefaultTransformService(TransformService):
         self.local_transforms[component] = local_transform
 
     def _set_world_no_update(self, component: TransformComponent, value: Transform):
+        self.changed_components.add(component)
         self.world_transforms[component] = value
 
     def set_world_position(self, component: TransformComponent, position: Point):
@@ -301,6 +302,7 @@ class DefaultTransformService(TransformService):
         world_transform = self._calc_world_from_local(component, component.raw())
         self._set_world_no_update(component, world_transform)
         self.dirty_components.discard(component)
+        self.changed_components.add(component)
 
     def get_dirty(self) -> set[TransformComponent]:
         return set(self.dirty_components)
