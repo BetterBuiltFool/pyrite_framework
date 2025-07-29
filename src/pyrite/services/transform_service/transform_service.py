@@ -212,12 +212,12 @@ class DefaultTransformService(TransformService):
 
     def set_world(self, component: TransformComponent, value: Transform):
         self._set_world_no_update(component, value)
+        self.changed_components.add(component)
 
         local_transform = self._calc_local_from_world(component, value)
         self.local_transforms[component] = local_transform
 
     def _set_world_no_update(self, component: TransformComponent, value: Transform):
-        self.changed_components.add(component)
         self.world_transforms[component] = value
 
     def set_world_position(self, component: TransformComponent, position: Point):
