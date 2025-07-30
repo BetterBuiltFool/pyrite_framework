@@ -137,6 +137,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def has_changed(self, component: TransformComponent) -> bool:
+        pass
+
+    @abstractmethod
     def get_changed(self) -> set[TransformComponent]:
         pass
 
@@ -309,6 +313,9 @@ class DefaultTransformService(TransformService):
 
     def mark_changed(self, transform: TransformComponent) -> None:
         self.changed_components.add(transform)
+
+    def has_changed(self, component: TransformComponent) -> bool:
+        return component in self.changed_components
 
     def get_changed(self) -> set[TransformComponent]:
         return set(self.changed_components)

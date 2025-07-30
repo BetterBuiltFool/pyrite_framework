@@ -281,15 +281,25 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         return cls._service.get_dirty()
 
     @classmethod
-    def mark_changed(cls, transform: TransformComponent) -> None:
+    def mark_changed(cls, component: TransformComponent) -> None:
         """
         Marks the passed TransformComponent as having been changed in the previous
         frame.
 
-        :param transform: A TransformComponent that has been modified in the passed
+        :param component: A TransformComponent that has been modified in the passed
         frame.
         """
-        cls._service.mark_changed(transform)
+        cls._service.mark_changed(component)
+
+    @classmethod
+    def has_changed(cls, component: TransformComponent) -> bool:
+        """
+        Checks if the component has been changed in the past frame.
+
+        :param component: Any transform component
+        :return: True if the component has been altered in the last frame.
+        """
+        return cls._service.has_changed(component)
 
     @classmethod
     def get_changed(cls) -> set[TransformComponent]:
