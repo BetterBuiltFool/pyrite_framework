@@ -32,7 +32,7 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     @classmethod
     def frame_reset(cls) -> None:
         """
-        Informs the service that the frame has ended, and any cleanup should be
+        Informs the service that a new frame has begun, and any cleanup should be
         performed.
         """
         cls._service.frame_reset()
