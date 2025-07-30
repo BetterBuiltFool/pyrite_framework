@@ -99,6 +99,14 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         cls._service.step(delta_time)
 
     @classmethod
+    def sync_bodies_to_transforms(cls):
+        """
+        Takes all TransformComponents with a rigidbody and updates the rigidbody to
+        match the Transform if the transform has been set in the past frame.
+        """
+        cls._service.sync_bodies_to_transforms()
+
+    @classmethod
     def sync_transforms_to_bodies(cls):
         """
         Takes all TransformComponents with a rigidbody and updates their position and

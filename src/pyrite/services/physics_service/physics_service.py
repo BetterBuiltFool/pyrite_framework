@@ -61,6 +61,10 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
+    def sync_bodies_to_transforms(self):
+        pass
+
+    @abstractmethod
     def sync_transforms_to_bodies(self):
         pass
 
@@ -113,9 +117,16 @@ class PymunkPhysicsService(PhysicsService):
     def step(self, delta_time: float):
         return self.space.step(delta_time)
 
+    def sync_bodies_to_transforms(self):
+        for body, rigidbody in self.bodies.items():
+            transform = rigidbody.transform
+            if not transform.has_changed():
+                continue
+            body.position = transform.position
+            body.angle = transform.rotation
+            self.space.reindex_shapes_for_body(body)
+
     def sync_transforms_to_bodies(self):
-        # Passing TransformComponent class explicitly since we can't import it without
-        # causing a cycle
         for body, rigidbody in self.bodies.items():
             transform = rigidbody.transform
             if body.is_sleeping or body.body_type == pymunk.Body.STATIC:
