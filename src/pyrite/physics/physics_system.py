@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ..systems import System
 
-from ..services import PhysicsService
+from ..services import PhysicsService, TransformService
 
 if TYPE_CHECKING:
     pass
@@ -31,4 +31,9 @@ class PhysicsSystem(System):
         PhysicsService.step(timestep * self.physics_mult)
 
     def update(self, delta_time: float) -> None:
-        PhysicsService.sync_transforms_to_bodies()
+        self.sync_transforms_to_bodies()
+
+    def sync_transforms_to_bodies(self):
+        for rigidbody, transform in PhysicsService.get_updated_transforms_for_bodies():
+            transform_component = rigidbody.transform
+            TransformService._set_world_no_update(transform_component, transform)

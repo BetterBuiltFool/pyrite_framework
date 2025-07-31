@@ -11,6 +11,8 @@ from ...types.service import Service
 from ...constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     # from pygame.typing import Point
     from pymunk import (
         Arbiter,
@@ -22,6 +24,7 @@ if TYPE_CHECKING:
     )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
+    from ...transform import Transform
 
 
 class PhysicsService(Service):
@@ -65,7 +68,9 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
-    def sync_transforms_to_bodies(self):
+    def get_updated_transforms_for_bodies(
+        self,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
         pass
 
 
@@ -122,25 +127,32 @@ class PymunkPhysicsService(PhysicsService):
             transform = rigidbody.transform
             if not transform.has_changed():
                 continue
-            body.position = transform.position
+            body.position = tuple(transform.position)
             body.angle = transform.rotation
             self.space.reindex_shapes_for_body(body)
 
-    def sync_transforms_to_bodies(self):
+    def get_updated_transforms_for_bodies(
+        self,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
         for body, rigidbody in self.bodies.items():
             transform = rigidbody.transform
             if body.is_sleeping or body.body_type == pymunk.Body.STATIC:
                 # No adjustments to sleeping, static, or transformless objects
                 continue
             # TODO calculate an expected interpolation value?
-            new_pos = transform.world_position.lerp(body.position, 0.5)
+            world_transform = transform.world()
+
+            new_pos = world_transform.position.lerp(body.position, 0.5)
             angle_between = (
-                (math.degrees(body.angle) - transform.world_rotation) + 180
+                (math.degrees(body.angle) - world_transform.rotation) + 180
             ) % 360 - 180
             new_rot = angle_between / 2
 
-            transform.world_position = new_pos
-            transform.world_rotation = new_rot
+            new_transform = world_transform.copy()
+            new_transform.position = new_pos
+            new_transform.rotation = new_rot
+
+            yield (rigidbody, new_transform)
 
     def post_solve(self, arbiter: Arbiter, space: Space, data: Any):
         collider1, collider2 = self.get_collider_components(arbiter)

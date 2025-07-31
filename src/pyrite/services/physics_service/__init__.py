@@ -6,14 +6,10 @@ from .physics_service import PhysicsService, PymunkPhysicsService
 from ...types.service import ServiceProvider
 
 if TYPE_CHECKING:
-    # from pygame.typing import Point
-    # from pymunk import (
-    #     PointQueryInfo,
-    #     SegmentQueryInfo,
-    #     ShapeFilter,
-    # )
+    from collections.abc import Iterator
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
+    from ...transform import Transform
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -107,9 +103,10 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         cls._service.sync_bodies_to_transforms()
 
     @classmethod
-    def sync_transforms_to_bodies(cls):
+    def get_updated_transforms_for_bodies(
+        cls,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
         """
-        Takes all TransformComponents with a rigidbody and updates their position and
-        rotation with the new calculations.
+        Provides an iterator containing Rigidbodies and their new transforms.
         """
-        cls._service.sync_transforms_to_bodies()
+        yield from cls._service.get_updated_transforms_for_bodies()
