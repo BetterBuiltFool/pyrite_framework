@@ -48,11 +48,10 @@ class ColliderRenderer(DebugRenderer):
         for component in RigidbodyComponent.get_instances().values():
             pos = component.body.position
             for shape in component.body.shapes:
-                shape_pos = pos + shape.center_of_gravity
                 match shape.__class__:
                     case pymunk.shapes.Circle:
                         assert isinstance(shape, pymunk.shapes.Circle)
-                        self.draw_circle(cameras, shape_pos, shape.radius)
+                        self.draw_circle(cameras, pos + shape.offset, shape.radius)
                     case pymunk.shapes.Poly:
                         assert isinstance(shape, pymunk.shapes.Poly)
                         self.draw_poly(cameras, pos, shape.get_vertices())
