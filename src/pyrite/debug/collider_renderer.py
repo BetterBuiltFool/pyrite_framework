@@ -23,10 +23,17 @@ class ColliderRenderer(DebugRenderer):
         self.color = Color(draw_color)
         self.font = pygame.font.Font()
 
-    def draw_circle(self, cameras: Iterable[Camera], position: Point, radius: int):
+    def draw_circle(self, cameras: Iterable[Camera], position: Point, radius: float):
         for camera in cameras:
             for viewport in camera.get_viewports():
-                draw.circle(camera, viewport, self.color, position, radius, width=1)
+                draw.circle(
+                    camera,
+                    viewport,
+                    self.color,
+                    position,
+                    int((radius / 2) * camera.zoom_level),
+                    width=1,
+                )
 
     def draw_poly(
         self, cameras: Iterable[Camera], position: Point, points: Sequence[Point]
@@ -45,7 +52,7 @@ class ColliderRenderer(DebugRenderer):
                 match shape.__class__:
                     case pymunk.shapes.Circle:
                         assert isinstance(shape, pymunk.shapes.Circle)
-                        self.draw_circle(cameras, shape_pos, int(shape.radius))
+                        self.draw_circle(cameras, shape_pos, shape.radius)
                     case pymunk.shapes.Poly:
                         assert isinstance(shape, pymunk.shapes.Poly)
                         self.draw_poly(cameras, pos, shape.get_vertices())
