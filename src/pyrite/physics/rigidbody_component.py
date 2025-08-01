@@ -35,6 +35,9 @@ class RigidbodyComponent(Component):
             body = Body()
         self.transform = transform
         self.body = body
+        self.body.position = tuple(transform.world_position)
+        self.body.angle = transform.world_rotation
+
         self._collider: ref[ColliderComponent] | None = None
         PhysicsService.add_rigidbody(self)
 
