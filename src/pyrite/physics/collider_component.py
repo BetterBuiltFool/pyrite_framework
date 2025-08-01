@@ -65,6 +65,9 @@ class ColliderComponent(Component):
             collision_shape.collision_type = COMPONENT_TYPE
             collision_shape.body = body
             collision_shape.filter = self.filter
+            if not (collision_shape.density) and not (rigidbody.body.mass):
+                # Force a density to make sure we don't get NaN propagating.
+                collision_shape.density = 1
         PhysicsService.add_collider(self)
 
         self.OnTouch = OnTouch(self)
