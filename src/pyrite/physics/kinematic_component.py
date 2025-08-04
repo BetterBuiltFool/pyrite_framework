@@ -53,3 +53,9 @@ class KinematicComponent(Component):
     @angular_velocity.setter
     def angular_velocity(self, ang_velocity: float):
         self.body.angular_velocity = math.radians(ang_velocity)
+
+    def apply_force(self, force_vector: Point) -> None:
+        self.body.apply_force_at_local_point((force_vector[0], force_vector[1]))
+
+    def apply_impulse(self, impulse_vector: Point) -> None:
+        self.body.apply_impulse_at_local_point((impulse_vector[0], impulse_vector[1]))
