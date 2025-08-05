@@ -67,3 +67,7 @@ class RigidbodyComponent(Component):
         The mass value of the rigidbody.
         """
         return self.body.mass
+
+    @mass.setter
+    def mass(self, new_mass: float):
+        self.body.mass = new_mass
