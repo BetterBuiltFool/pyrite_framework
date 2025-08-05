@@ -49,26 +49,6 @@ class RigidbodyComponent(Component):
         """
         return Vector2(self.body.center_of_gravity)
 
-    @property
-    def collider(self) -> ColliderComponent | None:
-        """
-        Property tracking an optional ColliderComponent for the Rigidbody
-
-        :return: The owned ColliderComponent, or None
-        """
-        if self._collider is not None:
-            return self._collider()
-        return self._collider
-
-    @collider.setter
-    def collider(self, collider_component: ColliderComponent | None):
-        if collider_component is not None:
-            component_reference = ref(collider_component)
-        else:
-            component_reference = None
-
-        self._collider = component_reference
-
     # TODO Add contraints property
 
     @property
