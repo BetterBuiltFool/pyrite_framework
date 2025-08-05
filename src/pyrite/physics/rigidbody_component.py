@@ -98,3 +98,13 @@ class RigidbodyComponent(Component):
         Forces the rigidbody to sleep, regardless of circumstances.
         """
         self.body.sleep()
+
+    def sleep_with_group(self, component: RigidbodyComponent) -> None:
+        """
+        Forces the rigidbody to sleep, while putting it into the same group as the
+        passed component.
+
+        :param component: Another rigidbody component, with whom the calling component
+        will be grouped.
+        """
+        self.body.sleep_with_group(component.body)
