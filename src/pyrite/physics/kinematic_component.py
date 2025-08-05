@@ -62,6 +62,14 @@ class KinematicComponent(Component):
         self.body.angular_velocity = math.radians(ang_velocity)
 
     @property
+    def torque(self) -> float:
+        """
+        Value representing the torque currently acting on the rigidbody.
+        """
+
+        return self.body.torque
+
+    @property
     def rotation_vector(self) -> Vector2:
         """
         Vector2 value of the rotational forces acting on the rigidbody.
