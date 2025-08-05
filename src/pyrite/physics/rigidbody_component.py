@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 from weakref import ref
 
+from pygame import Vector2
 from pymunk import Body
 
 from ..transform import TransformComponent
@@ -40,6 +41,13 @@ class RigidbodyComponent(Component):
 
         self._collider: ref[ColliderComponent] | None = None
         PhysicsService.add_rigidbody(self)
+
+    @property
+    def center_of_gravity(self) -> Vector2:
+        """
+        Returns the local center of gravity for the rigidbody.
+        """
+        return Vector2(self.body.center_of_gravity)
 
     @property
     def collider(self) -> ColliderComponent | None:
