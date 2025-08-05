@@ -57,16 +57,16 @@ class KinematicComponent(Component):
         """
         return math.degrees(self.body.angular_velocity)
 
+    @angular_velocity.setter
+    def angular_velocity(self, ang_velocity: float):
+        self.body.angular_velocity = math.radians(ang_velocity)
+
     @property
     def rotation_vector(self) -> Vector2:
         """
         Vector2 value of the rotational forces acting on the rigidbody.
         """
         return Vector2(self.body.rotation_vector)
-
-    @angular_velocity.setter
-    def angular_velocity(self, ang_velocity: float):
-        self.body.angular_velocity = math.radians(ang_velocity)
 
     def apply_force(self, force_vector: Point) -> None:
         self.body.apply_force_at_local_point((force_vector[0], force_vector[1]))
