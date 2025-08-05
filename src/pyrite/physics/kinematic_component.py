@@ -32,25 +32,6 @@ class KinematicComponent(Component):
         self.body = rigidbody.body
 
     @property
-    def velocity(self) -> Vector2:
-        """
-        Vector2 velocity of the object's rigidbody
-        """
-        vel = self.body.velocity
-        return Vector2(vel[0], vel[1])
-
-    @velocity.setter
-    def velocity(self, vel: Point):
-        self.body.velocity = (vel[0], vel[1])
-
-    @property
-    def force(self) -> Vector2:
-        """
-        Vector2 value of the forces currently acting on the body's venter of gravity.
-        """
-        return Vector2(self.body.force)
-
-    @property
     def angular_velocity(self) -> float:
         """
         Angular velocity of the object's rigidbody, in degrees/unit time
@@ -62,6 +43,20 @@ class KinematicComponent(Component):
         self.body.angular_velocity = math.radians(ang_velocity)
 
     @property
+    def force(self) -> Vector2:
+        """
+        Vector2 value of the forces currently acting on the body's venter of gravity.
+        """
+        return Vector2(self.body.force)
+
+    @property
+    def rotation_vector(self) -> Vector2:
+        """
+        Vector2 value of the rotational forces acting on the rigidbody.
+        """
+        return Vector2(self.body.rotation_vector)
+
+    @property
     def torque(self) -> float:
         """
         Value representing the torque currently acting on the rigidbody.
@@ -70,11 +65,16 @@ class KinematicComponent(Component):
         return self.body.torque
 
     @property
-    def rotation_vector(self) -> Vector2:
+    def velocity(self) -> Vector2:
         """
-        Vector2 value of the rotational forces acting on the rigidbody.
+        Vector2 velocity of the object's rigidbody
         """
-        return Vector2(self.body.rotation_vector)
+        vel = self.body.velocity
+        return Vector2(vel[0], vel[1])
+
+    @velocity.setter
+    def velocity(self, vel: Point):
+        self.body.velocity = (vel[0], vel[1])
 
     def apply_force(self, force_vector: Point) -> None:
         self.body.apply_force_at_local_point((force_vector[0], force_vector[1]))
