@@ -44,11 +44,25 @@ class KinematicComponent(Component):
         self.body.velocity = (vel[0], vel[1])
 
     @property
+    def force(self) -> Vector2:
+        """
+        Vector2 value of the forces currently acting on the body's venter of gravity.
+        """
+        return Vector2(self.body.force)
+
+    @property
     def angular_velocity(self) -> float:
         """
         Angular velocity of the object's rigidbody, in degrees/unit time
         """
         return math.degrees(self.body.angular_velocity)
+
+    @property
+    def rotation_vector(self) -> Vector2:
+        """
+        Vector2 value of the rotational forces acting on the rigidbody.
+        """
+        return Vector2(self.body.rotation_vector)
 
     @angular_velocity.setter
     def angular_velocity(self, ang_velocity: float):
