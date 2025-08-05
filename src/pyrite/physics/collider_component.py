@@ -60,10 +60,10 @@ class ColliderComponent(Component):
 
         rigidbody.collider = self
 
-        body = rigidbody.body
+        self.body = rigidbody.body
         for collision_shape in shape:
             collision_shape.collision_type = COMPONENT_TYPE
-            collision_shape.body = body
+            collision_shape.body = self.body
             collision_shape.filter = self.filter
             if not (collision_shape.density):  # and not (rigidbody.body.mass):
                 # Force a density to make sure we don't get NaN propagating.
