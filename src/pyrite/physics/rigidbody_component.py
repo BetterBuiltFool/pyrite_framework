@@ -92,3 +92,9 @@ class RigidbodyComponent(Component):
         Returns True if the rigidbody is sleeping.
         """
         return self.body.is_sleeping
+
+    def sleep(self) -> None:
+        """
+        Forces the rigidbody to sleep, regardless of circumstances.
+        """
+        self.body.sleep()
