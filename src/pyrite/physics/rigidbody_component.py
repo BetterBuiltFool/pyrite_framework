@@ -69,6 +69,8 @@ class RigidbodyComponent(Component):
 
         self._collider = component_reference
 
+    # TODO Add contraints property
+
     @property
     def mass(self) -> float:
         """
@@ -93,6 +95,16 @@ class RigidbodyComponent(Component):
     @moment.setter
     def moment(self, moment: float) -> None:
         self.body.moment = moment
+
+    @property
+    def position(self) -> Vector2:
+        """
+        Returns A Vector2 of the world position of the Rigidbody, as reported by the
+        underlying physics engine.
+
+        Does not respect the values of any associated TransformComponents.
+        """
+        return Vector2(self.body.position)
 
     @property
     def is_sleeping(self) -> bool:
