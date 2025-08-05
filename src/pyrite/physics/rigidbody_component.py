@@ -69,5 +69,19 @@ class RigidbodyComponent(Component):
         return self.body.mass
 
     @mass.setter
-    def mass(self, new_mass: float):
-        self.body.mass = new_mass
+    def mass(self, mass: float) -> None:
+        self.body.mass = mass
+
+    @property
+    def moment(self) -> float:
+        """
+        Moment of Inertia for the rigidbody. Represents resistance to change in
+        rotation.
+
+        Rotation can be disabled with `rigidbody.moment = float('inf')`
+        """
+        return self.body.moment
+
+    @moment.setter
+    def moment(self, moment: float) -> None:
+        self.body.moment = moment
