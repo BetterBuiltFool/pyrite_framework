@@ -50,6 +50,13 @@ class KinematicComponent(Component):
         return Vector2(self.body.force)
 
     @property
+    def kinetic_energy(self) -> float:
+        """
+        The current kinetic energy of the Rigidbody.
+        """
+        return self.body.kinetic_energy
+
+    @property
     def rotation_vector(self) -> Vector2:
         """
         Vector2 value of the rotational forces acting on the rigidbody.
