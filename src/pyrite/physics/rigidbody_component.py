@@ -87,7 +87,7 @@ class RigidbodyComponent(Component):
         self.body.moment = moment
 
     @property
-    def sleeeping(self) -> bool:
+    def is_sleeping(self) -> bool:
         """
         Returns True if the rigidbody is sleeping.
         """
