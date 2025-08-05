@@ -60,3 +60,10 @@ class RigidbodyComponent(Component):
             component_reference = None
 
         self._collider = component_reference
+
+    @property
+    def mass(self) -> float:
+        """
+        The mass value of the rigidbody.
+        """
+        return self.body.mass
