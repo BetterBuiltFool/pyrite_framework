@@ -85,6 +85,10 @@ class PymunkPhysicsService(PhysicsService):
             WeakValueDictionary()
         )
 
+        self.colliders: WeakValueDictionary[Body, ColliderComponent] = (
+            WeakValueDictionary()
+        )
+
         def post_solve(arbiter: Arbiter, space: Space, data: Any):
             collider1, collider2 = self.get_collider_components(arbiter)
             if arbiter.is_first_contact:
@@ -118,6 +122,7 @@ class PymunkPhysicsService(PhysicsService):
         self.space.add(rigidbody.body)
 
     def add_collider(self, collider: ColliderComponent):
+        self.colliders[collider.body] = collider
         self.space.add(*collider.shapes)
 
     # def cast_ray(
@@ -181,8 +186,6 @@ class PymunkPhysicsService(PhysicsService):
         shape1, shape2 = arbiter.shapes
         body1 = shape1.body
         body2 = shape2.body
-        rigidbody_1 = self.bodies[body1]
-        rigidbody_2 = self.bodies[body2]
-        assert rigidbody_1.collider
-        assert rigidbody_2.collider
-        return rigidbody_1.collider, rigidbody_2.collider
+        collider1 = self.colliders[body1]
+        collider2 = self.colliders[body2]
+        return collider1, collider2
