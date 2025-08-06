@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import math
+
 import pymunk
 
 from pyrite.physics.rigidbody_component import RigidbodyComponent
@@ -23,8 +25,8 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
         damping: float,
     ) -> None:
         super().__init__(body_a, body_b)
-        # TODO Convert rest_angle to radians. We want to be user-facing values to be in
-        # degrees to match other places.
+
+        rest_angle = math.radians(rest_angle)
         self._constraint = pymunk.DampedRotarySpring(
             body_a.body, body_b.body, rest_angle, stiffness, damping
         )
@@ -40,3 +42,14 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
     @damping.setter
     def damping(self, damping: float) -> None:
         self._constraint.damping = damping
+
+    @property
+    def rest_angle(self) -> float:
+        """
+        The angle the spring will try to return to, in degrees.
+        """
+        return math.degrees(self._constraint.rest_angle)
+
+    @rest_angle.setter
+    def rest_angle(self, rest_angle: float) -> None:
+        self._constraint.rest_angle = math.radians(rest_angle)
