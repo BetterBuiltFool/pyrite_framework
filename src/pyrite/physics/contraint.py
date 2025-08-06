@@ -8,6 +8,10 @@ if TYPE_CHECKING:
 
 
 class Constraint(ABC):
+    """
+    ABC class for physics contraints. All constraints are adapters for the underlying
+    physics engine.
+    """
 
     @property
     @abstractmethod
@@ -17,20 +21,10 @@ class Constraint(ABC):
         """
         pass
 
-    @a.setter
-    @abstractmethod
-    def a(self, body: RigidbodyComponent) -> None:
-        pass
-
     @property
     @abstractmethod
     def b(self) -> RigidbodyComponent:
         """
         The second of the two constrained rigidbodies.
         """
-        pass
-
-    @b.setter
-    @abstractmethod
-    def b(self, body: RigidbodyComponent) -> None:
         pass
