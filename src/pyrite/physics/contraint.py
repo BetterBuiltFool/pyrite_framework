@@ -82,6 +82,21 @@ class Constraint(ABC):
     def max_bias(self, max_bias: float) -> None:
         self._constraint.max_bias = max_bias
 
+    @property
+    def max_force(self) -> float:
+        """
+        The maximum force the constraint can apply to its two bodies.
+
+        Defaults to fnfinity.
+        """
+        return self._constraint.max_force
+
+    @max_force.setter
+    def max_force(self, max_force: float) -> None:
+        self._constraint.max_force = max_force
+
+    # Not adding post/presolve right now.
+
     def activate_bodies(self) -> None:
         """
         Activates the constrained bodies.
