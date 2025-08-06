@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from .rigidbody_component import RigidbodyComponent
 
 
-class Constraint(ABC):
+class Constraint[ConstraintT: PymunkConstraint](ABC):
     """
     ABC class for physics contraints. All constraints are adapters for the underlying
     physics engine.
@@ -17,7 +17,7 @@ class Constraint(ABC):
     def __init__(self, body_a: RigidbodyComponent, body_b: RigidbodyComponent) -> None:
         self._a = body_a
         self._b = body_b
-        self._constraint: PymunkConstraint
+        self._constraint: ConstraintT
 
     @property
     def a(self) -> RigidbodyComponent:
