@@ -34,5 +34,7 @@ class Constraint(ABC):
         return self._b
 
     def activate_bodies(self) -> None:
-        """ """
+        """
+        Activates the constrained bodies.
+        """
         self._constraint.activate_bodies()
