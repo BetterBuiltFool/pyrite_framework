@@ -33,6 +33,20 @@ class Constraint(ABC):
         """
         return self._b
 
+    @property
+    def collide_bodies(self) -> bool:
+        """
+        When False,on any constraint that ties together two bodies, the bodies will
+        ignore collisions with each other.
+
+        Defaults to True.
+        """
+        return self._constraint.collide_bodies
+
+    @collide_bodies.setter
+    def collide_bodies(self, collide_bodies: bool) -> None:
+        self._constraint.collide_bodies = collide_bodies
+
     def activate_bodies(self) -> None:
         """
         Activates the constrained bodies.
