@@ -61,6 +61,15 @@ class Constraint(ABC):
         self._constraint.error_bias = error_bias
 
     @property
+    def impulse(self) -> float:
+        """
+        The most recent impulse this constraint applied.
+
+        Multiply by the physics step to determine force.
+        """
+        return self._constraint.impulse
+
+    @property
     def max_bias(self) -> float:
         """
         The maximum speed that the constraint will apply error correction.
