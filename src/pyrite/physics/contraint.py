@@ -47,6 +47,32 @@ class Constraint(ABC):
     def collide_bodies(self, collide_bodies: bool) -> None:
         self._constraint.collide_bodies = collide_bodies
 
+    @property
+    def error_bias(self) -> float:
+        """
+        The percentage of joint error that remains unfixed after one second.
+
+        Defaults to pow(1.0 - 0.1, 60.0), or 10% correction every 1/60 second.
+        """
+        return self._constraint.error_bias
+
+    @error_bias.setter
+    def error_bias(self, error_bias: float) -> None:
+        self._constraint.error_bias = error_bias
+
+    @property
+    def max_bias(self) -> float:
+        """
+        The maximum speed that the constraint will apply error correction.
+
+        Defaults to infinity.
+        """
+        return self._constraint.max_bias
+
+    @max_bias.setter
+    def max_bias(self, max_bias: float) -> None:
+        self._constraint.max_bias = max_bias
+
     def activate_bodies(self) -> None:
         """
         Activates the constrained bodies.
