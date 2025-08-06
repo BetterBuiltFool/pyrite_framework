@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC  # , abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,18 +13,20 @@ class Constraint(ABC):
     physics engine.
     """
 
+    def __init__(self, body_a: RigidbodyComponent, body_b: RigidbodyComponent) -> None:
+        self._a = body_a
+        self._b = body_b
+
     @property
-    @abstractmethod
     def a(self) -> RigidbodyComponent:
         """
         The first of the two constrained rigidbodies.
         """
-        pass
+        return self._a
 
     @property
-    @abstractmethod
     def b(self) -> RigidbodyComponent:
         """
         The second of the two constrained rigidbodies.
         """
-        pass
+        return self._b
