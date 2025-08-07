@@ -53,3 +53,14 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
     @rest_angle.setter
     def rest_angle(self, rest_angle: float) -> None:
         self._constraint.rest_angle = math.radians(rest_angle)
+
+    @property
+    def stiffness(self) -> float:
+        """
+        The spring constant of the joint.
+        """
+        return self._constraint.stiffness
+
+    @stiffness.setter
+    def stiffness(self, stiffness: float) -> None:
+        self._constraint.stiffness = stiffness
