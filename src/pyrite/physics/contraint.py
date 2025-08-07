@@ -11,7 +11,7 @@ from pyrite.physics.rigidbody_component import RigidbodyComponent
 from ..types.constraint import Constraint
 
 if TYPE_CHECKING:
-    pass
+    from pygame.typing import Point
 
 
 class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
@@ -64,3 +64,28 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
     @stiffness.setter
     def stiffness(self, stiffness: float) -> None:
         self._constraint.stiffness = stiffness
+
+
+class DampedSpring(Constraint[pymunk.DampedSpring]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        anchor_a: Point,
+        anchor_b: Point,
+        rest_length: float,
+        stiffness: float,
+        damping: float,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.DampedSpring(
+            body_a.body,
+            body_b.body,
+            (anchor_a[0], anchor_a[1]),
+            (anchor_b[0], anchor_b[1]),
+            rest_length,
+            stiffness,
+            damping,
+        )
