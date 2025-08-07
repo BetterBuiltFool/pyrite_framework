@@ -159,3 +159,24 @@ class GearJoint(Constraint[pymunk.GearJoint]):
     @ratio.setter
     def ratio(self, ratio: float) -> None:
         self._constraint.ratio = ratio
+
+
+class GrooveJoint(Constraint[pymunk.GrooveJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        groove_a: Point,
+        groove_b: Point,
+        anchor_b: Point,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.GrooveJoint(
+            body_a.body,
+            body_b.body,
+            (groove_a[0], groove_a[1]),
+            (groove_b[0], groove_b[1]),
+            (anchor_b[0], anchor_b[1]),
+        )
