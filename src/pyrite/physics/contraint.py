@@ -145,3 +145,14 @@ class GearJoint(Constraint[pymunk.GearJoint]):
     @phase.setter
     def phase(self, phase: float) -> None:
         self._constraint.phase = phase
+
+    @property
+    def ratio(self) -> float:
+        """
+        Absolute ratio between the two bodies constrained by the gear joint.
+        """
+        return self._constraint.ratio
+
+    @ratio.setter
+    def ratio(self, ratio: float) -> None:
+        self._constraint.ratio = ratio
