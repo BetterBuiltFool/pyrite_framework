@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-
 import math
 
+from pygame import Vector2
 import pymunk
 
 from pyrite.physics.rigidbody_component import RigidbodyComponent
@@ -180,3 +180,36 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
             (groove_b[0], groove_b[1]),
             (anchor_b[0], anchor_b[1]),
         )
+
+    @property
+    def anchor_b(self) -> Vector2:
+        """
+        Pivot point on body B.
+        """
+        return Vector2(self._constraint.anchor_b)
+
+    @anchor_b.setter
+    def anchor_b(self, anchor_b: Point) -> None:
+        self._constraint.anchor_b = (anchor_b[0], anchor_b[1])
+
+    @property
+    def groove_a(self) -> Vector2:
+        """
+        Position of the start of the groove.
+        """
+        return Vector2(self._constraint.groove_a)
+
+    @groove_a.setter
+    def groove_a(self, groove_a: Point) -> None:
+        self._constraint.groove_a = (groove_a[0], groove_a[1])
+
+    @property
+    def groove_b(self) -> Vector2:
+        """
+        Position of the end of the groove.
+        """
+        return Vector2(self._constraint.groove_b)
+
+    @groove_b.setter
+    def groove_b(self, groove_b: Point) -> None:
+        self._constraint.groove_b = (groove_b[0], groove_b[1])
