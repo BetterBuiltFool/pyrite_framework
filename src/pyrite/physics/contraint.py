@@ -123,3 +123,17 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
     @stiffness.setter
     def stiffness(self, stiffness: float) -> None:
         self._constraint.stiffness = stiffness
+
+
+class GearJoint(Constraint[pymunk.GearJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        phase: float,
+        ratio: float,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.GearJoint(body_a.body, body_b.body, phase, ratio)
