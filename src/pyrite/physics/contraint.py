@@ -137,3 +137,11 @@ class GearJoint(Constraint[pymunk.GearJoint]):
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.GearJoint(body_a.body, body_b.body, phase, ratio)
+
+    @property
+    def phase(self) -> float:
+        return self._constraint.phase
+
+    @phase.setter
+    def phase(self, phase: float) -> None:
+        self._constraint.phase = phase
