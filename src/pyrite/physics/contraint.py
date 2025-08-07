@@ -213,3 +213,44 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
     @groove_b.setter
     def groove_b(self, groove_b: Point) -> None:
         self._constraint.groove_b = (groove_b[0], groove_b[1])
+
+
+class PinJoint(Constraint[pymunk.PinJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        anchor_a: Point = (0, 0),
+        anchor_b: Point = (0, 0),
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.PinJoint(
+            body_a.body,
+            body_b.body,
+            (anchor_a[0], anchor_a[1]),
+            (anchor_b[0], anchor_b[1]),
+        )
+
+    @property
+    def anchor_a(self) -> Vector2:
+        """
+        Relative position of the contraint on body A.
+        """
+        return Vector2(self._constraint.anchor_a)
+
+    @anchor_a.setter
+    def anchor_a(self, anchor_a: Point) -> None:
+        self._constraint.anchor_a = (anchor_a[0], anchor_a[1])
+
+    @property
+    def anchor_b(self) -> Vector2:
+        """
+        Relative position of the contraint on body B.
+        """
+        return Vector2(self._constraint.anchor_b)
+
+    @anchor_b.setter
+    def anchor_b(self, anchor_b: Point) -> None:
+        self._constraint.anchor_b = (anchor_b[0], anchor_b[1])
