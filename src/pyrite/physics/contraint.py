@@ -89,3 +89,26 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
             stiffness,
             damping,
         )
+
+    @property
+    def damping(self) -> float:
+        """
+        Controls the apparent "softness" of the spring.
+        Higher values result in stiffer springs.
+        """
+        return self._constraint.damping
+
+    @damping.setter
+    def damping(self, damping: float) -> None:
+        self._constraint.damping = damping
+
+    @property
+    def stiffness(self) -> float:
+        """
+        The spring constant of the joint.
+        """
+        return self._constraint.stiffness
+
+    @stiffness.setter
+    def stiffness(self, stiffness: float) -> None:
+        self._constraint.stiffness = stiffness
