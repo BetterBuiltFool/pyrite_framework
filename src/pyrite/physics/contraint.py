@@ -103,6 +103,17 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
         self._constraint.damping = damping
 
     @property
+    def rest_length(self) -> float:
+        """
+        The length the spring tries to return to.
+        """
+        return self._constraint.rest_length
+
+    @rest_length.setter
+    def rest_length(self, rest_length: float) -> None:
+        self._constraint.rest_length = rest_length
+
+    @property
     def stiffness(self) -> float:
         """
         The spring constant of the joint.
