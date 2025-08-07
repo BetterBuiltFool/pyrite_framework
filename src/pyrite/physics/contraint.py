@@ -140,11 +140,14 @@ class GearJoint(Constraint[pymunk.GearJoint]):
 
     @property
     def phase(self) -> float:
-        return self._constraint.phase
+        """
+        The offset angle between the two bodies, in degrees.
+        """
+        return math.degrees(self._constraint.phase)
 
     @phase.setter
     def phase(self, phase: float) -> None:
-        self._constraint.phase = phase
+        self._constraint.phase = math.radians(phase)
 
     @property
     def ratio(self) -> float:
