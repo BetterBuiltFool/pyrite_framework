@@ -14,6 +14,10 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
+def point_to_tuple(point: Point) -> tuple[float, float]:
+    return point[0], point[1]
+
+
 class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
 
     def __init__(
@@ -254,3 +258,63 @@ class PinJoint(Constraint[pymunk.PinJoint]):
     @anchor_b.setter
     def anchor_b(self, anchor_b: Point) -> None:
         self._constraint.anchor_b = (anchor_b[0], anchor_b[1])
+
+
+class PivotJoint(Constraint[pymunk.PivotJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        _constraint: pymunk.PivotJoint,
+    ) -> None:
+        """
+        Do not spawn PivotJoints directly. Instead, use `PivotJoint.from_pivot()` or
+        `PivotJoint.from_anchors()`
+        """
+        super().__init__(body_a, body_b)
+
+        self._constraint = _constraint
+
+    @staticmethod
+    def from_pivot(
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        pivot: Point,
+    ) -> PivotJoint:
+        """
+        Creates a PivotJoint between two bodies, around a world-space point.
+
+        Make sure the rigidbodies are in the correct space already.
+
+        :param body_a: The first Rigidbody of the joint
+        :param body_b: The second Rigidbody of the joint
+        :param pivot: A world-space position around which body_b will pivot
+        :return: The completed PivotJoint
+        """
+        _constraint = pymunk.PivotJoint(body_a.body, body_b.body, point_to_tuple(pivot))
+        return PivotJoint(body_a, body_b, _constraint)
+
+    @staticmethod
+    def from_anchors(
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        anchor_a: Point,
+        anchor_b: Point,
+    ) -> PivotJoint:
+        """
+        Creates a PivotJoint between two Rigidbodies, with anchor points relative to
+        each body.
+
+        Make sure the rigidbodies are in the correct space already.
+
+        :param body_a: The first Rigidbody of the joint
+        :param body_b: The second Rigidbody of the joint
+        :param anchor_a: A local position on _body_a_
+        :param anchor_b: A local position on _body_b_
+        :return: The completed PivotJoint
+        """
+        _constraint = pymunk.PivotJoint(
+            body_a.body, body_b.body, point_to_tuple(anchor_a), point_to_tuple(anchor_b)
+        )
+        return PivotJoint(body_a, body_b, _constraint)
