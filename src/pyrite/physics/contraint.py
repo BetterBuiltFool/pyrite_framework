@@ -87,8 +87,8 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
         self._constraint = pymunk.DampedSpring(
             body_a.body,
             body_b.body,
-            (anchor_a[0], anchor_a[1]),
-            (anchor_b[0], anchor_b[1]),
+            point_to_tuple(anchor_a),
+            point_to_tuple(anchor_b),
             rest_length,
             stiffness,
             damping,
@@ -180,9 +180,9 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
         self._constraint = pymunk.GrooveJoint(
             body_a.body,
             body_b.body,
-            (groove_a[0], groove_a[1]),
-            (groove_b[0], groove_b[1]),
-            (anchor_b[0], anchor_b[1]),
+            point_to_tuple(groove_a),
+            point_to_tuple(groove_b),
+            point_to_tuple(anchor_b),
         )
 
     @property
@@ -194,7 +194,7 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
 
     @anchor_b.setter
     def anchor_b(self, anchor_b: Point) -> None:
-        self._constraint.anchor_b = (anchor_b[0], anchor_b[1])
+        self._constraint.anchor_b = point_to_tuple(anchor_b)
 
     @property
     def groove_a(self) -> Vector2:
@@ -205,7 +205,7 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
 
     @groove_a.setter
     def groove_a(self, groove_a: Point) -> None:
-        self._constraint.groove_a = (groove_a[0], groove_a[1])
+        self._constraint.groove_a = point_to_tuple(groove_a)
 
     @property
     def groove_b(self) -> Vector2:
@@ -216,7 +216,7 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
 
     @groove_b.setter
     def groove_b(self, groove_b: Point) -> None:
-        self._constraint.groove_b = (groove_b[0], groove_b[1])
+        self._constraint.groove_b = point_to_tuple(groove_b)
 
 
 class PinJoint(Constraint[pymunk.PinJoint]):
@@ -233,8 +233,8 @@ class PinJoint(Constraint[pymunk.PinJoint]):
         self._constraint = pymunk.PinJoint(
             body_a.body,
             body_b.body,
-            (anchor_a[0], anchor_a[1]),
-            (anchor_b[0], anchor_b[1]),
+            point_to_tuple(anchor_a),
+            point_to_tuple(anchor_b),
         )
 
     @property
@@ -246,7 +246,7 @@ class PinJoint(Constraint[pymunk.PinJoint]):
 
     @anchor_a.setter
     def anchor_a(self, anchor_a: Point) -> None:
-        self._constraint.anchor_a = (anchor_a[0], anchor_a[1])
+        self._constraint.anchor_a = point_to_tuple(anchor_a)
 
     @property
     def anchor_b(self) -> Vector2:
@@ -257,7 +257,7 @@ class PinJoint(Constraint[pymunk.PinJoint]):
 
     @anchor_b.setter
     def anchor_b(self, anchor_b: Point) -> None:
-        self._constraint.anchor_b = (anchor_b[0], anchor_b[1])
+        self._constraint.anchor_b = point_to_tuple(anchor_b)
 
 
 class PivotJoint(Constraint[pymunk.PivotJoint]):
