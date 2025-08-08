@@ -318,3 +318,25 @@ class PivotJoint(Constraint[pymunk.PivotJoint]):
             body_a.body, body_b.body, point_to_tuple(anchor_a), point_to_tuple(anchor_b)
         )
         return PivotJoint(body_a, body_b, _constraint)
+
+    @property
+    def anchor_a(self) -> Vector2:
+        """
+        Relative position of the contraint on body A.
+        """
+        return Vector2(self._constraint.anchor_a)
+
+    @anchor_a.setter
+    def anchor_a(self, anchor_a: Point) -> None:
+        self._constraint.anchor_a = point_to_tuple(anchor_a)
+
+    @property
+    def anchor_b(self) -> Vector2:
+        """
+        Relative position of the contraint on body B.
+        """
+        return Vector2(self._constraint.anchor_b)
+
+    @anchor_b.setter
+    def anchor_b(self, anchor_b: Point) -> None:
+        self._constraint.anchor_b = point_to_tuple(anchor_b)
