@@ -447,3 +447,26 @@ class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
     @max.setter
     def max(self, max: float) -> None:
         self._constraint.max = math.radians(max)
+
+
+class SimpleMotor(Constraint[pymunk.SimpleMotor]):
+
+    def __init__(
+        self, body_a: RigidbodyComponent, body_b: RigidbodyComponent, rate: float
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.SimpleMotor(
+            body_a.body, body_b.body, math.radians(rate)
+        )
+
+    @property
+    def rate(self) -> float:
+        """
+        Relative angular velocity.
+        """
+        return math.degrees(self._constraint.rate)
+
+    @rate.setter
+    def rate(self, rate: float) -> None:
+        self._constraint.rate = math.radians(rate)
