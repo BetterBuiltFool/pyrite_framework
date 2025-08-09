@@ -362,3 +362,17 @@ class PivotJoint(Constraint[pymunk.PivotJoint]):
     @anchor_b.setter
     def anchor_b(self, anchor_b: Point) -> None:
         self._constraint.anchor_b = point_to_tuple(anchor_b)
+
+
+class RatchetJoint(Constraint[pymunk.RatchetJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        phase: float,
+        ratchet: float,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.RatchetJoint(body_a.body, body_b.body, phase, ratchet)
