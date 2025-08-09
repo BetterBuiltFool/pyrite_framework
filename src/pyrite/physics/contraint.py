@@ -376,3 +376,36 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.RatchetJoint(body_a.body, body_b.body, phase, ratchet)
+
+    @property
+    def angle(self) -> float:
+        """
+        The current angle of the joint, in degrees.
+        """
+        return math.degrees(self._constraint.angle)
+
+    @angle.setter
+    def angle(self, angle: float) -> None:
+        self._constraint.angle = math.radians(angle)
+
+    @property
+    def phase(self) -> float:
+        """
+        The offset angle between the two bodies, in degrees.
+        """
+        return math.degrees(self._constraint.phase)
+
+    @phase.setter
+    def phase(self, phase: float) -> None:
+        self._constraint.phase = math.radians(phase)
+
+    @property
+    def ratchet(self) -> float:
+        """
+        The size of the step in the ratchet mechanism.
+        """
+        return self._constraint.ratchet
+
+    @ratchet.setter
+    def reatchet(self, ratchet: float) -> None:
+        self._constraint.ratchet = ratchet
