@@ -409,3 +409,41 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
     @ratchet.setter
     def reatchet(self, ratchet: float) -> None:
         self._constraint.ratchet = ratchet
+
+
+class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        min: float,
+        max: float,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.RotaryLimitJoint(
+            body_a.body, body_b.body, math.radians(min), math.radians(max)
+        )
+
+    @property
+    def min(self) -> float:
+        """
+        The lower bound of the rotation range, in degrees.
+        """
+        return math.degrees(self._constraint.min)
+
+    @min.setter
+    def min(self, min: float) -> None:
+        self._constraint.min = math.radians(min)
+
+    @property
+    def max(self) -> float:
+        """
+        The upper bound of the rotation range, in degrees.
+        """
+        return math.degrees(self._constraint.max)
+
+    @max.setter
+    def max(self, max: float) -> None:
+        self._constraint.max = math.radians(max)
