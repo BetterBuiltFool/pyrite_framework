@@ -7,7 +7,7 @@ from pygame import Vector2
 import pymunk
 
 from pyrite.physics.rigidbody_component import RigidbodyComponent
-
+from ..services import PhysicsService
 from ..types.constraint import Constraint
 
 if TYPE_CHECKING:
@@ -34,6 +34,8 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
         self._constraint = pymunk.DampedRotarySpring(
             body_a.body, body_b.body, rest_angle, stiffness, damping
         )
+
+        PhysicsService.add_constraint(self)
 
     @property
     def damping(self) -> float:
@@ -93,6 +95,8 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
             stiffness,
             damping,
         )
+
+        PhysicsService.add_constraint(self)
 
     @property
     def anchor_a(self) -> Vector2:
@@ -164,6 +168,8 @@ class GearJoint(Constraint[pymunk.GearJoint]):
 
         self._constraint = pymunk.GearJoint(body_a.body, body_b.body, phase, ratio)
 
+        PhysicsService.add_constraint(self)
+
     @property
     def phase(self) -> float:
         """
@@ -206,6 +212,8 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
             point_to_tuple(groove_b),
             point_to_tuple(anchor_b),
         )
+
+        PhysicsService.add_constraint(self)
 
     @property
     def anchor_b(self) -> Vector2:
@@ -259,6 +267,8 @@ class PinJoint(Constraint[pymunk.PinJoint]):
             point_to_tuple(anchor_b),
         )
 
+        PhysicsService.add_constraint(self)
+
     @property
     def anchor_a(self) -> Vector2:
         """
@@ -297,6 +307,8 @@ class PivotJoint(Constraint[pymunk.PivotJoint]):
         super().__init__(body_a, body_b)
 
         self._constraint = _constraint
+
+        PhysicsService.add_constraint(self)
 
     @staticmethod
     def from_pivot(
@@ -377,6 +389,8 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
 
         self._constraint = pymunk.RatchetJoint(body_a.body, body_b.body, phase, ratchet)
 
+        PhysicsService.add_constraint(self)
+
     @property
     def angle(self) -> float:
         """
@@ -426,6 +440,8 @@ class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
             body_a.body, body_b.body, math.radians(min), math.radians(max)
         )
 
+        PhysicsService.add_constraint(self)
+
     @property
     def min(self) -> float:
         """
@@ -459,6 +475,8 @@ class SimpleMotor(Constraint[pymunk.SimpleMotor]):
         self._constraint = pymunk.SimpleMotor(
             body_a.body, body_b.body, math.radians(rate)
         )
+
+        PhysicsService.add_constraint(self)
 
     @property
     def rate(self) -> float:
