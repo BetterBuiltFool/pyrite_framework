@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
+    from ...types.constraint import Constraint
 
 
 class PhysicsService(Service):
@@ -35,6 +36,10 @@ class PhysicsService(Service):
 
     @abstractmethod
     def add_collider(self, collider: ColliderComponent):
+        pass
+
+    @abstractmethod
+    def add_constraint(self, constraint: Constraint) -> None:
         pass
 
         # @abstractmethod
@@ -124,6 +129,9 @@ class PymunkPhysicsService(PhysicsService):
     def add_collider(self, collider: ColliderComponent):
         self.colliders[collider.body] = collider
         self.space.add(*collider.shapes)
+
+    def add_constraint(self, constraint: Constraint) -> None:
+        self.space.add(constraint._constraint)
 
     # def cast_ray(
     #     self, start: Point, end: Point, shape_filter: ShapeFilter

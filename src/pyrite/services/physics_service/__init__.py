@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
+    from ...types.constraint import Constraint
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -28,6 +29,10 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     @classmethod
     def add_collider(cls, collider: ColliderComponent):
         cls._service.add_collider(collider)
+
+    @classmethod
+    def add_constraint(cls, constraint: Constraint):
+        cls._service.add_constraint(constraint)
 
     # @classmethod
     # def cast_ray(
