@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import KeysView
 from typing import Any, TYPE_CHECKING
-from weakref import ref, WeakKeyDictionary
+from weakref import WeakKeyDictionary
 
 from pygame import Vector2
 from pymunk import Body
@@ -12,7 +12,6 @@ from ..component import Component
 from ..services import PhysicsService
 
 if TYPE_CHECKING:
-    from .collider_component import ColliderComponent
     from ..types.constraint import Constraint
 
 
@@ -40,7 +39,6 @@ class RigidbodyComponent(Component):
 
         self._constraints: WeakKeyDictionary[Constraint, None] = WeakKeyDictionary()
 
-        self._collider: ref[ColliderComponent] | None = None  # TODO: Remove this
         PhysicsService.add_rigidbody(self)
 
     @property
