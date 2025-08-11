@@ -23,9 +23,6 @@ class RigidbodyComponent(Component):
     Requires a TransformComponent.
 
     Required for ColliderComponent and KinematicComponent.
-
-    TODO: Automatically sync Body position with TransformComponent when
-    TransformComponent is changed.
     """
 
     def __init__(self, owner: Any, body: Body | None = None) -> None:
