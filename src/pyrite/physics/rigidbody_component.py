@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import KeysView
 from typing import Any, TYPE_CHECKING
-from weakref import ref
+from weakref import ref, WeakKeyDictionary
 
 from pygame import Vector2
 from pymunk import Body
@@ -12,6 +13,7 @@ from ..services import PhysicsService
 
 if TYPE_CHECKING:
     from .collider_component import ColliderComponent
+    from ..types.constraint import Constraint
 
 
 class RigidbodyComponent(Component):
@@ -39,7 +41,9 @@ class RigidbodyComponent(Component):
         self.body.position = tuple(transform.world_position)
         self.body.angle = transform.world_rotation
 
-        self._collider: ref[ColliderComponent] | None = None
+        self._constraints: WeakKeyDictionary[Constraint, None] = WeakKeyDictionary()
+
+        self._collider: ref[ColliderComponent] | None = None  # TODO: Remove this
         PhysicsService.add_rigidbody(self)
 
     @property
@@ -49,7 +53,12 @@ class RigidbodyComponent(Component):
         """
         return Vector2(self.body.center_of_gravity)
 
-    # TODO Add contraints property
+    @property
+    def constraints(self) -> KeysView[Constraint]:
+        """
+        Provides the constraints the rigidbody is attached to.
+        """
+        return KeysView(self._constraints)
 
     @property
     def mass(self) -> float:

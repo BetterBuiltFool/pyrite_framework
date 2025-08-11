@@ -18,6 +18,10 @@ class Constraint[ConstraintT: PymunkConstraint]:
         self._b = body_b
         self._constraint: ConstraintT
 
+        # Add constraint to rigidbodies
+        body_a._constraints[self] = None
+        body_b._constraints[self] = None
+
     @property
     def a(self) -> RigidbodyComponent:
         """
