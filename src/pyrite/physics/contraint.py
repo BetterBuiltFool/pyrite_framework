@@ -488,3 +488,72 @@ class SimpleMotor(Constraint[pymunk.SimpleMotor]):
     @rate.setter
     def rate(self, rate: float) -> None:
         self._constraint.rate = math.radians(rate)
+
+
+class SlideJoint(Constraint[pymunk.SlideJoint]):
+
+    def __init__(
+        self,
+        body_a: RigidbodyComponent,
+        body_b: RigidbodyComponent,
+        anchor_a: Point,
+        anchor_b: Point,
+        min: float,
+        max: float,
+    ) -> None:
+        super().__init__(body_a, body_b)
+
+        self._constraint = pymunk.SlideJoint(
+            body_a.body,
+            body_b.body,
+            point_to_tuple(anchor_a),
+            point_to_tuple(anchor_b),
+            min,
+            max,
+        )
+
+        PhysicsService.add_constraint(self)
+
+    @property
+    def anchor_a(self) -> Vector2:
+        """
+        Relative position of the contraint on body A.
+        """
+        return Vector2(self._constraint.anchor_a)
+
+    @anchor_a.setter
+    def anchor_a(self, anchor_a: Point) -> None:
+        self._constraint.anchor_a = point_to_tuple(anchor_a)
+
+    @property
+    def anchor_b(self) -> Vector2:
+        """
+        Relative position of the contraint on body B.
+        """
+        return Vector2(self._constraint.anchor_b)
+
+    @anchor_b.setter
+    def anchor_b(self, anchor_b: Point) -> None:
+        self._constraint.anchor_b = point_to_tuple(anchor_b)
+
+    @property
+    def min(self) -> float:
+        """
+        The lower bound of the distance between anchor points.
+        """
+        return math.degrees(self._constraint.min)
+
+    @min.setter
+    def min(self, min: float) -> None:
+        self._constraint.min = math.radians(min)
+
+    @property
+    def max(self) -> float:
+        """
+        The upper bound of the distance between anchor points.
+        """
+        return math.degrees(self._constraint.max)
+
+    @max.setter
+    def max(self, max: float) -> None:
+        self._constraint.max = math.radians(max)
