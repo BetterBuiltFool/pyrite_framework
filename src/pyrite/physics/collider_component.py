@@ -54,12 +54,17 @@ class ColliderComponent(Component):
         self._categories.update({self: category})
         self._collision_masks.update({self: mask})
 
-        self.shapes = shape
+        # self.shapes = (
+        #     shape  # TODO: Make this a WKD[Shape, None]. Assign shapes in shape loop.
+        # )
+        self.shapes: WeakKeyDictionary[Shape, None] = WeakKeyDictionary()
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 
         self.body = rigidbody.body
         for collision_shape in shape:
+            self.shapes[collision_shape] = None
+
             collision_shape.collision_type = COMPONENT_TYPE
             collision_shape.body = self.body
             collision_shape.filter = self.filter
