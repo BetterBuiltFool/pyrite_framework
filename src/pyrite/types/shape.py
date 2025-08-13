@@ -4,9 +4,13 @@ from typing import TYPE_CHECKING
 
 import pymunk
 
-from pygame import Rect
+from pygame import Rect, Vector2
+
+# from ..utils import point_to_tuple
 
 if TYPE_CHECKING:
+    # from pygame.typing import Point
+
     from weakref import ref
     from ..physics import ColliderComponent, RigidbodyComponent
 
@@ -52,3 +56,10 @@ class Shape[ShapeT: pymunk.Shape]:
             return
         self._collider = ref(collider)
         # collider.shapes[self] = None
+
+    @property
+    def center_of_gravity(self) -> Vector2:
+        """
+        Returns the calculated center of gravity for this shape.
+        """
+        return Vector2(self._shape.center_of_gravity)
