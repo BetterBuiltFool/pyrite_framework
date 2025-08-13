@@ -91,3 +91,17 @@ class Shape[ShapeT: pymunk.Shape]:
     @elasticity.setter
     def elasticity(self, elasticity: float) -> None:
         self._shape.elasticity = elasticity
+
+    # Leaving out 'filter' property, since we set that inside ColliderComponent
+
+    @property
+    def friction(self) -> float:
+        """
+        Coefficient of friction of the shape. 0.0 is frictionless, number greater than
+        1.0 are okay.
+        """
+        return self._shape.friction
+
+    @friction.setter
+    def friction(self, friction: float) -> None:
+        self._shape.friction = friction
