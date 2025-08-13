@@ -15,6 +15,8 @@ from ..component import Component
 if TYPE_CHECKING:
     from pymunk import Shape
 
+    # from ..types.shape import Shape
+
 
 class ColliderComponent(Component):
     """

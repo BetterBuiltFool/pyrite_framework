@@ -44,11 +44,11 @@ class Shape[ShapeT: pymunk.Shape]:
 
     @collider.setter
     def collider(self, collider: ColliderComponent | None) -> None:
-        if self._collider is not None:
-            # TODO Remove the shape from the collider.
+        if self.collider is not None:
+            # del self.collider.shapes[self]
             pass
         if collider is None:
             self._collider = None
             return
         self._collider = ref(collider)
-        # TODO Add shape to collider
+        # collider.shapes[self] = None
