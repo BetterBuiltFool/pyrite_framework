@@ -63,3 +63,17 @@ class Shape[ShapeT: pymunk.Shape]:
         Returns the calculated center of gravity for this shape.
         """
         return Vector2(self._shape.center_of_gravity)
+
+    @property
+    def density(self) -> float:
+        """
+        Density of the shape.
+
+        Useful for allowing the mass and inertia of a rigidbody to be calculated
+        automatically from the sum of its shapes rather than being set to the body.
+        """
+        return self._shape.density
+
+    @density.setter
+    def density(self, density: float) -> None:
+        self._shape.density = density
