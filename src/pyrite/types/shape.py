@@ -77,3 +77,17 @@ class Shape[ShapeT: pymunk.Shape]:
     @density.setter
     def density(self, density: float) -> None:
         self._shape.density = density
+
+    @property
+    def elasticity(self) -> float:
+        """
+        Elasticity of the shape.
+
+        0.0 is perfectly inelastic, while 1.0 is perfectly elastic, causing a "perfect"
+        bounce. Values greater than or equal to 1.0 can cause issues in the simulation.
+        """
+        return self._shape.elasticity
+
+    @elasticity.setter
+    def elasticity(self, elasticity: float) -> None:
+        self._shape.elasticity = elasticity
