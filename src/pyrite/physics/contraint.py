@@ -9,13 +9,10 @@ import pymunk
 from pyrite.physics.rigidbody_component import RigidbodyComponent
 from ..services import PhysicsService
 from ..types.constraint import Constraint
+from ..utils import point_to_tuple
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-
-
-def point_to_tuple(point: Point) -> tuple[float, float]:
-    return point[0], point[1]
 
 
 class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
