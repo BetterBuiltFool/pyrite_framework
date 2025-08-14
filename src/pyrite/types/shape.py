@@ -105,3 +105,14 @@ class Shape[ShapeT: pymunk.Shape]:
     @friction.setter
     def friction(self, friction: float) -> None:
         self._shape.friction = friction
+
+    @property
+    def mass(self) -> float:
+        """
+        The mass of the shape.
+        """
+        return self._shape.mass
+
+    @mass.setter
+    def mass(self, mass: float) -> None:
+        self._shape.mass = mass
