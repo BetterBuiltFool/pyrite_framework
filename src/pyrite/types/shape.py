@@ -17,8 +17,13 @@ if TYPE_CHECKING:
 
 class Shape[ShapeT: pymunk.Shape]:
 
-    def __init__(self) -> None:
-        self._collider: ref[ColliderComponent] | None
+    def __init__(
+        self,
+        collider: ColliderComponent | None,
+    ) -> None:
+        self._collider: ref[ColliderComponent] | None = (
+            ref(collider) if collider else None
+        )
         self._shape: ShapeT
 
     @property
