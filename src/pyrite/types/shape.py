@@ -123,3 +123,15 @@ class Shape[ShapeT: pymunk.Shape]:
         The calculated moment of inertia of the shape.
         """
         return self._shape.moment
+
+    @property
+    def sensor(self) -> bool:
+        """
+        Boolean if the shape is a sensor. Sensor generate collision events, but do not
+        cause actual collisions.
+        """
+        return self._shape.sensor
+
+    @sensor.setter
+    def sensor(self, sensor: bool) -> None:
+        self._shape.sensor = sensor
