@@ -116,3 +116,10 @@ class Shape[ShapeT: pymunk.Shape]:
     @mass.setter
     def mass(self, mass: float) -> None:
         self._shape.mass = mass
+
+    @property
+    def moment(self) -> float:
+        """
+        The calculated moment of inertia of the shape.
+        """
+        return self._shape.moment
