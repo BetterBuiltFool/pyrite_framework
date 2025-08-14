@@ -63,3 +63,9 @@ class Polygon(Shape[pymunk.Poly]):
         self._shape = pymunk.Poly(
             None, [point_to_tuple(vert) for vert in verts], vert_transform, radius
         )
+
+    def get_vertices(self) -> list[Vector2]:
+        """
+        Returns the relative positions of each vertex in the shape.
+        """
+        return [Vector2(vert) for vert in self._shape.get_vertices()]
