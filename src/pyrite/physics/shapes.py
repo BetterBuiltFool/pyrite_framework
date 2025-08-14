@@ -49,7 +49,7 @@ class Polygon(Shape[pymunk.Poly]):
         self,
         collider: ColliderComponent | None,
         verts: Sequence[Point],
-        transform: TransformLike,
+        transform: TransformLike | None = None,
         radius: float = 0,
     ) -> None:
         super().__init__(collider)
@@ -69,3 +69,16 @@ class Polygon(Shape[pymunk.Poly]):
         Returns the relative positions of each vertex in the shape.
         """
         return [Vector2(vert) for vert in self._shape.get_vertices()]
+
+    @staticmethod
+    def make_box(
+        collider: ColliderComponent | None, size: Point = (10, 10), radius: float = 0
+    ) -> Polygon:
+        width, height = size
+        verts = [
+            (-width / 2, height / 2),
+            (width / 2, height / 2),
+            (width / 2, -height / 2),
+            (-width / 2, -height / 2),
+        ]
+        return Polygon(collider, verts, None, radius)
