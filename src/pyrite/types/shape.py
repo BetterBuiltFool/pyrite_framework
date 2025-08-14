@@ -6,10 +6,10 @@ import pymunk
 
 from pygame import Rect, Vector2
 
-# from ..utils import point_to_tuple
+from ..utils import point_to_tuple
 
 if TYPE_CHECKING:
-    # from pygame.typing import Point
+    from pygame.typing import Point
 
     from weakref import ref
     from ..physics import ColliderComponent, RigidbodyComponent
@@ -135,3 +135,14 @@ class Shape[ShapeT: pymunk.Shape]:
     @sensor.setter
     def sensor(self, sensor: bool) -> None:
         self._shape.sensor = sensor
+
+    @property
+    def surface_velocity(self) -> Vector2:
+        """
+        Velocity applied to other shapes in contact with this shape.
+        """
+        return Vector2(self._shape.surface_velocity)
+
+    @surface_velocity.setter
+    def surface_velocity(self, surface_velocity: Point) -> None:
+        self._shape.surface_velocity = point_to_tuple(surface_velocity)
