@@ -12,13 +12,12 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
     from weakref import ref
-    from ..physics import ColliderComponent, RigidbodyComponent
+    from ..physics import ColliderComponent
 
 
 class Shape[ShapeT: pymunk.Shape]:
 
     def __init__(self) -> None:
-        self._rigidbody: RigidbodyComponent | None
         self._collider: ref[ColliderComponent] | None
         self._shape: ShapeT
 
