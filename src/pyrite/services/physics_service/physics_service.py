@@ -61,6 +61,10 @@ class PhysicsService(Service):
         # pass
 
     @abstractmethod
+    def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
+        pass
+
+    @abstractmethod
     def set_gravity(self, gravity_x: float, gravity_y: float):
         pass
 
@@ -156,13 +160,18 @@ class PymunkPhysicsService(PhysicsService):
         return self.space.step(delta_time)
 
     def sync_bodies_to_transforms(self):
-        for body, rigidbody in self.bodies.items():
+        for rigidbody in self.bodies.values():
             transform = rigidbody.transform
             if not transform.has_changed():
                 continue
-            body.position = tuple(transform.position)
-            body.angle = transform.rotation
-            self.space.reindex_shapes_for_body(body)
+            self._force_sync_to_transform(rigidbody)
+
+    def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
+        transform = rigidbody.transform
+        body = rigidbody.body
+        body.position = tuple(transform.position)
+        body.angle = transform.rotation
+        self.space.reindex_shapes_for_body(body)
 
     def get_updated_transforms_for_bodies(
         self,

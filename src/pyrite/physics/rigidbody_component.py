@@ -97,6 +97,12 @@ class RigidbodyComponent(Component):
         """
         return self.body.is_sleeping
 
+    def _force_sync_to_transform(self) -> None:
+        """
+        Forces the body to sync to the current TransformComponent value.
+        """
+        PhysicsService._force_sync_to_transform(self)
+
     def sleep(self) -> None:
         """
         Forces the rigidbody to sleep, regardless of circumstances.

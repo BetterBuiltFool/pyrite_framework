@@ -100,6 +100,13 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         cls._service.step(delta_time)
 
     @classmethod
+    def _force_sync_to_transform(cls, rigidbody: RigidbodyComponent) -> None:
+        """
+        Forces the RigidbodyComponent to sync up with its associated transform.
+        """
+        cls._service._force_sync_to_transform(rigidbody)
+
+    @classmethod
     def sync_bodies_to_transforms(cls):
         """
         Takes all TransformComponents with a rigidbody and updates the rigidbody to
