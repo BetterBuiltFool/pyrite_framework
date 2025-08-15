@@ -10,6 +10,8 @@ from ..utils import point_to_tuple
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+    from pygame import Rect
     from pygame.typing import Point
 
     from . import ColliderComponent
@@ -81,4 +83,11 @@ class Polygon(Shape[pymunk.Poly]):
             (width / 2, -height / 2),
             (-width / 2, -height / 2),
         ]
+        return Polygon(collider, verts, None, radius)
+
+    @staticmethod
+    def make_box_from_rect(
+        collider: ColliderComponent | None, rect: Rect, radius: float = 0
+    ) -> Polygon:
+        verts = [rect.topleft, rect.topright, rect.bottomright, rect.bottomleft]
         return Polygon(collider, verts, None, radius)
