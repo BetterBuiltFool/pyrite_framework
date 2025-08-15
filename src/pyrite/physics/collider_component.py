@@ -14,8 +14,6 @@ from ..services import PhysicsService
 from ..component import Component
 
 if TYPE_CHECKING:
-    # from pymunk import Shape
-
     from ..types.shape import Shape
 
 
@@ -70,6 +68,8 @@ class ColliderComponent(Component):
             collision_shape._shape.filter = self.filter
             if not (collision_shape.density):  # and not (rigidbody.body.mass):
                 # Force a density to make sure we don't get NaN propagating.
+                # TODO Fix this. This is a terrible hack that will likely create
+                # unintended consequences.
                 collision_shape.density = 1
         PhysicsService.add_collider(self)
 
