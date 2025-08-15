@@ -4,6 +4,7 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
+import pymunk
 from pymunk import ShapeFilter
 
 from ..constants import COMPONENT_TYPE
@@ -13,9 +14,9 @@ from ..services import PhysicsService
 from ..component import Component
 
 if TYPE_CHECKING:
-    from pymunk import Shape
+    # from pymunk import Shape
 
-    # from ..types.shape import Shape
+    from ..types.shape import Shape
 
 
 class ColliderComponent(Component):
@@ -41,7 +42,7 @@ class ColliderComponent(Component):
     def __init__(
         self,
         owner: Any,
-        shape: Shape | Sequence[Shape],
+        shape: Shape | Sequence[Shape[pymunk.Shape]],
         category: int = 1,
         mask: int = 0xFFFFFFFF,  # Pymunk provided max value
     ) -> None:
@@ -56,7 +57,7 @@ class ColliderComponent(Component):
         self._categories.update({self: category})
         self._collision_masks.update({self: mask})
 
-        self.shapes: WeakKeyDictionary[Shape, None] = WeakKeyDictionary()
+        self.shapes: WeakKeyDictionary[Shape[pymunk.Shape], None] = WeakKeyDictionary()
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 
@@ -64,9 +65,9 @@ class ColliderComponent(Component):
         for collision_shape in shape:
             self.shapes[collision_shape] = None
 
-            collision_shape.collision_type = COMPONENT_TYPE
-            collision_shape.body = self.body
-            collision_shape.filter = self.filter
+            collision_shape._shape.collision_type = COMPONENT_TYPE
+            collision_shape._shape.body = self.body
+            collision_shape._shape.filter = self.filter
             if not (collision_shape.density):  # and not (rigidbody.body.mass):
                 # Force a density to make sure we don't get NaN propagating.
                 collision_shape.density = 1

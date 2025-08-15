@@ -128,7 +128,7 @@ class PymunkPhysicsService(PhysicsService):
 
     def add_collider(self, collider: ColliderComponent):
         self.colliders[collider.body] = collider
-        self.space.add(*collider.shapes)
+        self.space.add(*[shape._shape for shape in collider.shapes])
 
     def add_constraint(self, constraint: Constraint) -> None:
         self.space.add(constraint._constraint)
