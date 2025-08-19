@@ -40,7 +40,7 @@ class ColliderComponent(Component):
     def __init__(
         self,
         owner: Any,
-        shape: Shape | Sequence[Shape[pymunk.Shape]],
+        shape: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
         category: int = 1,
         mask: int = 0xFFFFFFFF,  # Pymunk provided max value
     ) -> None:
