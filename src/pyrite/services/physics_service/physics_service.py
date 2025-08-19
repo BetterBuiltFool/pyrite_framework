@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Sequence
 import math
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
     from ...types.constraint import Constraint
+    from pyrite.types.shape import Shape
 
 
 class PhysicsService(Service):
@@ -40,6 +42,14 @@ class PhysicsService(Service):
 
     @abstractmethod
     def add_constraint(self, constraint: Constraint) -> None:
+        pass
+
+    @abstractmethod
+    def add_collider_shapes(
+        self,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
         pass
 
         # @abstractmethod
@@ -136,6 +146,25 @@ class PymunkPhysicsService(PhysicsService):
 
     def add_constraint(self, constraint: Constraint) -> None:
         self.space.add(constraint._constraint)
+
+    def add_collider_shapes(
+        self,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
+        if not isinstance(shapes, Sequence):
+            shapes = [shapes]
+        for shape in shapes:
+            collider.shapes[shape] = None
+
+            shape._shape.collision_type = COMPONENT_TYPE
+            shape._shape.body = collider.body
+            shape._shape.filter = collider.filter
+            if not (shape.density):  # and not (rigidbody.body.mass):
+                # Force a density to make sure we don't get NaN propagating.
+                # TODO Fix this. This is a terrible hack that will likely create
+                # unintended consequences.
+                shape.density = 1
 
     # def cast_ray(
     #     self, start: Point, end: Point, shape_filter: ShapeFilter

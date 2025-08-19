@@ -7,7 +7,6 @@ from weakref import WeakKeyDictionary
 import pymunk
 from pymunk import ShapeFilter
 
-from ..constants import COMPONENT_TYPE
 from ..events import OnSeparate, OnTouch, WhileTouching
 from .rigidbody_component import RigidbodyComponent
 from ..services import PhysicsService
@@ -60,17 +59,9 @@ class ColliderComponent(Component):
         self.filter = ShapeFilter(categories=category, mask=mask)
 
         self.body = rigidbody.body
-        for collision_shape in shape:
-            self.shapes[collision_shape] = None
 
-            collision_shape._shape.collision_type = COMPONENT_TYPE
-            collision_shape._shape.body = self.body
-            collision_shape._shape.filter = self.filter
-            if not (collision_shape.density):  # and not (rigidbody.body.mass):
-                # Force a density to make sure we don't get NaN propagating.
-                # TODO Fix this. This is a terrible hack that will likely create
-                # unintended consequences.
-                collision_shape.density = 1
+        PhysicsService.add_collider_shapes(self, shape)
+
         PhysicsService.add_collider(self)
 
         self.OnTouch = OnTouch(self)

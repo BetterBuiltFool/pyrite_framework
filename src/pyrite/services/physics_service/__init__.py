@@ -2,15 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pymunk
+
 from .physics_service import PhysicsService, PymunkPhysicsService
 from ...types.service import ServiceProvider
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Sequence
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
     from ...types.constraint import Constraint
+    from pyrite.types.shape import Shape
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -33,6 +36,20 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     @classmethod
     def add_constraint(cls, constraint: Constraint):
         cls._service.add_constraint(constraint)
+
+    @classmethod
+    def add_collider_shapes(
+        cls,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
+        """
+        Adds the shape or sequence of shapes to the provided ColliderComponent
+
+        :param collider: a collider component receiving new shapes.
+        :param shapes: A shape or sequence of shapes.
+        """
+        cls._service.add_collider_shapes(collider, shapes)
 
     # @classmethod
     # def cast_ray(
