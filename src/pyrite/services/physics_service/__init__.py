@@ -98,7 +98,24 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     cls._service.check_point(point, shape_filer)
 
     @classmethod
+    def clear_collider_shapes(cls, collider: ColliderComponent) -> set[Shape]:
+        """
+        Removes all shapes from the given collider.
+
+        :param collider: The collider whose shapes are being removed.
+        :return: A set containing all previous shapes from the collider.
+        """
+        return cls._service.clear_collider_shapes(collider)
+
+    @classmethod
     def remove_collider_shape(cls, collider: ColliderComponent, shape: Shape) -> None:
+        """
+        Removes a given shape from a collider.
+
+        :param collider: The collider whose shape is being removed.
+        :param shape: The shape to be removed from the collider. If the shape does not
+            belong to the collider, nothing will happen.
+        """
         cls._service.remove_collider_shape(collider, shape)
 
     @classmethod

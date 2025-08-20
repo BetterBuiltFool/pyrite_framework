@@ -75,6 +75,10 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
+    def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
+        pass
+
+    @abstractmethod
     def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
         pass
 
@@ -189,6 +193,12 @@ class PymunkPhysicsService(PhysicsService):
     # def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
     #     # TODO Implement this, just checking boxes right now
     #     pass
+
+    def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
+        shapes = set(collider.shapes.keys())
+        for shape in shapes:
+            self.remove_collider_shape(collider, shape)
+        return shapes
 
     def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
         if shape in collider.shapes:
