@@ -178,6 +178,8 @@ class PymunkPhysicsService(PhysicsService):
                 # unintended consequences.
                 shape.density = 1
 
+            self.space.add(shape._shape)
+
     # def cast_ray(
     #     self, start: Point, end: Point, shape_filter: ShapeFilter
     # ) -> list[SegmentQueryInfo]:
