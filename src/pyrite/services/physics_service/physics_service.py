@@ -75,6 +75,10 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
+    def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
+        pass
+
+    @abstractmethod
     def set_gravity(self, gravity_x: float, gravity_y: float):
         pass
 
@@ -157,8 +161,8 @@ class PymunkPhysicsService(PhysicsService):
         for shape in shapes:
             collider.shapes[shape] = None
 
-            if shape.collider and shape in shape.collider.shapes:
-                shape.collider.shapes.pop(shape)
+            if shape.collider:
+                self.remove_collider_shape(shape.collider, shape)
             shape.collider = collider
 
             shape._shape.collision_type = COMPONENT_TYPE
@@ -185,6 +189,11 @@ class PymunkPhysicsService(PhysicsService):
     # def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
     #     # TODO Implement this, just checking boxes right now
     #     pass
+
+    def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
+        if shape in collider.shapes:
+            collider.shapes.pop(shape)
+        shape.collider = None
 
     def set_gravity(self, gravity_x: float, gravity_y: float):
         self.space.gravity = (gravity_x, gravity_y)

@@ -98,6 +98,10 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     cls._service.check_point(point, shape_filer)
 
     @classmethod
+    def remove_collider_shape(cls, collider: ColliderComponent, shape: Shape) -> None:
+        cls._service.remove_collider_shape(collider, shape)
+
+    @classmethod
     def set_gravity(cls, gravity_x: float, gravity_y: float):
         """
         Sets the gravity in the physics space.
