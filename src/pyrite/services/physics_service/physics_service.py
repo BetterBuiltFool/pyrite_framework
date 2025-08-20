@@ -157,6 +157,8 @@ class PymunkPhysicsService(PhysicsService):
         for shape in shapes:
             collider.shapes[shape] = None
 
+            if shape.collider and shape in shape.collider.shapes:
+                shape.collider.shapes.pop(shape)
             shape._shape.collision_type = COMPONENT_TYPE
             shape._shape.body = collider.body
             shape._shape.filter = collider.filter
