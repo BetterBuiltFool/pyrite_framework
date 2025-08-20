@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from weakref import ref
 
 import pymunk
 
@@ -11,7 +12,6 @@ from ..utils import point_to_tuple
 if TYPE_CHECKING:
     from pygame.typing import Point
 
-    from weakref import ref
     from ..physics import ColliderComponent
 
 
