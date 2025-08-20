@@ -200,9 +200,13 @@ class PymunkPhysicsService(PhysicsService):
             self.remove_collider_shape(collider, shape)
         return shapes
 
-    def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
+    def remove_collider_shape(
+        self, collider: ColliderComponent, shape: Shape[pymunk.Shape]
+    ) -> None:
         if shape in collider.shapes:
             collider.shapes.pop(shape)
+        self.space.remove(shape._shape)
+        shape._shape.body = None
         shape.collider = None
 
     def set_gravity(self, gravity_x: float, gravity_y: float):
