@@ -7,6 +7,7 @@ from weakref import WeakKeyDictionary
 import pymunk
 from pymunk import ShapeFilter
 
+from pyrite.constants import MASK_ALL
 from ..events import OnSeparate, OnTouch, WhileTouching
 from .rigidbody_component import RigidbodyComponent
 from ..services import PhysicsService
@@ -41,7 +42,7 @@ class ColliderComponent(Component):
         owner: Any,
         shape: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
         category: int = 1,
-        mask: int = 0xFFFFFFFF,  # Pymunk provided max value
+        mask: int = MASK_ALL,
     ) -> None:
         super().__init__(owner)
         if not (rigidbody := RigidbodyComponent.get(owner)):

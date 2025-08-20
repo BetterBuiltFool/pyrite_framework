@@ -23,3 +23,8 @@ DEFAULT_FULLSCREEN: DisplaySettings = DisplaySettings(
 Fullscreen view, native resolution.
 Actual resolution supplied by pygame.
 """
+
+MASK_ALL: int = 0xFFFFFFFF  # Value provided by pymunk
+"""
+Bitmask value representing all categories.
+"""
