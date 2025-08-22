@@ -167,3 +167,10 @@ class ColliderComponent(Component):
         :return: True if the masks are overlapping, otherwise False.
         """
         return bool(self.collision_mask & other.category)
+
+    def set_friction(self, friction: float) -> None:
+        """
+        Sets the fiction value on all shapes in the collider.
+        """
+        for shape in self.shapes:
+            shape.friction = friction
