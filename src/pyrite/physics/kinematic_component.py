@@ -7,6 +7,7 @@ from pygame import Vector2
 
 from ..component import Component
 from .rigidbody_component import RigidbodyComponent
+from pyrite.utils import point_to_tuple
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -84,7 +85,7 @@ class KinematicComponent(Component):
         self.body.velocity = (vel[0], vel[1])
 
     def apply_force(self, force_vector: Point) -> None:
-        self.body.apply_force_at_local_point((force_vector[0], force_vector[1]))
+        self.body.apply_force_at_local_point(point_to_tuple(force_vector))
 
     def apply_impulse(self, impulse_vector: Point) -> None:
-        self.body.apply_impulse_at_local_point((impulse_vector[0], impulse_vector[1]))
+        self.body.apply_impulse_at_local_point(point_to_tuple(impulse_vector))
