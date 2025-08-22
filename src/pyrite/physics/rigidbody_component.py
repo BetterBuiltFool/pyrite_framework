@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import KeysView
-from typing import Any, TYPE_CHECKING
+from typing import Any, TypeAlias, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 from pygame import Vector2
@@ -14,6 +14,8 @@ from ..services import PhysicsService
 if TYPE_CHECKING:
     from ..types.constraint import Constraint
 
+    BodyType: TypeAlias = int
+
 
 class RigidbodyComponent(Component):
     """
@@ -24,14 +26,26 @@ class RigidbodyComponent(Component):
     Required for ColliderComponent and KinematicComponent.
     """
 
-    def __init__(self, owner: Any, body: Body | None = None) -> None:
+    DYNAMIC: BodyType = Body.DYNAMIC
+    STATIC: BodyType = Body.STATIC
+    KINEMATIC: BodyType = Body.KINEMATIC
+
+    def __init__(
+        self,
+        owner: Any,
+        mass: float = 0,
+        moment: float = 0,
+        body_type: BodyType = DYNAMIC,
+        **kwds,
+    ) -> None:
         super().__init__(owner)
         if not (transform := TransformComponent.get(owner)):
             raise RuntimeError(
                 f"RigidbodyComponent requires that {owner} has a TransformComponent"
             )
-        if body is None:
-            body = Body()
+        if not (body := kwds.get("body")):
+            body = Body(mass, moment, body_type)
+        assert isinstance(body, Body)
         self.transform = transform
         self.body = body
         self.body.position = tuple(transform.world_position)
