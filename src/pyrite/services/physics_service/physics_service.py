@@ -171,10 +171,7 @@ class PymunkPhysicsService(PhysicsService):
             shape._shape.collision_type = COMPONENT_TYPE
             shape._shape.body = collider.body
             shape._shape.filter = collider.filter
-            if not (shape.density):  # and not (rigidbody.body.mass):
-                # Force a density to make sure we don't get NaN propagating.
-                # TODO Fix this. This is a terrible hack that will likely create
-                # unintended consequences.
+            if not (shape.density) and not (shape.mass or collider.body.mass):
                 shape.density = 1
 
             self.space.add(shape._shape)
