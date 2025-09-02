@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from weakref import ref
+from typing import ClassVar, TYPE_CHECKING
+from weakref import ref, WeakValueDictionary
 
 import pymunk
 
@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 
 class Shape[ShapeT: pymunk.Shape]:
+
+    _shapes: ClassVar[WeakValueDictionary[pymunk.Shape, Shape]] = WeakValueDictionary()
 
     def __init__(
         self,
