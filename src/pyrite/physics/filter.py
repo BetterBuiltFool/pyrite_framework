@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pymunk import ShapeFilter
+
 if TYPE_CHECKING:
     from pyrite.types.aliases import CollisionGroup, ObjectCategory, CategoryMask
 
@@ -19,6 +21,7 @@ class Filter:
         self.group = group
         self.category = category
         self.mask = mask
+        self._filter = ShapeFilter(group, category, mask)
 
     def rejects_collision(self, other: Filter) -> bool:
         """
