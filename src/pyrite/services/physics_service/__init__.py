@@ -27,14 +27,29 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     # -----------------------Delegates-----------------------
     @classmethod
     def add_rigidbody(cls, rigidbody: RigidbodyComponent):
+        """
+        Registers a rigidbody with the physics service.
+
+        :param rigidbody: A RigidbodyComponent.
+        """
         cls._service.add_rigidbody(rigidbody)
 
     @classmethod
     def add_collider(cls, collider: ColliderComponent):
+        """
+        Registers a collider with the physics service.
+
+        :param collider: A ColliderComponent.
+        """
         cls._service.add_collider(collider)
 
     @classmethod
     def add_constraint(cls, constraint: Constraint):
+        """
+        Registers a constraint with the physiscs service.
+
+        :param constraint: A Constraint.
+        """
         cls._service.add_constraint(constraint)
 
     @classmethod
