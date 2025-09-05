@@ -85,7 +85,17 @@ class KinematicComponent(Component):
         self.body.velocity = (vel[0], vel[1])
 
     def apply_force(self, force_vector: Point) -> None:
+        """
+        Applies the given force to the center of the Rigidbody.
+
+        :param force_vector: A 2D force vector, with local rotation.
+        """
         self.body.apply_force_at_local_point(point_to_tuple(force_vector))
 
     def apply_impulse(self, impulse_vector: Point) -> None:
+        """
+        Applies the given impulse to the center of the Rigidbody.
+
+        :param force_vector: A 2D impulse vector, with local rotation.
+        """
         self.body.apply_impulse_at_local_point(point_to_tuple(impulse_vector))
