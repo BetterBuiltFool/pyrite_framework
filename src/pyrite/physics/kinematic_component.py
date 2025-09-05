@@ -81,8 +81,8 @@ class KinematicComponent(Component):
         return Vector2(vel[0], vel[1])
 
     @velocity.setter
-    def velocity(self, vel: Point):
-        self.body.velocity = (vel[0], vel[1])
+    def velocity(self, velocity: Point):
+        self.body.velocity = point_to_tuple(velocity)
 
     def apply_force(self, force_vector: Point) -> None:
         """
