@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
 
-    from . import ColliderComponent
+    from .collider_component import ColliderComponent
     from ..types import TransformLike
 
 
