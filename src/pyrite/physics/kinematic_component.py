@@ -20,7 +20,7 @@ class KinematicComponent(Component):
 
     Requires RigidbodyComponent.
 
-    TODO: Give methods for manipulating forces on bodies
+    :raises RuntimeError: Raised if the owner does not have a RigidbodyComponent.
     """
 
     def __init__(self, owner: Any) -> None:
