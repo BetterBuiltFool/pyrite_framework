@@ -24,6 +24,8 @@ class RigidbodyComponent(Component):
     Requires a TransformComponent.
 
     Required for ColliderComponent and KinematicComponent.
+
+    :raises RuntimeError: Raised if the owner lacks a TransformComponent.
     """
 
     DYNAMIC: BodyType = Body.DYNAMIC
