@@ -19,6 +19,9 @@ if TYPE_CHECKING:
 
 
 class Circle(Shape[pymunk.Circle]):
+    """
+    Basic circle shape.
+    """
 
     def __init__(
         self, collider: ColliderComponent | None, radius: float, offset: Point = (0, 0)
@@ -47,6 +50,12 @@ class Circle(Shape[pymunk.Circle]):
 
 
 class Polygon(Shape[pymunk.Poly]):
+    """
+    Shape built out of discrete vertices.
+
+    For rectangular shapes, you can use the shortcut of Polygon.make_box() or
+    Polygon.make_box_from_rect()
+    """
 
     def __init__(
         self,
@@ -96,6 +105,11 @@ class Polygon(Shape[pymunk.Poly]):
 
 
 class Segment(Shape[pymunk.Segment]):
+    """
+    Simple linear collider, good for making floors and walls.
+
+    Ensure that the radius is thick enough to prevent passthrough by speedy objects.
+    """
 
     def __init__(
         self,
