@@ -196,8 +196,8 @@ class GearJoint(Constraint[pymunk.GearJoint]):
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.GearJoint(
-            body_a.body, body_b.body, phase, ratio
-        )  # TODO: math.radians(phase)
+            body_a.body, body_b.body, math.radians(phase), ratio
+        )
 
         PhysicsService.add_constraint(self)
 
@@ -453,8 +453,8 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.RatchetJoint(
-            body_a.body, body_b.body, phase, ratchet
-        )  # TODO: math.radians(phase)
+            body_a.body, body_b.body, math.radians(phase), ratchet
+        )
 
         PhysicsService.add_constraint(self)
 
