@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 
 
 class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
+    """
+    A damped spring that function with rotation rather than translation.
+    """
 
     def __init__(
         self,
@@ -25,6 +28,13 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
         stiffness: float,
         damping: float,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param rest_angle: The angle which the constraint will tend towards.
+        :param stiffness: The spring constant of the constraint (Young's Modulus)
+        :param damping: The relative softness of the spring.
+        """
         super().__init__(body_a, body_b)
 
         rest_angle = math.radians(rest_angle)
@@ -70,6 +80,9 @@ class DampedRotarySpring(Constraint[pymunk.DampedRotarySpring]):
 
 
 class DampedSpring(Constraint[pymunk.DampedSpring]):
+    """
+    A linear spring that configurable softness.
+    """
 
     def __init__(
         self,
@@ -81,6 +94,15 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
         stiffness: float,
         damping: float,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param anchor_a: Relative point on _body_a_ that the spring attaches to.
+        :param anchor_b: Relative point on _body_b_ that the spring attaches to.
+        :param rest_length: The separation the spring tries to maintain.
+        :param stiffness: The spring constant of the constraint (Young's Modulus)
+        :param damping: The relative softness of the spring.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.DampedSpring(
@@ -153,6 +175,9 @@ class DampedSpring(Constraint[pymunk.DampedSpring]):
 
 
 class GearJoint(Constraint[pymunk.GearJoint]):
+    """
+    A Rotary joint that maintain a constant ratio of angle between two rigidbodies.
+    """
 
     def __init__(
         self,
@@ -161,9 +186,18 @@ class GearJoint(Constraint[pymunk.GearJoint]):
         phase: float,
         ratio: float,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param phase: The offset angle between the two bodies, in degrees.
+        :param ratio: Absolute ratio between the two bodies constrained by the gear
+            joint.
+        """
         super().__init__(body_a, body_b)
 
-        self._constraint = pymunk.GearJoint(body_a.body, body_b.body, phase, ratio)
+        self._constraint = pymunk.GearJoint(
+            body_a.body, body_b.body, phase, ratio
+        )  # TODO: math.radians(phase)
 
         PhysicsService.add_constraint(self)
 
@@ -191,6 +225,9 @@ class GearJoint(Constraint[pymunk.GearJoint]):
 
 
 class GrooveJoint(Constraint[pymunk.GrooveJoint]):
+    """
+    A pivot joint that can also slide.
+    """
 
     def __init__(
         self,
@@ -200,6 +237,13 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
         groove_b: Point,
         anchor_b: Point,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param groove_a: Position of the start of the groove.
+        :param groove_b: Position of the end of the groove.
+        :param anchor_b: Pivot point on _body_b_.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.GrooveJoint(
@@ -247,6 +291,9 @@ class GrooveJoint(Constraint[pymunk.GrooveJoint]):
 
 
 class PinJoint(Constraint[pymunk.PinJoint]):
+    """
+    Simple rigid joint that holds two rigidbodies together.
+    """
 
     def __init__(
         self,
@@ -255,6 +302,12 @@ class PinJoint(Constraint[pymunk.PinJoint]):
         anchor_a: Point = (0, 0),
         anchor_b: Point = (0, 0),
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param anchor_a: Relative point on _body_a_ that the spring attaches to.
+        :param anchor_b: Relative point on _body_b_ that the spring attaches to.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.PinJoint(
@@ -290,6 +343,12 @@ class PinJoint(Constraint[pymunk.PinJoint]):
 
 
 class PivotJoint(Constraint[pymunk.PivotJoint]):
+    """
+    A pin-like joint that also allows for rotation of body B relative to body A.
+
+    Do not spawn PivotJoints directly. Instead, use `PivotJoint.from_pivot()` or
+    `PivotJoint.from_anchors()`
+    """
 
     def __init__(
         self,
@@ -374,6 +433,9 @@ class PivotJoint(Constraint[pymunk.PivotJoint]):
 
 
 class RatchetJoint(Constraint[pymunk.RatchetJoint]):
+    """
+    A pivoting joint that works like a socket wrench.
+    """
 
     def __init__(
         self,
@@ -382,9 +444,17 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
         phase: float,
         ratchet: float,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param phase: The offset angle between the two bodies, in degrees.
+        :param ratchet: The size of the step in the ratchet mechanism.
+        """
         super().__init__(body_a, body_b)
 
-        self._constraint = pymunk.RatchetJoint(body_a.body, body_b.body, phase, ratchet)
+        self._constraint = pymunk.RatchetJoint(
+            body_a.body, body_b.body, phase, ratchet
+        )  # TODO: math.radians(phase)
 
         PhysicsService.add_constraint(self)
 
@@ -423,6 +493,9 @@ class RatchetJoint(Constraint[pymunk.RatchetJoint]):
 
 
 class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
+    """
+    A pivoting joint with a maximum and minimum angle.
+    """
 
     def __init__(
         self,
@@ -431,6 +504,12 @@ class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
         min: float,
         max: float,
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param min: The lower bound of the rotation range, in degrees.
+        :param max: The upper bound of the rotation range, in degrees.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.RotaryLimitJoint(
@@ -463,10 +542,18 @@ class RotaryLimitJoint(Constraint[pymunk.RotaryLimitJoint]):
 
 
 class SimpleMotor(Constraint[pymunk.SimpleMotor]):
+    """
+    A rotating joint that maintains a constant angular velocity.
+    """
 
     def __init__(
         self, body_a: RigidbodyComponent, body_b: RigidbodyComponent, rate: float
     ) -> None:
+        """
+        :param body_a: The primary body of the constraint.
+        :param body_b: The secondary body of the  constraint.
+        :param rate: Relative angular velocity.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.SimpleMotor(
@@ -488,6 +575,10 @@ class SimpleMotor(Constraint[pymunk.SimpleMotor]):
 
 
 class SlideJoint(Constraint[pymunk.SlideJoint]):
+    """
+    A pin-like joint that allows for limited movement between the constrained
+    rigidbodies.
+    """
 
     def __init__(
         self,
@@ -498,6 +589,14 @@ class SlideJoint(Constraint[pymunk.SlideJoint]):
         min: float,
         max: float,
     ) -> None:
+        """
+        :param body_a: The first Rigidbody of the joint
+        :param body_b: The second Rigidbody of the joint
+        :param anchor_a: A local position on _body_a_
+        :param anchor_b: A local position on _body_b_
+        :param min: The lower bound of the distance between anchor points.
+        :param max: The upper bound of the distance between anchor points.
+        """
         super().__init__(body_a, body_b)
 
         self._constraint = pymunk.SlideJoint(
