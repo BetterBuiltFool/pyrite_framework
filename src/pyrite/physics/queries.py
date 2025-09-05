@@ -11,6 +11,9 @@ if TYPE_CHECKING:
 
 
 class PointInfo:
+    """
+    Contains information about a point query.
+    """
 
     def __init__(
         self,
@@ -26,6 +29,9 @@ class PointInfo:
 
 
 class SegmentInfo:
+    """
+    Contains information for a ray cast.
+    """
 
     def __init__(
         self, shape: Shape | None, point: Point, normal: Point, alpha: float
