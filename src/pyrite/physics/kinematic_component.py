@@ -40,8 +40,8 @@ class KinematicComponent(Component):
         return math.degrees(self.body.angular_velocity)
 
     @angular_velocity.setter
-    def angular_velocity(self, ang_velocity: float):
-        self.body.angular_velocity = math.radians(ang_velocity)
+    def angular_velocity(self, angular_velocity: float):
+        self.body.angular_velocity = math.radians(angular_velocity)
 
     @property
     def force(self) -> Vector2:
