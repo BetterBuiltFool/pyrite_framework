@@ -77,8 +77,7 @@ class KinematicComponent(Component):
         """
         Vector2 velocity of the object's rigidbody
         """
-        vel = self.body.velocity
-        return Vector2(vel[0], vel[1])
+        return Vector2(self.body.velocity)
 
     @velocity.setter
     def velocity(self, velocity: Point):
