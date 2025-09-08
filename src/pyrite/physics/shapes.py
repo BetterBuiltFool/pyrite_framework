@@ -85,6 +85,18 @@ class Polygon(Shape[pymunk.Poly]):
     def make_box(
         collider: ColliderComponent | None, size: Point = (10, 10), radius: float = 0
     ) -> Polygon:
+        """
+        Creates a box-shaped polygon collider based on the provided size.
+
+        Size is taken in width, height order.
+
+        :param collider: The collider component that the shape belongs to, or None.
+        :param size: A tuple of numbers describing the width and height of the box,
+            defaults to (10, 10)
+        :param radius: Optional bevel to make sliding along surfaces easier, defaults
+            to 0
+        :return: The completed Polygon.
+        """
         width, height = size
         verts = [
             (-width / 2, height / 2),
@@ -98,6 +110,17 @@ class Polygon(Shape[pymunk.Poly]):
     def make_box_from_rect(
         collider: ColliderComponent | None, rect: Rect, radius: float = 0
     ) -> Polygon:
+        """
+        Creates a box-shaped polygon collider based on the provided rectangle. The rect
+        will be in local space.
+
+        :param collider: The collider component that the shape belongs to, or None.
+        :param rect: A rect describing the width, height, and top left corner of the
+            new box.
+        :param radius: Optional bevel to make sliding along surfaces easier, defaults
+            to 0
+        :return: The completed Polygon.
+        """
         verts = [rect.topleft, rect.topright, rect.bottomright, rect.bottomleft]
         return Polygon(collider, verts, None, radius)
 
