@@ -22,11 +22,13 @@ class Shape[ShapeT: pymunk.Shape]:
     def __init__(
         self,
         collider: ColliderComponent | None,
+        shape: ShapeT,
     ) -> None:
         self._collider: ref[ColliderComponent] | None = (
             ref(collider) if collider else None
         )
-        self._shape: ShapeT
+        self._shape: ShapeT = shape
+        self._shapes[shape] = self
 
     @property
     def area(self) -> float:
