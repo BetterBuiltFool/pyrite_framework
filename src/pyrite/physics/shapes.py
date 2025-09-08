@@ -26,10 +26,7 @@ class Circle(Shape[pymunk.Circle]):
     def __init__(
         self, collider: ColliderComponent | None, radius: float, offset: Point = (0, 0)
     ) -> None:
-        super().__init__(collider)
-
-        self._shape = pymunk.Circle(None, radius, point_to_tuple(offset))
-        self._shapes[self._shape] = self
+        super().__init__(collider, pymunk.Circle(None, radius, point_to_tuple(offset)))
 
     # TODO: Add access to unsafe setters?
 
@@ -64,7 +61,6 @@ class Polygon(Shape[pymunk.Poly]):
         transform: TransformLike | None = None,
         radius: float = 0,
     ) -> None:
-        super().__init__(collider)
         vert_transform: pymunk.Transform | None = None
         if transform:
             vert_transform = (
@@ -72,10 +68,12 @@ class Polygon(Shape[pymunk.Poly]):
                 .rotated(transform.rotation)
                 .scaled(transform.scale.x)  # pymunk can only handle uniform scaling.
             )
-        self._shape = pymunk.Poly(
-            None, [point_to_tuple(vert) for vert in verts], vert_transform, radius
+        super().__init__(
+            collider,
+            pymunk.Poly(
+                None, [point_to_tuple(vert) for vert in verts], vert_transform, radius
+            ),
         )
-        self._shapes[self._shape] = self
 
     def get_vertices(self) -> list[Vector2]:
         """
@@ -118,10 +116,9 @@ class Segment(Shape[pymunk.Segment]):
         b: Point,
         radius: float,
     ) -> None:
-        super().__init__(collider)
-
-        self._shape = pymunk.Segment(None, point_to_tuple(a), point_to_tuple(b), radius)
-        self._shapes[self._shape] = self
+        super().__init__(
+            collider, pymunk.Segment(None, point_to_tuple(a), point_to_tuple(b), radius)
+        )
 
     @property
     def a(self) -> Vector2:
