@@ -41,7 +41,19 @@ class TestPymunkPhysicsService(unittest.TestCase):
         self.assertIn(test_shape_2, collider.shapes)
 
     def test_clear_collider_shapes(self):
-        pass
+        collider_owner = Empty()
+
+        test_shape = Circle(None, 10)
+        test_shape_2 = Circle(None, 15)
+        collider = ColliderComponent(collider_owner, [test_shape, test_shape_2])
+
+        self.assertIn(test_shape, collider.shapes)
+        self.assertIn(test_shape_2, collider.shapes)
+
+        self.physics_service.clear_collider_shapes(collider)
+
+        self.assertNotIn(test_shape, collider.shapes)
+        self.assertNotIn(test_shape_2, collider.shapes)
 
     def test_force_sync_to_transform(self):
         pass
