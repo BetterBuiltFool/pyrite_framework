@@ -140,8 +140,13 @@ class PymunkPhysicsService(PhysicsService):
 
     def transfer(self, target_service: PhysicsService):
         for body in self.bodies.values():
+            self.space.remove(body.body)
             target_service.add_rigidbody(body)
         for body in self.colliders.values():
+            collider = ColliderComponent.get(body.owner)
+            assert collider
+            for shape in collider.shapes:
+                self.space.remove(shape._shape)
             target_service.add_collider(body)
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
