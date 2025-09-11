@@ -240,7 +240,7 @@ class PymunkPhysicsService(PhysicsService):
         transform = rigidbody.transform
         body = rigidbody.body
         body.position = tuple(transform.position)
-        body.angle = transform.rotation
+        body.angle = math.radians(transform.rotation)
         self.space.reindex_shapes_for_body(body)
 
     def get_updated_transforms_for_bodies(
