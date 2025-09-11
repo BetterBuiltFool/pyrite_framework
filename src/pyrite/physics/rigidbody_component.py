@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
-from weakref import ref
+from collections.abc import KeysView
+from typing import Any, TypeAlias, TYPE_CHECKING
+from weakref import WeakKeyDictionary
 
+from pygame import Vector2
 from pymunk import Body
 
 from ..transform import TransformComponent
@@ -10,7 +12,9 @@ from ..component import Component
 from ..services import PhysicsService
 
 if TYPE_CHECKING:
-    from .collider_component import ColliderComponent
+    from ..types.constraint import Constraint
+
+    BodyType: TypeAlias = int
 
 
 class RigidbodyComponent(Component):
@@ -21,39 +25,112 @@ class RigidbodyComponent(Component):
 
     Required for ColliderComponent and KinematicComponent.
 
-    TODO: Automatically sync Body position with TransformComponent when
-    TransformComponent is changed.
+    :raises RuntimeError: Raised if the owner lacks a TransformComponent.
     """
 
-    def __init__(self, owner: Any, body: Body | None = None) -> None:
+    DYNAMIC: BodyType = Body.DYNAMIC
+    STATIC: BodyType = Body.STATIC
+    KINEMATIC: BodyType = Body.KINEMATIC
+
+    def __init__(
+        self,
+        owner: Any,
+        mass: float = 0,
+        moment: float = 0,
+        body_type: BodyType = DYNAMIC,
+        **kwds,
+    ) -> None:
         super().__init__(owner)
         if not (transform := TransformComponent.get(owner)):
             raise RuntimeError(
                 f"RigidbodyComponent requires that {owner} has a TransformComponent"
             )
-        if body is None:
-            body = Body()
+        if not (body := kwds.get("body")):
+            body = Body(mass, moment, body_type)
+        assert isinstance(body, Body)
         self.transform = transform
         self.body = body
-        self._collider: ref[ColliderComponent] | None = None
+        self.body.position = tuple(transform.world_position)
+        self.body.angle = transform.world_rotation
+
+        self._constraints: WeakKeyDictionary[Constraint, None] = WeakKeyDictionary()
+
         PhysicsService.add_rigidbody(self)
 
     @property
-    def collider(self) -> ColliderComponent | None:
+    def center_of_gravity(self) -> Vector2:
         """
-        Property tracking an optional ColliderComponent for the Rigidbody
-
-        :return: The owned ColliderComponent, or None
+        Returns the local center of gravity for the rigidbody.
         """
-        if self._collider is not None:
-            return self._collider()
-        return self._collider
+        return Vector2(self.body.center_of_gravity)
 
-    @collider.setter
-    def collider(self, collider_component: ColliderComponent | None):
-        if collider_component is not None:
-            component_reference = ref(collider_component)
-        else:
-            component_reference = None
+    @property
+    def constraints(self) -> KeysView[Constraint]:
+        """
+        Provides the constraints the rigidbody is attached to.
+        """
+        return KeysView(self._constraints)
 
-        self._collider = component_reference
+    @property
+    def mass(self) -> float:
+        """
+        The mass value of the rigidbody.
+        """
+        return self.body.mass
+
+    @mass.setter
+    def mass(self, mass: float) -> None:
+        self.body.mass = mass
+
+    @property
+    def moment(self) -> float:
+        """
+        Moment of Inertia for the rigidbody. Represents resistance to change in
+        rotation.
+
+        Rotation can be disabled with `rigidbody.moment = float('inf')`
+        """
+        return self.body.moment
+
+    @moment.setter
+    def moment(self, moment: float) -> None:
+        self.body.moment = moment
+
+    @property
+    def position(self) -> Vector2:
+        """
+        Returns A Vector2 of the world position of the Rigidbody, as reported by the
+        underlying physics engine.
+
+        Does not respect the values of any associated TransformComponents.
+        """
+        return Vector2(self.body.position)
+
+    @property
+    def is_sleeping(self) -> bool:
+        """
+        Returns True if the rigidbody is sleeping.
+        """
+        return self.body.is_sleeping
+
+    def _force_sync_to_transform(self) -> None:
+        """
+        Forces the body to sync to the current TransformComponent value.
+        """
+        PhysicsService._force_sync_to_transform(self)
+
+    def sleep(self) -> None:
+        """
+        Forces the rigidbody to sleep, regardless of circumstances.
+        """
+        self.body.sleep()
+
+    def sleep_with_group(self, component: RigidbodyComponent) -> None:
+        """
+        Forces the rigidbody to sleep, while putting it into the same group as the
+        passed component.
+
+        :param component: Another rigidbody component, with whom the calling component
+        will be grouped.
+        """
+        self.body.sleep_with_group(component.body)

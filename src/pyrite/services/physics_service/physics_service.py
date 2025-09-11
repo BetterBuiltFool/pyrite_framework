@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Sequence
 import math
 from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
@@ -11,6 +12,8 @@ from ...types.service import Service
 from ...constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     # from pygame.typing import Point
     from pymunk import (
         Arbiter,
@@ -22,6 +25,9 @@ if TYPE_CHECKING:
     )
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
+    from ...transform import Transform
+    from ...types.constraint import Constraint
+    from pyrite.types.shape import Shape
 
 
 class PhysicsService(Service):
@@ -32,6 +38,18 @@ class PhysicsService(Service):
 
     @abstractmethod
     def add_collider(self, collider: ColliderComponent):
+        pass
+
+    @abstractmethod
+    def add_constraint(self, constraint: Constraint) -> None:
+        pass
+
+    @abstractmethod
+    def add_collider_shapes(
+        self,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
         pass
 
         # @abstractmethod
@@ -53,6 +71,18 @@ class PhysicsService(Service):
         # pass
 
     @abstractmethod
+    def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
+        pass
+
+    @abstractmethod
+    def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
+        pass
+
+    @abstractmethod
+    def remove_collider_shape(self, collider: ColliderComponent, shape: Shape) -> None:
+        pass
+
+    @abstractmethod
     def set_gravity(self, gravity_x: float, gravity_y: float):
         pass
 
@@ -61,7 +91,13 @@ class PhysicsService(Service):
         pass
 
     @abstractmethod
-    def sync_transforms_to_bodies(self):
+    def sync_bodies_to_transforms(self):
+        pass
+
+    @abstractmethod
+    def get_updated_transforms_for_bodies(
+        self,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
         pass
 
 
@@ -75,21 +111,86 @@ class PymunkPhysicsService(PhysicsService):
         self.bodies: WeakValueDictionary[Body, RigidbodyComponent] = (
             WeakValueDictionary()
         )
-        self.comp_handler.post_solve = PymunkPhysicsService.post_solve
-        self.comp_handler.separate = PymunkPhysicsService.separate
+
+        self.colliders: WeakValueDictionary[Body, ColliderComponent] = (
+            WeakValueDictionary()
+        )
+
+        def post_solve(arbiter: Arbiter, space: Space, data: Any):
+            collider1, collider2 = self.get_collider_components(arbiter)
+            if arbiter.is_first_contact:
+                if collider1.compare_mask(collider2):
+                    collider1.OnTouch(collider1, collider2)
+                if collider2.compare_mask(collider1):
+                    collider2.OnTouch(collider2, collider1)
+            if collider1.compare_mask(collider2):
+                collider1.WhileTouching(collider1, collider2)
+            if collider2.compare_mask(collider1):
+                collider2.WhileTouching(collider2, collider1)
+
+        def separate(arbiter: Arbiter, space: Space, data: Any):
+            collider1, collider2 = self.get_collider_components(arbiter)
+            if collider1.compare_mask(collider2):
+                collider1.OnSeparate(collider1, collider2)
+            if collider2.compare_mask(collider1):
+                collider2.OnSeparate(collider2, collider1)
+
+        self.comp_handler.post_solve = post_solve
+        self.comp_handler.separate = separate
 
     def transfer(self, target_service: PhysicsService):
-        # Gotta figure out what to do here. I don't have any plans for other physics
-        # engines, so I've not bothered with making things terribly abstract, meaning
-        # that it's decidedly nontrivial to transfer physics data.
-        pass
+        for body in self.bodies.values():
+
+            # Remove the bodies and constraints from the old space.
+            self.space.remove(body.body)
+            for constraint in body.constraints:
+                self.space.remove(constraint._constraint)
+
+            target_service.add_rigidbody(body)
+            for constraint in body.constraints:
+                target_service.add_constraint(constraint)
+        for body in self.colliders.values():
+
+            # Remove all shapes from the space
+            collider = ColliderComponent.get(body.owner)
+            assert collider
+            for shape in collider.shapes:
+                self.space.remove(shape._shape)
+
+            target_service.add_collider(body)
+            target_service.add_collider_shapes(collider, list(collider.shapes.keys()))
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
-        self.bodies.update({rigidbody.body: rigidbody})
+        self.bodies[rigidbody.body] = rigidbody
         self.space.add(rigidbody.body)
 
     def add_collider(self, collider: ColliderComponent):
-        self.space.add(*collider.shapes)
+        self.colliders[collider.body] = collider
+
+    def add_constraint(self, constraint: Constraint) -> None:
+        self.space.add(constraint._constraint)
+
+    def add_collider_shapes(
+        self,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
+        if not isinstance(shapes, Sequence):
+            shapes = [shapes]
+        for shape in shapes:
+            collider.shapes[shape] = None
+
+            if shape.collider:
+                self.remove_collider_shape(shape.collider, shape)
+            shape.collider = collider
+
+            shape._shape.collision_type = COMPONENT_TYPE
+            shape._shape.body = collider.body
+            shape._shape.filter = collider.filter
+            if not (shape.density) and not (shape.mass or collider.body.mass):
+                shape.density = 1
+
+            self.space.add(shape._shape)
 
     # def cast_ray(
     #     self, start: Point, end: Point, shape_filter: ShapeFilter
@@ -107,48 +208,63 @@ class PymunkPhysicsService(PhysicsService):
     #     # TODO Implement this, just checking boxes right now
     #     pass
 
+    def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
+        shapes = set(collider.shapes.keys())
+        for shape in shapes:
+            self.remove_collider_shape(collider, shape)
+        return shapes
+
+    def remove_collider_shape(
+        self, collider: ColliderComponent, shape: Shape[pymunk.Shape]
+    ) -> None:
+        if shape in collider.shapes:
+            collider.shapes.pop(shape)
+        self.space.remove(shape._shape)
+        shape._shape.body = None
+        shape.collider = None
+
     def set_gravity(self, gravity_x: float, gravity_y: float):
         self.space.gravity = (gravity_x, gravity_y)
 
     def step(self, delta_time: float):
         return self.space.step(delta_time)
 
-    def sync_transforms_to_bodies(self):
-        # Passing TransformComponent class explicitly since we can't import it without
-        # causing a cycle
+    def sync_bodies_to_transforms(self):
+        for rigidbody in self.bodies.values():
+            transform = rigidbody.transform
+            if not transform.has_changed():
+                continue
+            self._force_sync_to_transform(rigidbody)
+
+    def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
+        transform = rigidbody.transform
+        body = rigidbody.body
+        body.position = tuple(transform.position)
+        body.angle = math.radians(transform.rotation)
+        self.space.reindex_shapes_for_body(body)
+
+    def get_updated_transforms_for_bodies(
+        self,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
         for body, rigidbody in self.bodies.items():
             transform = rigidbody.transform
             if body.is_sleeping or body.body_type == pymunk.Body.STATIC:
                 # No adjustments to sleeping, static, or transformless objects
                 continue
             # TODO calculate an expected interpolation value?
-            new_pos = transform.world_position.lerp(body.position, 0.5)
+            world_transform = transform.world()
+
+            new_pos = world_transform.position.lerp(body.position, 0.5)
             angle_between = (
-                (math.degrees(body.angle) - transform.world_rotation) + 180
-            ) % 360 - 180
-            new_rot = angle_between / 2
+                ((math.degrees(body.angle) - world_transform.rotation) + 180) % 360
+            ) - 180
+            new_rot = world_transform.rotation + (angle_between / 2)
 
-            transform.world_position = new_pos
-            transform.world_rotation = new_rot
+            new_transform = world_transform.copy()
+            new_transform.position = new_pos
+            new_transform.rotation = new_rot
 
-    def post_solve(self, arbiter: Arbiter, space: Space, data: Any):
-        collider1, collider2 = self.get_collider_components(arbiter)
-        if arbiter.is_first_contact:
-            if collider1.compare_mask(collider2):
-                collider1.OnTouch(collider1, collider2)
-            if collider2.compare_mask(collider1):
-                collider2.OnTouch(collider2, collider1)
-        if collider1.compare_mask(collider2):
-            collider1.WhileTouching(collider1, collider2)
-        if collider2.compare_mask(collider1):
-            collider2.WhileTouching(collider2, collider1)
-
-    def separate(self, arbiter: Arbiter, space: Space, data: Any):
-        collider1, collider2 = self.get_collider_components(arbiter)
-        if collider1.compare_mask(collider2):
-            collider1.OnSeparate(collider1, collider2)
-        if collider2.compare_mask(collider1):
-            collider2.OnSeparate(collider2, collider1)
+            yield (rigidbody, new_transform)
 
     def get_collider_components(
         self,
@@ -157,8 +273,6 @@ class PymunkPhysicsService(PhysicsService):
         shape1, shape2 = arbiter.shapes
         body1 = shape1.body
         body2 = shape2.body
-        rigidbody_1 = self.bodies[body1]
-        rigidbody_2 = self.bodies[body2]
-        assert rigidbody_1.collider
-        assert rigidbody_2.collider
-        return rigidbody_1.collider, rigidbody_2.collider
+        collider1 = self.colliders[body1]
+        collider2 = self.colliders[body2]
+        return collider1, collider2

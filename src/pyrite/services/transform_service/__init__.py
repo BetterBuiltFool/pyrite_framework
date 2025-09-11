@@ -30,6 +30,14 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
     # -----------------------Delegates-----------------------
 
     @classmethod
+    def frame_reset(cls) -> None:
+        """
+        Informs the service that a new frame has begun, and any cleanup should be
+        performed.
+        """
+        cls._service.frame_reset()
+
+    @classmethod
     def get_local(cls, component: TransformComponent) -> Transform:
         """
         :param component: Any transform component.
@@ -271,6 +279,35 @@ class TransformServiceProvider(ServiceProvider[TransformService]):
         :return: A set containing all transform components in need of updates.
         """
         return cls._service.get_dirty()
+
+    @classmethod
+    def mark_changed(cls, component: TransformComponent) -> None:
+        """
+        Marks the passed TransformComponent as having been changed in the previous
+        frame.
+
+        :param component: A TransformComponent that has been modified in the passed
+        frame.
+        """
+        cls._service.mark_changed(component)
+
+    @classmethod
+    def has_changed(cls, component: TransformComponent) -> bool:
+        """
+        Checks if the component has been changed in the past frame.
+
+        :param component: Any transform component
+        :return: True if the component has been altered in the last frame.
+        """
+        return cls._service.has_changed(component)
+
+    @classmethod
+    def get_changed(cls) -> set[TransformComponent]:
+        """
+        :return: A set containing all transform components that have been altered in
+        the most recent frame.
+        """
+        return cls._service.get_changed()
 
     @classmethod
     def initialize_component(cls, component: TransformComponent, value: Transform):

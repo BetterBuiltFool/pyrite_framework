@@ -118,6 +118,12 @@ class TransformComponent(Component):
         """
         return TransformService.is_dirty(self)
 
+    def has_changed(self) -> bool:
+        """
+        :return: True if the component has been changed in the last frame.
+        """
+        return TransformService.has_changed(self)
+
     def raw(self) -> Transform:
         """
         Returns a transform object representing this component in local space.

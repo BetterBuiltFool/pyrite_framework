@@ -27,6 +27,10 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def frame_reset(self) -> None:
+        pass
+
+    @abstractmethod
     def get_local(self, component: TransformComponent) -> Transform:
         pass
 
@@ -129,6 +133,18 @@ class TransformService(Service):
         pass
 
     @abstractmethod
+    def mark_changed(self, transform: TransformComponent) -> None:
+        pass
+
+    @abstractmethod
+    def has_changed(self, component: TransformComponent) -> bool:
+        pass
+
+    @abstractmethod
+    def get_changed(self) -> set[TransformComponent]:
+        pass
+
+    @abstractmethod
     def initialize_component(self, component: TransformComponent, value: Transform):
         pass
 
@@ -146,9 +162,14 @@ class DefaultTransformService(TransformService):
 
         self.dirty_components: WeakSet[TransformComponent] = WeakSet()
 
+        self.changed_components: WeakSet[TransformComponent] = WeakSet()
+
     def __iter__(self) -> Iterator[TransformComponent | None]:
         for node in self.root_transforms:
             yield from node.values().depth()
+
+    def frame_reset(self) -> None:
+        self.changed_components = WeakSet()
 
     def transfer(self, target_service: TransformService):
         for component, transform in self.local_transforms.items():
@@ -195,6 +216,7 @@ class DefaultTransformService(TransformService):
 
     def set_world(self, component: TransformComponent, value: Transform):
         self._set_world_no_update(component, value)
+        self.changed_components.add(component)
 
         local_transform = self._calc_local_from_world(component, value)
         self.local_transforms[component] = local_transform
@@ -284,9 +306,19 @@ class DefaultTransformService(TransformService):
         world_transform = self._calc_world_from_local(component, component.raw())
         self._set_world_no_update(component, world_transform)
         self.dirty_components.discard(component)
+        self.changed_components.add(component)
 
     def get_dirty(self) -> set[TransformComponent]:
         return set(self.dirty_components)
+
+    def mark_changed(self, transform: TransformComponent) -> None:
+        self.changed_components.add(transform)
+
+    def has_changed(self, component: TransformComponent) -> bool:
+        return component in self.changed_components
+
+    def get_changed(self) -> set[TransformComponent]:
+        return set(self.changed_components)
 
     def initialize_component(self, component: TransformComponent, value: Transform):
         self.dirty_components.add(component)

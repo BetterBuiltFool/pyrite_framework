@@ -4,16 +4,17 @@ from collections.abc import Sequence
 from typing import Any, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
+import pymunk
 from pymunk import ShapeFilter
 
-from ..constants import COMPONENT_TYPE
+from pyrite.constants import MASK_ALL
 from ..events import OnSeparate, OnTouch, WhileTouching
 from .rigidbody_component import RigidbodyComponent
 from ..services import PhysicsService
 from ..component import Component
 
 if TYPE_CHECKING:
-    from pymunk import Shape
+    from ..types.shape import Shape
 
 
 class ColliderComponent(Component):
@@ -39,9 +40,9 @@ class ColliderComponent(Component):
     def __init__(
         self,
         owner: Any,
-        shape: Shape | Sequence[Shape],
+        shape: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
         category: int = 1,
-        mask: int = 0xFFFFFFFF,  # Pymunk provided max value
+        mask: int = MASK_ALL,
     ) -> None:
         super().__init__(owner)
         if not (rigidbody := RigidbodyComponent.get(owner)):
@@ -54,17 +55,14 @@ class ColliderComponent(Component):
         self._categories.update({self: category})
         self._collision_masks.update({self: mask})
 
-        self.shapes = shape
+        self.shapes: WeakKeyDictionary[Shape[pymunk.Shape], None] = WeakKeyDictionary()
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 
-        rigidbody.collider = self
+        self.body = rigidbody.body
 
-        body = rigidbody.body
-        for collision_shape in shape:
-            collision_shape.collision_type = COMPONENT_TYPE
-            collision_shape.body = body
-            collision_shape.filter = self.filter
+        PhysicsService.add_collider_shapes(self, shape)
+
         PhysicsService.add_collider(self)
 
         self.OnTouch = OnTouch(self)
@@ -169,3 +167,10 @@ class ColliderComponent(Component):
         :return: True if the masks are overlapping, otherwise False.
         """
         return bool(self.collision_mask & other.category)
+
+    def set_friction(self, friction: float) -> None:
+        """
+        Sets the fiction value on all shapes in the collider.
+        """
+        for shape in self.shapes:
+            shape.friction = friction

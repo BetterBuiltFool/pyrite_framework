@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ..systems import System
 
-from ..services import PhysicsService
+from ..services import PhysicsService, TransformService
 
 if TYPE_CHECKING:
     pass
@@ -23,8 +23,17 @@ class PhysicsSystem(System):
         self.physics_mult = physics_mult
 
     def const_update(self, timestep: float) -> None:
+        # Ensure that the rigidbodies are where we want them to be.
+        # If multiple constupdates are happening, this might cause issues.
+        # TODO: Move this elsewhere so that it only happens once per frame?
+        PhysicsService.sync_bodies_to_transforms()
 
         PhysicsService.step(timestep * self.physics_mult)
 
     def update(self, delta_time: float) -> None:
-        PhysicsService.sync_transforms_to_bodies()
+        self.sync_transforms_to_bodies()
+
+    def sync_transforms_to_bodies(self):
+        for rigidbody, transform in PhysicsService.get_updated_transforms_for_bodies():
+            transform_component = rigidbody.transform
+            TransformService._set_world_no_update(transform_component, transform)

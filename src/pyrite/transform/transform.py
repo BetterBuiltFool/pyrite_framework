@@ -105,7 +105,7 @@ class Transform:
 
         return Transform(new_position, new_rotation, new_scale)
 
-    def generalize_position(self, position: Vector2) -> Vector2:
+    def generalize_position(self, position: Point) -> Vector2:
         """
         Takes a position local to the Transform and converts it into the same relative
         space as the Transform.
@@ -119,10 +119,10 @@ class Transform:
         ```
         _______________________________________________________________________________
 
-        :param position: A position (as a Vector2) that is local to this Transform.
+        :param position: A position (as a Point) that is local to this Transform.
         :return: A new Vector2 position in the same relative space as this Transform.
         """
-        scaled_position = self.scale.elementwise() * position
+        scaled_position = self.scale.elementwise() * Vector2(position)
         rotated_position = scaled_position.rotate(self.rotation)
         return self.position + rotated_position
 
@@ -171,7 +171,7 @@ class Transform:
 
         return Transform(new_position, new_rotation, new_scale)
 
-    def localize_position(self, position: Vector2) -> Vector2:
+    def localize_position(self, position: Point) -> Vector2:
         """
         Takes a position in the same relative space as the Transform, and derives it in
         the local space of the Transform.
@@ -182,10 +182,10 @@ class Transform:
 
         transform.generalize_position(position) == Vector2(5, 5)
 
-        :param position: A position (as a Vector2) that is local to this Transform.
+        :param position: A position (as a Point) that is local to this Transform.
         :return: A new Vector2 position in the same relative space as this Transform.
         """
-        translated_position = position - self.position
+        translated_position = Vector2(position) - self.position
         rotated_position = translated_position.rotate(self.rotation)
         return rotated_position / self.scale.elementwise()
 

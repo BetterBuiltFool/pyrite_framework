@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pymunk
+
 from .physics_service import PhysicsService, PymunkPhysicsService
 from ...types.service import ServiceProvider
 
 if TYPE_CHECKING:
-    # from pygame.typing import Point
-    # from pymunk import (
-    #     PointQueryInfo,
-    #     SegmentQueryInfo,
-    #     ShapeFilter,
-    # )
+    from collections.abc import Iterator, Sequence
     from ...physics.collider_component import ColliderComponent
     from ...physics.rigidbody_component import RigidbodyComponent
+    from ...transform import Transform
+    from ...types.constraint import Constraint
+    from pyrite.types.shape import Shape
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -27,11 +27,44 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     # -----------------------Delegates-----------------------
     @classmethod
     def add_rigidbody(cls, rigidbody: RigidbodyComponent):
+        """
+        Registers a rigidbody with the physics service.
+
+        :param rigidbody: A RigidbodyComponent.
+        """
         cls._service.add_rigidbody(rigidbody)
 
     @classmethod
     def add_collider(cls, collider: ColliderComponent):
+        """
+        Registers a collider with the physics service.
+
+        :param collider: A ColliderComponent.
+        """
         cls._service.add_collider(collider)
+
+    @classmethod
+    def add_constraint(cls, constraint: Constraint):
+        """
+        Registers a constraint with the physiscs service.
+
+        :param constraint: A Constraint.
+        """
+        cls._service.add_constraint(constraint)
+
+    @classmethod
+    def add_collider_shapes(
+        cls,
+        collider: ColliderComponent,
+        shapes: Shape[pymunk.Shape] | Sequence[Shape[pymunk.Shape]],
+    ) -> None:
+        """
+        Adds the shape or sequence of shapes to the provided ColliderComponent
+
+        :param collider: a collider component receiving new shapes.
+        :param shapes: A shape or sequence of shapes.
+        """
+        cls._service.add_collider_shapes(collider, shapes)
 
     # @classmethod
     # def cast_ray(
@@ -80,6 +113,27 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     cls._service.check_point(point, shape_filer)
 
     @classmethod
+    def clear_collider_shapes(cls, collider: ColliderComponent) -> set[Shape]:
+        """
+        Removes all shapes from the given collider.
+
+        :param collider: The collider whose shapes are being removed.
+        :return: A set containing all previous shapes from the collider.
+        """
+        return cls._service.clear_collider_shapes(collider)
+
+    @classmethod
+    def remove_collider_shape(cls, collider: ColliderComponent, shape: Shape) -> None:
+        """
+        Removes a given shape from a collider.
+
+        :param collider: The collider whose shape is being removed.
+        :param shape: The shape to be removed from the collider. If the shape does not
+            belong to the collider, nothing will happen.
+        """
+        cls._service.remove_collider_shape(collider, shape)
+
+    @classmethod
     def set_gravity(cls, gravity_x: float, gravity_y: float):
         """
         Sets the gravity in the physics space.
@@ -99,9 +153,25 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         cls._service.step(delta_time)
 
     @classmethod
-    def sync_transforms_to_bodies(cls):
+    def _force_sync_to_transform(cls, rigidbody: RigidbodyComponent) -> None:
         """
-        Takes all TransformComponents with a rigidbody and updates their position and
-        rotation with the new calculations.
+        Forces the RigidbodyComponent to sync up with its associated transform.
         """
-        cls._service.sync_transforms_to_bodies()
+        cls._service._force_sync_to_transform(rigidbody)
+
+    @classmethod
+    def sync_bodies_to_transforms(cls):
+        """
+        Takes all TransformComponents with a rigidbody and updates the rigidbody to
+        match the Transform if the transform has been set in the past frame.
+        """
+        cls._service.sync_bodies_to_transforms()
+
+    @classmethod
+    def get_updated_transforms_for_bodies(
+        cls,
+    ) -> Iterator[tuple[RigidbodyComponent, Transform]]:
+        """
+        Provides an iterator containing Rigidbodies and their new transforms.
+        """
+        yield from cls._service.get_updated_transforms_for_bodies()
