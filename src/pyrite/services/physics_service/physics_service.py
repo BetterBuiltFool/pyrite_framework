@@ -256,9 +256,9 @@ class PymunkPhysicsService(PhysicsService):
 
             new_pos = world_transform.position.lerp(body.position, 0.5)
             angle_between = (
-                (math.degrees(body.angle) - world_transform.rotation) + 180
-            ) % 360 - 180
-            new_rot = angle_between / 2
+                ((math.degrees(body.angle) - world_transform.rotation) + 180) % 360
+            ) - 180
+            new_rot = world_transform.rotation + (angle_between / 2)
 
             new_transform = world_transform.copy()
             new_transform.position = new_pos
