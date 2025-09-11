@@ -147,6 +147,8 @@ class PymunkPhysicsService(PhysicsService):
                 self.space.remove(constraint._constraint)
 
             target_service.add_rigidbody(body)
+            for constraint in body.constraints:
+                target_service.add_constraint(constraint)
         for body in self.colliders.values():
 
             # Remove all shapes from the space
@@ -156,6 +158,7 @@ class PymunkPhysicsService(PhysicsService):
                 self.space.remove(shape._shape)
 
             target_service.add_collider(body)
+            target_service.add_collider_shapes(collider, list(collider.shapes.keys()))
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
         self.bodies[rigidbody.body] = rigidbody
