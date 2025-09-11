@@ -85,7 +85,20 @@ class TestPymunkPhysicsService(unittest.TestCase):
         )
 
     def test_get_updated_transforms(self):
-        pass
+        phys_object = Empty()
+
+        phys_object.rigidbody.body.position = (0, 0)
+        phys_object.rigidbody.body.angle = math.radians(0)
+
+        transform = Transform((100, 100), 90)
+        phys_object.transform.world_position = transform.position
+        phys_object.transform.world_rotation = transform.rotation
+
+        expected = Transform((50, 50), 45)
+
+        for _, transform in self.physics_service.get_updated_transforms_for_bodies():
+            self.assertEqual(transform.position, expected.position)
+            self.assertEqual(transform.rotation, expected.rotation)
 
 
 if __name__ == "__main__":
