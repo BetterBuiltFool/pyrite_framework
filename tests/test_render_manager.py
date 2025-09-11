@@ -6,7 +6,7 @@ from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
 
-from pyrite.camera import Camera
+from pyrite._camera import Camera
 from pyrite.core.render_system import (
     DefaultRenderManager,
     _get_draw_index,

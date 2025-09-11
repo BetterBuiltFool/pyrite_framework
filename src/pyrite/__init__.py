@@ -7,7 +7,7 @@ from .game import (  # noqa: F401
     get_game_instance,
 )
 
-from .camera import Camera, ChaseCamera  # noqa: F401
+from pyrite._camera import Camera, ChaseCamera  # noqa: F401
 from .entity import Entity  # noqa:F401
 from .enum import RenderLayers, AnchorPoint  # noqa: F401
 from .physics import (  # noqa: F401
