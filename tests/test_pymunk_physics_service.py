@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import math
 import unittest
 
 from pyrite.physics import ColliderComponent, RigidbodyComponent
 from pyrite.physics.shapes import Circle
 from pyrite.services import PhysicsService
 from pyrite.services.physics_service import PymunkPhysicsService
-from pyrite.transform import TransformComponent
+from pyrite.transform import TransformComponent, Transform
 
 
 class Empty:
@@ -56,7 +57,32 @@ class TestPymunkPhysicsService(unittest.TestCase):
         self.assertNotIn(test_shape_2, collider.shapes)
 
     def test_force_sync_to_transform(self):
-        pass
+        phys_object = Empty()
+
+        phys_object.rigidbody.body.position = (10, 10)
+        phys_object.rigidbody.body.angle = math.radians(45)
+
+        transform = Transform((100, 100), 90)
+        phys_object.transform.world_position = transform.position
+        phys_object.transform.world_rotation = transform.rotation
+
+        self.assertNotEqual(
+            phys_object.transform.world_position, phys_object.rigidbody.body.position
+        )
+        self.assertNotEqual(
+            phys_object.transform.world_rotation,
+            math.degrees(phys_object.rigidbody.body.angle),
+        )
+
+        self.physics_service._force_sync_to_transform(phys_object.rigidbody)
+
+        self.assertEqual(
+            phys_object.transform.world_position, phys_object.rigidbody.body.position
+        )
+        self.assertEqual(
+            phys_object.transform.world_rotation,
+            math.degrees(phys_object.rigidbody.body.angle),
+        )
 
     def test_get_updated_transforms(self):
         pass
