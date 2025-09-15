@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     # from pygame.typing import Point
     from . import CameraViewBounds, Renderable, Projection
     from .render_target import RenderTarget
-    from ..rendering import Viewport
+    from .._rendering import Viewport
     from ..enum import Layer
     from ..events import OnEnable as EventOnEnable
     from ..events import OnDisable as EventOnDisable

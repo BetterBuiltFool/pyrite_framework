@@ -7,7 +7,7 @@ from weakref import WeakKeyDictionary
 
 from pygame import Surface, Vector2, Vector3
 
-from ...rendering.view_plane import ViewPlane
+from ..._rendering.view_plane import ViewPlane
 from ...types.service import Service
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from ...types import Camera
     from ...transform import Transform
     from ...types import CameraViewBounds
-    from ...rendering import Viewport
+    from ..._rendering import Viewport
 
 
 class CameraService(Service):

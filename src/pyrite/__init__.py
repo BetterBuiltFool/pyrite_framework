@@ -16,7 +16,7 @@ from .physics import (  # noqa: F401
     KinematicComponent,
     RigidbodyComponent,
 )
-from .rendering import Renderable  # noqa: F401
+from ._rendering import Renderable  # noqa: F401
 from .sprite.sprite import Sprite  # noqa: F401
 from .sprite.spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .systems import System  # noqa: F401

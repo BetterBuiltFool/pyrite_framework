@@ -16,7 +16,7 @@ if TYPE_CHECKING:
         HasTransformProperty,
         TransformLike,
     )
-    from ..rendering.viewport import Viewport
+    from .._rendering.viewport import Viewport
     from pygame.typing import Point
 
 

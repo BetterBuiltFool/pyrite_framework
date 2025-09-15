@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
     from ...transform import Transform
     from ...types import Camera, CameraViewBounds
-    from ...rendering import Viewport
+    from ..._rendering import Viewport
 
 
 class CameraServiceProvider(ServiceProvider[CameraService]):

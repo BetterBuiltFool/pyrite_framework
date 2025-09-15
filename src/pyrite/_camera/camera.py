@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from ..services import CameraService
 from ..enum import Layer
 from ..events import OnEnable, OnDisable
-from ..rendering import CameraRenderer
-from ..rendering.viewport import Viewport
+from .._rendering import CameraRenderer
+from .._rendering.viewport import Viewport
 from ..transform import transform_component
 from ..types import Camera as CameraBase, Renderable
 

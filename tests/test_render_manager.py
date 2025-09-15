@@ -11,10 +11,10 @@ from pyrite.core.render_system import (
     DefaultRenderManager,
     _get_draw_index,
 )
-from pyrite.entity.entity import BaseEntity
+from pyrite._entity.entity import BaseEntity
 from pyrite.enum import Layer, RenderLayers
-from pyrite.rendering import OrthoProjection, RectBounds
-from pyrite.rendering.base_renderable import BaseRenderable
+from pyrite._rendering import OrthoProjection, RectBounds
+from pyrite._rendering.base_renderable import BaseRenderable
 from pyrite.services import CameraService
 from pyrite.types import CullingBounds
 from pyrite.types.camera import CameraBase

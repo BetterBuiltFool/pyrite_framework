@@ -10,7 +10,7 @@ from pygame import Surface
 
 from ..enum import RenderLayers
 
-from ..rendering import RenderTextureComponent
+from .._rendering import RenderTextureComponent
 from ..services import CameraService
 
 if TYPE_CHECKING:
