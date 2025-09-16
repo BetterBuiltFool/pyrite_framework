@@ -4,7 +4,11 @@ from typing import TYPE_CHECKING
 
 from ..systems import System
 
-from .._services import PhysicsService, TransformService
+from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
+from pyrite._services.transform_service import (
+    TransformServiceProvider as TransformService,
+)
+
 
 if TYPE_CHECKING:
     pass

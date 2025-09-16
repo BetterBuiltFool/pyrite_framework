@@ -10,7 +10,7 @@ from pymunk import ShapeFilter
 from pyrite.constants import MASK_ALL
 from ..events import OnSeparate, OnTouch, WhileTouching
 from .rigidbody_component import RigidbodyComponent
-from .._services import PhysicsService
+from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 from ..component import Component
 
 if TYPE_CHECKING:

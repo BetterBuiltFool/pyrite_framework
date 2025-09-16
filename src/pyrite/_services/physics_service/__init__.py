@@ -9,8 +9,8 @@ from ...types.service import ServiceProvider
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
-    from ...physics.collider_component import ColliderComponent
-    from ...physics.rigidbody_component import RigidbodyComponent
+    from pyrite._physics.collider_component import ColliderComponent
+    from pyrite._physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
     from ...types.constraint import Constraint
     from pyrite.types.shape import Shape

@@ -7,8 +7,8 @@ from weakref import WeakKeyDictionary
 import pygame
 from pygame import Surface
 
-from ..._services import CameraService
-from ..._services.camera_service import DefaultCameraService
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
+from pyrite._services.camera_service.camera_service import DefaultCameraService
 from ...types import Camera, Renderer, Sprite
 
 if TYPE_CHECKING:

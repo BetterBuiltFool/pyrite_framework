@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .._services import TransformService
+from pyrite._services.transform_service import (
+    TransformServiceProvider as TransformService,
+)
 from ..systems import System
 
 

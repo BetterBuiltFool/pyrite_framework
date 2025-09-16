@@ -6,7 +6,9 @@ from pygame import Vector2
 
 from ..component import Component
 from .transform import Transform
-from .._services import TransformService
+from pyrite._services.transform_service import (
+    TransformServiceProvider as TransformService,
+)
 from ..types import TransformLike
 
 

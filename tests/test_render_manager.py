@@ -15,7 +15,7 @@ from pyrite._entity.entity import BaseEntity
 from pyrite.enum import Layer, RenderLayers
 from pyrite.rendering import OrthoProjection, RectBounds
 from pyrite._rendering.base_renderable import BaseRenderable
-from pyrite._services import CameraService
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite.types import CullingBounds
 from pyrite.types.camera import CameraBase
 from pyrite.types.renderable import Renderable

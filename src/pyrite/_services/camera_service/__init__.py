@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
     from ...transform import Transform
     from ...types import Camera, CameraViewBounds
-    from ..._rendering import Viewport
+    from pyrite._rendering.viewport import Viewport
 
 
 class CameraServiceProvider(ServiceProvider[CameraService]):

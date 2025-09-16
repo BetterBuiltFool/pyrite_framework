@@ -3,11 +3,11 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from .._services import CameraService
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from ..enum import Layer
 from ..events import OnEnable, OnDisable
-from .._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
-from .._rendering.viewport import Viewport
+from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
+from pyrite._rendering.viewport import Viewport
 from ..transform import transform_component
 from ..types import Camera as CameraBase, Renderable
 

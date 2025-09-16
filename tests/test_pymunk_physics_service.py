@@ -5,7 +5,7 @@ import unittest
 
 from pyrite.physics import ColliderComponent, RigidbodyComponent
 from pyrite._physics.shapes import Circle
-from pyrite._services import PhysicsService
+from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 from pyrite._services.physics_service import PymunkPhysicsService
 from pyrite.transform import TransformComponent, Transform
 

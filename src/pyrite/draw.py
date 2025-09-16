@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect
 
-from ._services import CameraService
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
 
 if TYPE_CHECKING:
     from .types import Camera
