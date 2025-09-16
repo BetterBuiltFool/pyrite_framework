@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect
 
-from .services import CameraService
+from ._services import CameraService
 
 if TYPE_CHECKING:
     from .types import Camera
-    from ._rendering import Viewport
+    from ._rendering.viewport import Viewport
     from pygame.typing import ColorLike, Point
 
 
