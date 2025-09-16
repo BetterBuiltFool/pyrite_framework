@@ -1,0 +1,9 @@
+import pyrite._services.bounds_service
+import pyrite._services.camera_service
+import pyrite._services.physics_service
+import pyrite._services.transform_service
+
+BoundsService = pyrite._services.bounds_service.BoundsServiceProvider
+CameraService = pyrite._services.camera_service.CameraServiceProvider
+PhysicsService = pyrite._services.physics_service.PhysicsServiceProvider
+TransformService = pyrite._services.transform_service.TransformServiceProvider
