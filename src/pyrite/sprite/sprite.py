@@ -3,9 +3,9 @@ from __future__ import annotations
 import typing
 
 from ..enum import AnchorPoint
-from .._rendering.rect_bounds import rotate_rect
-from .._rendering import RectBounds, Renderable
-from .._rendering import SpriteRenderer
+from pyrite._rendering.rect_bounds import RectBounds, rotate_rect
+from pyrite._rendering.base_renderable import BaseRenderable as Renderable
+from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
 from ..services import BoundsService
 from ..transform import transform_component as transform
 from ..types.sprite import BaseSprite

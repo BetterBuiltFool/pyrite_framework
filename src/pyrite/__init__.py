@@ -16,7 +16,7 @@ from .physics import (  # noqa: F401
     KinematicComponent,
     RigidbodyComponent,
 )
-from ._rendering import Renderable  # noqa: F401
+import pyrite._rendering.base_renderable
 from .sprite.sprite import Sprite  # noqa: F401
 from .sprite.spritesheet import SpriteSheet, SpriteMap  # noqa: F401
 from .systems import System  # noqa: F401
@@ -24,3 +24,5 @@ from .transform import Transform, TransformComponent  # noqa: F401
 
 Camera = pyrite._camera.camera.Camera
 ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
+
+Renderable = pyrite._rendering.base_renderable.BaseRenderable
