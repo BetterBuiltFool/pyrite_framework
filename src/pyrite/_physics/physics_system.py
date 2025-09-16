@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ..systems import System
 
-from ..services import PhysicsService, TransformService
+from .._services import PhysicsService, TransformService
 
 if TYPE_CHECKING:
     pass

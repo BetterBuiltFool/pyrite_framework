@@ -6,7 +6,7 @@ from ..enum import AnchorPoint
 from pyrite._rendering.rect_bounds import RectBounds, rotate_rect
 from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
-from ..services import BoundsService
+from .._services import BoundsService
 from ..transform import transform_component as transform
 from ..types.sprite import BaseSprite
 

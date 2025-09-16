@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..services import TransformService
+from .._services import TransformService
 from ..systems import System
 
 

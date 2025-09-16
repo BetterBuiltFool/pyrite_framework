@@ -6,7 +6,7 @@ from pygame import Vector2
 
 from ..component import Component
 from .transform import Transform
-from ..services import TransformService
+from .._services import TransformService
 from ..types import TransformLike
 
 

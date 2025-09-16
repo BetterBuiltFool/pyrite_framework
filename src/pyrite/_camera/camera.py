@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from ..services import CameraService
+from .._services import CameraService
 from ..enum import Layer
 from ..events import OnEnable, OnDisable
 from .._rendering.camera_renderer import CameraRendererProvider as CameraRenderer

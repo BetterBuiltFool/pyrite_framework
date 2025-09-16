@@ -2,8 +2,8 @@ from __future__ import annotations
 import unittest
 
 from pyrite.transform import TransformComponent
-from pyrite.services import TransformService
-from pyrite.services.transform_service.transform_service import DefaultTransformService
+from pyrite._services import TransformService
+from pyrite._services.transform_service.transform_service import DefaultTransformService
 
 
 class Empty:

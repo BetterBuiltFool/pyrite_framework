@@ -9,7 +9,7 @@ from pymunk import Body
 
 from ..transform import TransformComponent
 from ..component import Component
-from ..services import PhysicsService
+from .._services import PhysicsService
 
 if TYPE_CHECKING:
     from ..types.constraint import Constraint

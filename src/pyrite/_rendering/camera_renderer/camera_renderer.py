@@ -5,8 +5,8 @@ from typing import cast, TYPE_CHECKING
 
 import pygame
 
-from ...services import CameraService
-from ...services.camera_service import DefaultCameraService
+from ..._services import CameraService
+from ..._services.camera_service import DefaultCameraService
 from ...types import Camera, Renderer
 from ...types.render_target import RenderTarget
 

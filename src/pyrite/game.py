@@ -16,7 +16,7 @@ from .core.system_manager import SystemManager
 from pyrite._camera.camera import Camera
 from pyrite._rendering.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
-from .services import CameraService
+from ._services import CameraService
 from .transform import transform_system
 from .utils import threading
 

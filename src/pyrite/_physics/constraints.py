@@ -7,7 +7,7 @@ from pygame import Vector2
 import pymunk
 
 from pyrite._physics.rigidbody_component import RigidbodyComponent
-from ..services import PhysicsService
+from .._services import PhysicsService
 from ..types.constraint import Constraint
 from ..utils import point_to_tuple
 
