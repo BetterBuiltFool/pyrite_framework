@@ -17,7 +17,7 @@ from pyrite._camera.camera import Camera
 from pyrite._rendering.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from .transform import transform_system
+from ._transform import transform_system
 from .utils import threading
 
 if TYPE_CHECKING:

@@ -7,16 +7,15 @@ from pyrite._rendering.rect_bounds import RectBounds, rotate_rect
 from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
 from pyrite._services.bounds_service import BoundsServiceProvider as BoundsService
-from ..transform import transform_component as transform
+from pyrite._transform.transform_component import TransformComponent
 from ..types.sprite import BaseSprite
 
 
 if typing.TYPE_CHECKING:
-    from ..types import Camera, CullingBounds, TransformLike
-    from ..transform import TransformComponent
-    from ..enum import Layer, Anchor
     from pygame import Surface, Vector2
     from pygame.typing import Point
+    from ..types import Camera, CullingBounds, TransformLike
+    from ..enum import Layer, Anchor
 
 
 class Sprite(BaseSprite, Renderable):
@@ -52,14 +51,16 @@ class Sprite(BaseSprite, Renderable):
         # self.display_surface = display_surface
         self.transform: TransformComponent
         if local_transform is not None:
-            if isinstance(local_transform, transform.TransformComponent):
+            if isinstance(local_transform, TransformComponent):
                 # If we're being passed something else's transform,
                 # we'll just use that instead.
                 self.transform = local_transform
             else:
-                self.transform = transform.from_transform(self, local_transform)
+                self.transform = TransformComponent.from_transform(
+                    self, local_transform
+                )
         else:
-            self.transform = transform.from_attributes(self, position)
+            self.transform = TransformComponent.from_attributes(self, position)
 
         self.anchor = anchor
 

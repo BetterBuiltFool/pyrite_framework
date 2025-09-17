@@ -142,32 +142,32 @@ class TransformComponent(Component):
     def __str__(self) -> str:
         return f"Local: {self.raw()}, World: {self.world()}"
 
+    @staticmethod
+    def from_transform(owner: Any, transform: TransformLike) -> TransformComponent:
+        """
+        Create a transform component based on another transform.
 
-def from_transform(owner: Any, transform: TransformLike) -> TransformComponent:
-    """
-    Create a transform component based on another transform.
+        :param owner: The owner of the new transform.
+        :param transform: The transform being copied
+        :return: The newly-created transform component
+        """
+        # This can be overridden to return a subclass of TransformComponent, if needed.
+        return TransformComponent(
+            owner, transform.position, transform.rotation, transform.scale
+        )
 
-    :param owner: The owner of the new transform.
-    :param transform: The transform being copied
-    :return: The newly-created transform component
-    """
-    # This can be overridden to return a subclass of TransformComponent, if needed.
-    return TransformComponent(
-        owner, transform.position, transform.rotation, transform.scale
-    )
+    @staticmethod
+    def from_attributes(
+        owner: Any, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
+    ) -> TransformComponent:
+        """
+        Create a transform component from transform attributes.
 
-
-def from_attributes(
-    owner: Any, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
-) -> TransformComponent:
-    """
-    Create a transform component from transform attributes.
-
-    :param owner: The owner of the new transform.
-    :param position: A Point in local space, defaults to (0, 0)
-    :param rotation: An angle in degrees in local space, defaults to 0
-    :param scale: A Point representing local scale , defaults to (1, 1)
-    :return: The newly-created transform component
-    """
-    # This can be overridden to return a subclass of TransformComponent, if needed.
-    return TransformComponent(owner, position, rotation, scale)
+        :param owner: The owner of the new transform.
+        :param position: A Point in local space, defaults to (0, 0)
+        :param rotation: An angle in degrees in local space, defaults to 0
+        :param scale: A Point representing local scale , defaults to (1, 1)
+        :return: The newly-created transform component
+        """
+        # This can be overridden to return a subclass of TransformComponent, if needed.
+        return TransformComponent(owner, position, rotation, scale)

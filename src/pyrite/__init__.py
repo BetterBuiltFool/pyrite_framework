@@ -20,7 +20,8 @@ import pyrite._rendering.base_renderable
 import pyrite._sprite.sprite
 import pyrite._sprite.spritesheet
 import pyrite._systems.base_system
-from .transform import Transform, TransformComponent  # noqa: F401
+import pyrite._transform.transform
+import pyrite._transform.transform_component
 
 Camera = pyrite._camera.camera.Camera
 ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
@@ -29,3 +30,6 @@ Renderable = pyrite._rendering.base_renderable.BaseRenderable
 Sprite = pyrite._sprite.sprite.Sprite
 SpriteSheet = pyrite._sprite.spritesheet.SpriteSheet
 System = pyrite._systems.base_system.BaseSystem
+
+Transform = pyrite._transform.transform.Transform
+TransformComponent = pyrite._transform.transform_component.TransformComponent

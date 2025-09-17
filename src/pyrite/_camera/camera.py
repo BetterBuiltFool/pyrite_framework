@@ -8,7 +8,7 @@ from ..enum import Layer
 from ..events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
-from ..transform import transform_component
+from pyrite._transform.transform_component import TransformComponent
 from ..types import Camera as CameraBase, Renderable
 
 if TYPE_CHECKING:
@@ -38,14 +38,14 @@ class Camera(CameraBase):
         enabled=True,
     ) -> None:
         if transform is not None:
-            if isinstance(transform, transform_component.TransformComponent):
+            if isinstance(transform, TransformComponent):
                 # If we're being passed something else's transform,
                 # we'll just use that instead.
                 self.transform = transform
             else:
-                self.transform = transform_component.from_transform(self, transform)
+                self.transform = TransformComponent.from_transform(self, transform)
         else:
-            self.transform = transform_component.from_attributes(self, position)
+            self.transform = TransformComponent.from_attributes(self, position)
         self.projection = projection
         if render_targets is None:
             render_targets = [Viewport.DEFAULT]
