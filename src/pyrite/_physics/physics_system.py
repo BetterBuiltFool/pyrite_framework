@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..systems import System
+from pyrite._systems.base_system import BaseSystem
 
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 from pyrite._services.transform_service import (
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     pass
 
 
-class PhysicsSystem(System):
+class PhysicsSystem(BaseSystem):
     """
     A system that manages the flow of physics in the world space.
     Syncs Rigidbodies and their transforms, and steps the simulation.

@@ -5,14 +5,14 @@ from typing import TYPE_CHECKING
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )
-from ..systems import System
+from pyrite._systems.base_system import BaseSystem
 
 
 if TYPE_CHECKING:
     pass
 
 
-class TransformSystem(System):
+class TransformSystem(BaseSystem):
     """
     System for ensuring that TransformComponent world values are up to date for
     rendering.
