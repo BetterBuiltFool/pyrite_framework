@@ -9,7 +9,7 @@ from .transform import Transform
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )
-from ..types import TransformLike
+from pyrite._types.transform import TransformLike
 
 
 if TYPE_CHECKING:

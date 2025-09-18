@@ -9,13 +9,15 @@ from ..events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
 from pyrite._transform.transform_component import TransformComponent
-from ..types import Camera as CameraBase, Renderable
+from pyrite._types.camera import CameraBase
+from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
-    from ..types import CameraViewBounds, TransformLike
-    from ..types.projection import Projection
-    from ..types.render_target import RenderTarget
-    from ..transform import Transform
+    from pyrite._types.view_bounds import CameraViewBounds
+    from pyrite._types.transform import TransformLike
+    from pyrite._types.projection import Projection
+    from pyrite._types.render_target import RenderTarget
+    from pyrite._transform.transform import Transform
     from pygame.typing import Point
 
 

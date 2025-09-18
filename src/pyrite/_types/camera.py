@@ -8,9 +8,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     # from pygame.typing import Point
-    from . import CameraViewBounds, Renderable, Projection
+    from pyrite._types.view_bounds import CameraViewBounds
+    from pyrite._types.renderable import Renderable
+    from pyrite._types.projection import Projection
     from .render_target import RenderTarget
-    from .._rendering import Viewport
+    from pyrite._rendering.viewport import Viewport
     from ..enum import Layer
     from ..events import OnEnable as EventOnEnable
     from ..events import OnDisable as EventOnDisable

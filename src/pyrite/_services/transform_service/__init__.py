@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ...types.service import ServiceProvider
+from pyrite._types.service import ServiceProvider
 from .transform_service import (
     TransformService,
     DefaultTransformService,

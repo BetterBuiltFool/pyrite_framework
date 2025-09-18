@@ -4,10 +4,12 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
-from ...types.service import Service
+from pyrite._types.service import Service
 
 if TYPE_CHECKING:
-    from ...types import CullingBounds, Renderable, TransformLike
+    from pyrite._types.bounds import CullingBounds
+    from pyrite._types.renderable import Renderable
+    from pyrite._types.transform import TransformLike
 
     type BoundsData = tuple[CullingBounds, TransformLike]
 

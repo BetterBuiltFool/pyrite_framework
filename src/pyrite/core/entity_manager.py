@@ -7,7 +7,7 @@ from weakref import WeakSet
 
 
 if TYPE_CHECKING:
-    from ..types.entity import Entity
+    from pyrite._types.entity import Entity
 
 import pygame
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from pymunk import ShapeFilter
 
 if TYPE_CHECKING:
-    from pyrite.types.aliases import CollisionGroup, ObjectCategory, CategoryMask
+    from pyrite._types.aliases import CollisionGroup, ObjectCategory, CategoryMask
 
 
 class Filter:

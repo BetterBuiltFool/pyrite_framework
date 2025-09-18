@@ -9,10 +9,12 @@ from pygame import Surface
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._services.camera_service.camera_service import DefaultCameraService
-from ...types import Camera, Renderer, Sprite
+from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.renderer import Renderer
+from pyrite._types.sprite import BaseSprite as Sprite
 
 if TYPE_CHECKING:
-    from ...types import TransformLike
+    from pyrite._types.transform import TransformLike
     from ... import Transform
 
     type SpriteData = tuple[Surface, Transform]

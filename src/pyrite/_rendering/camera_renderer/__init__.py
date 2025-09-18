@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .camera_renderer import CameraRenderer, DefaultCameraRenderer
-from ...types import Camera, RendererProvider
-from ...types.render_target import RenderTarget
+from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.renderer import RendererProvider
+from pyrite._types.render_target import RenderTarget
 
 if TYPE_CHECKING:
     pass

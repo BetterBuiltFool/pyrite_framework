@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from pygame import Vector2
 import pymunk
 
-from ..types.shape import Shape
+from pyrite._types.shape import Shape
 from ..utils import point_to_tuple
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
     from .collider_component import ColliderComponent
-    from ..types import TransformLike
+    from pyrite._types.transform import TransformLike
 
 
 class Circle(Shape[pymunk.Circle]):

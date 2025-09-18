@@ -22,7 +22,7 @@ from .utils import threading
 
 if TYPE_CHECKING:
     from types import TracebackType
-    from .types.system import System
+    from pyrite._types.system import System
 
 
 import pygame

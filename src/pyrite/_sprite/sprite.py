@@ -8,13 +8,15 @@ from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
 from pyrite._services.bounds_service import BoundsServiceProvider as BoundsService
 from pyrite._transform.transform_component import TransformComponent
-from ..types.sprite import BaseSprite
+from pyrite._types.sprite import BaseSprite
 
 
 if typing.TYPE_CHECKING:
     from pygame import Surface, Vector2
     from pygame.typing import Point
-    from ..types import Camera, CullingBounds, TransformLike
+    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.bounds import CullingBounds
+    from pyrite._types.transform import TransformLike
     from ..enum import Layer, Anchor
 
 

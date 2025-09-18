@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from ..core import entity_manager
 from ..events import OnEnable, OnDisable
-from ..types import Entity
+from pyrite._types.entity import Entity
 
 if TYPE_CHECKING:
     from pygame import Event

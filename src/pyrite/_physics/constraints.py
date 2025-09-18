@@ -8,7 +8,7 @@ import pymunk
 
 from pyrite._physics.rigidbody_component import RigidbodyComponent
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
-from ..types.constraint import Constraint
+from pyrite._types.constraint import Constraint
 from ..utils import point_to_tuple
 
 if TYPE_CHECKING:

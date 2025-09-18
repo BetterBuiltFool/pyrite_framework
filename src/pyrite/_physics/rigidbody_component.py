@@ -12,7 +12,7 @@ from ..component import Component
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 
 if TYPE_CHECKING:
-    from ..types.constraint import Constraint
+    from pyrite._types.constraint import Constraint
 
     BodyType: TypeAlias = int
 

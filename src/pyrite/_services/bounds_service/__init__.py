@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ...types.service import ServiceProvider
+from pyrite._types.service import ServiceProvider
 
 from .bounds_service import BoundsService, DefaultBoundsService
 
 if TYPE_CHECKING:
-    from ...types import Renderable
+    from pyrite._types.renderable import Renderable
     from .bounds_service import BoundsData
 
 

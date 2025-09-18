@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from ..core import system_manager
 from ..events import OnEnable, OnDisable
-from ..types import System
+from pyrite._types.system import System
 
 if TYPE_CHECKING:
     pass

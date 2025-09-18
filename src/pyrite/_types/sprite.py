@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from . import Renderable
+from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from pygame import Surface, Vector2

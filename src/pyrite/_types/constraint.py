@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pymunk import Constraint as PymunkConstraint
-    from ..physics.rigidbody_component import RigidbodyComponent
+    from pyrite._physics.rigidbody_component import RigidbodyComponent
 
 
 class Constraint[ConstraintT: PymunkConstraint]:

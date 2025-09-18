@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect
 
-from ..types.projection import Projection
+from pyrite._types.projection import Projection
 
 if TYPE_CHECKING:
     from pygame.typing import RectLike

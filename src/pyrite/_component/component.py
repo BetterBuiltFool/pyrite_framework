@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from weakref import ref, WeakKeyDictionary
 
-from ..types import Component
+from pyrite._types.component import Component
 
 if TYPE_CHECKING:
     from typing import Any, Self

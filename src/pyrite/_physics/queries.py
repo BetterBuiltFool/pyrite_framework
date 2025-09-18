@@ -7,7 +7,7 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from pygame.typing import Point
 
-    from pyrite.types.shape import Shape
+    from pyrite._types.shape import Shape
 
 
 class PointInfo:

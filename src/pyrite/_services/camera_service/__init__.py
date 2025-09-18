@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ...types.service import ServiceProvider
+from pyrite._types.service import ServiceProvider
 from .camera_service import CameraService, DefaultCameraService
 
 if TYPE_CHECKING:
@@ -10,7 +10,8 @@ if TYPE_CHECKING:
     from pygame import Vector3
 
     from ...transform import Transform
-    from ...types import Camera, CameraViewBounds
+    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._rendering.viewport import Viewport
 
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-    from ..types import Camera
+    from pyrite._types.camera import CameraBase as Camera
     from ..core.render_system import RenderQueue
 
 

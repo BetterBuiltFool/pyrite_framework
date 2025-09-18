@@ -1,28 +1,42 @@
 from __future__ import annotations
-
 from typing import Protocol, TYPE_CHECKING
 
-from .bounds import CullingBounds  # noqa: F401
-from .camera import CameraBase as Camera  # noqa: F401
-from .component import Component  # noqa: F401
-from .debug_renderer import DebugRenderer  # noqa: F401
-from .entity import Entity  # noqa: F401
-from .projection import Projection  # noqa: F401
-from .renderable import Renderable  # noqa: F401
-from .renderer import Renderer, RendererProvider  # noqa: F401
-from .sprite import BaseSprite as Sprite  # noqa: F401
-from .system import System  # noqa: F401
-from .transform import TransformLike  # noqa:F401
-from .view_bounds import CameraViewBounds  # noqa: F401
+import pygame
+
+import pyrite._types.bounds
+import pyrite._types.camera
+import pyrite._types.component
+import pyrite._types.debug_renderer
+import pyrite._types.entity
+import pyrite._types.projection
+import pyrite._types.renderable
+import pyrite._types.renderer
+import pyrite._types.sprite
+import pyrite._types.system
+import pyrite._types.transform
+import pyrite._types.view_bounds
 
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import SequenceLike
-    from ..transform.transform_component import TransformComponent
+
+    from pyrite._transform.transform_component import TransformComponent
 
     Point3D = SequenceLike[float]
 
-import pygame
+CullingBounds = pyrite._types.bounds.CullingBounds
+Camera = pyrite._types.camera.CameraBase
+Component = pyrite._types.component.Component
+DebugRenderer = pyrite._types.debug_renderer.DebugRenderer
+Entity = pyrite._types.entity.Entity
+Projection = pyrite._types.projection.Projection
+Renderable = pyrite._types.renderable.Renderable
+Renderer = pyrite._types.renderer.Renderer
+RendererProvider = pyrite._types.renderer.RendererProvider
+Sprite = pyrite._types.sprite.BaseSprite
+System = pyrite._types.system.System
+TransformLike = pyrite._types.transform.TransformLike
+CameraViewBounds = pyrite._types.view_bounds.CameraViewBounds
 
 
 class HasPosition(Protocol):

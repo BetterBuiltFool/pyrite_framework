@@ -8,14 +8,14 @@ from weakref import WeakKeyDictionary
 from pygame import Surface, Vector2, Vector3
 
 from ..._rendering.view_plane import ViewPlane
-from ...types.service import Service
+from pyrite._types.service import Service
 
 if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
-    from ...types import Camera
+    from pyrite._types.camera import CameraBase as Camera
     from ...transform import Transform
-    from ...types import CameraViewBounds
+    from pyrite._types.view_bounds import CameraViewBounds
     from ..._rendering.viewport import Viewport
 
 

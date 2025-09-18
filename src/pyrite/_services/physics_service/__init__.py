@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING
 import pymunk
 
 from .physics_service import PhysicsService, PymunkPhysicsService
-from ...types.service import ServiceProvider
+from pyrite._types.service import ServiceProvider
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
     from pyrite._physics.collider_component import ColliderComponent
     from pyrite._physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
-    from ...types.constraint import Constraint
-    from pyrite.types.shape import Shape
+    from pyrite._types.constraint import Constraint
+    from pyrite._types.shape import Shape
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):

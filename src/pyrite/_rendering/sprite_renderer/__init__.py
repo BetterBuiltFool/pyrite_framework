@@ -4,13 +4,14 @@ from typing import TYPE_CHECKING
 
 
 from .sprite_renderer import SpriteRenderer, DefaultSpriteRenderer
-from ...types import Camera, RendererProvider
+from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.renderer import RendererProvider
 
 
 if TYPE_CHECKING:
     from pygame import Surface
 
-    from ...types import TransformLike
+    from pyrite._types.transform import TransformLike
     from ... import Sprite
 
 

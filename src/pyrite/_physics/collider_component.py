@@ -14,7 +14,7 @@ from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsSe
 from ..component import Component
 
 if TYPE_CHECKING:
-    from ..types.shape import Shape
+    from pyrite._types.shape import Shape
 
 
 class ColliderComponent(Component):

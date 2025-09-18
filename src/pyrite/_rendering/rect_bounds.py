@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from pygame import Vector2
 
-from ..types import CullingBounds
+from pyrite._types.bounds import CullingBounds
 from ..cuboid import Cuboid
 from pygame import Rect
 

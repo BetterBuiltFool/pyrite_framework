@@ -8,7 +8,7 @@ from weakref import WeakKeyDictionary, WeakSet
 from pygame import Vector2
 from weaktree import WeakTreeNode
 
-from ...types.service import Service
+from pyrite._types.service import Service
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

@@ -6,7 +6,7 @@ import pygame
 from pygame import Color
 import pymunk
 
-from ..types.debug_renderer import DebugRenderer
+from pyrite._types.debug_renderer import DebugRenderer
 from .. import draw
 from ..physics import RigidbodyComponent
 

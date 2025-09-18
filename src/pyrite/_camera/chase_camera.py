@@ -11,11 +11,8 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from .camera import Projection
     from ..enum import Layer
-    from ..types import (
-        HasTransform,
-        HasTransformProperty,
-        TransformLike,
-    )
+    from ..types import HasTransform, HasTransformProperty
+    from pyrite._types.transform import TransformLike
     from .._rendering.viewport import Viewport
     from pygame.typing import Point
 

@@ -8,7 +8,7 @@ from weakref import WeakValueDictionary
 
 import pymunk
 
-from ...types.service import Service
+from pyrite._types.service import Service
 from ...constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
@@ -26,8 +26,8 @@ if TYPE_CHECKING:
     from ..._physics.collider_component import ColliderComponent
     from ..._physics.rigidbody_component import RigidbodyComponent
     from ...transform import Transform
-    from ...types.constraint import Constraint
-    from pyrite.types.shape import Shape
+    from pyrite._types.constraint import Constraint
+    from pyrite._types.shape import Shape
 
 
 class PhysicsService(Service):

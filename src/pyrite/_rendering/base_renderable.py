@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from ..enum import RenderLayers
 from ..events import OnEnable, OnDisable
 from ..core import render_system
-from ..types import Renderable
+from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from ..enum import Layer

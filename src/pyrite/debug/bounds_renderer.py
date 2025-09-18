@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Color
 
-from ..types.debug_renderer import DebugRenderer
+from pyrite._types.debug_renderer import DebugRenderer
 from ..enum import RenderLayers
 from .. import draw
 

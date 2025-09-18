@@ -6,7 +6,7 @@ from functools import singledispatchmethod
 from typing import Any, TYPE_CHECKING
 from weakref import ref, WeakKeyDictionary
 
-from ..types.instance_event import InstanceEvent
+from pyrite._types.instance_event import InstanceEvent
 
 # This is NOT the standard library threading module.
 from ..utils import threading

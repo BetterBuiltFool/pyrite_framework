@@ -15,8 +15,9 @@ from pyrite._services.camera_service import CameraServiceProvider as CameraServi
 
 if TYPE_CHECKING:
     from ..enum import Layer
-    from ..types import Camera, Renderable
-    from ..types.debug_renderer import DebugRenderer
+    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.renderable import Renderable
+    from pyrite._types.debug_renderer import DebugRenderer
 
     type LayerDict = dict[Camera, list[Renderable]]
     type RenderQueue = dict[Layer, LayerDict]

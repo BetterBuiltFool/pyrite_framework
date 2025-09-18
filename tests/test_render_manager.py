@@ -17,8 +17,8 @@ from pyrite.rendering import OrthoProjection, RectBounds
 from pyrite._rendering.base_renderable import BaseRenderable
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite.types import CullingBounds
-from pyrite.types.camera import CameraBase
-from pyrite.types.renderable import Renderable
+from pyrite._types.camera import CameraBase
+from pyrite._types.renderable import Renderable
 
 
 class MockRenderable(BaseRenderable):
