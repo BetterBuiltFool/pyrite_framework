@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..enum import RenderLayers
-from ..events import OnEnable, OnDisable
-from ..core import render_system
+from pyrite.enum import RenderLayers
+from pyrite.events import OnEnable, OnDisable
+from pyrite.core import render_system
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
-    from ..enum import Layer
+    from pyrite.enum import Layer
 
 
 class BaseRenderable(Renderable):

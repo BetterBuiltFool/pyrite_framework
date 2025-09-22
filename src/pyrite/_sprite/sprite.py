@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing
 
-from ..enum import AnchorPoint
+from pyrite.enum import AnchorPoint
 from pyrite._rendering.rect_bounds import RectBounds, rotate_rect
 from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
@@ -17,7 +17,7 @@ if typing.TYPE_CHECKING:
     from pyrite._types.camera import CameraBase as Camera
     from pyrite._types.bounds import CullingBounds
     from pyrite._types.transform import TransformLike
-    from ..enum import Layer, Anchor
+    from pyrite.enum import Layer, Anchor
 
 
 class Sprite(BaseSprite, Renderable):

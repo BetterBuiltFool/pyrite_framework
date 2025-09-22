@@ -15,7 +15,7 @@ from pyrite._types.sprite import BaseSprite as Sprite
 
 if TYPE_CHECKING:
     from pyrite._types.transform import TransformLike
-    from ... import Transform
+    from pyrite._transform.transform import Transform
 
     type SpriteData = tuple[Surface, Transform]
 

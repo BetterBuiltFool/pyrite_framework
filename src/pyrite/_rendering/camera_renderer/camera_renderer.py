@@ -6,7 +6,7 @@ from typing import cast, TYPE_CHECKING
 import pygame
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from ..._services.camera_service import DefaultCameraService
+from pyrite._services.camera_service import DefaultCameraService
 from pyrite._types.camera import CameraBase as Camera
 from pyrite._types.renderer import Renderer
 from pyrite._types.render_target import RenderTarget

@@ -11,12 +11,13 @@ if TYPE_CHECKING:
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.renderable import Renderable
     from pyrite._types.projection import Projection
-    from .render_target import RenderTarget
+    from pyrite._types.render_target import RenderTarget
     from pyrite._rendering.viewport import Viewport
-    from ..enum import Layer
-    from ..events import OnEnable as EventOnEnable
-    from ..events import OnDisable as EventOnDisable
-    from ..transform import Transform, TransformComponent
+    from pyrite.enum import Layer
+    from pyrite.events import OnEnable as EventOnEnable
+    from pyrite.events import OnDisable as EventOnDisable
+    from pyrite._transform.transform import Transform
+    from pyrite._transform.transform_component import TransformComponent
 
 
 class CameraBase(ABC):

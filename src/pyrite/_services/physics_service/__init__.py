@@ -4,14 +4,17 @@ from typing import TYPE_CHECKING
 
 import pymunk
 
-from .physics_service import PhysicsService, PymunkPhysicsService
+from pyrite._services.physics_service.physics_service import (
+    PhysicsService,
+    PymunkPhysicsService,
+)
 from pyrite._types.service import ServiceProvider
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
     from pyrite._physics.collider_component import ColliderComponent
     from pyrite._physics.rigidbody_component import RigidbodyComponent
-    from ...transform import Transform
+    from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape
 

@@ -4,11 +4,14 @@ from typing import TYPE_CHECKING
 
 from pyrite._types.service import ServiceProvider
 
-from .bounds_service import BoundsService, DefaultBoundsService
+from pyrite._services.bounds_service.bounds_service import (
+    BoundsService,
+    DefaultBoundsService,
+)
 
 if TYPE_CHECKING:
     from pyrite._types.renderable import Renderable
-    from .bounds_service import BoundsData
+    from pyrite._services.bounds_service.bounds_service import BoundsData
 
 
 class BoundsServiceProvider(ServiceProvider[BoundsService]):

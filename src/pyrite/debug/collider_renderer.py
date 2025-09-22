@@ -7,14 +7,14 @@ from pygame import Color
 import pymunk
 
 from pyrite._types.debug_renderer import DebugRenderer
-from .. import draw
-from ..physics import RigidbodyComponent
+from pyrite import draw
+from pyrite._physics.rigidbody_component import RigidbodyComponent
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from pygame.typing import ColorLike, Point
-    from ..core.render_system import RenderQueue
-    from ..types import Camera
+    from pyrite.core.render_system import RenderQueue
+    from pyrite.types import Camera
 
 
 class ColliderRenderer(DebugRenderer):

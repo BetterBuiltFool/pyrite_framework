@@ -4,8 +4,8 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from ..enum import Layer
-from ..events import OnEnable, OnDisable
+from pyrite.enum import Layer
+from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
 from pyrite._transform.transform_component import TransformComponent
@@ -13,12 +13,12 @@ from pyrite._types.camera import CameraBase
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.transform import TransformLike
     from pyrite._types.projection import Projection
     from pyrite._types.render_target import RenderTarget
     from pyrite._transform.transform import Transform
-    from pygame.typing import Point
 
 
 class Camera(CameraBase):

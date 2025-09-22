@@ -6,8 +6,8 @@ import typing
 if typing.TYPE_CHECKING:
     from pygame import Event
 
-    from ..events import OnEnable as EventOnEnable
-    from ..events import OnDisable as EventOnDisable
+    from pyrite.events import OnEnable as EventOnEnable
+    from pyrite.events import OnDisable as EventOnDisable
 
 
 class System(ABC):

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 
-from ..core import system_manager
-from ..events import OnEnable, OnDisable
+from pyrite.core import system_manager
+from pyrite.events import OnEnable, OnDisable
 from pyrite._types.system import System
 
 if TYPE_CHECKING:

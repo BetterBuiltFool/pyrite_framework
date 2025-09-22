@@ -3,13 +3,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyrite._types.service import ServiceProvider
-from .camera_service import CameraService, DefaultCameraService
+from pyrite._services.camera_service.camera_service import (
+    CameraService,
+    DefaultCameraService,
+)
 
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pygame import Vector3
 
-    from ...transform import Transform
+    from pyrite._transform.transform import Transform
     from pyrite._types.camera import CameraBase as Camera
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._rendering.viewport import Viewport

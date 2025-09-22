@@ -9,7 +9,7 @@ from weakref import WeakValueDictionary
 import pymunk
 
 from pyrite._types.service import Service
-from ...constants import COMPONENT_TYPE
+from pyrite.constants import COMPONENT_TYPE
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -23,9 +23,9 @@ if TYPE_CHECKING:
         # ShapeFilter,
         Space,
     )
-    from ..._physics.collider_component import ColliderComponent
-    from ..._physics.rigidbody_component import RigidbodyComponent
-    from ...transform import Transform
+    from pyrite._physics.collider_component import ColliderComponent
+    from pyrite._physics.rigidbody_component import RigidbodyComponent
+    from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape
 

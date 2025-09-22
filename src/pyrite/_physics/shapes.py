@@ -6,7 +6,7 @@ from pygame import Vector2
 import pymunk
 
 from pyrite._types.shape import Shape
-from ..utils import point_to_tuple
+from pyrite.utils import point_to_tuple
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
 
-    from .collider_component import ColliderComponent
+    from pyrite._physics.collider_component import ColliderComponent
     from pyrite._types.transform import TransformLike
 
 

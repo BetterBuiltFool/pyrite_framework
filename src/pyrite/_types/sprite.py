@@ -9,8 +9,8 @@ if TYPE_CHECKING:
     from pygame import Surface, Vector2
     from pygame.typing import Point
 
-    from ..enum import Anchor
-    from ..transform import TransformComponent
+    from pyrite.enum import Anchor
+    from pyrite.transform import TransformComponent
 
 
 class BaseSprite(Renderable):

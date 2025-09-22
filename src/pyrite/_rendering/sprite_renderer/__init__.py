@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 
-from .sprite_renderer import SpriteRenderer, DefaultSpriteRenderer
+from pyrite._rendering.sprite_renderer.sprite_renderer import (
+    SpriteRenderer,
+    DefaultSpriteRenderer,
+)
 from pyrite._types.camera import CameraBase as Camera
 from pyrite._types.renderer import RendererProvider
 
@@ -12,7 +15,7 @@ if TYPE_CHECKING:
     from pygame import Surface
 
     from pyrite._types.transform import TransformLike
-    from ... import Sprite
+    from pyrite._sprite.sprite import Sprite
 
 
 class SpriteRendererProvider(RendererProvider[SpriteRenderer]):

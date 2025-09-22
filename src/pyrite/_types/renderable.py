@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pyrite._types.camera import CameraBase as Camera
     from pyrite._types.bounds import CullingBounds
-    from ..enum import Layer
-    from ..events import OnEnable as EventOnEnable
-    from ..events import OnDisable as EventOnDisable
+    from pyrite.enum import Layer
+    from pyrite.events import OnEnable as EventOnEnable
+    from pyrite.events import OnDisable as EventOnDisable
 
 
 class Renderable(ABC):

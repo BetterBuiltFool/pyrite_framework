@@ -4,8 +4,8 @@ from typing import Any, TYPE_CHECKING
 
 from pygame import Vector2
 
-from ..component import Component
-from .transform import Transform
+from pyrite._component.component import BaseComponent as Component
+from pyrite._transform.transform import Transform
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )

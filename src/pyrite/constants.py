@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import cffi
 import pygame
 
-from .core.display_settings import DisplaySettings
+from pyrite.core.display_settings import DisplaySettings
 
 if TYPE_CHECKING:
     pass

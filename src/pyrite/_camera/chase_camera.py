@@ -3,17 +3,17 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from .camera import Camera
-from ..entity import Entity
+from pyrite._camera.camera import Camera
+from pyrite._entity.entity import BaseEntity as Entity
 
 from pygame import Vector2
 
 if TYPE_CHECKING:
-    from .camera import Projection
-    from ..enum import Layer
-    from ..types import HasTransform, HasTransformProperty
+    from pyrite._types.projection import Projection
+    from pyrite.enum import Layer
+    from pyrite.types import HasTransform, HasTransformProperty
     from pyrite._types.transform import TransformLike
-    from .._rendering.viewport import Viewport
+    from pyrite._rendering.viewport import Viewport
     from pygame.typing import Point
 
 

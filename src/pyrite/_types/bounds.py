@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame import Rect
-    from ..cuboid import Cuboid
+    from pyrite.cuboid import Cuboid
 
 
 class CullingBounds(ABC):

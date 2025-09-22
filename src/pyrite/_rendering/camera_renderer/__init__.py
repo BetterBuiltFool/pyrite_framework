@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .camera_renderer import CameraRenderer, DefaultCameraRenderer
+from pyrite._rendering.camera_renderer.camera_renderer import (
+    CameraRenderer,
+    DefaultCameraRenderer,
+)
 from pyrite._types.camera import CameraBase as Camera
 from pyrite._types.renderer import RendererProvider
 from pyrite._types.render_target import RenderTarget

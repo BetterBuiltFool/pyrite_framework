@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any
 
 from pygame import Vector2
 
-from ..component import Component
-from .rigidbody_component import RigidbodyComponent
+from pyrite._component.component import BaseComponent as Component
+from pyrite._physics.rigidbody_component import RigidbodyComponent
 from pyrite.utils import point_to_tuple
 
 if TYPE_CHECKING:

@@ -7,8 +7,8 @@ from weakref import WeakKeyDictionary
 from pygame import Vector2
 from pymunk import Body
 
-from ..transform import TransformComponent
-from ..component import Component
+from pyrite._transform.transform_component import TransformComponent
+from pyrite._component.component import BaseComponent as Component
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 
 if TYPE_CHECKING:

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..core import entity_manager
-from ..events import OnEnable, OnDisable
+from pyrite.core import entity_manager
+from pyrite.events import OnEnable, OnDisable
 from pyrite._types.entity import Entity
 
 if TYPE_CHECKING:

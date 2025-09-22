@@ -13,7 +13,8 @@ from pyrite._types.service import Service
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from pygame.typing import Point
-    from ...transform import Transform, TransformComponent
+    from pyrite._transform.transform import Transform
+    from pyrite._transform.transform_component import TransformComponent
 
     type NodeDict = WeakKeyDictionary[
         TransformComponent, WeakTreeNode[TransformComponent]

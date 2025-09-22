@@ -6,14 +6,14 @@ import pygame
 from pygame import Color
 
 from pyrite._types.debug_renderer import DebugRenderer
-from ..enum import RenderLayers
-from .. import draw
+from pyrite.enum import RenderLayers
+from pyrite import draw
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
     from pygame.typing import ColorLike
-    from ..core.render_system import RenderQueue
-    from ..types import Camera
+    from pyrite.core.render_system import RenderQueue
+    from pyrite.types import Camera
 
 
 class BoundsRenderer(DebugRenderer):

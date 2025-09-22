@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyrite._types.service import ServiceProvider
-from .transform_service import (
+from pyrite._services.transform_service.transform_service import (
     TransformService,
     DefaultTransformService,
 )
@@ -12,7 +12,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
     from pygame.typing import Point
     from pygame import Vector2
-    from ...transform import Transform, TransformComponent
+    from pyrite._transform.transform import Transform
+    from pyrite._transform.transform_component import TransformComponent
 
 
 class TransformServiceProvider(ServiceProvider[TransformService]):

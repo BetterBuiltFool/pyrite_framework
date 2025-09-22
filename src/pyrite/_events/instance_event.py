@@ -8,8 +8,7 @@ from weakref import ref, WeakKeyDictionary
 
 from pyrite._types.instance_event import InstanceEvent
 
-# This is NOT the standard library threading module.
-from ..utils import threading
+from pyrite.utils import threading
 
 if TYPE_CHECKING:
     pass
