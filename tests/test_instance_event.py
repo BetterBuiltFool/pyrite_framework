@@ -2,7 +2,7 @@ import unittest
 from weakref import WeakKeyDictionary
 
 from pyrite.events import InstanceEvent
-from pyrite.events.instance_event import SENTINEL
+from pyrite._events.instance_event import SENTINEL
 from pyrite.utils import threading
 
 

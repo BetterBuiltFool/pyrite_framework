@@ -5,7 +5,7 @@ import bisect
 from typing import cast, Self, TYPE_CHECKING
 from weakref import WeakSet
 
-from ..types.system import System
+from pyrite._types.system import System
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

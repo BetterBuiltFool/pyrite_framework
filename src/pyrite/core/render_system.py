@@ -8,15 +8,16 @@ from weakref import WeakSet
 
 from pygame import Surface
 
-from ..enum import RenderLayers
+from pyrite.enum import RenderLayers
 
-from ..rendering import RenderTextureComponent
-from ..services import CameraService
+from pyrite._rendering.render_texture import RenderTextureComponent
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
 
 if TYPE_CHECKING:
-    from ..enum import Layer
-    from ..types import Camera, Renderable
-    from ..types.debug_renderer import DebugRenderer
+    from pyrite.enum import Layer
+    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.renderable import Renderable
+    from pyrite._types.debug_renderer import DebugRenderer
 
     type LayerDict = dict[Camera, list[Renderable]]
     type RenderQueue = dict[Layer, LayerDict]

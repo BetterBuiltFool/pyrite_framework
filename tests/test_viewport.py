@@ -5,7 +5,7 @@ import unittest
 
 from pygame import FRect, Rect
 
-from pyrite.rendering import Viewport
+from pyrite._rendering.viewport import Viewport
 
 if TYPE_CHECKING:
     from pygame.typing import Point

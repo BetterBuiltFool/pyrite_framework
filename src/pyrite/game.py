@@ -6,22 +6,23 @@ from typing import Self, TYPE_CHECKING
 
 from pygame import Rect
 
-from .core.display_settings import DisplaySettings
-from .core.entity_manager import EntityManager
-from .core.game_data import GameData
-from .core.render_system import RenderSystem, RenderManager
-from .core.rate_settings import RateSettings
-from .core.system_manager import SystemManager
+from pyrite.core.display_settings import DisplaySettings
+from pyrite.core.entity_manager import EntityManager
+from pyrite.core.game_data import GameData
+from pyrite.core.render_system import RenderSystem, RenderManager
+from pyrite.core.rate_settings import RateSettings
+from pyrite.core.system_manager import SystemManager
 
-from .camera.camera import Camera
-from .rendering import OrthoProjection, Viewport
-from .services import CameraService
-from .transform import transform_system
-from .utils import threading
+from pyrite._camera.camera import Camera
+from pyrite._rendering.ortho_projection import OrthoProjection
+from pyrite._rendering.viewport import Viewport
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
+from pyrite._transform import transform_system
+from pyrite.utils import threading
 
 if TYPE_CHECKING:
     from types import TracebackType
-    from .types.system import System
+    from pyrite._types.system import System
 
 
 import pygame

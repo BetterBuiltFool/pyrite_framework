@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from pyrite.physics.filter import Filter
+from pyrite._physics.filter import Filter
 from pyrite.constants import MASK_ALL
 
 

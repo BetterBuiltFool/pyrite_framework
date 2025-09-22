@@ -4,7 +4,7 @@ import unittest
 
 from pygame import Rect
 
-from pyrite.rendering.rect_bounds import rotate_rect
+from pyrite._rendering.rect_bounds import rotate_rect
 from pyrite.enum import Anchor
 
 

@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect
 
-from .services import CameraService
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
 
 if TYPE_CHECKING:
-    from .types import Camera
-    from .rendering import Viewport
+    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._rendering.viewport import Viewport
     from pygame.typing import ColorLike, Point
 
 

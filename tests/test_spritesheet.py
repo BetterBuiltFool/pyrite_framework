@@ -3,7 +3,7 @@ import unittest
 
 import pygame
 
-from pyrite.sprite.spritesheet import (
+from pyrite._sprite.spritesheet import (
     SimpleSpriteMap,
     SpriteSheet,
 )
