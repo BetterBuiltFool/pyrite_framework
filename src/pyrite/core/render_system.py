@@ -282,7 +282,7 @@ class DefaultRenderManager(RenderManager):
         for layer in RenderLayers._layers:
             layer_set = cast(set, self.renderables.get(layer, EMPTY_LAYER_SET))
             layer_dict = self.precull(layer_set, layer, cameras)
-            render_queue.update({layer: layer_dict})
+            render_queue[layer] = layer_dict
 
         return render_queue
 
@@ -301,7 +301,7 @@ class DefaultRenderManager(RenderManager):
             if layer in camera.layer_mask:
                 continue
             visible = filter(camera.cull, layer_set)
-            culled_dict.update({camera: self.sort_layer(visible)})
+            culled_dict[camera] = self.sort_layer(visible)
         return culled_dict
 
     def get_number_renderables(self) -> int:
