@@ -32,8 +32,8 @@ class Viewport:
         return self._crop
 
     @crop.setter
-    def crop(self, flag: bool):
-        self._crop = flag
+    def crop(self, crop: bool):
+        self._crop = crop
 
     @property
     def relative_rect(self) -> FRect:
@@ -45,8 +45,8 @@ class Viewport:
         return self._relative_rect
 
     @relative_rect.setter
-    def relative_rect(self, new_relative_rect: FRect):
-        self._relative_rect = new_relative_rect
+    def relative_rect(self, relative_rect: FRect):
+        self._relative_rect = relative_rect
         display_surf = pygame.display.get_surface()
         assert display_surf is not None
         self._update_display_rect(display_surf.size)
