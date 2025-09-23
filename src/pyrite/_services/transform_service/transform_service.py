@@ -323,9 +323,9 @@ class DefaultTransformService(TransformService):
 
     def initialize_component(self, component: TransformComponent, value: Transform):
         self.dirty_components.add(component)
-        self.local_transforms.update({component: value})
+        self.local_transforms[component] = value
         # Temporary, will update w/ TransformComponent updates
-        self.world_transforms.update({component: value.copy()})
+        self.world_transforms[component] = value.copy()
 
         node = WeakTreeNode(component, cleanup_mode=WeakTreeNode.REPARENT)
         self.transform_nodes[component] = node
