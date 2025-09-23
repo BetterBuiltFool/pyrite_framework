@@ -153,7 +153,7 @@ class DefaultCameraService(CameraService):
         display_size = camera.projection.far_plane.size
         surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
         surface = Surface(surface_size)
-        self._surfaces.update({camera: surface})
+        self._surfaces[camera] = surface
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
         return point.localize(point, camera.transform.world())
@@ -217,7 +217,7 @@ class DefaultCameraService(CameraService):
         return coords
 
     def update_default_camera(self, default_camera: Camera, size: Point):
-        self._surfaces.update({default_camera: Surface(size)})
+        self._surfaces[default_camera] = Surface(size)
 
     def zoom(self, camera: Camera, zoom: float):
         camera.zoom_level = zoom

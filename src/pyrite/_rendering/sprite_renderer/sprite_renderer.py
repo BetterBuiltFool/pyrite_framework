@@ -77,7 +77,7 @@ class DefaultSpriteRenderer(SpriteRenderer):
             # surface = sprite.draw_sprite()
             transform = renderable.transform.world()
             surface = self.redraw_sprite(renderable)
-            self._sprite_cache.update({renderable: (surface, transform)})
+            self._sprite_cache[renderable] = (surface, transform)
             renderable.is_dirty = False
 
         assert transform

@@ -20,7 +20,7 @@ class BaseComponent(Component):
 
     def __new__(cls, owner: Any, *args, **kwds):
         new_component = super().__new__(cls)
-        cls.instances.update({owner: new_component})
+        cls.instances[owner] = new_component
         return new_component
 
     def __init__(self, owner: Any) -> None:

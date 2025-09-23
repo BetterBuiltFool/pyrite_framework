@@ -27,7 +27,7 @@ def default_decoder(sprite_map_file: TextIO) -> RectDict[str]:
         value = value.strip("\n")
         value = value.lstrip()
         values = [int(subvalue) for subvalue in value.split(" ")]
-        sprites.update({key: Rect(*values)})
+        sprites[key] = Rect(*values)
     return sprites
 
 

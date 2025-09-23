@@ -23,7 +23,7 @@ class ComponentC(Component):
     def __init__(self, owner, data: str = "") -> None:
         super().__init__(owner)
         # Super simple test data
-        self.component_data.update({self: data})
+        self.component_data[self] = data
 
     @property
     def data(self) -> str:
@@ -31,7 +31,7 @@ class ComponentC(Component):
 
     @data.setter
     def data(self, value: str):
-        self.component_data.update({self: value})
+        self.component_data[self] = value
 
     @classmethod
     def _purge_component(cls, component: Component):
