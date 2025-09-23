@@ -52,8 +52,8 @@ class ColliderComponent(Component):
         if not isinstance(shape, Sequence):
             shape = [shape]
 
-        self._categories.update({self: category})
-        self._collision_masks.update({self: mask})
+        self._categories[self] = category
+        self._collision_masks[self] = mask
 
         self.shapes: WeakKeyDictionary[Shape[pymunk.Shape], None] = WeakKeyDictionary()
 
