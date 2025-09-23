@@ -91,7 +91,7 @@ class Viewport:
         :param viewport: An existing viewport object to be added.
         :return: The existing viewport object.
         """
-        cls._viewports.update({label: viewport})
+        cls._viewports[label] = viewport
         return viewport
 
     def local_to_screen(self, local_coord: Point) -> Point:
