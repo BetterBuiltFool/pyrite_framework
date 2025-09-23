@@ -28,7 +28,7 @@ class Renderable(ABC):
 
     @enabled.setter
     @abstractmethod
-    def enabled(self, value: bool) -> None:
+    def enabled(self, enabled: bool) -> None:
         pass
 
     @property
@@ -38,7 +38,7 @@ class Renderable(ABC):
 
     @layer.setter
     @abstractmethod
-    def layer(self, new_layer: Layer):
+    def layer(self, layer: Layer):
         pass
 
     def on_preenable(self):
