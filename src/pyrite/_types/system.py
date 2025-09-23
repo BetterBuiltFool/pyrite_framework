@@ -26,7 +26,7 @@ class System(ABC):
 
     @enabled.setter
     @abstractmethod
-    def enabled(self, value: bool):
+    def enabled(self, enabled: bool):
         pass
 
     def pre_update(self, delta_time: float) -> None:
