@@ -30,8 +30,8 @@ class ComponentC(Component):
         return self.component_data[self]
 
     @data.setter
-    def data(self, value: str):
-        self.component_data[self] = value
+    def data(self, data: str):
+        self.component_data[self] = data
 
     @classmethod
     def _purge_component(cls, component: Component):
