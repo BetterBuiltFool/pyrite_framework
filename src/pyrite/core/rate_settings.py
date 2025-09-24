@@ -56,10 +56,10 @@ class RateSettings:
         return self._fps_cap
 
     @fps_cap.setter
-    def fps_cap(self, target: int) -> None:
-        if target < 0:
+    def fps_cap(self, fps_cap: int) -> None:
+        if fps_cap < 0:
             raise ValueError("FPS must be positive.")
-        self._fps_cap = target
+        self._fps_cap = fps_cap
 
     @property
     def tick_rate(self) -> float:
@@ -74,20 +74,20 @@ class RateSettings:
         return self._tick_rate
 
     @tick_rate.setter
-    def tick_rate(self, target: float) -> None:
-        if target < 0:
+    def tick_rate(self, tick_rate: float) -> None:
+        if tick_rate < 0:
             logger.warning(
                 "Tick rates less than 0 are not allowed. Setting to 0 (disables "
                 "const_update)"
             )
-            target = 0
-        if target > MAX_TICK_RATE_WARNING:
+            tick_rate = 0
+        if tick_rate > MAX_TICK_RATE_WARNING:
             logger.warning("High tick rates may cause instability. Use with caution.")
-        if self._tick_rate == 0 and target != 0:
-            logger.info(f"Tick rate set to '{target}'. 'const_update' is enabled.")
-        self._tick_rate = target
-        if target != 0:
-            self._fixed_timestep = 1 / target
+        if self._tick_rate == 0 and tick_rate != 0:
+            logger.info(f"Tick rate set to '{tick_rate}'. 'const_update' is enabled.")
+        self._tick_rate = tick_rate
+        if tick_rate != 0:
+            self._fixed_timestep = 1 / tick_rate
         else:
             self._fixed_timestep = -1
             logger.info("Tick rate set to '0'. 'const_update' is disabled.")
@@ -106,11 +106,11 @@ class RateSettings:
         return self._fixed_timestep
 
     @fixed_timestep.setter
-    def fixed_timestep(self, target: float) -> None:
-        if target <= 0:
+    def fixed_timestep(self, fixed_timestep: float) -> None:
+        if fixed_timestep <= 0:
             raise ValueError("Timestep must be greater than zero.")
-        self._fixed_timestep = target
-        self._tick_rate = 1 / target
+        self._fixed_timestep = fixed_timestep
+        self._tick_rate = 1 / fixed_timestep
 
     @staticmethod
     def get_rate_settings(**kwds) -> RateSettings:
