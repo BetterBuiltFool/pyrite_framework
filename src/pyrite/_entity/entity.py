@@ -29,9 +29,9 @@ class BaseEntity(Entity):
         return entity_manager.is_enabled(self)
 
     @enabled.setter
-    def enabled(self, value: bool) -> None:
-        self._enabled = value
-        if value:
+    def enabled(self, enabled: bool) -> None:
+        self._enabled = enabled
+        if enabled:
             self.on_preenable()
             if entity_manager.enable(self):
                 self.OnEnable(self)
