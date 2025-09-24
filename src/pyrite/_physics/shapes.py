@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
     from pyrite._physics.collider_component import ColliderComponent
-    from pyrite._types.transform import TransformLike
+    from pyrite._types.protocols import TransformLike
 
 
 class Circle(Shape[pymunk.Circle]):

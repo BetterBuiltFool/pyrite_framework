@@ -9,7 +9,7 @@ from pyrite._services.camera_service import CameraServiceProvider as CameraServi
 from pyrite._services.camera_service import DefaultCameraService
 from pyrite._types.camera import CameraBase as Camera
 from pyrite._types.renderer import Renderer
-from pyrite._types.render_target import RenderTarget
+from pyrite._types.protocols import RenderTarget
 
 if TYPE_CHECKING:
     pass

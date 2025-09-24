@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from pygame.typing import ColorLike, Point
     from pyrite.core.render_system import RenderQueue
-    from pyrite.types import Camera
+    from pyrite._types.camera import CameraBase
 
 
 class ColliderRenderer(DebugRenderer):
@@ -23,7 +23,9 @@ class ColliderRenderer(DebugRenderer):
         self.color = Color(draw_color)
         self.font = pygame.font.Font()
 
-    def draw_circle(self, cameras: Iterable[Camera], position: Point, radius: float):
+    def draw_circle(
+        self, cameras: Iterable[CameraBase], position: Point, radius: float
+    ):
         for camera in cameras:
             for viewport in camera.get_viewports():
                 draw.circle(
@@ -36,14 +38,14 @@ class ColliderRenderer(DebugRenderer):
                 )
 
     def draw_poly(
-        self, cameras: Iterable[Camera], position: Point, points: Sequence[Point]
+        self, cameras: Iterable[CameraBase], position: Point, points: Sequence[Point]
     ):
         points = [(position[0] + point[0], position[1] + point[1]) for point in points]
         for camera in cameras:
             for viewport in camera.get_viewports():
                 draw.polygon(camera, viewport, self.color, points, width=1)
 
-    def draw_to_screen(self, cameras: Iterable[Camera], render_queue: RenderQueue):
+    def draw_to_screen(self, cameras: Iterable[CameraBase], render_queue: RenderQueue):
 
         for component in RigidbodyComponent.get_instances().values():
             pos = component.body.position

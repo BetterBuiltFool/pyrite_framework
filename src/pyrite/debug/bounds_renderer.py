@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable
     from pygame.typing import ColorLike
     from pyrite.core.render_system import RenderQueue
-    from pyrite.types import Camera
+    from pyrite._types.camera import CameraBase
 
 
 class BoundsRenderer(DebugRenderer):
@@ -22,7 +22,7 @@ class BoundsRenderer(DebugRenderer):
         self.color = Color(draw_color)
         self.font = pygame.font.Font()
 
-    def draw_to_screen(self, cameras: Iterable[Camera], render_queue: RenderQueue):
+    def draw_to_screen(self, cameras: Iterable[CameraBase], render_queue: RenderQueue):
         for layer in RenderLayers._layers:
             layer_dict = render_queue.get(layer, {})
             for renderables in layer_dict.values():

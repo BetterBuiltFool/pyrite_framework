@@ -11,8 +11,11 @@ from pygame import Vector2
 if TYPE_CHECKING:
     from pyrite._types.projection import Projection
     from pyrite.enum import Layer
-    from pyrite.types import HasTransform, HasTransformProperty
-    from pyrite._types.transform import TransformLike
+    from pyrite._types.protocols import (
+        HasTransform,
+        HasTransformProperty,
+        TransformLike,
+    )
     from pyrite._rendering.viewport import Viewport
     from pygame.typing import Point
 
@@ -86,11 +89,11 @@ class ChaseCamera(Entity, Camera):
         return Camera.enabled.fget(self)
 
     @enabled.setter
-    def enabled(self, value: bool) -> None:
+    def enabled(self, enabled: bool) -> None:
         assert Camera.enabled.fset
         assert Entity.enabled.fset
-        Camera.enabled.fset(self, value)
-        Entity.enabled.fset(self, value)
+        Camera.enabled.fset(self, enabled)
+        Entity.enabled.fset(self, enabled)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:

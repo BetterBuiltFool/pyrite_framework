@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.renderable import Renderable
     from pyrite._types.projection import Projection
-    from pyrite._types.render_target import RenderTarget
+    from pyrite._types.protocols import RenderTarget
     from pyrite._rendering.viewport import Viewport
     from pyrite.enum import Layer
     from pyrite.events import OnEnable as EventOnEnable
