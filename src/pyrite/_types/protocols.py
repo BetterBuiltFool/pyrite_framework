@@ -5,6 +5,7 @@ from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame import Rect, Surface, Vector2
+    from pygame.typing import Point
     from pyrite._transform.transform_component import TransformComponent
 
 
@@ -85,3 +86,24 @@ class RenderTarget(Protocol):
         If False, the rendering will be scaled to fit the target.
         """
         ...
+
+
+class TransformLike(Protocol):
+
+    @property
+    def position(self) -> Vector2: ...
+
+    @position.setter
+    def position(self, position: Point): ...
+
+    @property
+    def rotation(self) -> float: ...
+
+    @rotation.setter
+    def rotation(self, rotation: float): ...
+
+    @property
+    def scale(self) -> Vector2: ...
+
+    @scale.setter
+    def scale(self, scale: Point): ...
