@@ -46,9 +46,9 @@ class BaseRenderable(Renderable):
         return render_system.is_enabled(self)
 
     @enabled.setter
-    def enabled(self, value: bool) -> None:
-        self._enabled = value
-        if value:
+    def enabled(self, enabled: bool) -> None:
+        self._enabled = enabled
+        if enabled:
             self.on_preenable()
             if render_system.enable(self):
                 self.OnEnable(self)
@@ -64,12 +64,12 @@ class BaseRenderable(Renderable):
         return self._layer
 
     @layer.setter
-    def layer(self, new_layer: Layer):
-        if self._layer is not new_layer:
+    def layer(self, layer: Layer):
+        if self._layer is not layer:
             enabled = self.enabled
             # This allows us to update within the renderer without firing
             # on enable/disable events.
             render_system.disable(self)
-            self._layer = new_layer
+            self._layer = layer
             if enabled:
                 render_system.enable(self)

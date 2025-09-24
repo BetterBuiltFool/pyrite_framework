@@ -77,8 +77,8 @@ class Sprite(BaseSprite, Renderable):
         return self.transform.position
 
     @position.setter
-    def position(self, new_position: Point):
-        self.transform.position = new_position
+    def position(self, position: Point):
+        self.transform.position = position
 
     @property
     def flip_x(self) -> bool:
@@ -88,16 +88,16 @@ class Sprite(BaseSprite, Renderable):
         return self._flip_x
 
     @flip_x.setter
-    def flip_x(self, flag: bool):
+    def flip_x(self, flip_x: bool):
         """
         Sets the sprite to be flipped along the x axis.
         Note: setting this directly will not automatically flip the display. Use
         set_surface() for that, or call _force_update_surface() after setting the flip
         parameters.
 
-        :param flag: Boolean determining whether to flip the sprite image.
+        :param flip_x: Boolean determining whether to flip the sprite image.
         """
-        self._flip_x = flag
+        self._flip_x = flip_x
 
     @property
     def flip_y(self) -> bool:
@@ -107,24 +107,24 @@ class Sprite(BaseSprite, Renderable):
         return self._flip_y
 
     @flip_y.setter
-    def flip_y(self, flag: bool):
+    def flip_y(self, flip_y: bool):
         """
         Sets the sprite to be flipped along the y axis.
         Note: setting this directly will not automatically flip the display. Use
         set_surface() for that, or call _force_update_surface() after setting the flip
         parameters.
 
-        :param flag: Boolean determining whether to flip the sprite image.
+        :param flip_y: Boolean determining whether to flip the sprite image.
         """
-        self._flip_y = flag
+        self._flip_y = flip_y
 
     @property
     def is_dirty(self) -> bool:
         return self._is_dirty
 
     @is_dirty.setter
-    def is_dirty(self, flag: bool):
-        self._is_dirty = flag
+    def is_dirty(self, is_dirty: bool):
+        self._is_dirty = is_dirty
 
     def set_surface(
         self,

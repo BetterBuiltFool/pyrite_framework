@@ -41,8 +41,8 @@ class BaseSystem(System):
         return system_manager.is_enabled(self)
 
     @enabled.setter
-    def enabled(self, value: bool):
-        if value:
+    def enabled(self, enabled: bool):
+        if enabled:
             system_manager.enable(self)
             if not self._enabled:
                 self.OnEnable(self)
@@ -50,4 +50,4 @@ class BaseSystem(System):
             system_manager.disable(self)
             if self._enabled:
                 self.OnDisable(self)
-        self._enabled = value
+        self._enabled = enabled

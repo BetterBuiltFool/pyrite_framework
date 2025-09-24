@@ -24,7 +24,7 @@ class BaseSprite(Renderable):
 
     @position.setter
     @abstractmethod
-    def position(self, new_position: Point): ...
+    def position(self, position: Point): ...
 
     @property
     @abstractmethod
@@ -36,14 +36,14 @@ class BaseSprite(Renderable):
 
     @flip_x.setter
     @abstractmethod
-    def flip_x(self, flag: bool):
+    def flip_x(self, flip_x: bool):
         """
         Sets the sprite to be flipped along the x axis.
         Note: setting this directly will not automatically flip the display. Use
         set_surface() for that, or call _force_update_surface() after setting the flip
         parameters.
 
-        :param flag: Boolean determining whether to flip the sprite image.
+        :param flip_x: Boolean determining whether to flip the sprite image.
         """
         pass
 
@@ -57,14 +57,14 @@ class BaseSprite(Renderable):
 
     @flip_y.setter
     @abstractmethod
-    def flip_y(self, flag: bool):
+    def flip_y(self, flip_y: bool):
         """
         Sets the sprite to be flipped along the y axis.
         Note: setting this directly will not automatically flip the display. Use
         set_surface() for that, or call _force_update_surface() after setting the flip
         parameters.
 
-        :param flag: Boolean determining whether to flip the sprite image.
+        :param flip_y: Boolean determining whether to flip the sprite image.
         """
         pass
 
@@ -74,7 +74,7 @@ class BaseSprite(Renderable):
 
     @is_dirty.setter
     @abstractmethod
-    def is_dirty(self, flag: bool): ...
+    def is_dirty(self, is_dirty: bool): ...
 
     @abstractmethod
     def set_surface(

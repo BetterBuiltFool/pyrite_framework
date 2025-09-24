@@ -22,7 +22,7 @@ class CameraRenderer(Renderer[Camera, RenderTarget]):
     def smooth_scale(self) -> bool: ...
 
     @smooth_scale.setter
-    def smooth_scale(self, flag: bool): ...
+    def smooth_scale(self, smooth_scale: bool): ...
 
 
 class DefaultCameraRenderer(CameraRenderer):
@@ -36,9 +36,9 @@ class DefaultCameraRenderer(CameraRenderer):
         return self._smooth
 
     @smooth_scale.setter
-    def smooth_scale(self, flag: bool):
-        self._smooth = flag
-        if flag:
+    def smooth_scale(self, smooth_scale: bool):
+        self._smooth = smooth_scale
+        if smooth_scale:
             self.scale_method = pygame.transform.smoothscale
         else:
             self.scale_method = pygame.transform.scale

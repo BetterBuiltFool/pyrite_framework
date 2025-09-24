@@ -27,8 +27,8 @@ class Transform:
         return self._position
 
     @position.setter
-    def position(self, new_position: Point):
-        self._position = Vector2(new_position)
+    def position(self, position: Point):
+        self._position = Vector2(position)
 
     @property
     def rotation(self) -> float:
@@ -38,8 +38,8 @@ class Transform:
         return self._rotation
 
     @rotation.setter
-    def rotation(self, angle: float):
-        self._rotation = angle
+    def rotation(self, rotation: float):
+        self._rotation = rotation
 
     @property
     def scale(self) -> Vector2:
@@ -49,8 +49,8 @@ class Transform:
         return self._scale
 
     @scale.setter
-    def scale(self, new_scale: Point):
-        self._scale = Vector2(new_scale)
+    def scale(self, scale: Point):
+        self._scale = Vector2(scale)
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, TransformLike):

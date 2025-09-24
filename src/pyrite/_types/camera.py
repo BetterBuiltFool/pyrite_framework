@@ -43,7 +43,7 @@ class CameraBase(ABC):
 
     @zoom_level.setter
     @abstractmethod
-    def zoom_level(self, zoom: float):
+    def zoom_level(self, zoom_level: float):
         pass
 
     @abstractmethod

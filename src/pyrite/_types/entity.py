@@ -23,7 +23,7 @@ class Entity(ABC):
 
     @enabled.setter
     @abstractmethod
-    def enabled(self, value: bool) -> None: ...
+    def enabled(self, enabled: bool) -> None: ...
 
     @abstractmethod
     def on_preenable(self):

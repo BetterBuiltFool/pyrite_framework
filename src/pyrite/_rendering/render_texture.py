@@ -29,8 +29,8 @@ class RenderTexture:
         return self._crop
 
     @crop.setter
-    def crop(self, flag: bool):
-        self._crop = flag
+    def crop(self, crop: bool):
+        self._crop = crop
 
     def get_target_surface(self) -> Surface:
         """
