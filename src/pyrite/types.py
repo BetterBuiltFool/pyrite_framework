@@ -30,5 +30,16 @@ Renderer = pyrite._types.renderer.Renderer
 RendererProvider = pyrite._types.renderer.RendererProvider
 Sprite = pyrite._types.sprite.BaseSprite
 System = pyrite._types.system.System
-# TransformLike = pyrite._types.transform.TransformLike
 CameraViewBounds = pyrite._types.view_bounds.CameraViewBounds
+
+# Protocols
+CanConstUpdate = pyrite._types.protocols.CanConstUpdate
+CanPostUpdate = pyrite._types.protocols.CanPostUpdate
+CanPreUpdate = pyrite._types.protocols.CanPreUpdate
+CanUpdate = pyrite._types.protocols.CanUpdate
+HasPosition = pyrite._types.protocols.HasPosition
+HasTexture = pyrite._types.protocols.HasTexture
+HasTransform = pyrite._types.protocols.HasTransform
+HasTransformProperty = pyrite._types.protocols.HasTransformProperty
+RenderTarget = pyrite._types.protocols.RenderTarget
+TransformLike = pyrite._types.protocols.TransformLike
