@@ -39,9 +39,9 @@ class TransformComponent(Component):
         return TransformService.get_local(self).position
 
     @position.setter
-    def position(self, new_position: Point):
+    def position(self, position: Point):
         local = TransformService.get_local(self)
-        local.position = new_position
+        local.position = position
         TransformService.set_local(self, local)
         TransformService.make_dirty(self)
 
@@ -53,9 +53,9 @@ class TransformComponent(Component):
         return TransformService.get_world(self).position
 
     @world_position.setter
-    def world_position(self, new_position: Point):
+    def world_position(self, position: Point):
         world = TransformService.get_world(self)
-        world.position = new_position
+        world.position = position
         TransformService.set_world(self, world)
         TransformService.make_dirty(self)
 
@@ -67,9 +67,9 @@ class TransformComponent(Component):
         return TransformService.get_local(self).rotation
 
     @rotation.setter
-    def rotation(self, angle: float):
+    def rotation(self, rotation: float):
         local = TransformService.get_local(self)
-        local.rotation = angle
+        local.rotation = rotation
         TransformService.set_local(self, local)
         TransformService.make_dirty(self)
 
@@ -81,9 +81,9 @@ class TransformComponent(Component):
         return TransformService.get_world(self).rotation
 
     @world_rotation.setter
-    def world_rotation(self, angle: float):
+    def world_rotation(self, rotation: float):
         world = TransformService.get_world(self)
-        world.rotation = angle
+        world.rotation = rotation
         TransformService.set_world(self, world)
         TransformService.make_dirty(self)
 
@@ -95,9 +95,9 @@ class TransformComponent(Component):
         return TransformService.get_local(self).scale
 
     @scale.setter
-    def scale(self, new_scale: Point):
+    def scale(self, scale: Point):
         local = TransformService.get_local(self)
-        local.scale = new_scale
+        local.scale = scale
         TransformService.set_local(self, local)
         TransformService.make_dirty(self)
 
@@ -109,9 +109,9 @@ class TransformComponent(Component):
         return TransformService.get_world(self).scale
 
     @world_scale.setter
-    def world_scale(self, new_scale: Point):
+    def world_scale(self, scale: Point):
         world = TransformService.get_world(self)
-        world.scale = new_scale
+        world.scale = scale
         TransformService.set_world(self, world)
 
     def is_dirty(self) -> bool:
