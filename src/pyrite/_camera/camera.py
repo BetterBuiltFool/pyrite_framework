@@ -15,9 +15,8 @@ from pyrite._types.renderable import Renderable
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite._types.view_bounds import CameraViewBounds
-    from pyrite._types.transform import TransformLike
+    from pyrite._types.protocols import RenderTarget, TransformLike
     from pyrite._types.projection import Projection
-    from pyrite._types.render_target import RenderTarget
     from pyrite._transform.transform import Transform
 
 
@@ -72,8 +71,8 @@ class Camera(CameraBase):
         return CameraService.is_enabled(self)
 
     @enabled.setter
-    def enabled(self, value: bool) -> None:
-        if value:
+    def enabled(self, enabled: bool) -> None:
+        if enabled:
             CameraService.enable(self)
             if not self._enabled:
                 self.OnEnable(self)
@@ -81,15 +80,15 @@ class Camera(CameraBase):
             CameraService.disable(self)
             if self._enabled:
                 self.OnDisable(self)
-        self._enabled = value
+        self._enabled = enabled
 
     @property
     def zoom_level(self):
         return self._zoom_level
 
     @zoom_level.setter
-    def zoom_level(self, zoom: float):
-        self._zoom_level = zoom
+    def zoom_level(self, zoom_level: float):
+        self._zoom_level = zoom_level
 
     def refresh(self):
         CameraService.refresh(self)

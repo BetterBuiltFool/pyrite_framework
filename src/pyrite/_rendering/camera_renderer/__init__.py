@@ -8,10 +8,9 @@ from pyrite._rendering.camera_renderer.camera_renderer import (
 )
 from pyrite._types.camera import CameraBase as Camera
 from pyrite._types.renderer import RendererProvider
-from pyrite._types.render_target import RenderTarget
 
 if TYPE_CHECKING:
-    pass
+    from pyrite._types.protocols import RenderTarget
 
 
 class CameraRendererProvider(RendererProvider[CameraRenderer]):

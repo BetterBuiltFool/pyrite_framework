@@ -14,7 +14,7 @@ from pyrite._types.renderer import RendererProvider
 if TYPE_CHECKING:
     from pygame import Surface
 
-    from pyrite._types.transform import TransformLike
+    from pyrite._types.protocols import TransformLike
     from pyrite._sprite.sprite import Sprite
 
 

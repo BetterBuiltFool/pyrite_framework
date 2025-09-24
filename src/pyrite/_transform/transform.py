@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from pygame import Vector2
 
-from pyrite._types.transform import TransformLike
+from pyrite._types.protocols import TransformLike
 
 if TYPE_CHECKING:
     from pygame.typing import Point

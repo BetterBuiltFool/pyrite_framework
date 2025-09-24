@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite._types.camera import CameraBase as Camera
     from pyrite._types.bounds import CullingBounds
-    from pyrite._types.transform import TransformLike
+    from pyrite._types.protocols import TransformLike
     from pyrite.enum import Layer, Anchor
 
 
