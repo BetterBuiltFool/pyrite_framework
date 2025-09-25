@@ -1,3 +1,3 @@
 import pyrite._entity.entity
 
-Entity = pyrite._entity.entity.BaseEntity
+BaseEntity = pyrite._entity.entity.BaseEntity

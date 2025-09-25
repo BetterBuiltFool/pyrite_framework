@@ -6,7 +6,7 @@ from pyrite._rendering.camera_renderer.camera_renderer import (
     CameraRenderer,
     DefaultCameraRenderer,
 )
-from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.camera import Camera
 from pyrite._types.renderer import RendererProvider
 
 if TYPE_CHECKING:

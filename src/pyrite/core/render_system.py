@@ -15,7 +15,7 @@ from pyrite._services.camera_service import CameraServiceProvider as CameraServi
 
 if TYPE_CHECKING:
     from pyrite.enum import Layer
-    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.camera import Camera
     from pyrite._types.renderable import Renderable
     from pyrite._types.debug_renderer import DebugRenderer
 

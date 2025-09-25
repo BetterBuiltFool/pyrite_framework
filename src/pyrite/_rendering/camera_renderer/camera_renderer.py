@@ -7,7 +7,7 @@ import pygame
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._services.camera_service import DefaultCameraService
-from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.camera import Camera
 from pyrite._types.renderer import Renderer
 from pyrite._types.protocols import RenderTarget
 

@@ -4,7 +4,7 @@ from typing import cast, TYPE_CHECKING
 
 from pygame import Rect, Surface
 
-from pyrite._component.component import BaseComponent as Component
+from pyrite._component.component import BaseComponent
 from pyrite._types.protocols import HasTexture
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class RenderTexture:
         return Surface(size)
 
 
-class RenderTextureComponent(Component):
+class RenderTextureComponent(BaseComponent):
     """
     Special component for sprites and sprite-like objects. Automatically updates the
     object's texture to the assigned rendertexture, and ensures it is redrawn to update.

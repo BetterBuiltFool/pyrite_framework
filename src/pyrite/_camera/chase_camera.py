@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-from pyrite._camera.camera import Camera
-from pyrite._entity.entity import BaseEntity as Entity
+from pyrite._camera.camera import BaseCamera
+from pyrite._entity.entity import BaseEntity
 
 from pygame import Vector2
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class ChaseCamera(Entity, Camera):
+class ChaseCamera(BaseEntity, BaseCamera):
 
     def __init__(
         self,
@@ -61,7 +61,7 @@ class ChaseCamera(Entity, Camera):
         :param enabled: Whether the Renderable will be drawn to the screen,
         defaults to True
         """
-        Camera.__init__(
+        BaseCamera.__init__(
             self,
             projection,
             position,
@@ -70,7 +70,7 @@ class ChaseCamera(Entity, Camera):
             layer_mask,
             enabled,
         )
-        Entity.__init__(
+        BaseEntity.__init__(
             self,
             enabled,
         )
@@ -85,15 +85,15 @@ class ChaseCamera(Entity, Camera):
 
     @property
     def enabled(self) -> bool:
-        assert Camera.enabled.fget
-        return Camera.enabled.fget(self)
+        assert BaseCamera.enabled.fget
+        return BaseCamera.enabled.fget(self)
 
     @enabled.setter
     def enabled(self, enabled: bool) -> None:
-        assert Camera.enabled.fset
-        assert Entity.enabled.fset
-        Camera.enabled.fset(self, enabled)
-        Entity.enabled.fset(self, enabled)
+        assert BaseCamera.enabled.fset
+        assert BaseEntity.enabled.fset
+        BaseCamera.enabled.fset(self, enabled)
+        BaseEntity.enabled.fset(self, enabled)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:

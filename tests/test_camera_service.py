@@ -7,7 +7,7 @@ from pygame import Rect, Vector3
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite.rendering import OrthoProjection
 from pyrite._types.projection import Projection
-from pyrite._types.camera import CameraBase
+from pyrite._types.camera import Camera
 from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
@@ -28,14 +28,14 @@ zero_transform = Transform()
 
 class MockCamera:
 
-    def __new__(cls, *args, **kwds) -> CameraBase:
-        return cast(CameraBase, super().__new__(cls))
+    def __new__(cls, *args, **kwds) -> Camera:
+        return cast(Camera, super().__new__(cls))
 
     def __init__(self, projection: Projection) -> None:
         self.projection = projection
         self.transform: TransformComponent = TransformComponent(self)
         self.zoom_level: ZoomLevel = 1
-        CameraService.add_camera(cast(CameraBase, self))
+        CameraService.add_camera(cast(Camera, self))
 
 
 class TestCameraService(unittest.TestCase):

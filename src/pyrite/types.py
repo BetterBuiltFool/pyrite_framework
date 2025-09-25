@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     Point3D = SequenceLike[float]
 
 CullingBounds = pyrite._types.bounds.CullingBounds
-Camera = pyrite._types.camera.CameraBase
+Camera = pyrite._types.camera.Camera
 Component = pyrite._types.component.Component
 DebugRenderer = pyrite._types.debug_renderer.DebugRenderer
 Entity = pyrite._types.entity.Entity
@@ -28,7 +28,7 @@ Projection = pyrite._types.projection.Projection
 Renderable = pyrite._types.renderable.Renderable
 Renderer = pyrite._types.renderer.Renderer
 RendererProvider = pyrite._types.renderer.RendererProvider
-Sprite = pyrite._types.sprite.BaseSprite
+Sprite = pyrite._types.sprite.Sprite
 System = pyrite._types.system.System
 CameraViewBounds = pyrite._types.view_bounds.CameraViewBounds
 

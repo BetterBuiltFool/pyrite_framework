@@ -8,7 +8,7 @@ from pygame import Vector2
 from pymunk import Body
 
 from pyrite._transform.transform_component import TransformComponent
-from pyrite._component.component import BaseComponent as Component
+from pyrite._component.component import BaseComponent
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     BodyType: TypeAlias = int
 
 
-class RigidbodyComponent(Component):
+class RigidbodyComponent(BaseComponent):
     """
     Associates an owner object with a physics body.
 

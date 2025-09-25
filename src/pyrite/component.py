@@ -1,3 +1,3 @@
 import pyrite._component.component
 
-Component = pyrite._component.component.BaseComponent
+BaseComponent = pyrite._component.component.BaseComponent

@@ -4,7 +4,7 @@ from abc import abstractmethod, ABC
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.camera import Camera
     from pyrite._types.bounds import CullingBounds
     from pyrite.enum import Layer
     from pyrite.events import OnEnable as EventOnEnable

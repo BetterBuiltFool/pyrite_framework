@@ -6,7 +6,7 @@ from weakref import WeakSet
 
 from pygame.rect import Rect as Rect
 
-from pyrite._camera.camera import Camera
+from pyrite._camera.camera import BaseCamera
 from pyrite.core.render_system import (
     DefaultRenderManager,
     _get_draw_index,
@@ -17,7 +17,7 @@ from pyrite.rendering import OrthoProjection, RectBounds
 from pyrite._rendering.base_renderable import BaseRenderable
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._types.bounds import CullingBounds
-from pyrite._types.camera import CameraBase
+from pyrite._types.camera import Camera
 from pyrite._types.renderable import Renderable
 
 
@@ -33,7 +33,7 @@ class MockRenderable(BaseRenderable):
         self._layer = layer
         self.draw_index = draw_index
 
-    def render(self, delta_time: float, camera: CameraBase):
+    def render(self, delta_time: float, camera: Camera):
         return super().render(delta_time, camera)
 
     def get_bounds(self) -> CullingBounds:
@@ -173,7 +173,7 @@ class TestDefaultRenderManager(unittest.TestCase):
         for renderable in all_elements:
             self.render_manager.enable(renderable)
 
-        default_camera = Camera(OrthoProjection((0, 0, 100, 100)))
+        default_camera = BaseCamera(OrthoProjection((0, 0, 100, 100)))
         CameraService._default_camera = default_camera
 
         render_queue = self.render_manager.generate_render_queue()

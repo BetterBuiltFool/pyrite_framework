@@ -13,7 +13,7 @@ from pygame import Rect
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 
 if TYPE_CHECKING:
-    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.camera import Camera
     from pyrite._rendering.viewport import Viewport
     from pygame.typing import ColorLike, Point
 

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pyrite.transform import TransformComponent
 
 
-class BaseSprite(Renderable):
+class Sprite(Renderable):
 
     anchor: Anchor
     transform: TransformComponent

@@ -7,7 +7,7 @@ from pyrite._rendering.sprite_renderer.sprite_renderer import (
     SpriteRenderer,
     DefaultSpriteRenderer,
 )
-from pyrite._types.camera import CameraBase as Camera
+from pyrite._types.camera import Camera
 from pyrite._types.renderer import RendererProvider
 
 
