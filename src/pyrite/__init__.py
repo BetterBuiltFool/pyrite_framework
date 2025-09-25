@@ -38,7 +38,7 @@ Camera = pyrite._camera.camera.BaseCamera
 ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
 
 Renderable = pyrite._rendering.base_renderable.BaseRenderable
-Sprite = pyrite._sprite.sprite.Sprite
+Sprite = pyrite._sprite.sprite.BaseSprite
 SpriteSheet = pyrite._sprite.spritesheet.SpriteSheet
 System = pyrite._systems.base_system.BaseSystem
 

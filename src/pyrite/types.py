@@ -28,7 +28,7 @@ Projection = pyrite._types.projection.Projection
 Renderable = pyrite._types.renderable.Renderable
 Renderer = pyrite._types.renderer.Renderer
 RendererProvider = pyrite._types.renderer.RendererProvider
-Sprite = pyrite._types.sprite.BaseSprite
+Sprite = pyrite._types.sprite.Sprite
 System = pyrite._types.system.System
 CameraViewBounds = pyrite._types.view_bounds.CameraViewBounds
 

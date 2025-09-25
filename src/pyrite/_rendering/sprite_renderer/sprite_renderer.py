@@ -11,7 +11,7 @@ from pyrite._services.camera_service import CameraServiceProvider as CameraServi
 from pyrite._services.camera_service.camera_service import DefaultCameraService
 from pyrite._types.camera import Camera
 from pyrite._types.renderer import Renderer
-from pyrite._types.sprite import BaseSprite as Sprite
+from pyrite._types.sprite import Sprite
 
 if TYPE_CHECKING:
     from pyrite._types.protocols import TransformLike
