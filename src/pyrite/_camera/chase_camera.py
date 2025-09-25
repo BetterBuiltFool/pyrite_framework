@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from pyrite._camera.camera import BaseCamera
-from pyrite._entity.entity import BaseEntity as Entity
+from pyrite._entity.entity import BaseEntity
 
 from pygame import Vector2
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class ChaseCamera(Entity, BaseCamera):
+class ChaseCamera(BaseEntity, BaseCamera):
 
     def __init__(
         self,
@@ -70,7 +70,7 @@ class ChaseCamera(Entity, BaseCamera):
             layer_mask,
             enabled,
         )
-        Entity.__init__(
+        BaseEntity.__init__(
             self,
             enabled,
         )
@@ -91,9 +91,9 @@ class ChaseCamera(Entity, BaseCamera):
     @enabled.setter
     def enabled(self, enabled: bool) -> None:
         assert BaseCamera.enabled.fset
-        assert Entity.enabled.fset
+        assert BaseEntity.enabled.fset
         BaseCamera.enabled.fset(self, enabled)
-        Entity.enabled.fset(self, enabled)
+        BaseEntity.enabled.fset(self, enabled)
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:

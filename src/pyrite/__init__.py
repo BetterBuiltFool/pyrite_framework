@@ -24,7 +24,7 @@ Game = pyrite.game.Game
 AsyncGame = pyrite.game.AsyncGame
 get_game_instance = pyrite.game.get_game_instance
 
-Entity = pyrite._entity.entity.BaseEntity
+BaseEntity = pyrite._entity.entity.BaseEntity
 
 RenderLayers = pyrite.enum.RenderLayers
 AnchorPoint = pyrite.enum.AnchorPoint

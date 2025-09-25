@@ -5,13 +5,13 @@ from weakref import WeakSet
 import unittest
 
 from pyrite.core.entity_manager import DefaultEntityManager
-from pyrite.entity import Entity
+from pyrite.entity import BaseEntity
 
 
-class MockEntity(Entity):
+class MockEntity(BaseEntity):
 
-    def __new__(cls, *args, **kwds) -> Entity:
-        return cast(Entity, super().__new__(cls))
+    def __new__(cls, *args, **kwds) -> BaseEntity:
+        return cast(BaseEntity, super().__new__(cls))
 
     def __init__(self, game_instance=None, enabled=True) -> None:
         pass
