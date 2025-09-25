@@ -34,7 +34,7 @@ ColliderComponent = pyrite._physics.collider_component.ColliderComponent
 KinematicComponent = pyrite._physics.kinematic_component.KinematicComponent
 RigidbodyComponent = pyrite._physics.rigidbody_component.RigidbodyComponent
 
-Camera = pyrite._camera.camera.Camera
+Camera = pyrite._camera.camera.BaseCamera
 ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
 
 Renderable = pyrite._rendering.base_renderable.BaseRenderable

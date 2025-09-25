@@ -13,7 +13,7 @@ from pyrite.core.render_system import RenderSystem, RenderManager
 from pyrite.core.rate_settings import RateSettings
 from pyrite.core.system_manager import SystemManager
 
-from pyrite._camera.camera import Camera
+from pyrite._camera.camera import BaseCamera
 from pyrite._rendering.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
@@ -143,7 +143,7 @@ class Game:
             self.display_settings
         )
         # Ensure we have a default camera in case there are no others.
-        default_camera = Camera(
+        default_camera = BaseCamera(
             OrthoProjection(Rect(0, 0, *self.window.size)), enabled=False
         )
         CameraService._default_camera = default_camera
