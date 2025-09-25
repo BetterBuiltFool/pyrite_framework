@@ -4,7 +4,7 @@ from typing import Any, TYPE_CHECKING
 
 from pygame import Vector2
 
-from pyrite._component.component import BaseComponent as Component
+from pyrite._component.component import BaseComponent
 from pyrite._transform.transform import Transform
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-class TransformComponent(Component):
+class TransformComponent(BaseComponent):
 
     def __init__(
         self,

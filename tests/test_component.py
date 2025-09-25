@@ -2,23 +2,23 @@ from __future__ import annotations
 import unittest
 from weakref import WeakKeyDictionary
 
-from pyrite.component import Component
+from pyrite.component import BaseComponent
 
 
-class ComponentA(Component):
+class ComponentA(BaseComponent):
 
     def foo(self):
         pass
 
 
-class ComponentB(Component):
+class ComponentB(BaseComponent):
 
     def bar(self):
         pass
 
 
-class ComponentC(Component):
-    component_data: dict[Component, str] = {}
+class ComponentC(BaseComponent):
+    component_data: dict[BaseComponent, str] = {}
 
     def __init__(self, owner, data: str = "") -> None:
         super().__init__(owner)
@@ -34,7 +34,7 @@ class ComponentC(Component):
         self.component_data[self] = data
 
     @classmethod
-    def _purge_component(cls, component: Component):
+    def _purge_component(cls, component: BaseComponent):
         # This will raise without a valid component
         cls.component_data.pop(component)
 
@@ -42,7 +42,7 @@ class ComponentC(Component):
 class TestOwner:
 
     def __init__(self, has_A: bool, has_B: bool, has_C: bool) -> None:
-        self.components: list[Component] = []
+        self.components: list[BaseComponent] = []
         if has_A:
             self.components.append(ComponentA(self))
         if has_B:
