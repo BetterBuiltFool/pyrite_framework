@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from pyrite._transform.transform_component import TransformComponent
 
 
-class CameraBase(ABC):
+class Camera(ABC):
     """
     Defines the important attributes of a camera for the sake of drawing onto its
     surface.

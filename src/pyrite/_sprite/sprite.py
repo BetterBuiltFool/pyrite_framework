@@ -14,7 +14,7 @@ from pyrite._types.sprite import BaseSprite
 if typing.TYPE_CHECKING:
     from pygame import Surface, Vector2
     from pygame.typing import Point
-    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.camera import Camera
     from pyrite._types.bounds import CullingBounds
     from pyrite._types.protocols import TransformLike
     from pyrite.enum import Layer, Anchor

@@ -9,7 +9,7 @@ from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
 from pyrite._transform.transform_component import TransformComponent
-from pyrite._types.camera import CameraBase
+from pyrite._types.camera import Camera as CameraBase
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:

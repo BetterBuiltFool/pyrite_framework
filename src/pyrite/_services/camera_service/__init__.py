@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pygame import Vector3
 
     from pyrite._transform.transform import Transform
-    from pyrite._types.camera import CameraBase as Camera
+    from pyrite._types.camera import Camera
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._rendering.viewport import Viewport
 
