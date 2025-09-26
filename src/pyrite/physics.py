@@ -1,11 +1,11 @@
-import pyrite._physics.collider_component
-import pyrite._physics.rigidbody_component
-import pyrite._physics.kinematic_component
+import pyrite._component.collider_component
+import pyrite._component.rigidbody_component
+import pyrite._component.kinematic_component
 import pyrite._physics.constraints
 
-ColliderComponent = pyrite._physics.collider_component.ColliderComponent
-RigidbodyComponent = pyrite._physics.rigidbody_component.RigidbodyComponent
-KinematicComponent = pyrite._physics.kinematic_component.KinematicComponent
+ColliderComponent = pyrite._component.collider_component.ColliderComponent
+RigidbodyComponent = pyrite._component.rigidbody_component.RigidbodyComponent
+KinematicComponent = pyrite._component.kinematic_component.KinematicComponent
 
 DampedRotarySpring = pyrite._physics.constraints.DampedRotarySpring
 DampedSpring = pyrite._physics.constraints.DampedSpring

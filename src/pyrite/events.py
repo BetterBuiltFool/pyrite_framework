@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 import pyrite._events.instance_event
 
 if TYPE_CHECKING:
-    from pyrite._physics.collider_component import ColliderComponent
+    from pyrite._component.collider_component import ColliderComponent
 
 # Define common events here.
 

@@ -6,7 +6,7 @@ import math
 from pygame import Vector2
 import pymunk
 
-from pyrite._physics.rigidbody_component import RigidbodyComponent
+from pyrite._component.rigidbody_component import RigidbodyComponent
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 from pyrite._types.constraint import Constraint
 from pyrite.utils import point_to_tuple

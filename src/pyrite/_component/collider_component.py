@@ -9,7 +9,7 @@ from pymunk import ShapeFilter
 
 from pyrite.constants import MASK_ALL
 from pyrite.events import OnSeparate, OnTouch, WhileTouching
-from pyrite._physics.rigidbody_component import RigidbodyComponent
+from pyrite._component.rigidbody_component import RigidbodyComponent
 from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsService
 from pyrite._component.component import BaseComponent
 

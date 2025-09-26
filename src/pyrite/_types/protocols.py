@@ -6,7 +6,7 @@ from typing import Protocol, runtime_checkable, TYPE_CHECKING
 if TYPE_CHECKING:
     from pygame import Rect, Surface, Vector2
     from pygame.typing import Point
-    from pyrite._transform.transform_component import TransformComponent
+    from pyrite._component.transform_component import TransformComponent
 
 
 class HasPosition(Protocol):

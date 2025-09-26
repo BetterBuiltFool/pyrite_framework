@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from pygame import Vector2
     from pyrite._transform.transform import Transform
-    from pyrite._transform.transform_component import TransformComponent
+    from pyrite._component.transform_component import TransformComponent
 
 
 class TransformServiceProvider(ServiceProvider[TransformService]):

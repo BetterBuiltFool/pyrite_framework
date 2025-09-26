@@ -8,7 +8,7 @@ import pymunk
 
 from pyrite._types.debug_renderer import DebugRenderer
 from pyrite import draw
-from pyrite._physics.rigidbody_component import RigidbodyComponent
+from pyrite._component.rigidbody_component import RigidbodyComponent
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence

@@ -1,3 +1,17 @@
 import pyrite._component.component
+import pyrite._component.collider_component
+import pyrite._component.rigidbody_component
+import pyrite._component.kinematic_component
+import pyrite._component.render_texture_component
+import pyrite._component.transform_component
 
 BaseComponent = pyrite._component.component.BaseComponent
+ColliderComponent = pyrite._component.collider_component.ColliderComponent
+RigidbodyComponent = pyrite._component.rigidbody_component.RigidbodyComponent
+KinematicComponent = pyrite._component.kinematic_component.KinematicComponent
+
+RenderTextureComponent = (
+    pyrite._component.render_texture_component.RenderTextureComponent
+)
+
+TransformComponent = pyrite._component.transform_component.TransformComponent

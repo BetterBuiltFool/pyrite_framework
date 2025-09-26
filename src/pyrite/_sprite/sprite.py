@@ -7,7 +7,7 @@ from pyrite._rendering.rect_bounds import RectBounds, rotate_rect
 from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
 from pyrite._services.bounds_service import BoundsServiceProvider as BoundsService
-from pyrite._transform.transform_component import TransformComponent
+from pyrite._component.transform_component import TransformComponent
 from pyrite._types.sprite import Sprite
 
 

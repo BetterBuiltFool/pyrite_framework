@@ -10,7 +10,7 @@ from pygame import Surface
 
 from pyrite.enum import RenderLayers
 
-from pyrite._rendering.render_texture import RenderTextureComponent
+from pyrite._component.render_texture_component import RenderTextureComponent
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 
 if TYPE_CHECKING:
