@@ -14,7 +14,7 @@ from pyrite.core.rate_settings import RateSettings
 from pyrite.core.system_manager import SystemManager
 
 from pyrite._camera.camera import BaseCamera
-from pyrite._rendering.ortho_projection import OrthoProjection
+from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._systems import transform_system
