@@ -7,13 +7,14 @@ from weakref import WeakSet
 from pygame.rect import Rect as Rect
 
 from pyrite._camera.camera import BaseCamera
+from pyrite.camera import OrthoProjection
 from pyrite.core.render_system import (
     DefaultRenderManager,
     _get_draw_index,
 )
 from pyrite._entity.entity import BaseEntity
 from pyrite.enum import Layer, RenderLayers
-from pyrite.rendering import OrthoProjection, RectBounds
+from pyrite.rendering import RectBounds
 from pyrite._rendering.base_renderable import BaseRenderable
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._types.bounds import CullingBounds
