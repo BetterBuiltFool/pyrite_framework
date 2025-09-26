@@ -12,7 +12,7 @@ from pyrite.utils import point_to_tuple
 if TYPE_CHECKING:
     from pygame.typing import Point
 
-    from pyrite._physics.collider_component import ColliderComponent
+    from pyrite._component.collider_component import ColliderComponent
 
 
 class Shape[ShapeT: pymunk.Shape]:

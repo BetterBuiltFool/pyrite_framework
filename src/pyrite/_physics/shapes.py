@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
 
-    from pyrite._physics.collider_component import ColliderComponent
+    from pyrite._component.collider_component import ColliderComponent
     from pyrite._types.protocols import TransformLike
 
 
