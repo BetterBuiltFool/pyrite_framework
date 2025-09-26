@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pygame import Vector2
+
 from pyrite._component.transform_component import TransformComponent
 from pyrite._entity.entity import BaseEntity
 
@@ -57,3 +59,28 @@ class EntityChaser(BaseEntity):
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
+
+    def post_update(self, delta_time: float) -> None:
+        if not self.target:
+            return
+        delta = self.calculate_ease(
+            self.transform.world_position - self.target.transform.world_position,
+            delta_time,
+        )
+        if self.max_distance >= 0:
+            delta = self.clamp_magnitude(delta)
+        self.transform.world_position = self.target.transform.world_position + delta
+
+    def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
+        distance = delta.magnitude()
+        if distance == 0:
+            return delta
+        delta_normalized = delta.normalize()
+        distance_adjustment = distance / self.ease_factor
+        distance_adjustment *= 60 * delta_time
+        distance -= distance_adjustment
+
+        return delta_normalized * distance
+
+    def clamp_magnitude(self, delta: Vector2) -> Vector2:
+        return self.clamp_magnitude(delta)
