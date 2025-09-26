@@ -23,8 +23,8 @@ if TYPE_CHECKING:
         # ShapeFilter,
         Space,
     )
-    from pyrite._physics.collider_component import ColliderComponent
-    from pyrite._physics.rigidbody_component import RigidbodyComponent
+    from pyrite._component.collider_component import ColliderComponent
+    from pyrite._component.rigidbody_component import RigidbodyComponent
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape

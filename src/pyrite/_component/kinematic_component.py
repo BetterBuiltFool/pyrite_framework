@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from pygame import Vector2
 
 from pyrite._component.component import BaseComponent
-from pyrite._physics.rigidbody_component import RigidbodyComponent
+from pyrite._component.rigidbody_component import RigidbodyComponent
 from pyrite.utils import point_to_tuple
 
 if TYPE_CHECKING:

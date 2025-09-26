@@ -6,9 +6,9 @@ import pyrite._camera.camera
 import pyrite._camera.chase_camera
 import pyrite._entity.entity
 import pyrite.enum
-import pyrite._physics.collider_component
-import pyrite._physics.kinematic_component
-import pyrite._physics.rigidbody_component
+import pyrite._component.collider_component
+import pyrite._component.kinematic_component
+import pyrite._component.rigidbody_component
 import pyrite._rendering.base_renderable
 import pyrite._sprite.sprite
 import pyrite._sprite.spritesheet
@@ -30,9 +30,9 @@ RenderLayers = pyrite.enum.RenderLayers
 AnchorPoint = pyrite.enum.AnchorPoint
 AbsoluteAnchor = pyrite.enum.AbsoluteAnchor
 
-ColliderComponent = pyrite._physics.collider_component.ColliderComponent
-KinematicComponent = pyrite._physics.kinematic_component.KinematicComponent
-RigidbodyComponent = pyrite._physics.rigidbody_component.RigidbodyComponent
+ColliderComponent = pyrite._component.collider_component.ColliderComponent
+KinematicComponent = pyrite._component.kinematic_component.KinematicComponent
+RigidbodyComponent = pyrite._component.rigidbody_component.RigidbodyComponent
 
 Camera = pyrite._camera.camera.BaseCamera
 ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
