@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from pyrite.events import OnEnable as EventOnEnable
     from pyrite.events import OnDisable as EventOnDisable
     from pyrite._transform.transform import Transform
-    from pyrite._transform.transform_component import TransformComponent
+    from pyrite._component.transform_component import TransformComponent
 
 
 class Camera(ABC):

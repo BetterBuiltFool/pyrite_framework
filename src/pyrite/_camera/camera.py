@@ -8,7 +8,7 @@ from pyrite.enum import Layer
 from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
-from pyrite._transform.transform_component import TransformComponent
+from pyrite._component.transform_component import TransformComponent
 from pyrite._types.camera import Camera
 from pyrite._types.renderable import Renderable
 

@@ -14,7 +14,7 @@ import pyrite._sprite.sprite
 import pyrite._sprite.spritesheet
 import pyrite._systems.base_system
 import pyrite._transform.transform
-import pyrite._transform.transform_component
+import pyrite._component.transform_component
 
 DisplaySettings = pyrite.core.display_settings.DisplaySettings
 GameData = pyrite.core.game_data.GameData
@@ -43,4 +43,4 @@ SpriteSheet = pyrite._sprite.spritesheet.SpriteSheet
 System = pyrite._systems.base_system.BaseSystem
 
 Transform = pyrite._transform.transform.Transform
-TransformComponent = pyrite._transform.transform_component.TransformComponent
+TransformComponent = pyrite._component.transform_component.TransformComponent
