@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
-def invariant_clamp(delta: Vector2, max_distance: int) -> Vector2:
-    return delta.clamp_magnitude(0, max_distance)
+def invariant_dist(distance: int) -> int:
+    return distance
 
 
 class EntityChaser(BaseEntity):
@@ -35,7 +35,7 @@ class EntityChaser(BaseEntity):
         target: HasTransform | HasTransformProperty | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
-        clamp_function: Callable[[Vector2, int], Vector2] | None = None,
+        dist_function: Callable[[int], int] | None = None,
     ) -> None:
         """
         Create an EntityChaser with the following properties:
@@ -66,10 +66,10 @@ class EntityChaser(BaseEntity):
         self.ease_factor = ease_factor
         self.max_distance = max_distance
 
-        if not clamp_function:
-            clamp_function = invariant_clamp
+        if not dist_function:
+            dist_function = invariant_dist
 
-        self.clamp = clamp_function
+        self.dist_function = dist_function
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
