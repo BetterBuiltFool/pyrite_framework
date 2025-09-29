@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from pygame import Vector2
@@ -17,6 +18,10 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
 
+def invariant_clamp(delta: Vector2, max_distance: int) -> Vector2:
+    return delta.clamp_magnitude(0, max_distance)
+
+
 class EntityChaser(BaseEntity):
     """
     An entity that will attempt to follow an object with a TransformComponent.
@@ -30,6 +35,7 @@ class EntityChaser(BaseEntity):
         target: HasTransform | HasTransformProperty | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
+        clamp_function: Callable[[Vector2, int], Vector2] | None = None,
     ) -> None:
         """
         Create an EntityChaser with the following properties:
@@ -59,6 +65,11 @@ class EntityChaser(BaseEntity):
         self.target = target
         self.ease_factor = ease_factor
         self.max_distance = max_distance
+
+        if not clamp_function:
+            clamp_function = invariant_clamp
+
+        self.clamp = clamp_function
 
     def post_update(self, delta_time: float) -> None:
         if not self.target:
