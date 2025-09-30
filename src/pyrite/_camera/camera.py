@@ -72,6 +72,8 @@ class BaseCamera(Camera):
         self._zoom_level: float = 1
         CameraService.add_camera(self)
 
+        self.chaser: EntityChaser | None = None
+
     @property
     def enabled(self) -> bool:
         return CameraService.is_enabled(self)
@@ -105,6 +107,8 @@ class BaseCamera(Camera):
         ease_factor: float = 8.0,
         max_distance: float = -1.0,
     ) -> None:
+        if self.chaser:
+            self.chaser.stop()
         self.chaser = EntityChaser(
             transform=self.transform,
             position=self.transform.world_position,
