@@ -95,3 +95,14 @@ class EntityChaser(BaseEntity):
 
     def clamp_magnitude(self, delta: Vector2) -> Vector2:
         return delta.clamp_magnitude(0, self.dist_function(self.max_distance))
+
+    def stop(self) -> None:
+        """
+        Clears all references and disables self.
+        """
+
+        # If there's a set dist function, it may contain a reference, so we reset it so
+        # we can clean up properly.
+        self.dist_function = invariant_dist
+
+        self.enabled = False
