@@ -118,6 +118,11 @@ class BaseCamera(Camera):
             dist_function=self._clamp_distance,
         )
 
+    def stop_chase(self) -> None:
+        if self.chaser:
+            self.chaser.stop()
+        self.chaser = None
+
     def _clamp_distance(self, distance: float) -> float:
         return distance / self.zoom_level
 
