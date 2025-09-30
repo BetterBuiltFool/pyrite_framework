@@ -3,7 +3,6 @@ import pyrite.core.game_data
 import pyrite.core.rate_settings
 import pyrite.game
 import pyrite._camera.camera
-import pyrite._camera.chase_camera
 import pyrite._entity.entity
 import pyrite.enum
 import pyrite._component.collider_component
@@ -35,7 +34,6 @@ KinematicComponent = pyrite._component.kinematic_component.KinematicComponent
 RigidbodyComponent = pyrite._component.rigidbody_component.RigidbodyComponent
 
 Camera = pyrite._camera.camera.BaseCamera
-ChaseCamera = pyrite._camera.chase_camera.ChaseCamera
 
 Renderable = pyrite._rendering.base_renderable.BaseRenderable
 Sprite = pyrite._sprite.sprite.BaseSprite
