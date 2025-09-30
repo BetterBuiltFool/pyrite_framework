@@ -4,6 +4,7 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
+from pyrite._entity.entity_chaser import EntityChaser
 from pyrite.enum import Layer
 from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
@@ -15,7 +16,12 @@ from pyrite._types.renderable import Renderable
 if TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite._types.view_bounds import CameraViewBounds
-    from pyrite._types.protocols import RenderTarget, TransformLike
+    from pyrite._types.protocols import (
+        HasTransform,
+        HasTransformProperty,
+        RenderTarget,
+        TransformLike,
+    )
     from pyrite._types.projection import Projection
     from pyrite._transform.transform import Transform
 
@@ -92,6 +98,24 @@ class BaseCamera(Camera):
 
     def refresh(self):
         CameraService.refresh(self)
+
+    def chase(
+        self,
+        target: HasTransform | HasTransformProperty,
+        ease_factor: float = 8.0,
+        max_distance: float = -1.0,
+    ) -> None:
+        self.chaser = EntityChaser(
+            transform=self.transform,
+            position=self.transform.world_position,
+            target=target,
+            ease_factor=ease_factor,
+            max_distance=max_distance,
+            dist_function=self._clamp_distance,
+        )
+
+    def _clamp_distance(self, distance: float) -> float:
+        return distance / self.zoom_level
 
     def cull(self, renderable: Renderable) -> bool:
         bounds = renderable.get_bounds()
