@@ -18,7 +18,7 @@ class TransformSystem(BaseSystem):
     rendering.
     """
 
-    def pre_render(self, delta_time: float) -> None:
+    def pre_render(self) -> None:
         TransformService.frame_reset()
         for component in TransformService.traverse_transforms():
             assert component

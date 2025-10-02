@@ -34,7 +34,7 @@ class PhysicsSystem(BaseSystem):
 
         PhysicsService.step(timestep * self.physics_mult)
 
-    def update(self, delta_time: float) -> None:
+    def update(self) -> None:
         self.sync_transforms_to_bodies()
 
     def sync_transforms_to_bodies(self):
