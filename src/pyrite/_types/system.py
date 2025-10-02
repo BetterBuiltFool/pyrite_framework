@@ -29,30 +29,24 @@ class System(ABC):
     def enabled(self, enabled: bool):
         pass
 
-    def pre_update(self, delta_time: float) -> None:
+    def pre_update(self) -> None:
         """
         A method that is called during the pre_update phase.
         Will always be called before update.
-
-        :param delta_time: Time passed since last frame.
         """
         pass
 
-    def update(self, delta_time: float) -> None:
+    def update(self) -> None:
         """
         A method that is called during the main update phase.
         Most behaviour should happen here.
-
-        :param delta_time: Time passed since last frame.
         """
         pass
 
-    def post_update(self, delta_time: float) -> None:
+    def post_update(self) -> None:
         """
         A method that is called during the post_update phase.
         Will always be called after update.
-
-        :param delta_time: Time passed since last frame.
         """
         pass
 
@@ -71,13 +65,11 @@ class System(ABC):
         """
         pass
 
-    def pre_render(self, delta_time: float) -> None:
+    def pre_render(self) -> None:
         """
         A method that is called immediately before the render phase.
         Used by TransformServices to ensure transforms are properly updated just prior
         to being used to display them.
-
-        :param delta_time: Time passed since last frame.
         """
 
     def on_event(self, event: Event):

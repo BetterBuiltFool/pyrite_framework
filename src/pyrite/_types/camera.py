@@ -82,11 +82,10 @@ class Camera(ABC):
         pass
 
     @abstractmethod
-    def render(self, delta_time: float, render_target: RenderTarget):
+    def render(self, render_target: RenderTarget):
         """
         Renders the camera view to the render target
 
-        :param delta_time: Time passed since last frame, in seconds.
         :param render_target: _description_
         """
         pass
