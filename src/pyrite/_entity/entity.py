@@ -54,13 +54,13 @@ class BaseEntity(Entity):
     def on_disable(self):
         pass
 
-    def pre_update(self, delta_time: float) -> None:
+    def pre_update(self) -> None:
         pass
 
-    def update(self, delta_time: float) -> None:
+    def update(self) -> None:
         pass
 
-    def post_update(self, delta_time: float) -> None:
+    def post_update(self) -> None:
         pass
 
     def const_update(self, timestep: float) -> None:
