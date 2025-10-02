@@ -7,6 +7,7 @@ from pygame import Vector2
 
 from pyrite._component.transform_component import TransformComponent
 from pyrite._entity.entity import BaseEntity
+import pyrite.time
 
 if TYPE_CHECKING:
     from pyrite._types.protocols import (
@@ -71,24 +72,23 @@ class EntityChaser(BaseEntity):
 
         self.dist_function = dist_function
 
-    def post_update(self, delta_time: float) -> None:
+    def post_update(self) -> None:
         if not self.target:
             return
         delta = self.calculate_ease(
-            self.transform.world_position - self.target.transform.world_position,
-            delta_time,
+            self.transform.world_position - self.target.transform.world_position
         )
         if self.max_distance >= 0:
             delta = self.clamp_magnitude(delta)
         self.transform.world_position = self.target.transform.world_position + delta
 
-    def calculate_ease(self, delta: Vector2, delta_time: float) -> Vector2:
+    def calculate_ease(self, delta: Vector2) -> Vector2:
         distance = delta.magnitude()
         if distance == 0:
             return delta
         delta_normalized = delta.normalize()
         distance_adjustment = distance / self.ease_factor
-        distance_adjustment *= 60 * delta_time
+        distance_adjustment *= 60 * pyrite.time.delta_time()
         distance -= distance_adjustment
 
         return delta_normalized * distance
