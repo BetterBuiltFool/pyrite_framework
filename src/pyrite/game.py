@@ -340,7 +340,7 @@ class Game:
         window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
-        self.renderer.render(self.window, delta_time, render_queue)
+        self.renderer.render(self.window, render_queue)
 
         self.render(window, delta_time)
 
