@@ -288,13 +288,13 @@ class Game:
 
         self.pre_update(delta_time)
         self.system_manager.pre_update()
-        self.entity_manager.pre_update(delta_time)
+        self.entity_manager.pre_update()
         self.update(delta_time)
         self.system_manager.update()
-        self.entity_manager.update(delta_time)
+        self.entity_manager.update()
         self.post_update(delta_time)
         self.system_manager.post_update()
-        self.entity_manager.post_update(delta_time)
+        self.entity_manager.post_update()
 
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
