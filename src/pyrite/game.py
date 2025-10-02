@@ -19,6 +19,7 @@ from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._systems import transform_system
 from pyrite.utils import threading
+import pyrite.time
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -197,6 +198,8 @@ class Game:
         delta_time, accumulated_time = self._get_frame_time(
             self.rate_settings.fps_cap, accumulated_time
         )
+
+        pyrite.time._dt = delta_time
 
         # This will ensure new entities are processed properly for the new frame.
         self.entity_manager.flush_buffer()
