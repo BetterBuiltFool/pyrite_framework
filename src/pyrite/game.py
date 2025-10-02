@@ -287,13 +287,13 @@ class Game:
         """
 
         self.pre_update(delta_time)
-        self.system_manager.pre_update(delta_time)
+        self.system_manager.pre_update()
         self.entity_manager.pre_update(delta_time)
         self.update(delta_time)
-        self.system_manager.update(delta_time)
+        self.system_manager.update()
         self.entity_manager.update(delta_time)
         self.post_update(delta_time)
-        self.system_manager.post_update(delta_time)
+        self.system_manager.post_update()
         self.entity_manager.post_update(delta_time)
 
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
@@ -334,7 +334,7 @@ class Game:
         :param delta_time: Time passed since last frame, in seconds.
         """
         # Finalize any systems
-        self.system_manager.pre_render(delta_time)
+        self.system_manager.pre_render()
 
         # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))  # TODO Make this changeable
