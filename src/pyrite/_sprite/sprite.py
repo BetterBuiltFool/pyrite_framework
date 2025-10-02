@@ -181,5 +181,5 @@ class BaseSprite(Sprite, Renderable):
 
         return bounds
 
-    def render(self, delta_time: float, camera: Camera):
-        SpriteRenderer.render(delta_time, self, camera)
+    def render(self, camera: Camera):
+        SpriteRenderer.render(self, camera)

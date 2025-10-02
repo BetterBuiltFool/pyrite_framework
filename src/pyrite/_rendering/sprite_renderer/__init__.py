@@ -23,8 +23,8 @@ class SpriteRendererProvider(RendererProvider[SpriteRenderer]):
     _renderer: SpriteRenderer = DefaultSpriteRenderer()
 
     @classmethod
-    def render(cls, delta_time: float, sprite: Sprite, camera: Camera):
-        cls._renderer.render(delta_time, sprite, camera)
+    def render(cls, sprite: Sprite, camera: Camera):
+        cls._renderer.render(sprite, camera)
 
     @classmethod
     def validate_sprite(
