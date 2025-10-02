@@ -43,7 +43,7 @@ class DefaultCameraRenderer(CameraRenderer):
         else:
             self.scale_method = pygame.transform.scale
 
-    def render(self, delta_time: float, renderable: Camera, target: RenderTarget):
+    def render(self, renderable: Camera, target: RenderTarget):
         surface = target.get_target_surface()
         render_rect = target.get_target_rect()
         camera_service = cast(
