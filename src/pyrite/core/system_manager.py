@@ -157,11 +157,9 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def const_update(self, timestep: float):
+    def const_update(self):
         """
         Runs the const_update phase for active systems.
-
-        :param timestep: Length of the simulated step
         """
         pass
 
@@ -255,9 +253,9 @@ class DefaultSystemManager(SystemManager):
         for system in self.current_systems:
             system.post_update()
 
-    def const_update(self, timestep: float):
+    def const_update(self):
         for system in self.current_systems:
-            system.const_update(timestep)
+            system.const_update()
 
     def pre_render(self):
         for system in self.current_systems:
