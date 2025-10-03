@@ -34,8 +34,8 @@ class MockRenderable(BaseRenderable):
         self._layer = layer
         self.draw_index = draw_index
 
-    def render(self, delta_time: float, camera: Camera):
-        return super().render(delta_time, camera)
+    def render(self, camera: Camera):
+        return super().render(camera)
 
     def get_bounds(self) -> CullingBounds:
         return RectBounds(Rect(-1024, -1024, 2048, 2048))
