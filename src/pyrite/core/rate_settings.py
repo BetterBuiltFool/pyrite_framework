@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 import typing
 
+import pyrite.time
+
 logger = logging.getLogger(__name__)
 
 MAX_TICK_RATE_WARNING = 120.0
@@ -45,6 +47,8 @@ class RateSettings:
         # Setting fixed timestep to -1 if timestep is 0 in case it gets referenced
         # without checking tickrate.
         self._fixed_timestep: float = 1 / tick_rate if tick_rate > 0 else -1
+
+        self._set_fixed_time_step(self._fixed_timestep)
 
     @property
     def fps_cap(self) -> int:
@@ -92,6 +96,8 @@ class RateSettings:
             self._fixed_timestep = -1
             logger.info("Tick rate set to '0'. 'const_update' is disabled.")
 
+        self._set_fixed_time_step(self._fixed_timestep)
+
     @property
     def fixed_timestep(self) -> float:
         """
@@ -111,6 +117,12 @@ class RateSettings:
             raise ValueError("Timestep must be greater than zero.")
         self._fixed_timestep = fixed_timestep
         self._tick_rate = 1 / fixed_timestep
+
+        self._set_fixed_time_step(self._fixed_timestep)
+
+    @staticmethod
+    def _set_fixed_time_step(timestep: float) -> None:
+        pyrite.time._fxt = timestep
 
     @staticmethod
     def get_rate_settings(**kwds) -> RateSettings:
