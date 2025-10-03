@@ -136,47 +136,37 @@ class SystemManager(ABC):
         pass
 
     @abstractmethod
-    def pre_update(self, delta_time: float):
+    def pre_update(self):
         """
         Runs the pre_update phase for active systems.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def update(self, delta_time: float):
+    def update(self):
         """
         Runs the update phase for active systems.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def post_update(self, delta_time: float):
+    def post_update(self):
         """
         Runs the post_update phase for active systems.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def const_update(self, timestep: float):
+    def const_update(self):
         """
         Runs the const_update phase for active systems.
-
-        :param timestep: Length of the simulated step
         """
         pass
 
     @abstractmethod
-    def pre_render(self, delta_time: float):
+    def pre_render(self):
         """
         Runs the pre_render phase for active systems.
-
-        :param delta_time: Time passed since last frame
         """
 
     @abstractmethod
@@ -251,25 +241,25 @@ class DefaultSystemManager(SystemManager):
     def prepare_systems(self):
         self.current_systems = self.sort_systems(self.active_systems)
 
-    def pre_update(self, delta_time: float):
+    def pre_update(self):
         for system in self.current_systems:
-            system.pre_update(delta_time)
+            system.pre_update()
 
-    def update(self, delta_time: float):
+    def update(self):
         for system in self.current_systems:
-            system.update(delta_time)
+            system.update()
 
-    def post_update(self, delta_time: float):
+    def post_update(self):
         for system in self.current_systems:
-            system.post_update(delta_time)
+            system.post_update()
 
-    def const_update(self, timestep: float):
+    def const_update(self):
         for system in self.current_systems:
-            system.const_update(timestep)
+            system.const_update()
 
-    def pre_render(self, delta_time: float):
+    def pre_render(self):
         for system in self.current_systems:
-            system.pre_render(delta_time)
+            system.pre_render()
 
     def handle_event(self, event: Event):
         for system in self.current_systems:

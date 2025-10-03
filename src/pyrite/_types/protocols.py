@@ -47,22 +47,22 @@ class HasTexture(Protocol):
 
 class CanUpdate(Protocol):
 
-    def update(self, delta_time: float) -> None: ...
+    def update(self) -> None: ...
 
 
 class CanPreUpdate(Protocol):
 
-    def pre_update(self, delta_time: float) -> None: ...
+    def pre_update(self) -> None: ...
 
 
 class CanPostUpdate(Protocol):
 
-    def post_update(self, delta_time: float) -> None: ...
+    def post_update(self) -> None: ...
 
 
 class CanConstUpdate(Protocol):
 
-    def const_update(self, timestep: float) -> None: ...
+    def const_update(self) -> None: ...
 
 
 class RenderTarget(Protocol):

@@ -19,6 +19,7 @@ from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._systems import transform_system
 from pyrite.utils import threading
+import pyrite.time
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -198,6 +199,8 @@ class Game:
             self.rate_settings.fps_cap, accumulated_time
         )
 
+        pyrite.time._dt = delta_time
+
         # This will ensure new entities are processed properly for the new frame.
         self.entity_manager.flush_buffer()
         self.system_manager.prepare_systems()
@@ -209,12 +212,12 @@ class Game:
                 self.rate_settings.fixed_timestep, accumulated_time
             )
 
-        self._update_block(delta_time)
+        self._update_block()
 
         if not (caption := self.game_data.caption):
             caption = self.game_data.title
         pygame.display.set_caption(caption)
-        self._render_block(self.window, delta_time)
+        self._render_block(self.window)
 
         return accumulated_time
 
@@ -233,34 +236,28 @@ class Game:
         accumulated_time += delta_time
         return (delta_time, accumulated_time)
 
-    def pre_update(self, delta_time: float) -> None:
+    def pre_update(self) -> None:
         """
         Early update function. Used for game logic that needs to run _before_ the main
         update phase.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
         """
         pass
 
-    def update(self, delta_time: float) -> None:
+    def update(self) -> None:
         """
         Main update function. Used for coordinating most of the game state changes
-        required.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
+        required..
         """
         pass
 
-    def post_update(self, delta_time: float) -> None:
+    def post_update(self) -> None:
         """
         Late update function. Used for game logic that needs to run _after_ the main
         update phase.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
         """
         pass
 
-    def const_update(self, timestep: float) -> None:
+    def const_update(self) -> None:
         """
         Update function that runs at a constant rate. Useful for anything that is
         sensitive to variations in frame time, such as physics.
@@ -270,28 +267,23 @@ class Game:
         eachother.
 
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
-
-        :param timestep: Simulated time passed since last update. Passed in from the
-        game's rate_settings.
         """
         pass
 
-    def _update_block(self, delta_time: float) -> None:
+    def _update_block(self) -> None:
         """
         Calls all of the update phases, in order.
-
-        :param delta_time: Actual time passed since last frame, in seconds.
         """
 
-        self.pre_update(delta_time)
-        self.system_manager.pre_update(delta_time)
-        self.entity_manager.pre_update(delta_time)
-        self.update(delta_time)
-        self.system_manager.update(delta_time)
-        self.entity_manager.update(delta_time)
-        self.post_update(delta_time)
-        self.system_manager.post_update(delta_time)
-        self.entity_manager.post_update(delta_time)
+        self.pre_update()
+        self.system_manager.pre_update()
+        self.entity_manager.pre_update()
+        self.update()
+        self.system_manager.update()
+        self.entity_manager.update()
+        self.post_update()
+        self.system_manager.post_update()
+        self.entity_manager.post_update()
 
     def _fixed_update_block(self, timestep: float, accumulated_time: float) -> float:
         """
@@ -308,38 +300,36 @@ class Game:
         :return: Remaining accumulated time.
         """
         while accumulated_time > timestep:
-            self.const_update(timestep)
-            self.system_manager.const_update(timestep)
-            self.entity_manager.const_update(timestep)
+            self.const_update()
+            self.system_manager.const_update()
+            self.entity_manager.const_update()
             accumulated_time -= timestep
         return accumulated_time
 
-    def render(self, window: pygame.Surface, delta_time: float) -> None:
+    def render(self, window: pygame.Surface) -> None:
         """
         Main drawing phase. Used for rendering active game objects to the screen.
 
         :param window: The main display window.
-        :param delta_time: Time passed since last frame, in seconds.
         """
         pass
 
-    def _render_block(self, window: pygame.Surface, delta_time: float) -> None:
+    def _render_block(self, window: pygame.Surface) -> None:
         """
         Calls the render functions, and updates the display.
 
         :param window: The main display window.
-        :param delta_time: Time passed since last frame, in seconds.
         """
         # Finalize any systems
-        self.system_manager.pre_render(delta_time)
+        self.system_manager.pre_render()
 
         # Redundant if no cameras, but cameras could cause this to be needed.
         window.fill(pygame.Color("black"))  # TODO Make this changeable
 
         render_queue = self.render_manager.generate_render_queue()
-        self.renderer.render(self.window, delta_time, render_queue)
+        self.renderer.render(self.window, render_queue)
 
-        self.render(window, delta_time)
+        self.render(window)
 
         pygame.display.flip()
 

@@ -85,13 +85,11 @@ class Renderable(ABC):
         pass
 
     @abstractmethod
-    def render(self, delta_time: float, camera: Camera):
+    def render(self, camera: Camera):
         """
         Causes the Renderable to be rendered to the given camera. Typically calls upon
         some renderer class that knows how to handle its data.
 
-        :param delta_time: Time passed since last frame. Can be ignored by the concrete
-            method but must be accepted.
         :param camera: A camera-type object to be drawn to.
         """
         pass

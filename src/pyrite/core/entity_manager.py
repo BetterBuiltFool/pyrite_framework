@@ -129,38 +129,30 @@ class EntityManager(ABC):
     # Update Methods
 
     @abstractmethod
-    def pre_update(self, delta_time: float):
+    def pre_update(self):
         """
         Runs the pre_update phase for active entities.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def update(self, delta_time: float):
+    def update(self):
         """
         Runs the update phase for active entities.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def post_update(self, delta_time: float):
+    def post_update(self):
         """
         Runs the post_update phase for active entities.
-
-        :param delta_time: Time passed since last frame
         """
         pass
 
     @abstractmethod
-    def const_update(self, timestep: float):
+    def const_update(self):
         """
         Runs the const_update phase for active entities.
-
-        :param timestep: Length of the simulated step
         """
         pass
 
@@ -232,21 +224,21 @@ class DefaultEntityManager(EntityManager):
         self._added_buffer = set()
         self._disabled_buffer = set()
 
-    def pre_update(self, delta_time: float):
+    def pre_update(self):
         for entity in self.entities:
-            entity.pre_update(delta_time)
+            entity.pre_update()
 
-    def update(self, delta_time: float):
+    def update(self):
         for entity in self.entities:
-            entity.update(delta_time)
+            entity.update()
 
-    def post_update(self, delta_time: float):
+    def post_update(self):
         for entity in self.entities:
-            entity.post_update(delta_time)
+            entity.post_update()
 
-    def const_update(self, timestep: float):
+    def const_update(self):
         for entity in self.entities:
-            entity.const_update(timestep)
+            entity.const_update()
 
     def handle_event(self, event: pygame.Event):
         for entity in self.entities:

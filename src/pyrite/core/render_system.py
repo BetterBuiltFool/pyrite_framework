@@ -185,7 +185,6 @@ class RenderSystem(ABC):
     def render(
         self,
         window: Surface,
-        delta_time: float,
         render_queue: RenderQueue,
     ):
         """
@@ -338,7 +337,6 @@ class DefaultRenderSystem(RenderSystem):
 
     def render_layer(
         self,
-        delta_time: float,
         layer_queue: Iterable[Renderable],
         camera: Camera,
     ):
@@ -346,34 +344,30 @@ class DefaultRenderSystem(RenderSystem):
         Extracts the renderables from the layer_queue, and has them drawn to the
         camera.
 
-        :param delta_time: Time passed since last frame.
         :param layer_queue: The ordered sequence of renderables to be drawn.
         :param camera: The camera being drawn to.
         """
         count = 0
         for renderable in layer_queue:
             count += 1
-            renderable.render(delta_time, camera)
+            renderable.render(camera)
         self._rendered_last_frame += count
 
     def render_camera(
         self,
-        delta_time: float,
         camera: Camera,
     ):
         """
         Draws the given camera to the window, at each of its surface viewports.
 
-        :param delta_time: Time passed since last frame, if needed for any calculations.
         :param camera: Camera being drawn to the screen
         :param window: Game window being drawn to
         """
         for render_target in camera.render_targets:
-            camera.render(delta_time, render_target)
+            camera.render(render_target)
 
     def render_ui(
         self,
-        delta_time: float,
         ui_elements: Iterable[Renderable],
         window: Surface,
     ):
@@ -381,17 +375,15 @@ class DefaultRenderSystem(RenderSystem):
         Goes through the ui elements, and draws them to the screen. They are already in
         screen space, so they do not get adjusted.
 
-        :param delta_time: Time passed since last frame.
         :param ui_elements: The sequence of ui elements to be drawn, in order.
         :param cameras: The cameras being drawn to.
         """
         # for ui_element in ui_elements:
-        #     ui_element.render(delta_time, window)
+        #     ui_element.render(window)
 
     def render(
         self,
         window: Surface,
-        delta_time: float,
         render_queue: RenderQueue,
     ):
         self._rendered_last_frame = 0
@@ -408,11 +400,11 @@ class DefaultRenderSystem(RenderSystem):
             for camera, render_sequence in layer_dict.items():
                 if layer in camera.layer_mask:
                     continue
-                self.render_layer(delta_time, render_sequence, camera)
+                self.render_layer(render_sequence, camera)
 
         # Render any cameras to the screen.
         for camera in CameraService.get_active_cameras():
-            self.render_camera(delta_time, camera)
+            self.render_camera(camera)
 
         self._debug_draw_to_screen(cameras, render_queue)
 

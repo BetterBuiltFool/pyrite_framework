@@ -136,8 +136,8 @@ class BaseCamera(Camera):
     def get_viewports(self) -> list[Viewport]:
         return self._viewports
 
-    def render(self, delta_time: float, render_target: RenderTarget):
-        CameraRenderer.render(delta_time, self, render_target)
+    def render(self, render_target: RenderTarget):
+        CameraRenderer.render(self, render_target)
 
     def to_local(self, point: Transform) -> Transform:
         return CameraService.to_local(self, point)

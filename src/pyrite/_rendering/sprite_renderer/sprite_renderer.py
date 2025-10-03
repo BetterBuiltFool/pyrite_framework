@@ -70,7 +70,7 @@ class DefaultSpriteRenderer(SpriteRenderer):
     def get(self, key: Sprite) -> SpriteData | tuple[None, None]:
         return self._sprite_cache.get(key, (None, None))
 
-    def render(self, delta_time: float, renderable: Sprite, target: Camera):
+    def render(self, renderable: Sprite, target: Camera):
         surface, transform = self.get(renderable)
         if surface is None or not self.validate_sprite(renderable, surface, transform):
             # Update the cache. This will save us redraws when the sprite is unchanged.

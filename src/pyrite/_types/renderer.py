@@ -10,13 +10,10 @@ if TYPE_CHECKING:
 class Renderer[RenderableTypeT, RenderTargetT](ABC):
 
     @abstractmethod
-    def render(
-        self, delta_time: float, renderable: RenderableTypeT, target: RenderTargetT
-    ):
+    def render(self, renderable: RenderableTypeT, target: RenderTargetT):
         """
         Draws the renderable to the screen.
 
-        :param delta_time: Time passed since last frame
         :param renderable: The renderable item, of the type handled by the renderer.
         :param target: An object to render to.
         """

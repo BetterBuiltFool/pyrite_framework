@@ -8,6 +8,7 @@ from pyrite._services.physics_service import PhysicsServiceProvider as PhysicsSe
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )
+import pyrite.time
 
 
 if TYPE_CHECKING:
@@ -26,15 +27,15 @@ class PhysicsSystem(BaseSystem):
         super().__init__(enabled, order_index)
         self.physics_mult = physics_mult
 
-    def const_update(self, timestep: float) -> None:
+    def const_update(self) -> None:
         # Ensure that the rigidbodies are where we want them to be.
         # If multiple constupdates are happening, this might cause issues.
         # TODO: Move this elsewhere so that it only happens once per frame?
         PhysicsService.sync_bodies_to_transforms()
 
-        PhysicsService.step(timestep * self.physics_mult)
+        PhysicsService.step(pyrite.time.fixed_time_step() * self.physics_mult)
 
-    def update(self, delta_time: float) -> None:
+    def update(self) -> None:
         self.sync_transforms_to_bodies()
 
     def sync_transforms_to_bodies(self):

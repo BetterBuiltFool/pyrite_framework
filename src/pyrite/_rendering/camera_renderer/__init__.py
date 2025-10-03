@@ -22,8 +22,8 @@ class CameraRendererProvider(RendererProvider[CameraRenderer]):
         cls._renderer = renderer
 
     @classmethod
-    def render(cls, delta_time: float, renderable: Camera, target: RenderTarget):
-        cls._renderer.render(delta_time, renderable, target)
+    def render(cls, renderable: Camera, target: RenderTarget):
+        cls._renderer.render(renderable, target)
 
     @classmethod
     def get_smooth_scale(cls) -> bool:
