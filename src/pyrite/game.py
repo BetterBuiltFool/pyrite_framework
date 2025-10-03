@@ -257,7 +257,7 @@ class Game:
         """
         pass
 
-    def const_update(self, timestep: float) -> None:
+    def const_update(self) -> None:
         """
         Update function that runs at a constant rate. Useful for anything that is
         sensitive to variations in frame time, such as physics.
@@ -267,9 +267,6 @@ class Game:
         eachother.
 
         For more info, see Glenn Fiedler's "Fix Your Timestep!"
-
-        :param timestep: Simulated time passed since last update. Passed in from the
-        game's rate_settings.
         """
         pass
 
@@ -303,9 +300,9 @@ class Game:
         :return: Remaining accumulated time.
         """
         while accumulated_time > timestep:
-            self.const_update(timestep)
-            self.system_manager.const_update(timestep)
-            self.entity_manager.const_update(timestep)
+            self.const_update()
+            self.system_manager.const_update()
+            self.entity_manager.const_update()
             accumulated_time -= timestep
         return accumulated_time
 
