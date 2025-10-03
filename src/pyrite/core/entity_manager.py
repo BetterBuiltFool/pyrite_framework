@@ -150,11 +150,9 @@ class EntityManager(ABC):
         pass
 
     @abstractmethod
-    def const_update(self, timestep: float):
+    def const_update(self):
         """
         Runs the const_update phase for active entities.
-
-        :param timestep: Length of the simulated step
         """
         pass
 
@@ -238,9 +236,9 @@ class DefaultEntityManager(EntityManager):
         for entity in self.entities:
             entity.post_update()
 
-    def const_update(self, timestep: float):
+    def const_update(self):
         for entity in self.entities:
-            entity.const_update(timestep)
+            entity.const_update()
 
     def handle_event(self, event: pygame.Event):
         for entity in self.entities:
