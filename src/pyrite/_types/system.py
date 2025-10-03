@@ -50,7 +50,7 @@ class System(ABC):
         """
         pass
 
-    def const_update(self, timestep: float) -> None:
+    def const_update(self) -> None:
         """
         A method that is called during the const_update phase.
         Useful for behavior that is sensitive to time fluctuations,
@@ -60,8 +60,6 @@ class System(ABC):
 
         const_update may be called any number of times per frame,
         depending on timestep length.
-
-        :param timestep: Length of the timestep being simulated.
         """
         pass
 
