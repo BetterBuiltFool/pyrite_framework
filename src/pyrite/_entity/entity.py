@@ -63,7 +63,7 @@ class BaseEntity(Entity):
     def post_update(self) -> None:
         pass
 
-    def const_update(self, timestep: float) -> None:
+    def const_update(self) -> None:
         pass
 
     def on_event(self, event: Event):
