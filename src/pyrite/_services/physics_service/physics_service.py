@@ -10,17 +10,18 @@ import pymunk
 
 from pyrite._types.service import Service
 from pyrite.constants import COMPONENT_TYPE
+from pyrite._physics.queries import PointInfo
+from pyrite._physics.filter import Filter
+from pyrite.utils import point_to_tuple
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    # from pygame.typing import Point
+    from pygame.typing import Point
     from pymunk import (
         Arbiter,
         Body,
-        # PointQueryInfo,
         # SegmentQueryInfo,
-        # ShapeFilter,
         Space,
     )
     from pyrite._component.collider_component import ColliderComponent
@@ -64,11 +65,9 @@ class PhysicsService(Service):
         # ) -> SegmentQueryInfo:
         #     pass
 
-        # @abstractmethod
-        # def check_point(
-        #     self, point: Point, shape_filer: ShapeFilter
-        # ) -> PointQueryInfo:
-        # pass
+    @abstractmethod
+    def check_point(self, point: Point, shape_filter: Filter) -> PointInfo | None:
+        pass
 
     @abstractmethod
     def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
@@ -204,9 +203,14 @@ class PymunkPhysicsService(PhysicsService):
     #     # TODO Implement this, just checking boxes right now
     #     pass
 
-    # def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+    def check_point(self, point: Point, shape_filter: Filter) -> PointInfo | None:
+        query = self.space.point_query_nearest(
+            point_to_tuple(point), 0, shape_filter._filter
+        )
+        if not query:
+            return None
+
+        return PointInfo.from_query(query)
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
