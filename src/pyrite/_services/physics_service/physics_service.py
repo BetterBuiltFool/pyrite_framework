@@ -66,6 +66,12 @@ class PhysicsService(Service):
         #     pass
 
     @abstractmethod
+    def check_point(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> list[PointInfo]:
+        pass
+
+    @abstractmethod
     def check_point_nearest(
         self, point: Point, max_distance: float, shape_filter: Filter
     ) -> PointInfo | None:
@@ -215,6 +221,15 @@ class PymunkPhysicsService(PhysicsService):
             return None
 
         return PointInfo.from_query(query)
+
+    def check_point(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> list[PointInfo]:
+        queries = self.space.point_query(
+            point_to_tuple(point), max_distance, shape_filter._filter
+        )
+
+        return [PointInfo.from_query(query) for query in queries]
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
