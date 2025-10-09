@@ -9,14 +9,19 @@ from pyrite._services.physics_service.physics_service import (
     PymunkPhysicsService,
 )
 from pyrite._types.service import ServiceProvider
+from pyrite.constants import MASK_ALL
+from pyrite._physics.filter import Filter
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
+
     from collections.abc import Iterator, Sequence
     from pyrite._component.collider_component import ColliderComponent
     from pyrite._component.rigidbody_component import RigidbodyComponent
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape
+    from pyrite._physics.queries import PointInfo
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -103,17 +108,20 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     """
     #     cls._service.cast_ray_single(start, end, shape_filter)
 
-    # @classmethod
-    # def check_point(cls, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-    #     """
-    #     Determines if a point in world space is within a shape.
+    @classmethod
+    def check_point(
+        cls, point: Point, shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL)
+    ) -> PointInfo | None:
+        """
+        Determines if a point in world space is within a shape.
 
-    #     :param point: A point in world space.
-    #     :param shape_filer: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
-    #     """
-    #     cls._service.check_point(point, shape_filer)
+        :param point: A point in world space.
+        :param shape_filer: A filter object used to filter out undesired shapes for
+            collision.
+        :return: An object containing collision info, or None if no collision was
+            detected.
+        """
+        return cls._service.check_point(point, shape_filter)
 
     @classmethod
     def clear_collider_shapes(cls, collider: ColliderComponent) -> set[Shape]:
