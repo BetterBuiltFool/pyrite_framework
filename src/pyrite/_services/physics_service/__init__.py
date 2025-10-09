@@ -109,19 +109,25 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     cls._service.cast_ray_single(start, end, shape_filter)
 
     @classmethod
-    def check_point(
-        cls, point: Point, shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL)
+    def check_point_nearest(
+        cls,
+        point: Point,
+        max_distance: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
     ) -> PointInfo | None:
         """
         Determines if a point in world space is within a shape.
 
         :param point: A point in world space.
+        :param max_distance: Maximum distance from the point to look for collisions.
+            With 0, the point must be overlapped. Negative distances are allowed.
+            Defaults to 0.
         :param shape_filer: A filter object used to filter out undesired shapes for
             collision.
         :return: An object containing collision info, or None if no collision was
             detected.
         """
-        return cls._service.check_point(point, shape_filter)
+        return cls._service.check_point_nearest(point, max_distance, shape_filter)
 
     @classmethod
     def clear_collider_shapes(cls, collider: ColliderComponent) -> set[Shape]:

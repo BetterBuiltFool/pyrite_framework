@@ -66,7 +66,9 @@ class PhysicsService(Service):
         #     pass
 
     @abstractmethod
-    def check_point(self, point: Point, shape_filter: Filter) -> PointInfo | None:
+    def check_point_nearest(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> PointInfo | None:
         pass
 
     @abstractmethod
@@ -203,9 +205,11 @@ class PymunkPhysicsService(PhysicsService):
     #     # TODO Implement this, just checking boxes right now
     #     pass
 
-    def check_point(self, point: Point, shape_filter: Filter) -> PointInfo | None:
+    def check_point_nearest(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> PointInfo | None:
         query = self.space.point_query_nearest(
-            point_to_tuple(point), 0, shape_filter._filter
+            point_to_tuple(point), max_distance, shape_filter._filter
         )
         if not query:
             return None
