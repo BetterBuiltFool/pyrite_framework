@@ -10,7 +10,7 @@ import pymunk
 
 from pyrite._types.service import Service
 from pyrite.constants import COMPONENT_TYPE
-from pyrite._physics.queries import PointInfo
+from pyrite._physics.queries import PointInfo, SegmentInfo
 from pyrite._physics.filter import Filter
 from pyrite.utils import point_to_tuple
 
@@ -59,11 +59,11 @@ class PhysicsService(Service):
         # ) -> list[SegmentQueryInfo]:
         #     pass
 
-        # @abstractmethod
-        # def cast_ray_single(
-        #     self, start: Point, end: Point, shape_filter: ShapeFilter
-        # ) -> SegmentQueryInfo:
-        #     pass
+    @abstractmethod
+    def cast_ray_single(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> SegmentInfo | None:
+        pass
 
     @abstractmethod
     def check_point(
@@ -210,6 +210,17 @@ class PymunkPhysicsService(PhysicsService):
     # ) -> SegmentQueryInfo:
     #     # TODO Implement this, just checking boxes right now
     #     pass
+
+    def cast_ray_single(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> SegmentInfo | None:
+        query = self.space.segment_query_first(
+            point_to_tuple(start), point_to_tuple(end), radius, shape_filter._filter
+        )
+        if not query:
+            return None
+
+        return SegmentInfo.from_query(query)
 
     def check_point_nearest(
         self, point: Point, max_distance: float, shape_filter: Filter

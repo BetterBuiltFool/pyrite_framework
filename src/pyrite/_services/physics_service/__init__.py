@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape
-    from pyrite._physics.queries import PointInfo
+    from pyrite._physics.queries import PointInfo, SegmentInfo
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -91,22 +91,29 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     #     """
     #     cls._service.cast_ray(start, end, shape_filter)
 
-    # @classmethod
-    # def cast_ray_single(
-    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> SegmentQueryInfo:
-    #     """
-    #     Cast a ray from start to end, returning the _first_ collision it finds.
-    #     Due to the nature of the physics engine, rays cannot be infinite so an end
-    #     point must be specifiied.
+    @classmethod
+    def cast_ray_single(
+        cls,
+        start: Point,
+        end: Point,
+        radius: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> SegmentInfo | None:
+        """
+        Cast a ray from start to end, returning the _first_ collision it finds.
+        Due to the nature of the physics engine, rays cannot be infinite so an end
+        point must be specifiied.
 
-    #     :param start: A start point, in world space.
-    #     :param end: An end point, in world space.
-    #     :param shape_filter: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
-    #     """
-    #     cls._service.cast_ray_single(start, end, shape_filter)
+        :param start: A start point, in world space.
+        :param end: An end point, in world space.
+        :param radius: How far from the segment shapes may be while still being
+            included, 0 requires overlap. Defaults to 0.
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: An object containing collision info, or None if no collision was
+            detected.
+        """
+        return cls._service.cast_ray_single(start, end, radius, shape_filter)
 
     @classmethod
     def check_point(
