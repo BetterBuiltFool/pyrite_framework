@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     from pymunk import (
         Arbiter,
         Body,
-        # SegmentQueryInfo,
         Space,
     )
     from pyrite._component.collider_component import ColliderComponent
