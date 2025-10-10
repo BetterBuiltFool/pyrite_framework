@@ -53,11 +53,11 @@ class PhysicsService(Service):
     ) -> None:
         pass
 
-        # @abstractmethod
-        # def cast_ray(
-        #     self, start: Point, end: Point, shape_filter: ShapeFilter
-        # ) -> list[SegmentQueryInfo]:
-        #     pass
+    @abstractmethod
+    def cast_ray(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> list[SegmentInfo]:
+        pass
 
     @abstractmethod
     def cast_ray_single(
@@ -199,17 +199,14 @@ class PymunkPhysicsService(PhysicsService):
 
             self.space.add(shape._shape)
 
-    # def cast_ray(
-    #     self, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> list[SegmentQueryInfo]:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+    def cast_ray(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> list[SegmentInfo]:
+        queries = self.space.segment_query(
+            point_to_tuple(start), point_to_tuple(end), radius, shape_filter._filter
+        )
 
-    # def cast_ray_single(
-    #     self, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> SegmentQueryInfo:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+        return [SegmentInfo.from_query(query) for query in queries]
 
     def cast_ray_single(
         self, start: Point, end: Point, radius: float, shape_filter: Filter

@@ -74,22 +74,29 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         """
         cls._service.add_collider_shapes(collider, shapes)
 
-    # @classmethod
-    # def cast_ray(
-    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> list[SegmentQueryInfo]:
-    #     """
-    #     Cast a ray from start to end, returning all collisions within.
-    #     Due to the nature of the physics engine, rays cannot be infinite so an end
-    #     point must be specifiied.
+    @classmethod
+    def cast_ray(
+        cls,
+        start: Point,
+        end: Point,
+        radius: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> list[SegmentInfo]:
+        """
+        Cast a ray from start to end, returning all collisions within.
+        Due to the nature of the physics engine, rays cannot be infinite so an end
+        point must be specified.
 
-    #     :param start: A start point, in world space.
-    #     :param end: An end point, in world space.
-    #     :param shape_filter: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A list of SegmentQueryInfos, one for each shape collided with.
-    #     """
-    #     cls._service.cast_ray(start, end, shape_filter)
+        :param start: A start point, in world space.
+        :param end: An end point, in world space.
+        :param radius: How far from the segment shapes may be while still being
+            included, 0 requires overlap. Defaults to 0.
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: A list containing segment info for any and all colliding shapes. Empty
+            if no shapes collide.
+        """
+        return cls._service.cast_ray(start, end, radius, shape_filter)
 
     @classmethod
     def cast_ray_single(
@@ -102,7 +109,7 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         """
         Cast a ray from start to end, returning the _first_ collision it finds.
         Due to the nature of the physics engine, rays cannot be infinite so an end
-        point must be specifiied.
+        point must be specified.
 
         :param start: A start point, in world space.
         :param end: An end point, in world space.
