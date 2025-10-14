@@ -133,9 +133,22 @@ class TestPymunkPhysicsService(unittest.TestCase):
         self.physics_service._force_sync_to_transform(ball2.rigidbody)
 
         params_list: list[tuple[Point, Point, float, Shape | None]] = [
+            # Through Multiple, circle1 first
             ((0, 0), (-20, 0), 0, circle1),
+            # Through None
             ((20, 0), (40, 0), 0, None),
+            # Through Multiple, circle2 first
             ((-20, 0), (0, 0), 0, circle2),
+            # Edge of collider
+            ((-30, 0), (-40, 0), 0, circle2),
+            # Just outside collider
+            ((-31, 0), (-40, 0), 0, None),
+            # Just outside with radius large enough to capture.
+            ((-31, 0), (-40, 0), 1, circle2),
+            # Edge of collider, negative radius
+            ((-30, 0), (-40, 0), -1, None),
+            # Just inside collider, negative radius
+            ((-29, 0), (-40, 0), -1, circle2),
         ]
 
         for i, (start, end, radius, expected) in enumerate(params_list):
