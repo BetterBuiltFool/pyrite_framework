@@ -18,6 +18,9 @@ if TYPE_CHECKING:
     from pyrite._types.shape import Shape
 
 
+FILTER = Filter(0, MASK_ALL, MASK_ALL)
+
+
 class Empty:
 
     def __init__(self) -> None:
@@ -34,7 +37,7 @@ class TestPymunkPhysicsService(unittest.TestCase):
             for shape in collider.shapes:
                 if shape is segment_info.shape:
                     return True
-        return False
+        raise AssertionError(f"{collider} is not found in the ray query")
 
     def setUp(self) -> None:
         self.physics_service = PymunkPhysicsService()
@@ -117,7 +120,7 @@ class TestPymunkPhysicsService(unittest.TestCase):
             self.assertEqual(transform.position, expected.position)
             self.assertEqual(transform.rotation, expected.rotation)
 
-    def test_cast_ray_single(self):
+    def test_cast_ray_single(self) -> None:
         ball1 = Empty()
         circle1 = Circle(None, 10)
         ColliderComponent(ball1, circle1)
@@ -128,8 +131,6 @@ class TestPymunkPhysicsService(unittest.TestCase):
         ball2.rigidbody.transform.position = (-20, 0)
 
         self.physics_service._force_sync_to_transform(ball2.rigidbody)
-
-        FILTER = Filter(0, MASK_ALL, MASK_ALL)
 
         params_list: list[tuple[Point, Point, float, Shape | None]] = [
             ((0, 0), (-20, 0), 0, circle1),
@@ -144,6 +145,46 @@ class TestPymunkPhysicsService(unittest.TestCase):
                 if query:
                     target = query.shape
                 self.assertIs(target, expected)
+
+    def test_cast_ray(self) -> None:
+        ball1 = Empty()
+        circle1 = Circle(None, 10)
+        collider1 = ColliderComponent(ball1, circle1)
+
+        ball2 = Empty()
+        circle2 = Circle(None, 10)
+        collider2 = ColliderComponent(ball2, circle2)
+        ball2.rigidbody.transform.position = (-20, 0)
+
+        self.physics_service._force_sync_to_transform(ball2.rigidbody)
+
+        params_list: list[tuple[Point, Point, float, list[ColliderComponent]]] = [
+            # Through Multiple
+            ((0, 0), (-20, 0), 0, [collider1, collider2]),
+            # Through None
+            ((20, 0), (40, 0), 0, []),
+            # Through One
+            ((-20, 0), (-15, 0), 0, [collider2]),
+            # Edge of collider
+            ((-30, 0), (-40, 0), 0, [collider2]),
+            # Just outside collider
+            ((-31, 0), (-40, 0), 0, []),
+            # Just outside with radius large enough to capture.
+            ((-31, 0), (-40, 0), 1, [collider2]),
+            # Edge of collider, negative radius
+            ((-30, 0), (-40, 0), -1, []),
+            # Just inside collider, negative radius
+            ((-29, 0), (-40, 0), -1, [collider2]),
+        ]
+
+        for i, (start, end, radius, expected_colliders) in enumerate(params_list):
+            with self.subTest(i=i):
+                query = self.physics_service.cast_ray(start, end, radius, FILTER)
+
+                self.assertEqual(len(query), len(expected_colliders))
+
+                for collider in expected_colliders:
+                    self.assertInRay(collider, query)
 
 
 if __name__ == "__main__":
