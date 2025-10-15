@@ -199,6 +199,46 @@ class TestPymunkPhysicsService(unittest.TestCase):
                 for collider in expected_colliders:
                     self.assertInRay(collider, query)
 
+    def test_check_point_nearest(self) -> None:
+        ball1 = Empty()
+        circle1 = Circle(None, 10)
+        ColliderComponent(ball1, circle1)
+
+        ball2 = Empty()
+        circle2 = Circle(None, 10)
+        ColliderComponent(ball2, circle2)
+        ball2.rigidbody.transform.position = (-15, 0)
+        self.physics_service._force_sync_to_transform(ball2.rigidbody)
+
+        params_list: list[tuple[Point, float, Shape | None]] = [
+            # Through one
+            ((0, 0), 0, circle1),
+            # Through Both, closer to circle1
+            ((-5, 0), 0, circle1),
+            # Through Both, closer to circle2
+            ((-10, 0), 0, circle2),
+            # Through None
+            ((15, 0), 0, None),
+            # Just inside collider
+            ((9.9, 0), 0, circle1),
+            # Edge of collider
+            ((10, 0), 0, None),  # Edge doesn't count for point, does for ray?
+            # Edge with radius large enough to capture.
+            ((10, 0), 1, circle1),
+            # Just inside collider, negative radius
+            ((9.9, 0), -1, None),
+            # Enough inside collider, negative radius
+            ((8.9, 0), -1, circle1),
+        ]
+
+        for i, (point, radius, expected) in enumerate(params_list):
+            with self.subTest(i=i):
+                query = self.physics_service.check_point_nearest(point, radius, FILTER)
+                target = None
+                if query:
+                    target = query.shape
+                self.assertIs(target, expected)
+
 
 if __name__ == "__main__":
 
