@@ -150,6 +150,8 @@ class TestPymunkPhysicsService(unittest.TestCase):
             ((-20, 0), (0, 0), 0, circle2),
             # Edge of collider
             ((-30, 0), (-40, 0), 0, circle2),
+            # Ray on edge of collider
+            ((-10, 10), (-40, 10), 0, circle2),
             # Just outside collider
             ((-31, 0), (-40, 0), 0, None),
             # Just outside with radius large enough to capture.
@@ -191,6 +193,8 @@ class TestPymunkPhysicsService(unittest.TestCase):
             ((-30, 0), (-40, 0), 0, [collider2]),
             # Ends on edge
             ((-40, 0), (-30, 0), 0, [collider2]),
+            # Ray on edge of collider
+            ((-10, 10), (-40, 10), 0, [collider2]),
             # Just outside collider
             ((-31, 0), (-40, 0), 0, []),
             # Just outside with radius large enough to capture.
