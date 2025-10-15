@@ -87,6 +87,8 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         Due to the nature of the physics engine, rays cannot be infinite so an end
         point must be specified.
 
+        Start and end points are _inclusive_ with shape edges.
+
         :param start: A start point, in world space.
         :param end: An end point, in world space.
         :param radius: How far from the segment shapes may be while still being
@@ -111,6 +113,8 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         Due to the nature of the physics engine, rays cannot be infinite so an end
         point must be specified.
 
+        Start and end points are _inclusive_ with shape edges.
+
         :param start: A start point, in world space.
         :param end: An end point, in world space.
         :param radius: How far from the segment shapes may be while still being
@@ -132,6 +136,9 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         """
         Finds all shapes that overlap the given world-space point.
 
+        Point is _exclusive_ with shape edges, i.e. if a point is exactly on an edge,
+        it will not capture the shape.
+
         :param point: A point in world space.
         :param max_distance: Maximum distance from the point to look for collisions.
             With 0, the point must be overlapped. Negative distances are allowed.
@@ -152,6 +159,9 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
     ) -> PointInfo | None:
         """
         Determines if a point in world space is within a shape.
+
+        Point is _exclusive_ with shape edges, i.e. if a point is exactly on an edge,
+        it will not capture the shape.
 
         :param point: A point in world space.
         :param max_distance: Maximum distance from the point to look for collisions.
