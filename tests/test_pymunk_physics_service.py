@@ -14,7 +14,7 @@ from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pyrite._physics.queries import SegmentInfo
+    from pyrite._physics.queries import SegmentInfo, PointInfo
     from pyrite._types.shape import Shape
 
 
@@ -38,6 +38,15 @@ class TestPymunkPhysicsService(unittest.TestCase):
                 if shape is segment_info.shape:
                     return True
         raise AssertionError(f"{collider} is not found in the ray query")
+
+    def assertInPoint(
+        self, collider: ColliderComponent, point_query_infos: list[PointInfo]
+    ):
+        for point_info in point_query_infos:
+            for shape in collider.shapes:
+                if shape is point_info.shape:
+                    return True
+        raise AssertionError(f"{collider} is not found in the point query")
 
     def setUp(self) -> None:
         self.physics_service = PymunkPhysicsService()
@@ -214,9 +223,9 @@ class TestPymunkPhysicsService(unittest.TestCase):
             # Through one
             ((0, 0), 0, circle1),
             # Through Both, closer to circle1
-            ((-5, 0), 0, circle1),
+            ((-5.1, 0), 0, circle1),
             # Through Both, closer to circle2
-            ((-10, 0), 0, circle2),
+            ((-9.9, 0), 0, circle2),
             # Through None
             ((15, 0), 0, None),
             # Just inside collider
@@ -238,6 +247,47 @@ class TestPymunkPhysicsService(unittest.TestCase):
                 if query:
                     target = query.shape
                 self.assertIs(target, expected)
+
+    def test_check_point(self) -> None:
+        ball1 = Empty()
+        circle1 = Circle(None, 10)
+        collider1 = ColliderComponent(ball1, circle1)
+
+        ball2 = Empty()
+        circle2 = Circle(None, 10)
+        collider2 = ColliderComponent(ball2, circle2)
+        ball2.rigidbody.transform.position = (-15, 0)
+        self.physics_service._force_sync_to_transform(ball2.rigidbody)
+
+        params_list: list[tuple[Point, float, list[ColliderComponent]]] = [
+            # Through one
+            ((0, 0), 0, [collider1]),
+            # Through Both, closer to circle1
+            ((-5.1, 0), 0, [collider1, collider2]),
+            # Through Both, closer to circle2
+            ((-9.9, 0), 0, [collider1, collider2]),
+            # Through None
+            ((15, 0), 0, []),
+            # Just inside collider
+            ((9.9, 0), 0, [collider1]),
+            # Edge of collider
+            ((10, 0), 0, []),  # Edge doesn't count for point, does for ray?
+            # Edge with radius large enough to capture.
+            ((10, 0), 1, [collider1]),
+            # Just inside collider, negative radius
+            ((9.9, 0), -1, []),
+            # Enough inside collider, negative radius
+            ((8.9, 0), -1, [collider1]),
+        ]
+
+        for i, (point, radius, expected_colliders) in enumerate(params_list):
+            with self.subTest(i=i):
+                query = self.physics_service.check_point(point, radius, FILTER)
+
+                self.assertEqual(len(query), len(expected_colliders))
+
+                for collider in expected_colliders:
+                    self.assertInPoint(collider, query)
 
 
 if __name__ == "__main__":
