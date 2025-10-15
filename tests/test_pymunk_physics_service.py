@@ -189,6 +189,8 @@ class TestPymunkPhysicsService(unittest.TestCase):
             ((-20, 0), (-15, 0), 0, [collider2]),
             # Edge of collider
             ((-30, 0), (-40, 0), 0, [collider2]),
+            # Ends on edge
+            ((-40, 0), (-30, 0), 0, [collider2]),
             # Just outside collider
             ((-31, 0), (-40, 0), 0, []),
             # Just outside with radius large enough to capture.
