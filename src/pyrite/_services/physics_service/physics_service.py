@@ -7,17 +7,19 @@ from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
 
 import pymunk
+import pygame
 
 from pyrite._types.service import Service
 from pyrite.constants import COMPONENT_TYPE
 from pyrite._physics.queries import PointInfo, SegmentInfo
 from pyrite._physics.filter import Filter
 from pyrite.utils import point_to_tuple
+from pyrite._types.shape import Shape
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from pygame.typing import Point
+    from pygame.typing import Point, RectLike
     from pymunk import (
         Arbiter,
         Body,
@@ -27,7 +29,6 @@ if TYPE_CHECKING:
     from pyrite._component.rigidbody_component import RigidbodyComponent
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
-    from pyrite._types.shape import Shape
 
 
 class PhysicsService(Service):
@@ -62,6 +63,10 @@ class PhysicsService(Service):
     def cast_ray_single(
         self, start: Point, end: Point, radius: float, shape_filter: Filter
     ) -> SegmentInfo | None:
+        pass
+
+    @abstractmethod
+    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
         pass
 
     @abstractmethod
@@ -228,6 +233,15 @@ class PymunkPhysicsService(PhysicsService):
             return None
 
         return PointInfo.from_query(query)
+
+    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
+        rect = pygame.Rect(area)
+        queries = self.space.bb_query(
+            pymunk.BB(rect.left, rect.bottom, rect.right, rect.top),
+            shape_filter._filter,
+        )
+
+        return [Shape._shapes[query_shape] for query_shape in queries]
 
     def check_point(
         self, point: Point, max_distance: float, shape_filter: Filter
