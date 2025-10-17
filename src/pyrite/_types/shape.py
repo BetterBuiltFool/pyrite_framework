@@ -28,7 +28,7 @@ class Shape[ShapeT: pymunk.Shape]:
             ref(collider) if collider else None
         )
         self._shape: ShapeT = shape
-        self._shapes[shape] = self
+        Shape._shapes[shape] = self
 
     @property
     def area(self) -> float:

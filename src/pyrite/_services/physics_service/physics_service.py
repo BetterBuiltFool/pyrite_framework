@@ -7,27 +7,28 @@ from typing import Any, TYPE_CHECKING
 from weakref import WeakValueDictionary
 
 import pymunk
+import pygame
 
 from pyrite._types.service import Service
 from pyrite.constants import COMPONENT_TYPE
+from pyrite._physics.queries import PointInfo, SegmentInfo
+from pyrite._physics.filter import Filter
+from pyrite.utils import point_to_tuple
+from pyrite._types.shape import Shape
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    # from pygame.typing import Point
+    from pygame.typing import Point, RectLike
     from pymunk import (
         Arbiter,
         Body,
-        # PointQueryInfo,
-        # SegmentQueryInfo,
-        # ShapeFilter,
         Space,
     )
     from pyrite._component.collider_component import ColliderComponent
     from pyrite._component.rigidbody_component import RigidbodyComponent
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
-    from pyrite._types.shape import Shape
 
 
 class PhysicsService(Service):
@@ -52,23 +53,33 @@ class PhysicsService(Service):
     ) -> None:
         pass
 
-        # @abstractmethod
-        # def cast_ray(
-        #     self, start: Point, end: Point, shape_filter: ShapeFilter
-        # ) -> list[SegmentQueryInfo]:
-        #     pass
+    @abstractmethod
+    def cast_ray(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> list[SegmentInfo]:
+        pass
 
-        # @abstractmethod
-        # def cast_ray_single(
-        #     self, start: Point, end: Point, shape_filter: ShapeFilter
-        # ) -> SegmentQueryInfo:
-        #     pass
+    @abstractmethod
+    def cast_ray_single(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> SegmentInfo | None:
+        pass
 
-        # @abstractmethod
-        # def check_point(
-        #     self, point: Point, shape_filer: ShapeFilter
-        # ) -> PointQueryInfo:
-        # pass
+    @abstractmethod
+    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
+        pass
+
+    @abstractmethod
+    def check_point(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> list[PointInfo]:
+        pass
+
+    @abstractmethod
+    def check_point_nearest(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> PointInfo | None:
+        pass
 
     @abstractmethod
     def _force_sync_to_transform(self, rigidbody: RigidbodyComponent) -> None:
@@ -192,21 +203,55 @@ class PymunkPhysicsService(PhysicsService):
 
             self.space.add(shape._shape)
 
-    # def cast_ray(
-    #     self, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> list[SegmentQueryInfo]:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+    def cast_ray(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> list[SegmentInfo]:
+        queries = self.space.segment_query(
+            point_to_tuple(start), point_to_tuple(end), radius, shape_filter._filter
+        )
 
-    # def cast_ray_single(
-    #     self, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> SegmentQueryInfo:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+        return [SegmentInfo.from_query(query) for query in queries]
 
-    # def check_point(self, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-    #     # TODO Implement this, just checking boxes right now
-    #     pass
+    def cast_ray_single(
+        self, start: Point, end: Point, radius: float, shape_filter: Filter
+    ) -> SegmentInfo | None:
+        query = self.space.segment_query_first(
+            point_to_tuple(start), point_to_tuple(end), radius, shape_filter._filter
+        )
+        if not query:
+            return None
+
+        return SegmentInfo.from_query(query)
+
+    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
+        rect = pygame.FRect(area)
+        bb = pymunk.BB(rect.left, rect.top - rect.height, rect.right, rect.top)
+        queries = self.space.bb_query(
+            bb,
+            shape_filter._filter,
+        )
+
+        return [Shape._shapes[query_shape] for query_shape in queries]
+
+    def check_point_nearest(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> PointInfo | None:
+        query = self.space.point_query_nearest(
+            point_to_tuple(point), max_distance, shape_filter._filter
+        )
+        if not query:
+            return None
+
+        return PointInfo.from_query(query)
+
+    def check_point(
+        self, point: Point, max_distance: float, shape_filter: Filter
+    ) -> list[PointInfo]:
+        queries = self.space.point_query(
+            point_to_tuple(point), max_distance, shape_filter._filter
+        )
+
+        return [PointInfo.from_query(query) for query in queries]
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())

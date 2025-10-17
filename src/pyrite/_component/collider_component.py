@@ -55,7 +55,7 @@ class ColliderComponent(BaseComponent):
         self._categories[self] = category
         self._collision_masks[self] = mask
 
-        self.shapes: WeakKeyDictionary[Shape[pymunk.Shape], None] = WeakKeyDictionary()
+        self.shapes: dict[Shape[pymunk.Shape], None] = {}
 
         self.filter = ShapeFilter(categories=category, mask=mask)
 

@@ -165,3 +165,4 @@ manual_testing.py
 .vscode/settings.json
 profile.html
 profile.json
+.vscode/launch.json

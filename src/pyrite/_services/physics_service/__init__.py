@@ -9,14 +9,19 @@ from pyrite._services.physics_service.physics_service import (
     PymunkPhysicsService,
 )
 from pyrite._types.service import ServiceProvider
+from pyrite.constants import MASK_ALL
+from pyrite._physics.filter import Filter
 
 if TYPE_CHECKING:
+    from pygame.typing import Point, RectLike
+
     from collections.abc import Iterator, Sequence
     from pyrite._component.collider_component import ColliderComponent
     from pyrite._component.rigidbody_component import RigidbodyComponent
     from pyrite._transform.transform import Transform
     from pyrite._types.constraint import Constraint
     from pyrite._types.shape import Shape
+    from pyrite._physics.queries import PointInfo, SegmentInfo
 
 
 class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
@@ -69,51 +74,120 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         """
         cls._service.add_collider_shapes(collider, shapes)
 
-    # @classmethod
-    # def cast_ray(
-    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> list[SegmentQueryInfo]:
-    #     """
-    #     Cast a ray from start to end, returning all collisions within.
-    #     Due to the nature of the physics engine, rays cannot be infinite so an end
-    #     point must be specifiied.
+    @classmethod
+    def cast_ray(
+        cls,
+        start: Point,
+        end: Point,
+        radius: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> list[SegmentInfo]:
+        """
+        Cast a ray from start to end, returning all collisions within.
+        Due to the nature of the physics engine, rays cannot be infinite so an end
+        point must be specified.
 
-    #     :param start: A start point, in world space.
-    #     :param end: An end point, in world space.
-    #     :param shape_filter: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A list of SegmentQueryInfos, one for each shape collided with.
-    #     """
-    #     cls._service.cast_ray(start, end, shape_filter)
+        Start and end points are _inclusive_ with shape edges.
 
-    # @classmethod
-    # def cast_ray_single(
-    #     cls, start: Point, end: Point, shape_filter: ShapeFilter
-    # ) -> SegmentQueryInfo:
-    #     """
-    #     Cast a ray from start to end, returning the _first_ collision it finds.
-    #     Due to the nature of the physics engine, rays cannot be infinite so an end
-    #     point must be specifiied.
+        :param start: A start point, in world space.
+        :param end: An end point, in world space.
+        :param radius: How far from the segment shapes may be while still being
+            included, 0 requires overlap. Defaults to 0.
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: A list containing segment info for any and all colliding shapes. Empty
+            if no shapes collide.
+        """
+        return cls._service.cast_ray(start, end, radius, shape_filter)
 
-    #     :param start: A start point, in world space.
-    #     :param end: An end point, in world space.
-    #     :param shape_filter: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
-    #     """
-    #     cls._service.cast_ray_single(start, end, shape_filter)
+    @classmethod
+    def cast_ray_single(
+        cls,
+        start: Point,
+        end: Point,
+        radius: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> SegmentInfo | None:
+        """
+        Cast a ray from start to end, returning the _first_ collision it finds.
+        Due to the nature of the physics engine, rays cannot be infinite so an end
+        point must be specified.
 
-    # @classmethod
-    # def check_point(cls, point: Point, shape_filer: ShapeFilter) -> PointQueryInfo:
-    #     """
-    #     Determines if a point in world space is within a shape.
+        Start and end points are _inclusive_ with shape edges.
 
-    #     :param point: A point in world space.
-    #     :param shape_filer: A filter object used to filter out undesired shapes for
-    #     collision.
-    #     :return: A SegmentQueryInfo, denoting information about the collided shape.
-    #     """
-    #     cls._service.check_point(point, shape_filer)
+        :param start: A start point, in world space.
+        :param end: An end point, in world space.
+        :param radius: How far from the segment shapes may be while still being
+            included, 0 requires overlap. Defaults to 0.
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: An object containing collision info, or None if no collision was
+            detected.
+        """
+        return cls._service.cast_ray_single(start, end, radius, shape_filter)
+
+    @classmethod
+    def check_area(
+        cls, area: RectLike, shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL)
+    ) -> list[Shape]:
+        """
+        Finds all shapes whose bounding boxes are within a rectangular,
+        axis-aligned area.
+
+        :param area: An area, in world space, to search
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: A list of all shapes in the requested area.
+        """
+        return cls._service.check_area(area, shape_filter)
+
+    @classmethod
+    def check_point(
+        cls,
+        point: Point,
+        max_distance: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> list[PointInfo]:
+        """
+        Finds all shapes that overlap the given world-space point.
+
+        Point is _exclusive_ with shape edges, i.e. if a point is exactly on an edge,
+        it will not capture the shape.
+
+        :param point: A point in world space.
+        :param max_distance: Maximum distance from the point to look for collisions.
+            With 0, the point must be overlapped. Negative distances are allowed.
+            Defaults to 0.
+        :param shape_fitler: A filter object used to filter out undesired shapes for
+            collision.
+        :return: A list containing point info for any and all colliding shapes. Empty
+            if no shapes collide.
+        """
+        return cls._service.check_point(point, max_distance, shape_filter)
+
+    @classmethod
+    def check_point_nearest(
+        cls,
+        point: Point,
+        max_distance: float = 0,
+        shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL),
+    ) -> PointInfo | None:
+        """
+        Determines if a point in world space is within a shape.
+
+        Point is _exclusive_ with shape edges, i.e. if a point is exactly on an edge,
+        it will not capture the shape.
+
+        :param point: A point in world space.
+        :param max_distance: Maximum distance from the point to look for collisions.
+            With 0, the point must be overlapped. Negative distances are allowed.
+            Defaults to 0.
+        :param shape_fitler: A filter object used to filter out undesired shapes for
+            collision.
+        :return: An object containing collision info, or None if no collision was
+            detected.
+        """
+        return cls._service.check_point_nearest(point, max_distance, shape_filter)
 
     @classmethod
     def clear_collider_shapes(cls, collider: ColliderComponent) -> set[Shape]:
