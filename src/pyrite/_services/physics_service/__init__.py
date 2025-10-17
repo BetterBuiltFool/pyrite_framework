@@ -13,7 +13,7 @@ from pyrite.constants import MASK_ALL
 from pyrite._physics.filter import Filter
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
+    from pygame.typing import Point, RectLike
 
     from collections.abc import Iterator, Sequence
     from pyrite._component.collider_component import ColliderComponent
@@ -125,6 +125,20 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
             detected.
         """
         return cls._service.cast_ray_single(start, end, radius, shape_filter)
+
+    @classmethod
+    def check_area(
+        cls, area: RectLike, shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL)
+    ) -> list[Shape]:
+        """
+        Finds all shapes within a rectangular, axis-aligned area.
+
+        :param area: An area, in world space, to search
+        :param shape_filter: A filter object used to filter out undesired shapes for
+        collision.
+        :return: A list of all shapes in the requested area.
+        """
+        return cls._service.check_area(area, shape_filter)
 
     @classmethod
     def check_point(
