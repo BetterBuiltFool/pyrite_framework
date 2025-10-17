@@ -13,7 +13,7 @@ from pyrite._services.physics_service import PymunkPhysicsService
 from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
-    from pygame.typing import Point
+    from pygame.typing import Point, RectLike
     from pyrite._physics.queries import SegmentInfo, PointInfo
     from pyrite._types.shape import Shape
 
@@ -294,6 +294,39 @@ class TestPymunkPhysicsService(unittest.TestCase):
 
                 for collider in expected_colliders:
                     self.assertInPoint(collider, query)
+
+    def test_check_area(self) -> None:
+        ball1 = Empty()
+        circle1 = Circle(None, 10)
+        ColliderComponent(ball1, circle1)
+
+        ball2 = Empty()
+        circle2 = Circle(None, 10)
+        ColliderComponent(ball2, circle2)
+        ball2.rigidbody.transform.position = (-15, 0)
+        self.physics_service._force_sync_to_transform(ball2.rigidbody)
+
+        params: list[tuple[RectLike, list[Shape]]] = [
+            # Single object in area
+            ((0, 0, 10, 10), [circle1]),
+            # Encompassing both
+            ((-25, 10, 35, 20), [circle1, circle2]),
+            # Zero size rect in intersection
+            ((-7.5, 0, 0, 0), [circle1, circle2]),
+            # Outside
+            ((11, 16, 5, 5), []),
+            # Edge
+            ((-15, 15, 5, 5), [circle1, circle2]),
+        ]
+
+        for i, (area, expected) in enumerate(params):
+            with self.subTest(i=i):
+                query = self.physics_service.check_area(area, FILTER)
+
+                self.assertEqual(len(query), len(expected))
+
+                for shape in expected:
+                    self.assertIn(shape, query)
 
 
 if __name__ == "__main__":
