@@ -223,6 +223,15 @@ class PymunkPhysicsService(PhysicsService):
 
         return SegmentInfo.from_query(query)
 
+    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
+        rect = pygame.Rect(area)
+        queries = self.space.bb_query(
+            pymunk.BB(rect.left, rect.bottom, rect.right, rect.top),
+            shape_filter._filter,
+        )
+
+        return [Shape._shapes[query_shape] for query_shape in queries]
+
     def check_point_nearest(
         self, point: Point, max_distance: float, shape_filter: Filter
     ) -> PointInfo | None:
@@ -233,15 +242,6 @@ class PymunkPhysicsService(PhysicsService):
             return None
 
         return PointInfo.from_query(query)
-
-    def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
-        rect = pygame.Rect(area)
-        queries = self.space.bb_query(
-            pymunk.BB(rect.left, rect.bottom, rect.right, rect.top),
-            shape_filter._filter,
-        )
-
-        return [Shape._shapes[query_shape] for query_shape in queries]
 
     def check_point(
         self, point: Point, max_distance: float, shape_filter: Filter
