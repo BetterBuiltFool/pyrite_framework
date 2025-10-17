@@ -224,7 +224,7 @@ class PymunkPhysicsService(PhysicsService):
         return SegmentInfo.from_query(query)
 
     def check_area(self, area: RectLike, shape_filter: Filter) -> list[Shape]:
-        rect = pygame.Rect(area)
+        rect = pygame.FRect(area)
         bb = pymunk.BB(rect.left, rect.top - rect.height, rect.right, rect.top)
         queries = self.space.bb_query(
             bb,
