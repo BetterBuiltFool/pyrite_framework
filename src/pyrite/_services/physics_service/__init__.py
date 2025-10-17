@@ -131,7 +131,8 @@ class PhysicsServiceProvider(ServiceProvider[PhysicsService]):
         cls, area: RectLike, shape_filter: Filter = Filter(0, MASK_ALL, MASK_ALL)
     ) -> list[Shape]:
         """
-        Finds all shapes within a rectangular, axis-aligned area.
+        Finds all shapes whose bounding boxes are within a rectangular,
+        axis-aligned area.
 
         :param area: An area, in world space, to search
         :param shape_filter: A filter object used to filter out undesired shapes for
