@@ -260,7 +260,11 @@ class PymunkPhysicsService(PhysicsService):
             self.space.remove(shape)
         for body in self.space.bodies:
             self.space.remove(body)
+
         self.space.step(0)  # To force the space to update.
+
+        self.colliders = WeakValueDictionary()
+        self.bodies = WeakValueDictionary()
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
