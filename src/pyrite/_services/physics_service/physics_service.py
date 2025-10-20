@@ -150,25 +150,14 @@ class PymunkPhysicsService(PhysicsService):
         self.comp_handler.separate = separate
 
     def transfer(self, target_service: PhysicsService):
+        self.clear()
         for body in self.bodies.values():
-
-            # Remove the bodies and constraints from the old space.
-            self.space.remove(body.body)
-            for constraint in body.constraints:
-                self.space.remove(constraint._constraint)
-
             target_service.add_rigidbody(body)
             for constraint in body.constraints:
                 target_service.add_constraint(constraint)
-        for body in self.colliders.values():
 
-            # Remove all shapes from the space
-            collider = ColliderComponent.get(body.owner)
-            assert collider
-            for shape in collider.shapes:
-                self.space.remove(shape._shape)
-
-            target_service.add_collider(body)
+        for collider in self.colliders.values():
+            target_service.add_collider(collider)
             target_service.add_collider_shapes(collider, list(collider.shapes.keys()))
 
     def add_rigidbody(self, rigidbody: RigidbodyComponent):
@@ -252,6 +241,19 @@ class PymunkPhysicsService(PhysicsService):
         )
 
         return [PointInfo.from_query(query) for query in queries]
+
+    def clear(self) -> None:
+        for constraint in self.space.constraints:
+            self.space.remove(constraint)
+        for shape in self.space.shapes:
+            self.space.remove(shape)
+        for body in self.space.bodies:
+            self.space.remove(body)
+
+        self.space.step(0)  # To force the space to update.
+
+        self.colliders.clear()
+        self.bodies.clear()
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
