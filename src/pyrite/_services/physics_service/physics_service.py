@@ -253,6 +253,15 @@ class PymunkPhysicsService(PhysicsService):
 
         return [PointInfo.from_query(query) for query in queries]
 
+    def clear(self) -> None:
+        for constraint in self.space.constraints:
+            self.space.remove(constraint)
+        for shape in self.space.shapes:
+            self.space.remove(shape)
+        for body in self.space.bodies:
+            self.space.remove(body)
+        self.space.step(0)  # To force the space to update.
+
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
         for shape in shapes:
