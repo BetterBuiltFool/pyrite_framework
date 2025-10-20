@@ -263,8 +263,8 @@ class PymunkPhysicsService(PhysicsService):
 
         self.space.step(0)  # To force the space to update.
 
-        self.colliders = WeakValueDictionary()
-        self.bodies = WeakValueDictionary()
+        self.colliders.clear()
+        self.bodies.clear()
 
     def clear_collider_shapes(self, collider: ColliderComponent) -> set[Shape]:
         shapes = set(collider.shapes.keys())
