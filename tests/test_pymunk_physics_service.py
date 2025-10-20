@@ -55,6 +55,35 @@ class TestPymunkPhysicsService(unittest.TestCase):
 
         PhysicsService.hotswap(self.physics_service)
 
+    def test_clear(self) -> None:
+        collider_owner = Empty()
+
+        test_shape = Circle(None, 10)
+        test_shape_2 = Circle(None, 15)
+        collider = ColliderComponent(collider_owner, [test_shape, test_shape_2])
+
+        self.assertIn(collider_owner.rigidbody.body, self.physics_service.space.bodies)
+        self.assertIn(test_shape._shape, self.physics_service.space.shapes)
+        self.assertIn(test_shape_2._shape, self.physics_service.space.shapes)
+
+        self.assertIn(collider_owner.rigidbody, self.physics_service.bodies.values())
+        self.assertIn(collider, self.physics_service.colliders.values())
+
+        self.physics_service.clear()
+
+        self.assertNotIn(
+            collider_owner.rigidbody.body, self.physics_service.space.bodies
+        )
+        self.assertNotIn(test_shape._shape, self.physics_service.space.shapes)
+        self.assertNotIn(test_shape_2._shape, self.physics_service.space.shapes)
+
+        self.assertNotIn(collider_owner.rigidbody, self.physics_service.bodies.values())
+        self.assertNotIn(collider, self.physics_service.colliders.values())
+
+        self.assertIsNone(collider_owner.rigidbody.body.space)
+        self.assertIsNone(test_shape._shape.space)
+        self.assertIsNone(test_shape_2._shape.space)
+
     def test_remove_collider_shape(self):
         collider_owner = Empty()
 
