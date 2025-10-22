@@ -3,6 +3,9 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+import pygame
+from pygame import Vector2
+
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
 from pyrite.enum import Layer
@@ -15,6 +18,7 @@ from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.protocols import (
         HasTransform,
@@ -147,6 +151,21 @@ class BaseCamera(Camera):
 
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
+
+    def get_mouse_position(self, viewport: Viewport | None = None) -> Vector2:
+        screen_pos = pygame.mouse.get_pos()
+        if not viewport:
+            if len(self._viewports) < 1:
+                raise RuntimeError(
+                    f"{self} does not have a valid viewport and cannot see the cursor."
+                    " Only cameras that render to the window can call"
+                    " get_mouse_position."
+                )
+            viewport = self._viewports[0]
+        return self._get_mouse_position(viewport, screen_pos)
+
+    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Vector2:
+        return Vector2(0, 0)
 
     # def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
     #     return CameraService.screen_to_world(self, point, viewport_index)
