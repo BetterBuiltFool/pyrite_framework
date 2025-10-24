@@ -71,3 +71,17 @@ class OrthoProjection(Projection):
             y_scaled - center.y,
             z_scaled + center.z,
         )
+
+    def eye_to_ndc(self, eye_coords: Vector3) -> Vector3:
+        rect = self.projection_rect
+        center = Vector3(*rect.center, self.center_z)
+        offset = (
+            eye_coords.x - center.x,
+            eye_coords.y + center.y,
+            eye_coords.z - center.z,
+        )
+        return Vector3(
+            offset[0] / (rect.width / 2),
+            offset[1] / (rect.height / 2),
+            offset[2] / (self.z_depth / 2),
+        )
