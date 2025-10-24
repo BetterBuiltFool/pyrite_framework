@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect
+from pygame import Rect, Vector3
 
 from pyrite._types.projection import Projection
 
@@ -55,3 +55,19 @@ class OrthoProjection(Projection):
     @property
     def z_depth(self) -> float:
         return self._z_far - self._z_near
+
+    @property
+    def center_z(self) -> float:
+        return self._z_far - (self.z_depth / 2)
+
+    def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
+        rect = self.projection_rect
+        center = Vector3(*rect.center, self.center_z)
+        x_scaled = ndc_coords.x * (rect.width / 2)
+        y_scaled = ndc_coords.y * (rect.height / 2)
+        z_scaled = ndc_coords.z * (self.z_depth / 2)
+        return Vector3(
+            x_scaled + center.x,
+            y_scaled - center.y,
+            z_scaled + center.z,
+        )
