@@ -185,8 +185,14 @@ class DefaultCameraService(CameraService):
         return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
-        # TODO Implement
-        return super().from_eye(camera, point)
+        far_plane_center = camera.projection.far_plane.center
+        far_plane_center = (
+            far_plane_center[0] / camera.zoom_level,
+            far_plane_center[1] / camera.zoom_level,
+        )
+        local_transform = point.copy()
+        local_transform.position = point.position - far_plane_center
+        return local_transform
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
         # Mkae a copy of point to avoid mutation
