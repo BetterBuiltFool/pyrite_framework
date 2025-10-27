@@ -13,6 +13,7 @@ from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
 from pyrite._component.transform_component import TransformComponent
+from pyrite._transform.transform import Transform
 from pyrite._types.camera import Camera
 from pyrite._types.renderable import Renderable
 
@@ -27,7 +28,6 @@ if TYPE_CHECKING:
         TransformLike,
     )
     from pyrite._types.projection import Projection
-    from pyrite._transform.transform import Transform
 
 
 class BaseCamera(Camera):
@@ -165,7 +165,9 @@ class BaseCamera(Camera):
         return self._get_mouse_position(viewport, screen_pos)
 
     def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Vector2:
-        return Vector2(0, 0)
+        ndc_coords = viewport.screen_to_ndc(screen_pos)
+        eye_coords = self.projection.ndc_to_eye(ndc_coords)
+        return CameraService.from_eye(self, Transform(eye_coords.xy)).position
 
     # def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
     #     return CameraService.screen_to_world(self, point, viewport_index)
