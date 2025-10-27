@@ -3,12 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector3
+from pygame import Rect, Vector3, Vector2
 
 from pyrite._types.projection import Projection
 
 if TYPE_CHECKING:
-    from pygame.typing import RectLike
+    from pygame.typing import RectLike, Point
 
 
 class OrthoProjection(Projection):
@@ -59,6 +59,15 @@ class OrthoProjection(Projection):
     @property
     def center_z(self) -> float:
         return self._z_far - (self.z_depth / 2)
+
+    def local_to_eye(self, local_point: Point, zoom_level: float = 1) -> Vector3:
+        far_plane_center = self.far_plane.center
+        far_plane_center = (
+            far_plane_center[0] / zoom_level,
+            far_plane_center[1] / zoom_level,
+        )
+        eye_position = Vector2(local_point) + far_plane_center
+        return Vector3(eye_position.x, eye_position.y, 0)
 
     def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
         rect = self.projection_rect
