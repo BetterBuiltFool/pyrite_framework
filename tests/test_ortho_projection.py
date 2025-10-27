@@ -190,6 +190,36 @@ class TestOrthoProjection(unittest.TestCase):
 
                 self.assertEqual(eye_coords, expected)
 
+    def test_eye_to_local(self) -> None:
+        test_params: dict[
+            str, tuple[OrthoProjection, LocalCoords, EyeCoords, ZoomLevel]
+        ] = {
+            "3/4 projection, local 0 coords": (
+                THREE_QUART_800X600,
+                ZERO_POINT,
+                Vector3(200, 150, 0),
+                1,
+            ),
+            "3/4 projection, counter local coords": (
+                THREE_QUART_800X600,
+                Vector2(-200, -150),
+                ZERO_3D,
+                1,
+            ),
+            "Centered projection, off center camera, origin test transform": (
+                CENTERED_800X600,
+                ZERO_POINT,
+                ZERO_3D,
+                1,
+            ),
+        }
+
+        for case, (projection, expected, eye_coords, zoom) in test_params.items():
+            with self.subTest(i=case):
+                local_coords = projection.eye_to_local(eye_coords, zoom)
+
+                self.assertEqual(local_coords, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
