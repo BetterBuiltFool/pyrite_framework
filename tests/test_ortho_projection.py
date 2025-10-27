@@ -3,23 +3,28 @@ from __future__ import annotations
 import unittest
 from typing import TYPE_CHECKING
 
-from pygame import Vector3
+from pygame import Rect, Vector2, Vector3
 
 from pyrite._camera.ortho_projection import OrthoProjection
 
 if TYPE_CHECKING:
-    # from pyrite._types.projection import Projection
-    pass
+    type LocalCoords = Vector2
+    type EyeCoords = Vector3
+    type NDCCoords = Vector3
+    type ZoomLevel = float
 
 CENTERED_100_SQUARE = OrthoProjection((-50, -50, 100, 100))
 CORNER_100_SQUARE = OrthoProjection((0, 0, 100, 100))
 CENTERED_200X100 = OrthoProjection((-100, -50, 200, 100))
 
+CENTERED_800X600 = OrthoProjection(Rect(-400, -300, 800, 600))
+THREE_QUART_800X600 = OrthoProjection(Rect(-200, -150, 800, 600))
+
+ZERO_POINT = Vector2(0)
+ZERO_3D = Vector3(0)
+
 
 class TestOrthoProjection(unittest.TestCase):
-
-    def setUp(self) -> None:
-        pass
 
     def test_ndc_to_eye(self) -> None:
 
@@ -154,6 +159,36 @@ class TestOrthoProjection(unittest.TestCase):
                 result = projection.eye_to_ndc(eye_coords)
 
                 self.assertEqual(result, expected_coords)
+
+    def test_local_to_eye(self) -> None:
+        test_params: dict[
+            str, tuple[OrthoProjection, LocalCoords, EyeCoords, ZoomLevel]
+        ] = {
+            "3/4 projection, local 0 coords": (
+                THREE_QUART_800X600,
+                ZERO_POINT,
+                Vector3(200, 150, 0),
+                1,
+            ),
+            "3/4 projection, counter local coords": (
+                THREE_QUART_800X600,
+                Vector2(-200, -150),
+                ZERO_3D,
+                1,
+            ),
+            "Centered projection, off center camera, origin test transform": (
+                CENTERED_800X600,
+                ZERO_POINT,
+                ZERO_3D,
+                1,
+            ),
+        }
+
+        for case, (projection, local_coords, expected, zoom) in test_params.items():
+            with self.subTest(i=case):
+                eye_coords = projection.local_to_eye(local_coords, zoom)
+
+                self.assertEqual(eye_coords, expected)
 
 
 if __name__ == "__main__":
