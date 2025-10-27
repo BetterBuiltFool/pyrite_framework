@@ -69,6 +69,14 @@ class OrthoProjection(Projection):
         eye_position = Vector2(local_point) + far_plane_center
         return Vector3(eye_position.x, eye_position.y, 0)
 
+    def eye_to_local(self, eye_coords: Vector3, zoom_level: float = 1) -> Vector2:
+        far_plane_center = self.far_plane.center
+        far_plane_center = (
+            far_plane_center[0] / zoom_level,
+            far_plane_center[1] / zoom_level,
+        )
+        return eye_coords.xy - far_plane_center
+
     def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
         rect = self.projection_rect
         center = Vector3(*rect.center, self.center_z)
