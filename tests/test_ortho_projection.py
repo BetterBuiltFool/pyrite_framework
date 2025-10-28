@@ -182,6 +182,24 @@ class TestOrthoProjection(unittest.TestCase):
                 ZERO_3D,
                 1,
             ),
+            "3/4 projection, local 0 coords, zoom 2x": (
+                THREE_QUART_800X600,
+                ZERO_POINT,
+                Vector3(100, 75, 0),
+                2,
+            ),
+            "3/4 projection, counter local coords, zoom 2x": (
+                THREE_QUART_800X600,
+                Vector2(-100, -75),
+                ZERO_3D,
+                2,
+            ),
+            "Centered projection, off center camera, origin test transform, zoom 2x": (
+                CENTERED_800X600,
+                ZERO_POINT,
+                ZERO_3D,
+                2,
+            ),
         }
 
         for case, (projection, local_coords, expected, zoom) in test_params.items():
@@ -211,6 +229,24 @@ class TestOrthoProjection(unittest.TestCase):
                 ZERO_POINT,
                 ZERO_3D,
                 1,
+            ),
+            "3/4 projection, local 0 coords, zoom 2x": (
+                THREE_QUART_800X600,
+                ZERO_POINT,
+                Vector3(100, 75, 0),
+                2,
+            ),
+            "3/4 projection, counter local coords, zoom 2x": (
+                THREE_QUART_800X600,
+                Vector2(-100, -75),
+                ZERO_3D,
+                2,
+            ),
+            "Centered projection, off center camera, origin test transform, zoom 2x": (
+                CENTERED_800X600,
+                ZERO_POINT,
+                ZERO_3D,
+                2,
             ),
         }
 
