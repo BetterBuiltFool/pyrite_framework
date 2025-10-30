@@ -4,8 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pygame import Rect, Vector2, Vector3
-    from pygame.typing import Point
+    from pygame import Rect, Vector3
 
 
 class Projection(ABC):
@@ -41,27 +40,6 @@ class Projection(ABC):
     def z_depth(self) -> float:
         """
         Total depth of the projected area.
-        """
-
-    @abstractmethod
-    def local_to_eye(self, local_point: Point, zoom_level: float = 1) -> Vector3:
-        """
-        Converts from a position in local space to the camera to the eye coordinates of
-        the projection.
-
-        :param local_point: A point in camera-local space
-        :param zoom_level: The zoom level of the camera, defaults to 1
-        :return: A point in 3D eye space
-        """
-
-    @abstractmethod
-    def eye_to_local(self, eye_coords: Vector3, zoom_level: float = 1) -> Vector2:
-        """
-        Converts an eye-coordinate position to the local space of the camera.
-
-        :param eye_coords: A point in 3D eye space
-        :param zoom_level: The zoom level of the camera, defaults to 1
-        :return: A point in camera-local space
         """
 
     @abstractmethod
