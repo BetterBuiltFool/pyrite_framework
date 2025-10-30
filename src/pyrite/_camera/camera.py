@@ -167,7 +167,7 @@ class BaseCamera(Camera):
     def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Vector2:
         ndc_coords = viewport.screen_to_ndc(screen_pos)
         eye_coords = self.projection.ndc_to_eye(ndc_coords)
-        return eye_coords.xy
+        return self.projection.eye_to_local(eye_coords, self.zoom_level)
 
     def zoom(self, zoom_level: float):
         CameraService.zoom(self, zoom_level)
