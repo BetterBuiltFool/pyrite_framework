@@ -58,6 +58,7 @@ class BaseCamera(Camera):
         else:
             self.transform = TransformComponent.from_attributes(self, position)
         self._projection = projection
+        self._active_projection = projection
         if render_targets is None:
             render_targets = [Viewport.DEFAULT]
         if not isinstance(render_targets, Sequence):
@@ -96,11 +97,12 @@ class BaseCamera(Camera):
 
     @property
     def projection(self) -> Projection:
-        return self._projection
+        return self._active_projection
 
     @projection.setter
     def projection(self, projection: Projection) -> None:
         self._projection = projection
+        self._active_projection = self._projection.zoom(self.zoom_level)
 
     @property
     def zoom_level(self):
@@ -178,4 +180,5 @@ class BaseCamera(Camera):
         return self.projection.eye_to_local(eye_coords, self.zoom_level)
 
     def zoom(self, zoom_level: float):
+        self._active_projection = self._projection.zoom(zoom_level)
         CameraService.zoom(self, zoom_level)
