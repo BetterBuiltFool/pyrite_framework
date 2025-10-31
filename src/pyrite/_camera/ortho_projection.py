@@ -60,6 +60,14 @@ class OrthoProjection(Projection):
     def center_z(self) -> float:
         return self._z_far - (self.z_depth / 2)
 
+    def __eq__(self, value: object) -> bool:
+        return (
+            isinstance(value, OrthoProjection)
+            and value.projection_rect == self.projection_rect
+            and self.z_near == value.z_near
+            and self.z_far == value.z_far
+        )
+
     def local_to_eye(self, local_point: Point, zoom_level: float = 1) -> Vector3:
         far_plane_center = self.far_plane.center
         far_plane_center = (
