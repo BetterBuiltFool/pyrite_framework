@@ -82,3 +82,13 @@ class Projection(ABC):
         :param eye_coords: A 3D point in the projection's local space.
         :return: The equivalent point in NDC space.
         """
+
+    @abstractmethod
+    def zoom(self, zoom_factor: float) -> Projection:
+        """
+        Returns a new projection with the same characteristics as the current one, as
+        if zoomed in by the given degree.
+
+        :param zoom_factor: The degree of zooming performed
+        :return: The new, zoomed projection.
+        """
