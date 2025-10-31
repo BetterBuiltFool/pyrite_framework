@@ -110,3 +110,14 @@ class OrthoProjection(Projection):
             offset[1] / (rect.height / 2),
             offset[2] / (self.z_depth / 2),
         )
+
+    def zoom(self, zoom_factor: float) -> OrthoProjection:
+        rect_center = self.projection_rect.center
+        new_rect = Rect(
+            0,
+            0,
+            self.projection_rect.width / zoom_factor,
+            self.projection_rect.height / zoom_factor,
+        )
+        new_rect.center = rect_center
+        return OrthoProjection(new_rect, self.z_near, self.z_far)

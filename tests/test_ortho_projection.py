@@ -256,6 +256,32 @@ class TestOrthoProjection(unittest.TestCase):
 
                 self.assertEqual(local_coords, expected)
 
+    def test_zoom(self) -> None:
+
+        test_params: dict[str, tuple[OrthoProjection, ZoomLevel, OrthoProjection]] = {
+            "Centered, zoom level 2": (
+                CENTERED_100_SQUARE,
+                2,
+                OrthoProjection((-25, -25, 50, 50)),
+            ),
+            "Corner, zoom level 2": (
+                CORNER_100_SQUARE,
+                2,
+                OrthoProjection((25, 25, 50, 50)),
+            ),
+            "Centered 200x100, zoom level 2": (
+                CENTERED_200X100,
+                2,
+                OrthoProjection((-50, -25, 100, 50)),
+            ),
+        }
+
+        for case, (projection, zoom_level, expected) in test_params.items():
+            with self.subTest(i=case):
+                zoom_proj = projection.zoom(zoom_level)
+
+                self.assertEqual(zoom_proj, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
