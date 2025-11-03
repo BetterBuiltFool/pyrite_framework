@@ -60,6 +60,9 @@ class OrthoProjection(Projection):
     def center_z(self) -> float:
         return self._z_far - (self.z_depth / 2)
 
+    def __repr__(self) -> str:
+        return f"<OrthoProjection {self.projection_rect}, {self.z_near}, {self.z_far}>"
+
     def __eq__(self, value: object) -> bool:
         return (
             isinstance(value, OrthoProjection)
