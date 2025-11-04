@@ -27,6 +27,7 @@ Camera with a centered projection, with world position == (0, 0)
 """
 
 ORIGIN: Point = (0, 0)
+SCREEN_CENTER: Point = (50, 50)
 
 Viewport.DEFAULT._update_display_rect((100, 100))
 
@@ -38,7 +39,7 @@ class TestScreenToWorld(unittest.TestCase):
             "CenteredCam, default Viewport": (
                 CENTERED_CAMERA,
                 Viewport.DEFAULT,
-                ORIGIN,
+                SCREEN_CENTER,
                 ORIGIN,
             )
         }
