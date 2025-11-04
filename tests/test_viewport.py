@@ -9,8 +9,9 @@ from pyrite._rendering.viewport import Viewport
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from pyrite.types import Point3D
 
-    type NDCCoords = Point
+    type NDCCoords = Point3D
     type ScreenCoords = Point
 
 display_size: Point = (600, 800)
@@ -46,26 +47,26 @@ class TestViewport(unittest.TestCase):
     def test_ndc_to_screen(self):
 
         test_params: dict[str, tuple[FRect, NDCCoords, ScreenCoords]] = {
-            "Full screen, top left point": (fullscreen, (-1, 1), (0, 0)),
-            "Full screen, bottom right point": (fullscreen, (1, -1), display_size),
+            "Full screen, top left point": (fullscreen, (-1, 1, 0), (0, 0)),
+            "Full screen, bottom right point": (fullscreen, (1, -1, 0), display_size),
             "Full screen, center point": (
                 fullscreen,
-                (0, 0),
+                (0, 0, 0),
                 screen_center,
             ),
             "Bottomright quadrant screen, top left point": (
                 bottom_right,
-                (-1, 1),
+                (-1, 1, 0),
                 screen_center,
             ),
             "Bottomright quadrant screen, bottom right point": (
                 bottom_right,
-                (1, -1),
+                (1, -1, 0),
                 display_size,
             ),
             "Bottomright quadrant screen, center point": (
                 bottom_right,
-                (0, 0),
+                (0, 0, 0),
                 (3 * display_size[0] / 4, 3 * display_size[1] / 4),
             ),
         }
@@ -83,23 +84,23 @@ class TestViewport(unittest.TestCase):
     def test_screen_to_ndc(self):
 
         test_params: dict[str, tuple[FRect, ScreenCoords, NDCCoords]] = {
-            "Full screen, top left point": (fullscreen, (0, 0), (-1, 1)),
-            "Full screen, bottom right point": (fullscreen, display_size, (1, -1)),
-            "Full screen, center point": (fullscreen, screen_center, (0, 0)),
+            "Full screen, top left point": (fullscreen, (0, 0), (-1, 1, 0)),
+            "Full screen, bottom right point": (fullscreen, display_size, (1, -1, 0)),
+            "Full screen, center point": (fullscreen, screen_center, (0, 0, 0)),
             "Bottomright quadrant screen, top left point": (
                 bottom_right,
                 screen_center,
-                (-1, 1),
+                (-1, 1, 0),
             ),
             "Bottomright quadrant screen, bottom right point": (
                 bottom_right,
                 display_size,
-                (1, -1),
+                (1, -1, 0),
             ),
             "Bottomright quadrant screen, center point": (
                 bottom_right,
                 (3 * display_size[0] / 4, 3 * display_size[1] / 4),
-                (0, 0),
+                (0, 0, 0),
             ),
         }
 
