@@ -22,7 +22,9 @@ lower_right = FRect(-1, 1, 1, 1)
 bottom_right = FRect(0, 0, 1, 1)
 upper_left = FRect(-1, 1, 1, 1)
 
-screen_center = (display_size[0] / 2, display_size[1] / 2)
+SCREEN_CENTER: ScreenCoords = (display_size[0] / 2, display_size[1] / 2)
+ORIGIN_3D: NDCCoords = (0, 0, 0)
+TOPLEFT: ScreenCoords = (0, 0)
 
 
 class TestViewport(unittest.TestCase):
@@ -47,17 +49,17 @@ class TestViewport(unittest.TestCase):
     def test_ndc_to_screen(self):
 
         test_params: dict[str, tuple[FRect, NDCCoords, ScreenCoords]] = {
-            "Full screen, top left point": (fullscreen, (-1, 1, 0), (0, 0)),
+            "Full screen, top left point": (fullscreen, (-1, 1, 0), TOPLEFT),
             "Full screen, bottom right point": (fullscreen, (1, -1, 0), display_size),
             "Full screen, center point": (
                 fullscreen,
-                (0, 0, 0),
-                screen_center,
+                ORIGIN_3D,
+                SCREEN_CENTER,
             ),
             "Bottomright quadrant screen, top left point": (
                 bottom_right,
                 (-1, 1, 0),
-                screen_center,
+                SCREEN_CENTER,
             ),
             "Bottomright quadrant screen, bottom right point": (
                 bottom_right,
@@ -66,7 +68,7 @@ class TestViewport(unittest.TestCase):
             ),
             "Bottomright quadrant screen, center point": (
                 bottom_right,
-                (0, 0, 0),
+                ORIGIN_3D,
                 (3 * display_size[0] / 4, 3 * display_size[1] / 4),
             ),
         }
@@ -84,12 +86,12 @@ class TestViewport(unittest.TestCase):
     def test_screen_to_ndc(self):
 
         test_params: dict[str, tuple[FRect, ScreenCoords, NDCCoords]] = {
-            "Full screen, top left point": (fullscreen, (0, 0), (-1, 1, 0)),
+            "Full screen, top left point": (fullscreen, TOPLEFT, (-1, 1, 0)),
             "Full screen, bottom right point": (fullscreen, display_size, (1, -1, 0)),
-            "Full screen, center point": (fullscreen, screen_center, (0, 0, 0)),
+            "Full screen, center point": (fullscreen, SCREEN_CENTER, ORIGIN_3D),
             "Bottomright quadrant screen, top left point": (
                 bottom_right,
-                screen_center,
+                SCREEN_CENTER,
                 (-1, 1, 0),
             ),
             "Bottomright quadrant screen, bottom right point": (
@@ -100,7 +102,7 @@ class TestViewport(unittest.TestCase):
             "Bottomright quadrant screen, center point": (
                 bottom_right,
                 (3 * display_size[0] / 4, 3 * display_size[1] / 4),
-                (0, 0, 0),
+                ORIGIN_3D,
             ),
         }
 
