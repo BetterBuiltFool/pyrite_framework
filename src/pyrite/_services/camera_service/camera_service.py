@@ -154,9 +154,10 @@ class DefaultCameraService(CameraService):
         return point.localize(point, camera.transform.world())
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        far_plane_center = camera.projection.far_plane.center
+        local_point = point.position
+        eye_point = camera.projection.local_to_eye(local_point)
         local_transform = point.copy()
-        local_transform.position = point.position + far_plane_center
+        local_transform.position = eye_point.xy
         return local_transform
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:
@@ -172,19 +173,22 @@ class DefaultCameraService(CameraService):
         return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
-        far_plane_center = camera.projection.far_plane.center
+        eye_point = point.position
+        local_point = camera.projection.eye_to_local(
+            Vector3(eye_point.x, eye_point.y, 0)
+        )
         local_transform = point.copy()
-        local_transform.position = point.position - far_plane_center
+        local_transform.position = local_point
         return local_transform
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
-        # Mkae a copy of point to avoid mutation
-        point = point.copy()
-        # Find the adjusted center of the camera's far plane
-        far_plane_center = camera.projection.far_plane.center
-        # Apply the offset to return center to origin
-        point.position -= far_plane_center
-        # Generalize to world coords
+        # # Mkae a copy of point to avoid mutation
+        # point = point.copy()
+        # # Find the adjusted center of the camera's far plane
+        # far_plane_center = camera.projection.far_plane.center
+        # # Apply the offset to return center to origin
+        # point.position -= far_plane_center
+        # # Generalize to world coords
         return point.generalize(point, camera.transform.world())
 
     def world_to_screen(
