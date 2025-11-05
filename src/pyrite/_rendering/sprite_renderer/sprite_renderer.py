@@ -14,6 +14,8 @@ from pyrite._types.renderer import Renderer
 from pyrite._types.sprite import Sprite
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
+
     from pyrite._types.protocols import TransformLike
     from pyrite._transform.transform import Transform
 
@@ -92,18 +94,39 @@ class DefaultSpriteRenderer(SpriteRenderer):
         surface_rect.center = position
 
         draw_transform = transform.copy()
-        draw_transform.position = position = surface_rect.bottomleft
+        draw_transform.position = surface_rect.bottomleft
 
         self._draw_to_camera(target, surface, draw_transform)
+
+    def _get_surface_pos(self, camera: Camera, transform: Transform) -> Point:
+
+        local_transform = camera.to_local(transform)
+        eye_coords = camera.to_eye(local_transform)
+
+        # Temporary
+        return eye_coords.position
 
     def _draw_to_camera(
         self, camera: Camera, sprite_surface: Surface, transform: Transform
     ):
         camera_service = cast(DefaultCameraService, CameraService._service)
         surface = camera_service._surfaces[camera]
-        local_position = camera.to_eye(camera.to_local(transform)).position
-        local_position[1] = surface.size[1] - local_position[1]
-        surface.blit(sprite_surface, local_position)
+
+        # local_position = camera.to_eye(camera.to_local(transform)).position
+        # local_position = local_position - camera.projection.far_plane.topleft
+        # local_position.y = surface.size[1] - local_position.y
+        # ^ It's gotta be something to do with here.
+        # what we need to do:
+        # 1. Take a world pos
+        # 2. Convert it to camera-local
+        # 3. Find out where it belongs in the projection
+        # 4. Convert that to the surface location
+        # 5. Blit
+        # I think I might be missing step 4.
+        # Surface rect is (0, 0, farplane.size)
+        # So we should just need to shift
+
+        surface.blit(sprite_surface, self._get_surface_pos(camera, transform))
 
     def redraw_sprite(self, sprite: Sprite) -> Surface:
         return self._redraw_sprite(sprite)
