@@ -167,13 +167,13 @@ class TestOrthoProjection(unittest.TestCase):
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
-                Vector3(200, 150, 0),
+                ZERO_3D,
                 1,
             ),
-            "3/4 projection, counter local coords": (
+            "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
-                ZERO_3D,
+                Vector3(-200, -150, 0),
                 1,
             ),
             "Centered projection, off center camera, origin test transform": (
@@ -197,13 +197,13 @@ class TestOrthoProjection(unittest.TestCase):
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
-                Vector3(200, 150, 0),
+                ZERO_3D,
                 1,
             ),
-            "3/4 projection, counter local coords": (
+            "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
-                ZERO_3D,
+                Vector3(-200, -150, 0),
                 1,
             ),
             "Centered projection, off center camera, origin test transform": (
