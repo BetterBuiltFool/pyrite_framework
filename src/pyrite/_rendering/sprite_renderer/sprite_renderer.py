@@ -5,7 +5,7 @@ from typing import cast, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
-from pygame import Surface
+from pygame import Surface, Vector2
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._services.camera_service.camera_service import DefaultCameraService
@@ -103,8 +103,12 @@ class DefaultSpriteRenderer(SpriteRenderer):
         local_transform = camera.to_local(transform)
         eye_coords = camera.to_eye(local_transform)
 
-        # Temporary
-        return eye_coords.position
+        eye_position = eye_coords.position
+        screen_pos = Vector2(
+            eye_position.x,
+            -eye_position.y,
+        )
+        return screen_pos - camera.projection.far_plane.topleft
 
     def _draw_to_camera(
         self, camera: Camera, sprite_surface: Surface, transform: Transform
