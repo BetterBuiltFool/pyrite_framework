@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 class OrthoProjection(Projection):
     """
     An orthographic projection data object, useful for 2D applications.
+
+    Height and width are in pixels. (0, 0) in the projection will be local (0, 0) for
+    the assigned camera.
+
+    Follows pygame Rect rules, so +y = down.
     """
 
     def __init__(
@@ -72,21 +77,14 @@ class OrthoProjection(Projection):
         )
 
     def local_to_eye(self, local_point: Point, zoom_level: float = 1) -> Vector3:
-        far_plane_center = self.far_plane.center
-        # far_plane_center = (
-        #     far_plane_center[0] / zoom_level,
-        #     far_plane_center[1] / zoom_level,
-        # )
-        eye_position = Vector2(local_point) + far_plane_center
-        return Vector3(eye_position.x, eye_position.y, 0)
+        # TODO Remove zoom_level param
+        # TODO Convert to Transform.
+        return Vector3(local_point[0], local_point[1], 0)
 
     def eye_to_local(self, eye_coords: Vector3, zoom_level: float = 1) -> Vector2:
-        far_plane_center = self.far_plane.center
-        # far_plane_center = (
-        #     far_plane_center[0] / zoom_level,
-        #     far_plane_center[1] / zoom_level,
-        # )
-        return eye_coords.xy - far_plane_center
+        # TODO Remove zoom_level param
+        # TODO Convert to Transform.
+        return eye_coords.xy
 
     def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
         rect = self.projection_rect
