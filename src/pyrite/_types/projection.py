@@ -4,8 +4,10 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pygame import Rect, Vector2, Vector3
-    from pygame.typing import Point
+    from pygame import Rect, Vector3
+
+    from pyrite._transform.transform import Transform
+    from pyrite._types.protocols import TransformLike
 
 
 class Projection(ABC):
@@ -44,17 +46,17 @@ class Projection(ABC):
         """
 
     @abstractmethod
-    def local_to_eye(self, local_point: Point) -> Vector3:
+    def local_to_eye(self, local_coords: TransformLike) -> Transform:
         """
         Converts from a position in local space to the camera to the eye coordinates of
         the projection.
 
-        :param local_point: A point in camera-local space
+        :param local_coords: A point in camera-local space
         :return: A point in 3D eye space
         """
 
     @abstractmethod
-    def eye_to_local(self, eye_coords: Vector3) -> Vector2:
+    def eye_to_local(self, eye_coords: TransformLike) -> Transform:
         """
         Converts an eye-coordinate position to the local space of the camera.
 

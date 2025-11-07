@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 from pygame import Rect, Vector2, Vector3
 
 from pyrite._camera.ortho_projection import OrthoProjection
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     type LocalCoords = Vector2
-    type EyeCoords = Vector3
+    type EyeCoords = Vector2
     type NDCCoords = Vector3
     type ZoomLevel = float
 
@@ -165,50 +166,50 @@ class TestOrthoProjection(unittest.TestCase):
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
-                ZERO_3D,
+                ZERO_POINT,
             ),
             "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
-                Vector3(-200, -150, 0),
+                Vector2(-200, -150),
             ),
             "Centered projection, off center camera, origin test transform": (
                 CENTERED_800X600,
                 ZERO_POINT,
-                ZERO_3D,
+                ZERO_POINT,
             ),
         }
 
         for case, (projection, local_coords, expected) in test_params.items():
             with self.subTest(i=case):
-                eye_coords = projection.local_to_eye(local_coords)
+                eye_coords = projection.local_to_eye(Transform(local_coords))
 
-                self.assertEqual(eye_coords, expected)
+                self.assertEqual(eye_coords.position, expected)
 
     def test_eye_to_local(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
-                ZERO_3D,
+                ZERO_POINT,
             ),
             "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
-                Vector3(-200, -150, 0),
+                Vector2(-200, -150),
             ),
             "Centered projection, off center camera, origin test transform": (
                 CENTERED_800X600,
                 ZERO_POINT,
-                ZERO_3D,
+                ZERO_POINT,
             ),
         }
 
         for case, (projection, expected, eye_coords) in test_params.items():
             with self.subTest(i=case):
-                local_coords = projection.eye_to_local(eye_coords)
+                local_coords = projection.eye_to_local(Transform(eye_coords))
 
-                self.assertEqual(local_coords, expected)
+                self.assertEqual(local_coords.position, expected)
 
     def test_zoom(self) -> None:
 

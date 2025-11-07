@@ -3,12 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector3, Vector2
+from pygame import Rect, Vector3
 
 from pyrite._types.projection import Projection
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
-    from pygame.typing import RectLike, Point
+    from pygame.typing import RectLike
+    from pyrite._types.protocols import TransformLike
 
 
 class OrthoProjection(Projection):
@@ -76,13 +78,11 @@ class OrthoProjection(Projection):
             and self.z_far == value.z_far
         )
 
-    def local_to_eye(self, local_point: Point) -> Vector3:
-        # TODO Convert to Transform.
-        return Vector3(local_point[0], local_point[1], 0)
+    def local_to_eye(self, local_coords: TransformLike) -> Transform:
+        return Transform(local_coords.position)
 
-    def eye_to_local(self, eye_coords: Vector3) -> Vector2:
-        # TODO Convert to Transform.
-        return eye_coords.xy
+    def eye_to_local(self, eye_coords: TransformLike) -> Transform:
+        return Transform(eye_coords.position)
 
     def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
         rect = self.projection_rect
