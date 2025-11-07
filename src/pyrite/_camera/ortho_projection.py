@@ -76,13 +76,11 @@ class OrthoProjection(Projection):
             and self.z_far == value.z_far
         )
 
-    def local_to_eye(self, local_point: Point, zoom_level: float = 1) -> Vector3:
-        # TODO Remove zoom_level param
+    def local_to_eye(self, local_point: Point) -> Vector3:
         # TODO Convert to Transform.
         return Vector3(local_point[0], local_point[1], 0)
 
-    def eye_to_local(self, eye_coords: Vector3, zoom_level: float = 1) -> Vector2:
-        # TODO Remove zoom_level param
+    def eye_to_local(self, eye_coords: Vector3) -> Vector2:
         # TODO Convert to Transform.
         return eye_coords.xy
 

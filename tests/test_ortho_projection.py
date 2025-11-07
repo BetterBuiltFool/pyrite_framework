@@ -161,62 +161,52 @@ class TestOrthoProjection(unittest.TestCase):
                 self.assertEqual(result, expected_coords)
 
     def test_local_to_eye(self) -> None:
-        test_params: dict[
-            str, tuple[OrthoProjection, LocalCoords, EyeCoords, ZoomLevel]
-        ] = {
+        test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
                 ZERO_3D,
-                1,
             ),
             "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
                 Vector3(-200, -150, 0),
-                1,
             ),
             "Centered projection, off center camera, origin test transform": (
                 CENTERED_800X600,
                 ZERO_POINT,
                 ZERO_3D,
-                1,
             ),
         }
 
-        for case, (projection, local_coords, expected, zoom) in test_params.items():
+        for case, (projection, local_coords, expected) in test_params.items():
             with self.subTest(i=case):
-                eye_coords = projection.local_to_eye(local_coords, zoom)
+                eye_coords = projection.local_to_eye(local_coords)
 
                 self.assertEqual(eye_coords, expected)
 
     def test_eye_to_local(self) -> None:
-        test_params: dict[
-            str, tuple[OrthoProjection, LocalCoords, EyeCoords, ZoomLevel]
-        ] = {
+        test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
             "3/4 projection, local 0 coords": (
                 THREE_QUART_800X600,
                 ZERO_POINT,
                 ZERO_3D,
-                1,
             ),
             "3/4 projection, center coords": (
                 THREE_QUART_800X600,
                 Vector2(-200, -150),
                 Vector3(-200, -150, 0),
-                1,
             ),
             "Centered projection, off center camera, origin test transform": (
                 CENTERED_800X600,
                 ZERO_POINT,
                 ZERO_3D,
-                1,
             ),
         }
 
-        for case, (projection, expected, eye_coords, zoom) in test_params.items():
+        for case, (projection, expected, eye_coords) in test_params.items():
             with self.subTest(i=case):
-                local_coords = projection.eye_to_local(eye_coords, zoom)
+                local_coords = projection.eye_to_local(eye_coords)
 
                 self.assertEqual(local_coords, expected)
 
