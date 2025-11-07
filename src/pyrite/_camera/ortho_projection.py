@@ -120,5 +120,5 @@ class OrthoProjection(Projection):
             self.projection_rect.width / zoom_factor,
             self.projection_rect.height / zoom_factor,
         )
-        new_rect.center = rect_center
+        new_rect.center = rect_center[0] / zoom_factor, rect_center[1] / zoom_factor
         return OrthoProjection(new_rect, self.z_near, self.z_far)

@@ -231,7 +231,7 @@ class TestOrthoProjection(unittest.TestCase):
             "Corner, zoom level 2": (
                 CORNER_100_SQUARE,
                 2,
-                OrthoProjection((25, 25, 50, 50)),
+                OrthoProjection((0, 0, 50, 50)),
             ),
             "Centered 200x100, zoom level 2": (
                 CENTERED_200X100,
