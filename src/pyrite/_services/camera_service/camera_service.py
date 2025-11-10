@@ -154,11 +154,7 @@ class DefaultCameraService(CameraService):
         return point.localize(point, camera.transform.world())
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        local_point = point.position
-        eye_point = camera.projection.local_to_eye(local_point)
-        local_transform = point.copy()
-        local_transform.position = eye_point.xy
-        return local_transform
+        return camera.projection.local_to_eye(point)
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:
         camera_transform = camera.transform.world()
@@ -173,13 +169,7 @@ class DefaultCameraService(CameraService):
         return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
-        eye_point = point.position
-        local_point = camera.projection.eye_to_local(
-            Vector3(eye_point.x, eye_point.y, 0)
-        )
-        local_transform = point.copy()
-        local_transform.position = local_point
-        return local_transform
+        return camera.projection.eye_to_local(point)
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
         # # Mkae a copy of point to avoid mutation
