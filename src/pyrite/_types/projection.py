@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pygame import Rect, Vector3
+    from pygame import Rect
 
     from pyrite._transform.transform import Transform
     from pyrite._types.protocols import TransformLike
@@ -65,7 +65,7 @@ class Projection(ABC):
         """
 
     @abstractmethod
-    def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
+    def ndc_to_eye(self, ndc_coords: TransformLike) -> Transform:
         """
         Converts Normalized Device Coordinates into eye coordinates for the projection.
 
@@ -74,7 +74,7 @@ class Projection(ABC):
         """
 
     @abstractmethod
-    def eye_to_ndc(self, eye_coords: Vector3) -> Vector3:
+    def eye_to_ndc(self, eye_coords: TransformLike) -> Transform:
         """
         Converts a point in the projection's local space into Normalized Device
         Coordinates.

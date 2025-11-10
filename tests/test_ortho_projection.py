@@ -29,137 +29,145 @@ class TestOrthoProjection(unittest.TestCase):
 
     def test_ndc_to_eye(self) -> None:
 
-        params: dict[str, tuple[OrthoProjection, Vector3, Vector3]] = {
+        params: dict[str, tuple[OrthoProjection, Vector2, Vector2]] = {
             "Base Case C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(0, 0, 0),
-                Vector3(0, 0, 0),
+                Vector2(0, 0),
+                Vector2(0, 0),
             ),
             "Top left corner C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(-1, 1, 0),
-                Vector3(-50, 50, 0),
+                Vector2(-1, 1),
+                Vector2(-50, 50),
             ),
             "Bottom Right corner C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(1, -1, 0),
-                Vector3(50, -50, 0),
+                Vector2(1, -1),
+                Vector2(50, -50),
             ),
             "3/4x 3/4y C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(0.5, 0.5, 0),
-                Vector3(25, 25, 0),
+                Vector2(0.5, 0.5),
+                Vector2(25, 25),
             ),
             "Base Case Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(0, 0, 0),
-                Vector3(50, -50, 0),
+                Vector2(0, 0),
+                Vector2(50, -50),
             ),
             "Top left corner Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(-1, 1, 0),
-                Vector3(0, 0, 0),
+                Vector2(-1, 1),
+                Vector2(0, 0),
             ),
             "Bottom Right corner Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(1, -1, 0),
-                Vector3(100, -100, 0),
+                Vector2(1, -1),
+                Vector2(100, -100),
             ),
             "3/4x 3/4y Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(0.5, 0.5, 0),
-                Vector3(75, -25, 0),
+                Vector2(0.5, 0.5),
+                Vector2(75, -25),
             ),
-            "Base Case C2x1": (CENTERED_200X100, Vector3(0, 0, 0), Vector3(0, 0, 0)),
+            "Base Case C2x1": (
+                CENTERED_200X100,
+                Vector2(0, 0),
+                Vector2(0, 0),
+            ),
             "Top left corner C2x1": (
                 CENTERED_200X100,
-                Vector3(-1, 1, 0),
-                Vector3(-100, 50, 0),
+                Vector2(-1, 1),
+                Vector2(-100, 50),
             ),
             "Bottom Right corner C2x1": (
                 CENTERED_200X100,
-                Vector3(1, -1, 0),
-                Vector3(100, -50, 0),
+                Vector2(1, -1),
+                Vector2(100, -50),
             ),
             "3/4x 3/4y C2x1": (
                 CENTERED_200X100,
-                Vector3(0.5, 0.5, 0),
-                Vector3(50, 25, 0),
+                Vector2(0.5, 0.5),
+                Vector2(50, 25),
             ),
         }
 
         for case, (projection, ndc_coords, expected_coords) in params.items():
             with self.subTest(i=case):
-                result = projection.ndc_to_eye(ndc_coords)
+                result = projection.ndc_to_eye(Transform(ndc_coords))
 
-                self.assertEqual(result, expected_coords)
+                self.assertEqual(result.position, expected_coords)
 
     def test_eye_to_ndc(self) -> None:
 
-        params: dict[str, tuple[OrthoProjection, Vector3, Vector3]] = {
+        params: dict[str, tuple[OrthoProjection, Vector2, Vector2]] = {
             "Base Case C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(0, 0, 0),
-                Vector3(0, 0, 0),
+                Vector2(0, 0),
+                Vector2(0, 0),
             ),
             "Top left corner C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(-50, 50, 0),
-                Vector3(-1, 1, 0),
+                Vector2(-50, 50),
+                Vector2(-1, 1),
             ),
             "Bottom Right corner C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(50, -50, 0),
-                Vector3(1, -1, 0),
+                Vector2(50, -50),
+                Vector2(1, -1),
             ),
             "3/4x 3/4y C100S": (
                 CENTERED_100_SQUARE,
-                Vector3(25, 25, 0),
-                Vector3(0.5, 0.5, 0),
+                Vector2(25, 25),
+                Vector2(0.5, 0.5),
             ),
             "Base Case Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(50, -50, 0),
-                Vector3(0, 0, 0),
+                Vector2(50, -50),
+                Vector2(0, 0),
             ),
             "Top left corner Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(0, 0, 0),
-                Vector3(-1, 1, 0),
+                Vector2(0, 0),
+                Vector2(-1, 1),
             ),
             "Bottom Right corner Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(100, -100, 0),
-                Vector3(1, -1, 0),
+                Vector2(100, -100),
+                Vector2(1, -1),
             ),
             "3/4x 3/4y Cr100S": (
                 CORNER_100_SQUARE,
-                Vector3(75, -25, 0),
-                Vector3(0.5, 0.5, 0),
+                Vector2(75, -25),
+                Vector2(0.5, 0.5),
             ),
-            "Base Case C2x1": (CENTERED_200X100, Vector3(0, 0, 0), Vector3(0, 0, 0)),
+            "Base Case C2x1": (
+                CENTERED_200X100,
+                Vector2(0, 0),
+                Vector2(0, 0),
+            ),
             "Top left corner C2x1": (
                 CENTERED_200X100,
-                Vector3(-100, 50, 0),
-                Vector3(-1, 1, 0),
+                Vector2(-100, 50),
+                Vector2(-1, 1),
             ),
             "Bottom Right corner C2x1": (
                 CENTERED_200X100,
-                Vector3(100, -50, 0),
-                Vector3(1, -1, 0),
+                Vector2(100, -50),
+                Vector2(1, -1),
             ),
             "3/4x 3/4y C2x1": (
                 CENTERED_200X100,
-                Vector3(50, 25, 0),
-                Vector3(0.5, 0.5, 0),
+                Vector2(50, 25),
+                Vector2(0.5, 0.5),
             ),
         }
 
         for case, (projection, eye_coords, expected_coords) in params.items():
             with self.subTest(i=case):
-                result = projection.eye_to_ndc(eye_coords)
+                result = projection.eye_to_ndc(Transform(eye_coords.xy))
 
-                self.assertEqual(result, expected_coords)
+                self.assertEqual(result.position, expected_coords)
 
     def test_local_to_eye(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {

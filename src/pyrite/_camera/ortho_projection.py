@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector3
+from pygame import Rect, Vector2
 
 from pyrite._types.projection import Projection
 from pyrite._transform.transform import Transform
@@ -84,31 +84,46 @@ class OrthoProjection(Projection):
     def eye_to_local(self, eye_coords: TransformLike) -> Transform:
         return Transform(eye_coords.position)
 
-    def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
-        rect = self.projection_rect
-        center = Vector3(*rect.center, self.center_z)
-        x_scaled = ndc_coords.x * (rect.width / 2)
-        y_scaled = ndc_coords.y * (rect.height / 2)
-        z_scaled = ndc_coords.z * (self.z_depth / 2)
-        return Vector3(
-            x_scaled + center.x,
-            y_scaled - center.y,
-            z_scaled + center.z,
-        )
+    # def ndc_to_eye(self, ndc_coords: Vector3) -> Vector3:
+    #     rect = self.projection_rect
+    #     center = Vector3(*rect.center, self.center_z)
+    #     x_scaled = ndc_coords.x * (rect.width / 2)
+    #     y_scaled = ndc_coords.y * (rect.height / 2)
+    #     z_scaled = ndc_coords.z * (self.z_depth / 2)
+    #     return Vector3(
+    #         x_scaled + center.x,
+    #         y_scaled - center.y,
+    #         z_scaled + center.z,
+    #     )
 
-    def eye_to_ndc(self, eye_coords: Vector3) -> Vector3:
+    def ndc_to_eye(self, ndc_coords: TransformLike) -> Transform:
         rect = self.projection_rect
-        center = Vector3(*rect.center, self.center_z)
-        offset = (
-            eye_coords.x - center.x,
-            eye_coords.y + center.y,
-            eye_coords.z - center.z,
-        )
-        return Vector3(
-            offset[0] / (rect.width / 2),
-            offset[1] / (rect.height / 2),
-            offset[2] / (self.z_depth / 2),
-        )
+        center = Vector2(rect.center)
+        ndc_position = ndc_coords.position
+        x_scaled = ndc_position.x * (rect.width / 2)
+        y_scaled = ndc_position.y * (rect.height / 2)
+        return Transform((x_scaled + center.x, y_scaled - center.y))
+
+    # def eye_to_ndc(self, eye_coords: Vector3) -> Vector3:
+    #     rect = self.projection_rect
+    #     center = Vector3(*rect.center, self.center_z)
+    #     offset = (
+    #         eye_coords.x - center.x,
+    #         eye_coords.y + center.y,
+    #         eye_coords.z - center.z,
+    #     )
+    #     return Vector3(
+    #         offset[0] / (rect.width / 2),
+    #         offset[1] / (rect.height / 2),
+    #         offset[2] / (self.z_depth / 2),
+    #     )
+
+    def eye_to_ndc(self, eye_coords: TransformLike) -> Transform:
+        rect = self.projection_rect
+        center = Vector2(rect.center)
+        eye_position = eye_coords.position
+        offset = (eye_position.x - center.x, eye_position.y + center.y)
+        return Transform((offset[0] / (rect.width / 2), offset[1] / (rect.height / 2)))
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
         rect_center = self.projection_rect.center
