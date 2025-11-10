@@ -51,7 +51,7 @@ class TestScreenToWorld(unittest.TestCase):
         ) in test_params.items():
             with self.subTest(i=case):
                 local_mouse_pos = camera._get_mouse_position(viewport, screen_point)
-                world_point = camera.to_world(Transform(local_mouse_pos))
+                world_point = camera.to_world(local_mouse_pos)
 
                 self.assertEqual(expected_point, world_point.position)
 

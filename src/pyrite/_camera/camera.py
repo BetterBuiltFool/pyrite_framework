@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Vector2
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
@@ -162,7 +161,7 @@ class BaseCamera(Camera):
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 
-    def get_mouse_position(self, viewport: Viewport | None = None) -> Vector2:
+    def get_mouse_position(self, viewport: Viewport | None = None) -> Transform:
         screen_pos = pygame.mouse.get_pos()
         if not viewport:
             if len(self._viewports) < 1:
@@ -174,10 +173,10 @@ class BaseCamera(Camera):
             viewport = self._viewports[0]
         return self._get_mouse_position(viewport, screen_pos)
 
-    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Vector2:
+    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Transform:
         ndc_coords = viewport.screen_to_ndc(screen_pos)
         eye_coords = self.projection.ndc_to_eye(Transform(ndc_coords.xy))
-        return self.projection.eye_to_local(eye_coords).position
+        return self.projection.eye_to_local(eye_coords)
 
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
