@@ -7,9 +7,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 import unittest
-
-from pygame import Vector3
-
 from pyrite.camera import Camera, OrthoProjection
 from pyrite.rendering import Viewport
 from pyrite.transform import Transform
@@ -80,8 +77,8 @@ class TestWorldToScreen(unittest.TestCase):
             with self.subTest(i=case):
                 world_transform = Transform(world_point)
                 eye_pos = camera.to_eye(camera.to_local(world_transform)).position
-                ndc_pos = camera.projection.eye_to_ndc(Vector3(eye_pos.x, eye_pos.y, 0))
-                screen_pos = viewport.ndc_to_screen(ndc_pos.xy)
+                ndc_pos = camera.projection.eye_to_ndc(Transform(eye_pos))
+                screen_pos = viewport.ndc_to_screen(ndc_pos.position)
 
                 self.assertEqual(expected_point, screen_pos)
 
