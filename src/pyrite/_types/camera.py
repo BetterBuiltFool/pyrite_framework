@@ -30,11 +30,20 @@ class Camera(ABC):
 
     layer_mask: Sequence[Layer]
     render_targets: Sequence[RenderTarget]
-    projection: Projection
     transform: TransformComponent
 
     OnEnable: EventOnEnable
     OnDisable: EventOnDisable
+
+    @property
+    @abstractmethod
+    def projection(self) -> Projection:
+        pass
+
+    @projection.setter
+    @abstractmethod
+    def projection(self, projection: Projection) -> None:
+        pass
 
     @property
     @abstractmethod

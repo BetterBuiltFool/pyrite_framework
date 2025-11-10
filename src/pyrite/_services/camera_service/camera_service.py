@@ -117,10 +117,9 @@ class DefaultCameraService(CameraService):
 
         width, height, depth, center_x, center_y = self._get_projection_data(camera)
         # Convert the local coords to projection space center.
-        zoom_level = camera.zoom_level
         eye_point = (
-            (local_coords.x * zoom_level) - center_x,
-            (local_coords.y * zoom_level) - center_y,
+            (local_coords.x) - center_x,
+            (local_coords.y) - center_y,
             local_coords.z,
         )
         # Divide by projection size to normalize.
@@ -140,33 +139,22 @@ class DefaultCameraService(CameraService):
             int(ndc_coords[2] * (depth / 2)),
         )
         # Translate to local camera space.
-        zoom_level = camera.zoom_level
         local_coords = Vector3(
-            center_x + projection_coords[0] / zoom_level,
-            center_y + projection_coords[1] / zoom_level,
+            center_x + projection_coords[0],
+            center_y + projection_coords[1],
             projection_coords[2],
         )
         return local_coords
 
     def _rebuild_surface(self, camera: Camera):
-        zoom_factor = 1 / camera.zoom_level
         display_size = camera.projection.far_plane.size
-        surface_size = (display_size[0] * zoom_factor), (display_size[1] * zoom_factor)
-        surface = Surface(surface_size)
-        self._surfaces[camera] = surface
+        self._surfaces[camera] = Surface(display_size)
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
         return point.localize(point, camera.transform.world())
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        far_plane_center = camera.projection.far_plane.center
-        far_plane_center = (
-            far_plane_center[0] / camera.zoom_level,
-            far_plane_center[1] / camera.zoom_level,
-        )
-        local_transform = point.copy()
-        local_transform.position = point.position + far_plane_center
-        return local_transform
+        return camera.projection.local_to_eye(point)
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:
         camera_transform = camera.transform.world()
@@ -178,28 +166,12 @@ class DefaultCameraService(CameraService):
 
     def local_point_to_projection(self, camera: Camera, point: Point) -> Point:
         far_plane_center = camera.projection.far_plane.center
-        far_plane_center = (
-            far_plane_center[0] / camera.zoom_level,
-            far_plane_center[1] / camera.zoom_level,
-        )
         return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
-        # TODO Implement
-        return super().from_eye(camera, point)
+        return camera.projection.eye_to_local(point)
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
-        # Mkae a copy of point to avoid mutation
-        point = point.copy()
-        # Find the adjusted center of the camera's far plane
-        far_plane_center = camera.projection.far_plane.center
-        far_plane_center = (
-            far_plane_center[0] / camera.zoom_level,
-            far_plane_center[1] / camera.zoom_level,
-        )
-        # Apply the offset to return center to origin
-        point.position -= far_plane_center
-        # Generalize to world coords
         return point.generalize(point, camera.transform.world())
 
     def world_to_screen(

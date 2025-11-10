@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import pygame
-from pygame import FRect, Rect
+from pygame import FRect, Rect, Vector3
 
 if TYPE_CHECKING:
     from pygame import Surface
@@ -126,7 +126,7 @@ class Viewport:
         )
         return view_point
 
-    def screen_to_ndc(self, screen_point: Point) -> Point:
+    def screen_to_ndc(self, screen_point: Point) -> Vector3:
         """
         Converts a point in screen space on the current display to ndc space.
 
@@ -140,7 +140,7 @@ class Viewport:
             (screen_point[0] - center_x) / (surface_width / 2),
             (screen_point[1] - center_y) / (-surface_height / 2),
         )
-        return ndc_point
+        return Vector3(*ndc_point, 0)
 
     def get_display_rect(self) -> Rect:
         """

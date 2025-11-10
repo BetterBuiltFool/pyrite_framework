@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
+import pygame
+
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
 from pyrite.enum import Layer
@@ -10,11 +12,13 @@ from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
 from pyrite._rendering.viewport import Viewport
 from pyrite._component.transform_component import TransformComponent
+from pyrite._transform.transform import Transform
 from pyrite._types.camera import Camera
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.protocols import (
         HasTransform,
@@ -23,7 +27,6 @@ if TYPE_CHECKING:
         TransformLike,
     )
     from pyrite._types.projection import Projection
-    from pyrite._transform.transform import Transform
 
 
 class BaseCamera(Camera):
@@ -53,7 +56,8 @@ class BaseCamera(Camera):
                 self.transform = TransformComponent.from_transform(self, transform)
         else:
             self.transform = TransformComponent.from_attributes(self, position)
-        self.projection = projection
+        self._projection = projection
+        self._active_projection = projection
         if render_targets is None:
             render_targets = [Viewport.DEFAULT]
         if not isinstance(render_targets, Sequence):
@@ -89,6 +93,15 @@ class BaseCamera(Camera):
             if self._enabled:
                 self.OnDisable(self)
         self._enabled = enabled
+
+    @property
+    def projection(self) -> Projection:
+        return self._active_projection
+
+    @projection.setter
+    def projection(self, projection: Projection) -> None:
+        self._projection = projection
+        self._active_projection = self._projection.zoom(self.zoom_level)
 
     @property
     def zoom_level(self):
@@ -148,13 +161,23 @@ class BaseCamera(Camera):
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 
-    # def screen_to_world(self, point: Point, viewport_index: int = 0) -> Point:
-    #     return CameraService.screen_to_world(self, point, viewport_index)
+    def get_mouse_position(self, viewport: Viewport | None = None) -> Transform:
+        screen_pos = pygame.mouse.get_pos()
+        if not viewport:
+            if len(self._viewports) < 1:
+                raise RuntimeError(
+                    f"{self} does not have a valid viewport and cannot see the cursor."
+                    " Only cameras that render to the window can call"
+                    " get_mouse_position."
+                )
+            viewport = self._viewports[0]
+        return self._get_mouse_position(viewport, screen_pos)
 
-    # def screen_to_world_clamped(
-    #     self, point: Point, viewport_index: int = 0
-    # ) -> Point | None:
-    #     return CameraService.screen_to_world_clamped(self, point, viewport_index)
+    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Transform:
+        ndc_coords = viewport.screen_to_ndc(screen_pos)
+        eye_coords = self.projection.ndc_to_eye(Transform(ndc_coords.xy))
+        return self.projection.eye_to_local(eye_coords)
 
     def zoom(self, zoom_level: float):
+        self._active_projection = self._projection.zoom(zoom_level)
         CameraService.zoom(self, zoom_level)
