@@ -172,13 +172,6 @@ class DefaultCameraService(CameraService):
         return camera.projection.eye_to_local(point)
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
-        # # Mkae a copy of point to avoid mutation
-        # point = point.copy()
-        # # Find the adjusted center of the camera's far plane
-        # far_plane_center = camera.projection.far_plane.center
-        # # Apply the offset to return center to origin
-        # point.position -= far_plane_center
-        # # Generalize to world coords
         return point.generalize(point, camera.transform.world())
 
     def world_to_screen(
