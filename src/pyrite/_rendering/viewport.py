@@ -9,6 +9,8 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point, RectLike
 
+    from pyrite._types.protocols import TransformLike
+
 
 class Viewport:
     """
@@ -94,23 +96,7 @@ class Viewport:
         cls._viewports[label] = viewport
         return viewport
 
-    # def local_to_screen(self, local_coord: Point) -> Point:
-    #     """
-    #     Converts a point in local space to screen space.
-    #     Good for cropping to viewport.
-
-    #     :param local_coord: A point in local space.
-    #     :return: A point in pygame screen space.
-    #     """
-    #     display_rect = self._display_rect
-    #     center_x, center_y = display_rect.center
-    #     view_point = (
-    #         center_x - int(-local_coord[0]),
-    #         center_y - int(local_coord[1]),
-    #     )
-    #     return view_point
-
-    def ndc_to_screen(self, ndc_coord: Point) -> Point:
+    def ndc_to_screen(self, ndc_coord: TransformLike) -> Point:
         """
         Converts a point in ndc space to screen coordinates on the current display.
 
@@ -121,9 +107,10 @@ class Viewport:
         display_rect = self._display_rect
         surface_width, surface_height = display_rect.size
         center_x, center_y = display_rect.center
+        ndc_position = ndc_coord.position
         view_point = (
-            center_x - int(ndc_coord[0] * (-surface_width / 2)),
-            center_y - int(ndc_coord[1] * (surface_height / 2)),
+            center_x - int(ndc_position.x * (-surface_width / 2)),
+            center_y - int(ndc_position.y * (surface_height / 2)),
         )
         return view_point
 

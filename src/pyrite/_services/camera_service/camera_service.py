@@ -181,7 +181,7 @@ class DefaultCameraService(CameraService):
         local_coords = self.to_local(camera, world_transform)
         eye_coords = self.to_eye(camera, local_coords)
         ndc_coords = camera.projection.eye_to_ndc(eye_coords)
-        return viewport.ndc_to_screen(ndc_coords.position)
+        return viewport.ndc_to_screen(ndc_coords)
 
     def update_default_camera(self, default_camera: Camera, size: Point):
         self._surfaces[default_camera] = Surface(size)
