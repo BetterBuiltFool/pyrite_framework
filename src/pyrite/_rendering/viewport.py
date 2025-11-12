@@ -23,19 +23,19 @@ class Viewport:
 
     def __init__(self, relative_rect: FRect | RectLike) -> None:
         self._relative_rect = FRect(relative_rect)
-        self._crop = False
+        # self._crop = False
 
-    @property
-    def crop(self) -> bool:
-        """
-        Determines if the rendering should be cropped or not.
-        If False, the rendering will be scaled to fit the target.
-        """
-        return self._crop
+    # @property
+    # def crop(self) -> bool:
+    #     """
+    #     Determines if the rendering should be cropped or not.
+    #     If False, the rendering will be scaled to fit the target.
+    #     """
+    #     return self._crop
 
-    @crop.setter
-    def crop(self, crop: bool):
-        self._crop = crop
+    # @crop.setter
+    # def crop(self, crop: bool):
+    #     self._crop = crop
 
     @property
     def relative_rect(self) -> FRect:
