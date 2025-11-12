@@ -15,19 +15,20 @@ class RenderTexture:
 
     def __init__(self, size: Point) -> None:
         self.render_surface = self._resize_surface(size)
-        self._crop = False
 
-    @property
-    def crop(self) -> bool:
-        """
-        Determines if the rendering should be cropped or not.
-        If False, the rendering will be scaled to fit the target.
-        """
-        return self._crop
+    #     self._crop = False
 
-    @crop.setter
-    def crop(self, crop: bool):
-        self._crop = crop
+    # @property
+    # def crop(self) -> bool:
+    #     """
+    #     Determines if the rendering should be cropped or not.
+    #     If False, the rendering will be scaled to fit the target.
+    #     """
+    #     return self._crop
+
+    # @crop.setter
+    # def crop(self, crop: bool):
+    #     self._crop = crop
 
     def get_target_surface(self) -> Surface:
         """

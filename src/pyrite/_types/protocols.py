@@ -79,13 +79,13 @@ class RenderTarget(Protocol):
         """
         ...
 
-    @property
-    def crop(self) -> bool:
-        """
-        Determines if the rendering should be cropped or not.
-        If False, the rendering will be scaled to fit the target.
-        """
-        ...
+    # @property
+    # def crop(self) -> bool:
+    #     """
+    #     Determines if the rendering should be cropped or not.
+    #     If False, the rendering will be scaled to fit the target.
+    #     """
+    #     ...
 
 
 @runtime_checkable

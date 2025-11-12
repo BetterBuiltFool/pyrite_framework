@@ -9,12 +9,12 @@ from pygame import Surface, Vector2, Vector3
 
 from pyrite._rendering.view_plane import ViewPlane
 from pyrite._types.service import Service
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     from pygame import Rect
     from pygame.typing import Point
     from pyrite._types.camera import Camera
-    from pyrite._transform.transform import Transform
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._rendering.viewport import Viewport
 
@@ -177,16 +177,11 @@ class DefaultCameraService(CameraService):
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
     ) -> Point:
-        local_coords = self.point_to_local(camera, point)
-        if viewport.crop:
-            coords = viewport.local_to_screen(local_coords)
-        else:
-            eye_coords = self.local_point_to_projection(camera, local_coords)
-            ndc_coords = self.local_to_ndc(
-                camera, Vector3(eye_coords[0], eye_coords[1], 0)
-            )
-            coords = viewport.ndc_to_screen(ndc_coords)
-        return coords
+        world_transform = Transform(point)
+        local_coords = self.to_local(camera, world_transform)
+        eye_coords = self.to_eye(camera, local_coords)
+        ndc_coords = camera.projection.eye_to_ndc(eye_coords)
+        return viewport.ndc_to_screen(ndc_coords)
 
     def update_default_camera(self, default_camera: Camera, size: Point):
         self._surfaces[default_camera] = Surface(size)

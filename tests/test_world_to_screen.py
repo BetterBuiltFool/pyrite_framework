@@ -78,7 +78,7 @@ class TestWorldToScreen(unittest.TestCase):
                 world_transform = Transform(world_point)
                 eye_pos = camera.to_eye(camera.to_local(world_transform)).position
                 ndc_pos = camera.projection.eye_to_ndc(Transform(eye_pos))
-                screen_pos = viewport.ndc_to_screen(ndc_pos.position)
+                screen_pos = viewport.ndc_to_screen(ndc_pos)
 
                 self.assertEqual(expected_point, screen_pos)
 
