@@ -12,7 +12,7 @@ from pyrite._types.renderer import Renderer
 from pyrite._types.protocols import RenderTarget
 
 if TYPE_CHECKING:
-    pass
+    from pygame.typing import Point
 
 
 class CameraRenderer(Renderer[Camera, RenderTarget]):
@@ -53,7 +53,7 @@ class DefaultCameraRenderer(CameraRenderer):
         camera_view = camera_service._surfaces[renderable]
         # if not target.crop:
         #     # Not cropping, so scale the view instead.
-        camera_view = self.scale_method(camera_view, render_rect.size)
+        camera_view = self._scale_view(camera_view, render_rect.size)
 
         crop_rect = render_rect.copy()
         crop_rect.center = camera_view.get_rect().center
@@ -62,3 +62,8 @@ class DefaultCameraRenderer(CameraRenderer):
             render_rect.topleft,
             crop_rect,
         )
+
+    def _scale_view(
+        self, camera_view: pygame.Surface, scale_factor: Point
+    ) -> pygame.Surface:
+        return self.scale_method(camera_view, scale_factor)
