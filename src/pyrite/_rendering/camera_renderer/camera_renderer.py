@@ -51,8 +51,7 @@ class DefaultCameraRenderer(CameraRenderer):
             CameraService._service,
         )
         camera_view = camera_service._surfaces[renderable]
-        # if not target.crop:
-        #     # Not cropping, so scale the view instead.
+
         camera_view = self._scale_view(camera_view, render_rect.size)
 
         crop_rect = render_rect.copy()
