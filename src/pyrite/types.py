@@ -17,7 +17,13 @@ import pyrite._types.view_bounds
 if TYPE_CHECKING:
     from pygame.typing import SequenceLike
 
+    from pyrite._types.protocols import _HasCuboidAttribute
+    from pyrite.cuboid import Cuboid
+
     Point3D = SequenceLike[float]
+    CubeLike = (
+        Cuboid | SequenceLike[float] | SequenceLike[Point3D] | _HasCuboidAttribute
+    )
 
 CullingBounds = pyrite._types.bounds.CullingBounds
 Camera = pyrite._types.camera.Camera
