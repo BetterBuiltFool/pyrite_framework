@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
+from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
 from pyrite.enum import Layer
@@ -181,3 +182,12 @@ class BaseCamera(Camera):
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
         CameraService.zoom(self, zoom_level)
+
+    @staticmethod
+    def ortho(cuboid: tuple[float, float, float, float, float, float]) -> BaseCamera:
+        projection = OrthoProjection(cuboid[0:4], cuboid[4], cuboid[5])
+        return BaseCamera(projection)
+
+    @staticmethod
+    def perspective() -> BaseCamera:
+        raise NotImplementedError()
