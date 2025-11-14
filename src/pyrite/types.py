@@ -15,15 +15,10 @@ import pyrite._types.protocols
 import pyrite._types.view_bounds
 
 if TYPE_CHECKING:
-    from pygame.typing import SequenceLike
+    from pygame.typing import Point, RectLike, SequenceLike
 
     from pyrite._types.protocols import _HasCuboidAttribute
     from pyrite.cuboid import Cuboid
-
-    Point3D = SequenceLike[float]
-    CubeLike = (
-        Cuboid | SequenceLike[float] | SequenceLike[Point3D] | _HasCuboidAttribute
-    )
 
 CullingBounds = pyrite._types.bounds.CullingBounds
 Camera = pyrite._types.camera.Camera
@@ -49,3 +44,15 @@ HasTransform = pyrite._types.protocols.HasTransform
 HasTransformProperty = pyrite._types.protocols.HasTransformProperty
 RenderTarget = pyrite._types.protocols.RenderTarget
 TransformLike = pyrite._types.protocols.TransformLike
+
+if TYPE_CHECKING:
+
+    Point3D = SequenceLike[float]
+    type CubeLike = (
+        Cuboid
+        | SequenceLike[float]
+        | SequenceLike[Point3D]
+        | tuple[RectLike, Point]
+        | tuple[RectLike, float, float]
+        | _HasCuboidAttribute
+    )
