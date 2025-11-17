@@ -63,13 +63,16 @@ class Cuboid:
             front, depth = cuboid[1]
         elif len(cuboid) == 3:
             front, depth = cuboid[1], cuboid[2]
+        elif len(cuboid) < 2:
+            raise TypeError(
+                f"Insufficient arguments, expected 2 or 3, got {len(cuboid)}"
+            )
         else:
-            front, depth = 0  # temp, should raise an error.
+            raise TypeError(f"Too many arguments, expected 2 or 3, got {len(cuboid)}")
         try:
             rect = Rect(cuboid[0])
-        except ValueError:
-            # Invalid Rectlike.
-            rect = Rect(0, 0, 0, 0)  # temp, should raise an error.
+        except TypeError:
+            raise TypeError(f"Expected RectLike value, received {cuboid[0]}")
 
         top, left = rect.topleft
         width, height = rect.size
