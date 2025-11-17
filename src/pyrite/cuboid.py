@@ -16,7 +16,13 @@ class Cuboid:
     # TODO Add methods, properties as needed. This will suffice for now.
 
     def __init__(
-        self, left: int, top: int, front: int, width: int, height: int, depth: int
+        self,
+        left: float,
+        top: float,
+        front: float,
+        width: float,
+        height: float,
+        depth: float,
     ) -> None:
         self.left = left
         self.top = top
