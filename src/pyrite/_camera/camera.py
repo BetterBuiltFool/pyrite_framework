@@ -184,9 +184,18 @@ class BaseCamera(Camera):
         CameraService.zoom(self, zoom_level)
 
     @staticmethod
-    def ortho(cuboid: tuple[float, float, float, float, float, float]) -> BaseCamera:
+    def ortho(
+        cuboid: tuple[float, float, float, float, float, float],
+        position: Point = (0, 0),
+        transform: TransformLike | None = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
+        layer_mask: Sequence[Layer] | None = None,
+        enabled=True,
+    ) -> BaseCamera:
         projection = OrthoProjection(cuboid[0:4], cuboid[4], cuboid[5])
-        return BaseCamera(projection)
+        return BaseCamera(
+            projection, position, transform, render_targets, layer_mask, enabled
+        )
 
     @staticmethod
     def perspective() -> BaseCamera:
