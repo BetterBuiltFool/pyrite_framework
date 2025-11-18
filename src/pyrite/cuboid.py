@@ -1,17 +1,26 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from pygame import Rect
 
 if TYPE_CHECKING:
     from pygame.typing import RectLike, Point
-    from pyrite.types import CubeLike
+    from pyrite.types import CubeLike, _HasCuboidAttribute
 
     RectPoint = tuple[RectLike, Point]
     RectBased = tuple[RectLike, float, float]
 
     CuboidTuple = tuple[float, float, float, float, float, float]
+
+    type _CubeLikeNoAttribute = (
+        Cuboid
+        # | SequenceLike[float]
+        # | SequenceLike[Point3D]
+        | tuple[RectLike, Point]
+        | tuple[RectLike, float, float]
+    )
 
 
 class Cuboid:
@@ -32,10 +41,16 @@ class Cuboid:
         height: float = 0,
         depth: float = 0,
     ) -> None:
+        if hasattr(left, "cuboid"):
+            # type:ignore being used here since the type checker doesn't notice that
+            # _HasCuboidAttribute is the only valid match after this check.
+            left = self._extract_cubelike_from_attribute(left)  # type:ignore
         if isinstance(left, Cuboid):
             left, top, front, width, height, depth = self._deconstruct_cuboid(left)
-        if isinstance(left, tuple):
+        elif isinstance(left, tuple):
             left, top, front, width, height, depth = self._deconstruct_tuple(left)
+        else:  # temp for type control
+            assert isinstance(left, (int, float))
 
         self.left: float = left
         self.top = top
@@ -78,6 +93,38 @@ class Cuboid:
         width, height = rect.size
         return left, top, front, width, height, depth
 
+    @staticmethod
+    def _extract_cubelike_from_attribute(
+        has_cuboid_attribute: _HasCuboidAttribute,
+    ) -> _CubeLikeNoAttribute:
+        """
+        Takes an object with a `cuboid` attribute and extracts the cubelike value from
+        it. Calls recursively if needed.
+
+        :param has_cuboid_attribute: An object with a cuboid attribute, as defined by
+            the _HasCuboidAttribute protocol.
+        :return: A CubeLike object that isn't _HasCuboidAttribute.
+        """
+        cube_like = has_cuboid_attribute.cuboid
+        if isinstance(cube_like, Callable):
+            # _HasCuboidAttribute
+            cube_like = cube_like()
+        if hasattr(cube_like, "cuboid"):
+            # Recursive check, incase somehow we end up with a multi-layer-deep
+            # nest of _HasCuboidAttributes.
+            # Worth note that this will be a problem if the nesting is infinite,
+            # of course.
+
+            # Using type ignore only because the type checker doesn't recognize that
+            # hasattr already filtered out the cases without the attribute.
+            cube_like = Cuboid._extract_cubelike_from_attribute(
+                cube_like  # type:ignore
+            )
+
+        # Again, tpye:ignore because we've established that there is no
+        # _HasCuboidAttribute remaining.
+        return cube_like  # type:ignore
+
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, Cuboid):
             return False
@@ -89,3 +136,7 @@ class Cuboid:
             and value.height == self.height
             and value.depth == self.depth
         )
+
+
+if TYPE_CHECKING:
+    del _CubeLikeNoAttribute
