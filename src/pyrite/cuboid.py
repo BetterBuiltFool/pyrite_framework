@@ -1,26 +1,64 @@
 from __future__ import annotations
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import Any, TypeGuard, TYPE_CHECKING
 
 from pygame import Rect
 
 if TYPE_CHECKING:
-    from pygame.typing import RectLike, Point
-    from pyrite.types import CubeLike, _HasCuboidAttribute
+    from pygame.typing import RectLike, Point, SequenceLike
+    from pyrite.types import CubeLike, _HasCuboidAttribute, Point3D
 
+    # Move these to _types
     RectPoint = tuple[RectLike, Point]
     RectBased = tuple[RectLike, float, float]
 
     CuboidTuple = tuple[float, float, float, float, float, float]
 
-    type _CubeLikeNoAttribute = (
-        Cuboid
-        # | SequenceLike[float]
-        # | SequenceLike[Point3D]
+    type _SequenceBased = (
+        SequenceLike[float]
+        | SequenceLike[Point3D]
         | tuple[RectLike, Point]
         | tuple[RectLike, float, float]
     )
+
+    type _CubeLikeNoAttribute = (
+        Cuboid
+        | SequenceLike[float]
+        | SequenceLike[Point3D]
+        | tuple[RectLike, Point]
+        | tuple[RectLike, float, float]
+    )
+
+BAD_CUBELIKE_EXCEPTION = TypeError("Expected Cuboid-style object")
+
+
+def has_cubelike_attribute(obj: Any) -> TypeGuard[_HasCuboidAttribute]:
+    return hasattr(obj, "cuboid")
+
+
+def is_sequence_based(obj: Any) -> TypeGuard[_SequenceBased]:
+    return hasattr(obj, "__len__") and hasattr(obj, "__getitem__")
+
+
+def is_number_sequence(obj: _SequenceBased) -> TypeGuard[SequenceLike[float]]:
+    return all(isinstance(member, (int, float)) for member in obj)
+
+
+def is_3d_points(obj: _SequenceBased) -> TypeGuard[SequenceLike[Point3D]]:
+    return len(obj) == 2 and all(
+        is_sequence_based(member) and len(member) == 3 for member in obj
+    )
+
+
+def has_rect_like(obj: _SequenceBased) -> TypeGuard[RectPoint | RectBased]:
+    might_be_rect = obj[0]
+    if not isinstance(might_be_rect, (int, float)):
+        try:
+            Rect(might_be_rect)
+            return True
+        except TypeError:
+            pass
+    return False
 
 
 class Cuboid:
@@ -34,25 +72,23 @@ class Cuboid:
 
     def __init__(
         self,
-        left: float | CubeLike,
+        left: float | CubeLike = 0,
         top: float = 0,
         front: float = 0,
         width: float = 0,
         height: float = 0,
         depth: float = 0,
     ) -> None:
-        if hasattr(left, "cuboid"):
-            # type:ignore being used here since the type checker doesn't notice that
-            # _HasCuboidAttribute is the only valid match after this check.
-            left = self._extract_cubelike_from_attribute(left)  # type:ignore
+        if has_cubelike_attribute(left):
+            left = self._extract_cubelike_from_attribute(left)
         if isinstance(left, Cuboid):
             left, top, front, width, height, depth = self._deconstruct_cuboid(left)
-        elif isinstance(left, tuple):
-            left, top, front, width, height, depth = self._deconstruct_tuple(left)
-        else:  # temp for type control
-            assert isinstance(left, (int, float))
+        elif is_sequence_based(left):
+            left, top, front, width, height, depth = self._deconstruct_sequence(left)
+        elif not isinstance(left, (int, float)):
+            raise BAD_CUBELIKE_EXCEPTION
 
-        self.left: float = left
+        self.left = left
         self.top = top
         self.front = front
         self.width = width
@@ -73,24 +109,29 @@ class Cuboid:
         )
 
     @staticmethod
-    def _deconstruct_tuple(cuboid: RectPoint | RectBased) -> CuboidTuple:
-        if len(cuboid) == 2:
-            front, depth = cuboid[1]
-        elif len(cuboid) == 3:
-            front, depth = cuboid[1], cuboid[2]
-        elif len(cuboid) < 2:
-            raise TypeError(
-                f"Insufficient arguments, expected 2 or 3, got {len(cuboid)}"
-            )
-        else:
-            raise TypeError(f"Too many arguments, expected 2 or 3, got {len(cuboid)}")
-        try:
-            rect = Rect(cuboid[0])
-        except TypeError:
-            raise TypeError(f"Expected RectLike value, received {cuboid[0]}")
+    def _deconstruct_sequence(cuboid: _SequenceBased) -> CuboidTuple:
+        if is_number_sequence(cuboid):
+            left, top, front, width, height, depth = cuboid
+        elif is_3d_points(cuboid):
+            left, top, front = cuboid[0]
+            width, height, depth = cuboid[1]
+        elif has_rect_like(cuboid):
+            if len(cuboid) == 2:
+                front, depth = cuboid[1]
+            elif len(cuboid) == 3:
+                front, depth = cuboid[1], cuboid[2]
+            else:
+                raise BAD_CUBELIKE_EXCEPTION
+            try:
+                rect = Rect(cuboid[0])
+            except TypeError:
+                raise BAD_CUBELIKE_EXCEPTION
 
-        top, left = rect.topleft
-        width, height = rect.size
+            top, left = rect.topleft
+            width, height = rect.size
+        else:
+            raise BAD_CUBELIKE_EXCEPTION
+
         return left, top, front, width, height, depth
 
     @staticmethod
@@ -106,24 +147,34 @@ class Cuboid:
         :return: A CubeLike object that isn't _HasCuboidAttribute.
         """
         cube_like = has_cuboid_attribute.cuboid
-        if isinstance(cube_like, Callable):
-            # _HasCuboidAttribute
+        if callable(cube_like):
             cube_like = cube_like()
-        if hasattr(cube_like, "cuboid"):
+        if has_cubelike_attribute(cube_like):
             # Recursive check, incase somehow we end up with a multi-layer-deep
             # nest of _HasCuboidAttributes.
             # Worth note that this will be a problem if the nesting is infinite,
             # of course.
+            cube_like = Cuboid._extract_cubelike_from_attribute(cube_like)
 
-            # Using type ignore only because the type checker doesn't recognize that
-            # hasattr already filtered out the cases without the attribute.
-            cube_like = Cuboid._extract_cubelike_from_attribute(
-                cube_like  # type:ignore
-            )
-
-        # Again, tpye:ignore because we've established that there is no
-        # _HasCuboidAttribute remaining.
+        # Currently in python 3.12, so TypeIs is not available, and TypeGuard isn't
+        # smart enough to determine that there can no longer be a _HasCuboidAttribute.
+        # Need to use type:ignore to get around this.
+        # TODO: Update python and switch to TypeIs
         return cube_like  # type:ignore
+
+    def __getitem__(self, index: int) -> float:
+        value_dict: dict[int, float] = {
+            0: self.left,
+            1: self.top,
+            3: self.front,
+            4: self.width,
+            5: self.height,
+            6: self.depth,
+        }
+        return value_dict[index]
+
+    def __len__(self) -> int:
+        return 6
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, Cuboid):
@@ -136,7 +187,3 @@ class Cuboid:
             and value.height == self.height
             and value.depth == self.depth
         )
-
-
-if TYPE_CHECKING:
-    del _CubeLikeNoAttribute
