@@ -75,6 +75,33 @@ class Cuboid:
         self.height = height
         self.depth = depth
 
+    @property
+    def face_xy(self) -> Rect:
+        """
+        Represents the face of the cuboid in like with the xy plane.
+
+        :return: A Rect that matches the cuboid's left, top, width, and height
+        """
+        return Rect(self.left, self.top, self.width, self.height)
+
+    @property
+    def face_xz(self) -> Rect:
+        """
+        Represents the face of the cuboid in like with the xz plane.
+
+        :return: A Rect that matches the cuboid's left, front, width, and depth
+        """
+        return Rect(self.left, self.front, self.width, self.depth)
+
+    @property
+    def face_yz(self) -> Rect:
+        """
+        Represents the face of the cuboid in like with the yz plane.
+
+        :return: A Rect that matches the cuboid's top, front, height, and depth
+        """
+        return Rect(self.top, self.front, self.height, self.depth)
+
     @staticmethod
     def _deconstruct_cuboid(
         cuboid: Cuboid,
