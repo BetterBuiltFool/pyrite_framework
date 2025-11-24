@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import overload, TYPE_CHECKING
 
 from pygame import Rect
 
@@ -33,7 +33,21 @@ class Cuboid:
 
     # TODO Add methods, properties as needed. This will suffice for now.
 
+    @overload
     def __init__(
+        self,
+        left: float = 0,
+        top: float = 0,
+        front: float = 0,
+        width: float = 0,
+        height: float = 0,
+        depth: float = 0,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, cubelike: CubeLike) -> None: ...
+
+    def __init__(  # type:ignore
         self,
         left: float | CubeLike = 0,
         top: float = 0,
@@ -41,7 +55,10 @@ class Cuboid:
         width: float = 0,
         height: float = 0,
         depth: float = 0,
+        cubelike: CubeLike | None = None,  # To handle keyword passing
     ) -> None:
+        if cubelike is not None:
+            left = cubelike
         if has_cubelike_attribute(left):
             left = self._extract_cubelike_from_attribute(left)
         if isinstance(left, Cuboid):
