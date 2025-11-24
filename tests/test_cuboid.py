@@ -152,6 +152,36 @@ class TestCuboid(unittest.TestCase):
 
                 self.assertEqual(result, expected)
 
+    def test_face_xy(self) -> None:
+        rect = Rect(self.rect_params)
+        cuboid = Cuboid(*self.basic_params)
+
+        self.assertEqual(rect, cuboid.face_xy)
+
+    def test_face_xz(self) -> None:
+        rect_xz_params: RectLike = (
+            self.basic_params[0],  # left
+            self.basic_params[2],  # front
+            self.basic_params[3],  # width
+            self.basic_params[5],  # depth
+        )
+        rect = Rect(rect_xz_params)
+        cuboid = Cuboid(*self.basic_params)
+
+        self.assertEqual(rect, cuboid.face_xz)
+
+    def test_face_yz(self) -> None:
+        rect_yz_params: RectLike = (
+            self.basic_params[1],  # top
+            self.basic_params[2],  # front
+            self.basic_params[4],  # height
+            self.basic_params[5],  # depth
+        )
+        rect = Rect(rect_yz_params)
+        cuboid = Cuboid(*self.basic_params)
+
+        self.assertEqual(rect, cuboid.face_yz)
+
     def test_init(self) -> None:
 
         # Our 'expected value' is also a test of the 6 floats init.
