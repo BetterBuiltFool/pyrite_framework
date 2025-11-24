@@ -1,64 +1,27 @@
 from __future__ import annotations
 
-from typing import Any, TypeGuard, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pygame import Rect
 
+from pyrite.types import (
+    has_cubelike_attribute,
+    has_rect_like,
+    is_sequence_based,
+    is_number_sequence,
+    is_3d_points,
+)
+
 if TYPE_CHECKING:
-    from pygame.typing import RectLike, Point, SequenceLike
-    from pyrite.types import CubeLike, _HasCuboidAttribute, Point3D
-
-    # Move these to _types
-    RectPoint = tuple[RectLike, Point]
-    RectBased = tuple[RectLike, float, float]
-
-    CuboidTuple = tuple[float, float, float, float, float, float]
-
-    type _SequenceBased = (
-        SequenceLike[float]
-        | SequenceLike[Point3D]
-        | tuple[RectLike, Point]
-        | tuple[RectLike, float, float]
-    )
-
-    type _CubeLikeNoAttribute = (
-        Cuboid
-        | SequenceLike[float]
-        | SequenceLike[Point3D]
-        | tuple[RectLike, Point]
-        | tuple[RectLike, float, float]
+    from pyrite.types import (
+        CubeLike,
+        _HasCuboidAttribute,
+        CuboidTuple,
+        _SequenceBased,
+        _CubeLikeNoAttribute,
     )
 
 BAD_CUBELIKE_EXCEPTION = TypeError("Expected Cuboid-style object")
-
-
-def has_cubelike_attribute(obj: Any) -> TypeGuard[_HasCuboidAttribute]:
-    return hasattr(obj, "cuboid")
-
-
-def is_sequence_based(obj: Any) -> TypeGuard[_SequenceBased]:
-    return hasattr(obj, "__len__") and hasattr(obj, "__getitem__")
-
-
-def is_number_sequence(obj: _SequenceBased) -> TypeGuard[SequenceLike[float]]:
-    return all(isinstance(member, (int, float)) for member in obj)
-
-
-def is_3d_points(obj: _SequenceBased) -> TypeGuard[SequenceLike[Point3D]]:
-    return len(obj) == 2 and all(
-        is_sequence_based(member) and len(member) == 3 for member in obj
-    )
-
-
-def has_rect_like(obj: _SequenceBased) -> TypeGuard[RectPoint | RectBased]:
-    might_be_rect = obj[0]
-    if not isinstance(might_be_rect, (int, float)):
-        try:
-            Rect(might_be_rect)
-            return True
-        except TypeError:
-            pass
-    return False
 
 
 class Cuboid:

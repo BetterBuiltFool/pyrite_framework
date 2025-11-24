@@ -5,8 +5,9 @@ import unittest
 
 from pygame import Rect
 
-from pyrite.cuboid import (
-    Cuboid,
+from pyrite.cuboid import Cuboid
+
+from pyrite.types import (
     has_cubelike_attribute,
     has_rect_like,
     is_sequence_based,
@@ -17,8 +18,7 @@ from pyrite.cuboid import (
 if TYPE_CHECKING:
     from pygame.typing import RectLike
 
-    from pyrite.types import CubeLike
-    from pyrite.cuboid import CuboidTuple, _SequenceBased
+    from pyrite.types import CubeLike, CuboidTuple, _SequenceBased
 
 
 class HasCuboidAttribute:
