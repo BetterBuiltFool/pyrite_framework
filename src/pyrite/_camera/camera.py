@@ -28,6 +28,7 @@ if TYPE_CHECKING:
         TransformLike,
     )
     from pyrite._types.projection import Projection
+    from pyrite.types import CubeLike
 
 
 class BaseCamera(Camera):
@@ -185,14 +186,14 @@ class BaseCamera(Camera):
 
     @staticmethod
     def ortho(
-        cuboid: tuple[float, float, float, float, float, float],
+        cuboid: CubeLike,
         position: Point = (0, 0),
         transform: TransformLike | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
     ) -> BaseCamera:
-        projection = OrthoProjection(cuboid[0:4], cuboid[4], cuboid[5])
+        projection = OrthoProjection(cuboid)
         return BaseCamera(
             projection, position, transform, render_targets, layer_mask, enabled
         )

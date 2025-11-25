@@ -10,8 +10,9 @@ from pyrite._types.projection import Projection
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
-    from pygame.typing import RectLike
+    # from pygame.typing import RectLike
     from pyrite._types.protocols import TransformLike
+    from pyrite.types import CubeLike
 
 
 class OrthoProjection(Projection):
@@ -24,19 +25,28 @@ class OrthoProjection(Projection):
     Follows pygame Rect rules, so +y = down.
     """
 
-    def __init__(
-        self,
-        projection_rect: RectLike | None = None,
-        z_near: float = -1,
-        z_far: float = 1,
-    ) -> None:
-        if projection_rect is None:
-            # Default projection is the size of the screen
+    def __init__(self, cuboid: CubeLike | None) -> None:
+        if cuboid is None:
             display = pygame.display.get_surface()
             assert display is not None
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
-        self.projection_data = Cuboid((projection_rect, (z_near, z_far - z_near)))
+            cuboid = (projection_rect, -1, 2)
+        self.projection_data = Cuboid(cuboid)
+
+    # def __init__(
+    #     self,
+    #     projection_rect: RectLike | None = None,
+    #     z_near: float = -1,
+    #     z_far: float = 1,
+    # ) -> None:
+    #     if projection_rect is None:
+    #         # Default projection is the size of the screen
+    #         display = pygame.display.get_surface()
+    #         assert display is not None
+    #         projection_rect = Rect(left_top=(0, 0), width_height=display.size)
+    #         projection_rect.center = (0, 0)
+    #     self.projection_data = Cuboid((projection_rect, (z_near, z_far - z_near)))
 
     @property
     def far_plane(self) -> Rect:
@@ -106,5 +116,5 @@ class OrthoProjection(Projection):
         )
         new_rect.center = rect_center[0] / zoom_factor, rect_center[1] / zoom_factor
         return OrthoProjection(
-            new_rect, self.projection_data.front, self.projection_data.back
+            (new_rect, self.projection_data.front, self.projection_data.depth)
         )
