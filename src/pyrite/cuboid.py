@@ -263,6 +263,12 @@ class Cuboid:
     def __len__(self) -> int:
         return 6
 
+    def __repr__(self) -> str:
+        return (
+            f"Cuboid({self.left}, {self.top}, {self.front}, {self.width}"
+            f", {self.height}, {self.depth})"
+        )
+
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, Cuboid):
             return False
