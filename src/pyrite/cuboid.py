@@ -19,6 +19,7 @@ if TYPE_CHECKING:
         CuboidTuple,
         _SequenceBased,
         _CubeLikeNoAttribute,
+        Point3D,
     )
 
 BAD_CUBELIKE_EXCEPTION = TypeError("Expected Cuboid-style object")
@@ -134,6 +135,52 @@ class Cuboid:
         :return: A Rect that matches the cuboid's top, front, height, and depth
         """
         return Rect(self.top, self.front, self.height, self.depth)
+
+    @property
+    def centerx(self) -> float:
+        """
+        Location of the center of the cuboid along the x axis.
+        """
+        return self.left + (self.width / 2)
+
+    @centerx.setter
+    def centerx(self, centerx: float) -> None:
+        self.left = centerx - (self.width / 2)
+
+    @property
+    def centery(self) -> float:
+        """
+        Location of the center of the cuboid along the y axis.
+        """
+        return self.top + (self.height / 2)
+
+    @centery.setter
+    def centery(self, centery: float) -> None:
+        self.top = centery - (self.height / 2)
+
+    @property
+    def centerz(self) -> float:
+        """
+        Location of the center of the cuboid along the z axis.
+        """
+        return self.front + (self.depth / 2)
+
+    @centerz.setter
+    def centerz(self, centerz: float) -> None:
+        self.front = centerz - (self.depth / 2)
+
+    @property
+    def center(self) -> tuple[float, float, float]:
+        """
+        Location of the 3-dimensional center of the cuboid.
+        """
+        return self.centerx, self.centery, self.centerz
+
+    @center.setter
+    def center(self, center: Point3D) -> None:
+        self.centerx = center[0]
+        self.centery = center[1]
+        self.centerz = center[2]
 
     @staticmethod
     def _deconstruct_cuboid(
