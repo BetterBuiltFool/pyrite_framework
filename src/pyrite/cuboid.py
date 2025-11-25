@@ -134,7 +134,7 @@ class Cuboid:
             except TypeError:
                 raise BAD_CUBELIKE_EXCEPTION
 
-            top, left = rect.topleft
+            left, top = rect.topleft
             width, height = rect.size
         else:
             raise BAD_CUBELIKE_EXCEPTION
