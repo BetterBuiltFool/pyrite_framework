@@ -76,6 +76,39 @@ class Cuboid:
         self.depth = depth
 
     @property
+    def right(self) -> float:
+        """
+        X coordinate of the right-most side of the cuboid.
+        """
+        return self.left + self.width
+
+    @right.setter
+    def right(self, right: float) -> None:
+        self.left = right - self.width
+
+    @property
+    def bottom(self) -> float:
+        """
+        Y Coordinate of the bottom-most side of the cuboid.
+        """
+        return self.top + self.height
+
+    @bottom.setter
+    def bottom(self, bottom: float) -> None:
+        self.top = bottom - self.height
+
+    @property
+    def back(self) -> float:
+        """
+        Z Coordinate of the back-most side of the cuboid.
+        """
+        return self.front + self.depth
+
+    @back.setter
+    def back(self, back: float) -> None:
+        self.front = back - self.depth
+
+    @property
     def face_xy(self) -> Rect:
         """
         Represents the face of the cuboid in like with the xy plane.
