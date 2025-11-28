@@ -3,9 +3,13 @@ from __future__ import annotations
 import unittest
 from typing import TYPE_CHECKING
 
-from pygame import Rect, Vector2, Vector3
+from pygame import Vector2, Vector3
 
-from pyrite._camera.ortho_projection import OrthoProjection
+from pyrite._camera.ortho_projection import (
+    OrthoProjection,
+    DEFAULT_Z_NEAR,
+    DEFAULT_Z_DEPTH,
+)
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
@@ -14,12 +18,22 @@ if TYPE_CHECKING:
     type NDCCoords = Vector3
     type ZoomLevel = float
 
-CENTERED_100_SQUARE = OrthoProjection((-50, -50, 100, 100))
-CORNER_100_SQUARE = OrthoProjection((0, 0, 100, 100))
-CENTERED_200X100 = OrthoProjection((-100, -50, 200, 100))
+CENTERED_100_SQUARE = OrthoProjection(
+    ((-50, -50, 100, 100), DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH),
+)
+CORNER_100_SQUARE = OrthoProjection(
+    ((0, 0, 100, 100), DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH),
+)
+CENTERED_200X100 = OrthoProjection(
+    ((-100, -50, 200, 100), DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH),
+)
 
-CENTERED_800X600 = OrthoProjection(Rect(-400, -300, 800, 600))
-THREE_QUART_800X600 = OrthoProjection(Rect(-200, -150, 800, 600))
+CENTERED_800X600 = OrthoProjection(
+    ((-400, -300, 800, 600), DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH),
+)
+THREE_QUART_800X600 = OrthoProjection(
+    ((-200, -150, 800, 600), DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH),
+)
 
 ZERO_POINT = Vector2(0)
 ZERO_3D = Vector3(0)
@@ -225,17 +239,17 @@ class TestOrthoProjection(unittest.TestCase):
             "Centered, zoom level 2": (
                 CENTERED_100_SQUARE,
                 2,
-                OrthoProjection((-25, -25, 50, 50)),
+                OrthoProjection((-25, -25, -1, 50, 50, 2)),
             ),
             "Corner, zoom level 2": (
                 CORNER_100_SQUARE,
                 2,
-                OrthoProjection((0, 0, 50, 50)),
+                OrthoProjection((0, 0, -1, 50, 50, 2)),
             ),
             "Centered 200x100, zoom level 2": (
                 CENTERED_200X100,
                 2,
-                OrthoProjection((-50, -25, 100, 50)),
+                OrthoProjection((-50, -25, -1, 100, 50, 2)),
             ),
         }
 

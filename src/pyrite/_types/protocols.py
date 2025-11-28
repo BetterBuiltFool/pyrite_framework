@@ -4,9 +4,11 @@ from typing import Protocol, runtime_checkable, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pygame import Rect, Surface, Vector2
     from pygame.typing import Point
     from pyrite._component.transform_component import TransformComponent
+    from pyrite.types import CubeLike
 
 
 class HasPosition(Protocol):
@@ -43,6 +45,16 @@ class HasTransformProperty(Protocol):
 class HasTexture(Protocol):
     texture: Surface
     is_dirty: bool
+
+
+class _HasCuboidAttribute(Protocol):
+    """
+    An object that has an attribute that is either a Cuboid,
+    or a function that returns a Cuboid.
+    """
+
+    @property
+    def cuboid(self) -> CubeLike | Callable[[], CubeLike]: ...
 
 
 class CanUpdate(Protocol):

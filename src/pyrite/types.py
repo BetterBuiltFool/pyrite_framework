@@ -1,5 +1,9 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+from typing import Any, TYPE_CHECKING, TypeGuard
+
+from pygame import Rect
+
 
 import pyrite._types.bounds
 import pyrite._types.camera
@@ -15,9 +19,10 @@ import pyrite._types.protocols
 import pyrite._types.view_bounds
 
 if TYPE_CHECKING:
-    from pygame.typing import SequenceLike
+    from pygame.typing import Point, RectLike, SequenceLike
 
-    Point3D = SequenceLike[float]
+    from pyrite._types.protocols import _HasCuboidAttribute
+    from pyrite.cuboid import Cuboid
 
 CullingBounds = pyrite._types.bounds.CullingBounds
 Camera = pyrite._types.camera.Camera
@@ -43,3 +48,55 @@ HasTransform = pyrite._types.protocols.HasTransform
 HasTransformProperty = pyrite._types.protocols.HasTransformProperty
 RenderTarget = pyrite._types.protocols.RenderTarget
 TransformLike = pyrite._types.protocols.TransformLike
+
+if TYPE_CHECKING:
+
+    Point3D = SequenceLike[float]
+
+    type _SequenceBased = (
+        SequenceLike[float]
+        | SequenceLike[Point3D]
+        | tuple[RectLike, Point]
+        | tuple[RectLike, float, float]
+    )
+
+    type _CubeLikeNoAttribute = (Cuboid | _SequenceBased)
+
+    type CubeLike = (_CubeLikeNoAttribute | _HasCuboidAttribute)
+    RectPoint = tuple[RectLike, Point]
+    RectBased = tuple[RectLike, float, float]
+
+    CuboidTuple = tuple[float, float, float, float, float, float]
+
+
+# TODO Consider if these should be here or int the _types folder and imported to here.
+
+
+def has_cubelike_attribute(obj: Any) -> TypeGuard[_HasCuboidAttribute]:
+    return hasattr(obj, "cuboid")
+
+
+def is_sequence_based(obj: Any) -> TypeGuard[_SequenceBased]:
+    return hasattr(obj, "__len__") and hasattr(obj, "__getitem__")
+
+
+def is_number_sequence(obj: _SequenceBased) -> TypeGuard[SequenceLike[float]]:
+    return all(isinstance(member, (int, float)) for member in obj)
+
+
+def is_3d_points(obj: _SequenceBased) -> TypeGuard[SequenceLike[Point3D]]:
+    return len(obj) == 2 and all(
+        is_sequence_based(member) and len(member) == 3 for member in obj
+    )
+
+
+def has_rect_like(obj: _SequenceBased) -> TypeGuard[RectPoint | RectBased]:
+    # I am NOT happy with this. I feel like there must be a better way to handle it.
+    might_be_rect = obj[0]
+    if not isinstance(might_be_rect, (int, float)):
+        try:
+            Rect(might_be_rect)
+            return True
+        except TypeError:
+            pass
+    return False

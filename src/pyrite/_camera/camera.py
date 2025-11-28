@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
+from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
 from pyrite.enum import Layer
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
         TransformLike,
     )
     from pyrite._types.projection import Projection
+    from pyrite.types import CubeLike
 
 
 class BaseCamera(Camera):
@@ -181,3 +183,21 @@ class BaseCamera(Camera):
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
         CameraService.zoom(self, zoom_level)
+
+    @staticmethod
+    def ortho(
+        cuboid: CubeLike,
+        position: Point = (0, 0),
+        transform: TransformLike | None = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
+        layer_mask: Sequence[Layer] | None = None,
+        enabled=True,
+    ) -> BaseCamera:
+        projection = OrthoProjection(cuboid)
+        return BaseCamera(
+            projection, position, transform, render_targets, layer_mask, enabled
+        )
+
+    @staticmethod
+    def perspective() -> BaseCamera:
+        raise NotImplementedError()

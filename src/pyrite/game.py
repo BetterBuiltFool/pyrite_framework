@@ -145,7 +145,7 @@ class Game:
         )
         # Ensure we have a default camera in case there are no others.
         default_camera = BaseCamera(
-            OrthoProjection(Rect(0, 0, *self.window.size)), enabled=False
+            OrthoProjection((Rect(0, 0, *self.window.size), -1, 2)), enabled=False
         )
         CameraService._default_camera = default_camera
         # Update the default camera so that it captures the new display.

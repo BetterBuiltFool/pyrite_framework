@@ -174,7 +174,7 @@ class TestDefaultRenderManager(unittest.TestCase):
         for renderable in all_elements:
             self.render_manager.enable(renderable)
 
-        default_camera = BaseCamera(OrthoProjection((0, 0, 100, 100)))
+        default_camera = BaseCamera(OrthoProjection(((0, 0, 100, 100), -1, 2)))
         CameraService._default_camera = default_camera
 
         render_queue = self.render_manager.generate_render_queue()

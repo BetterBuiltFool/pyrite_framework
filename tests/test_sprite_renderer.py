@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     type WorldPosition = Point
     type SurfacePosition = Point
 
-CORNER_100X100 = OrthoProjection((0, 0, 100, 100))
-CENTER_100X100 = OrthoProjection((-50, -50, 100, 100))
+CORNER_100X100 = OrthoProjection((0, 0, -1, 100, 100, 2))
+CENTER_100X100 = OrthoProjection((-50, -50, -2, 100, 100, 2))
 
 ORIGIN = (0, 0)
 TOPLEFT = (0, 0)
