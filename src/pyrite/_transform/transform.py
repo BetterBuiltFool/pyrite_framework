@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pygame import Vector2
+from pyglm import glm
 
 from pyrite._types.protocols import TransformLike
 
@@ -51,6 +52,15 @@ class Transform:
     @scale.setter
     def scale(self, scale: Point):
         self._scale = Vector2(scale)
+
+    @property
+    def matrix(self) -> glm.mat4:
+        matrix = glm.mat4()
+        matrix = glm.translate(matrix, glm.vec3(self._position.x, self._position.y, 0))
+        # TODO Make self._rotation use radians
+        matrix = glm.rotate(matrix, glm.radians(self._rotation), glm.vec3(0, 0, 1))
+        matrix = glm.scale(matrix, glm.vec3(self._scale.x, self._scale.y, 0))
+        return matrix
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, TransformLike):
