@@ -21,7 +21,7 @@ class Transform:
         if len(position) < 3:
             position = position[0], position[1], 0
         self._position = Vector3(position)
-        self._rotation = rotation
+        self._rotation = glm.quat(glm.vec3(0, 0, glm.radians(rotation)))
         self._scale = Vector2(scale)
 
     @property
@@ -55,11 +55,15 @@ class Transform:
         """
         Represents the local rotation of the transform
         """
-        return self._rotation
+        return glm.degrees(glm.eulerAngles(self._rotation).z)
 
     @rotation.setter
     def rotation(self, rotation: float):
-        self._rotation = rotation
+        self._rotation = glm.quat(glm.vec3(0, 0, glm.radians(rotation)))
+
+    @property
+    def euler_angles(self) -> Vector3:
+        return Vector3(glm.eulerAngles(self._rotation))
 
     @property
     def scale(self) -> Vector2:
@@ -74,12 +78,9 @@ class Transform:
 
     @property
     def matrix(self) -> glm.mat4:
-        matrix = glm.mat4()
-        matrix = glm.translate(matrix, glm.vec3(*self._position))
         # TODO Make self._rotation use radians
-        matrix = glm.rotate(matrix, glm.radians(self._rotation), glm.vec3(0, 0, 1))
-        matrix = glm.scale(matrix, glm.vec3(self._scale.x, self._scale.y, 0))
-        return matrix
+        matrix = glm.translate(glm.vec3(*self._position)) * glm.mat4(self._rotation)
+        return glm.scale(matrix, glm.vec3(self._scale.x, self._scale.y, 0))
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, HasTransformAttributes):
@@ -91,7 +92,7 @@ class Transform:
         )
 
     def copy(self) -> Transform:
-        return Transform(self._position, self._rotation, self._scale)
+        return Transform(self._position, self.rotation, self._scale)
 
     @staticmethod
     def generalize(
