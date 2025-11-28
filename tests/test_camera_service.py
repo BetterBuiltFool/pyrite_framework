@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import cast, TYPE_CHECKING
 import unittest
 
-from pygame import Rect, Vector3
+from pygame import Vector3
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite.camera import OrthoProjection
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     type EyeTransform = Transform
 
 
-centered_projection = OrthoProjection(Rect(-400, -300, 800, 600))
-three_quart_projection = OrthoProjection(Rect(-200, -150, 800, 600))
+centered_projection = OrthoProjection(((-400, -300, 800, 600), -1, 2))
+three_quart_projection = OrthoProjection(((-200, -150, 800, 600), -1, 2))
 zero_vector = Vector3(0, 0, 0)
 zero_transform = Transform()
 

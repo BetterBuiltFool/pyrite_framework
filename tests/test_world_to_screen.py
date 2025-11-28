@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     type WorldPoint = Point
 
 
-CENTERED_PROJECTION = OrthoProjection((-50, -50, 100, 100), -1, 1)
+CENTERED_PROJECTION = OrthoProjection(((-50, -50, 100, 100), -1, 2))
 CENTERED_CAMERA = Camera(CENTERED_PROJECTION)
 """
 Camera with a centered projection, with world position == (0, 0)

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     type ScreenPoint = Point
     type LocalPoint = Point
 
-CAMERA = BaseCamera(OrthoProjection((-50, -50, 100, 100)))
+CAMERA = BaseCamera(OrthoProjection(((-50, -50, 100, 100), -1, 2)))
 Viewport.DEFAULT._update_display_rect((100, 100))
 
 # Represents the top left quarter of the screen.

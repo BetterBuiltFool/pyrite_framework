@@ -3,9 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import unittest
 
-from pygame import FRect, Rect
+from pygame import FRect, Rect, Vector3
 
 from pyrite._rendering.viewport import Viewport
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -79,7 +80,9 @@ class TestViewport(unittest.TestCase):
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
 
-                screen_coords = viewport.ndc_to_screen(ndc_coords)
+                screen_coords = viewport.ndc_to_screen(
+                    Transform(Vector3(ndc_coords).xy)
+                )
 
                 self.assertEqual(screen_coords, expected_coords)
 
