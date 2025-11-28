@@ -47,7 +47,7 @@ HasTexture = pyrite._types.protocols.HasTexture
 HasTransform = pyrite._types.protocols.HasTransform
 HasTransformProperty = pyrite._types.protocols.HasTransformProperty
 RenderTarget = pyrite._types.protocols.RenderTarget
-TransformLike = pyrite._types.protocols.TransformLike
+HasTransformAttributes = pyrite._types.protocols.HasTransformAttributes
 
 if TYPE_CHECKING:
 

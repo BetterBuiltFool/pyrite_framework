@@ -16,7 +16,7 @@ from pyrite._types.sprite import Sprite
 if TYPE_CHECKING:
     from pygame.typing import Point
 
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
     from pyrite._transform.transform import Transform
 
     type SpriteData = tuple[Surface, Transform]
@@ -26,7 +26,10 @@ class SpriteRenderer(Renderer[Sprite, Camera]):
 
     @abstractmethod
     def validate_sprite(
-        self, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
+        self,
+        sprite: Sprite,
+        surface: Surface | None,
+        transform: HasTransformAttributes | None,
     ) -> bool:
         pass
 
@@ -46,7 +49,10 @@ class DefaultSpriteRenderer(SpriteRenderer):
         self._debug = False
 
     def validate_sprite(
-        self, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
+        self,
+        sprite: Sprite,
+        surface: Surface | None,
+        transform: HasTransformAttributes | None,
     ) -> bool:
         current_transform = sprite.transform.world()
         if transform is None or surface is None:

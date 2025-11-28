@@ -14,7 +14,7 @@ from pyrite._types.renderer import RendererProvider
 if TYPE_CHECKING:
     from pygame import Surface
 
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
     from pyrite._sprite.sprite import Sprite
 
 
@@ -28,7 +28,10 @@ class SpriteRendererProvider(RendererProvider[SpriteRenderer]):
 
     @classmethod
     def validate_sprite(
-        cls, sprite: Sprite, surface: Surface | None, transform: TransformLike | None
+        cls,
+        sprite: Sprite,
+        surface: Surface | None,
+        transform: HasTransformAttributes | None,
     ) -> bool:
         return cls._renderer.validate_sprite(sprite, surface, transform)
 

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point, RectLike
 
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
 
 
 class Viewport:
@@ -96,7 +96,7 @@ class Viewport:
         cls._viewports[label] = viewport
         return viewport
 
-    def ndc_to_screen(self, ndc_coord: TransformLike) -> Point:
+    def ndc_to_screen(self, ndc_coord: HasTransformAttributes) -> Point:
         """
         Converts a point in ndc space to screen coordinates on the current display.
 

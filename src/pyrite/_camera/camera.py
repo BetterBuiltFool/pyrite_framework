@@ -25,7 +25,7 @@ if TYPE_CHECKING:
         HasTransform,
         HasTransformProperty,
         RenderTarget,
-        TransformLike,
+        HasTransformAttributes,
     )
     from pyrite._types.projection import Projection
     from pyrite.types import CubeLike
@@ -44,7 +44,7 @@ class BaseCamera(Camera):
         self,
         projection: Projection,
         position: Point = (0, 0),
-        transform: TransformLike | None = None,
+        transform: HasTransformAttributes | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
@@ -188,7 +188,7 @@ class BaseCamera(Camera):
     def ortho(
         cuboid: CubeLike,
         position: Point = (0, 0),
-        transform: TransformLike | None = None,
+        transform: HasTransformAttributes | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,

@@ -9,7 +9,7 @@ from pyrite._transform.transform import Transform
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )
-from pyrite._types.protocols import TransformLike
+from pyrite._types.protocols import HasTransformAttributes
 
 
 if TYPE_CHECKING:
@@ -143,7 +143,9 @@ class TransformComponent(BaseComponent):
         return f"Local: {self.raw()}, World: {self.world()}"
 
     @staticmethod
-    def from_transform(owner: Any, transform: TransformLike) -> TransformComponent:
+    def from_transform(
+        owner: Any, transform: HasTransformAttributes
+    ) -> TransformComponent:
         """
         Create a transform component based on another transform.
 

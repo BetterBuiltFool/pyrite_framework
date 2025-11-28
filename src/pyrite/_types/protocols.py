@@ -101,7 +101,7 @@ class RenderTarget(Protocol):
 
 
 @runtime_checkable
-class TransformLike(Protocol):
+class HasTransformAttributes(Protocol):
 
     @property
     def position(self) -> Vector2: ...

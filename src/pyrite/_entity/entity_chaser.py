@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from pyrite._types.protocols import (
         HasTransform,
         HasTransformProperty,
-        TransformLike,
+        HasTransformAttributes,
     )
 
     from pygame.typing import Point
@@ -31,7 +31,7 @@ class EntityChaser(BaseEntity):
     def __init__(
         self,
         enabled=True,
-        transform: TransformLike | None = None,
+        transform: HasTransformAttributes | None = None,
         position: Point = (0, 0),
         target: HasTransform | HasTransformProperty | None = None,
         ease_factor: float = 8.0,

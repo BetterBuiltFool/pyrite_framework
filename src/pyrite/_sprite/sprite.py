@@ -16,7 +16,7 @@ if typing.TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite._types.camera import Camera
     from pyrite._types.bounds import CullingBounds
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
     from pyrite.enum import Layer, Anchor
 
 
@@ -29,7 +29,7 @@ class BaseSprite(Sprite, Renderable):
         self,
         display_surface: Surface,
         position: Point = (0, 0),
-        local_transform: TransformLike | None = None,
+        local_transform: HasTransformAttributes | None = None,
         anchor: Anchor = AnchorPoint.CENTER,
         enabled=True,
         layer: Layer | None = None,

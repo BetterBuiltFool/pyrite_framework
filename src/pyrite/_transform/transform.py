@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from pygame import Vector2
 from pyglm import glm
 
-from pyrite._types.protocols import TransformLike
+from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -63,7 +63,7 @@ class Transform:
         return matrix
 
     def __eq__(self, value: object) -> bool:
-        if not isinstance(value, TransformLike):
+        if not isinstance(value, HasTransformAttributes):
             return False
         return (
             value.position == self._position
@@ -75,7 +75,9 @@ class Transform:
         return Transform(self._position, self._rotation, self._scale)
 
     @staticmethod
-    def generalize(branch: TransformLike, root: TransformLike) -> Transform:
+    def generalize(
+        branch: HasTransformAttributes, root: HasTransformAttributes
+    ) -> Transform:
         """
         Applies a root transform to a local transform, converting it into the same
         relative space.
@@ -134,14 +136,16 @@ class Transform:
         rotated_position = scaled_position.rotate(self.rotation)
         return self.position + rotated_position
 
-    def __mul__(self, other_transform: TransformLike) -> Transform:
+    def __mul__(self, other_transform: HasTransformAttributes) -> Transform:
         return Transform.generalize(other_transform, self)
 
-    def __rmul__(self, other_transform: TransformLike) -> Transform:
+    def __rmul__(self, other_transform: HasTransformAttributes) -> Transform:
         return Transform.generalize(self, other_transform)
 
     @staticmethod
-    def localize(branch: TransformLike, root: TransformLike) -> Transform:
+    def localize(
+        branch: HasTransformAttributes, root: HasTransformAttributes
+    ) -> Transform:
         """
         Given two Transforms in the same relative space, finds the Transform local to
         the root that is equivalent of this Transform.
@@ -195,10 +199,10 @@ class Transform:
         rotated_position = translated_position.rotate(self.rotation)
         return rotated_position / self.scale.elementwise()
 
-    def __truediv__(self, other: TransformLike) -> Transform:
+    def __truediv__(self, other: HasTransformAttributes) -> Transform:
         return Transform.localize(self, other)
 
-    def __rtruediv__(self, other: TransformLike) -> Transform:
+    def __rtruediv__(self, other: HasTransformAttributes) -> Transform:
         return Transform.localize(other, self)
 
     def __repr__(self) -> str:
