@@ -20,35 +20,37 @@ class Transform:
         # self._position = Vector2(position)
         if len(position) < 3:
             position = position[0], position[1], 0
-        self._position = Vector3(position)
+        if len(scale) < 3:
+            scale = scale[0], scale[1], 1
+        self._position = glm.vec3(position)
         self._rotation = glm.quat(glm.vec3(0, 0, glm.radians(rotation)))
-        self._scale = Vector2(scale)
+        self._scale = glm.vec3(scale)
 
     @property
     def position(self) -> Vector2:
         """
         Represents the local position of the transform
         """
-        return self._position.xy
+        return Vector2(self._position.xy)
 
     @position.setter
     def position(self, position: Point):
         if len(position) < 3:
             # Keep current z if a new one is not provided.
             position = position[0], position[1], self._position.z
-        self._position = Vector3(position)
+        self._position = glm.vec3(position)
 
     @property
     def position_3d(self) -> Vector3:
         """
         Represents the local position of the transform.
         """
-        return self._position
+        return Vector3(self._position)
 
     @position_3d.setter
     def position_3d(self, position_3d: Point3D) -> None:
         # Skip the length check since we're assuming it's already a valid vec3 param
-        self._position = Vector3(position_3d)
+        self._position = glm.vec3(position_3d)
 
     @property
     def rotation(self) -> float:
@@ -70,25 +72,37 @@ class Transform:
         """
         Represents the local scaling of the transform
         """
-        return self._scale
+        return Vector2(self._scale.xy)
 
     @scale.setter
     def scale(self, scale: Point):
-        self._scale = Vector2(scale)
+        if len(scale) < 3:
+            scale = scale[0], scale[1], 1
+        self._scale = glm.vec3(scale)
+
+    @property
+    def scale_3d(self) -> Vector3:
+        """
+        Represents the local scaling of the transform
+        """
+        return Vector3(self._scale)
+
+    @scale_3d.setter
+    def scale_3d(self, scale_3d: Point3D):
+        self._scale = glm.vec3(scale_3d)
 
     @property
     def matrix(self) -> glm.mat4:
-        # TODO Make self._rotation use radians
-        matrix = glm.translate(glm.vec3(*self._position)) * glm.mat4(self._rotation)
-        return glm.scale(matrix, glm.vec3(self._scale.x, self._scale.y, 0))
+        matrix = glm.translate(self._position) * glm.mat4(self._rotation)
+        return glm.scale(matrix, self._scale)
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, HasTransformAttributes):
             return False
         return (
-            value.position == self._position
-            and value.rotation == self._rotation
-            and value.scale == self._scale
+            value.position == self.position
+            and value.rotation == self.rotation
+            and value.scale == self.scale
         )
 
     def copy(self) -> Transform:
