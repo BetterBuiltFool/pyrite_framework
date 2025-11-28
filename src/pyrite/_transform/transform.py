@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pygame import Vector2
+from pygame import Vector2, Vector3
 from pyglm import glm
 
 from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from pyrite.types import Point3D
 
 
 class Transform:
@@ -16,7 +17,10 @@ class Transform:
     def __init__(
         self, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
     ) -> None:
-        self._position = Vector2(position)
+        # self._position = Vector2(position)
+        if len(position) < 3:
+            position = position[0], position[1], 0
+        self._position = Vector3(position)
         self._rotation = rotation
         self._scale = Vector2(scale)
 
@@ -25,11 +29,26 @@ class Transform:
         """
         Represents the local position of the transform
         """
-        return self._position
+        return self._position.xy
 
     @position.setter
     def position(self, position: Point):
-        self._position = Vector2(position)
+        if len(position) < 3:
+            # Keep current z if a new one is not provided.
+            position = position[0], position[1], self._position.z
+        self._position = Vector3(position)
+
+    @property
+    def position_3d(self) -> Vector3:
+        """
+        Represents the local position of the transform.
+        """
+        return self._position
+
+    @position_3d.setter
+    def position_3d(self, position_3d: Point3D) -> None:
+        # Skip the length check since we're assuming it's already a valid vec3 param
+        self._position = Vector3(position_3d)
 
     @property
     def rotation(self) -> float:
@@ -56,7 +75,7 @@ class Transform:
     @property
     def matrix(self) -> glm.mat4:
         matrix = glm.mat4()
-        matrix = glm.translate(matrix, glm.vec3(self._position.x, self._position.y, 0))
+        matrix = glm.translate(matrix, glm.vec3(*self._position))
         # TODO Make self._rotation use radians
         matrix = glm.rotate(matrix, glm.radians(self._rotation), glm.vec3(0, 0, 1))
         matrix = glm.scale(matrix, glm.vec3(self._scale.x, self._scale.y, 0))
