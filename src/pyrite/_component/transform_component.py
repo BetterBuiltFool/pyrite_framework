@@ -14,6 +14,7 @@ from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from pyglm import glm
 
 
 class TransformComponent(BaseComponent):
@@ -113,6 +114,11 @@ class TransformComponent(BaseComponent):
         world = TransformService.get_world(self)
         world.scale = scale
         TransformService.set_world(self, world)
+
+    @property
+    def matrix(self) -> glm.mat4x4:
+        # TODO: Consider if this should be outsourced to the TransformService.
+        return TransformService.get_local(self).matrix
 
     def is_dirty(self) -> bool:
         """
