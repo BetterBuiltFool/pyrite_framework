@@ -158,28 +158,6 @@ class Transform:
         new_transform._scale = new_scale
         return new_transform
 
-    def generalize_position(self, position: Point) -> Vector2:
-        """
-        Takes a position local to the Transform and converts it into the same relative
-        space as the Transform.
-
-        :Example:
-        ```
-        transform = Transform((10, 10), 0, (2,2))
-        position = Vector2(5,5)
-
-        transform.generalize_position(position) == Vector2(20, 20)
-        ```
-        _______________________________________________________________________________
-
-        :param position: A position (as a Point) that is local to this Transform.
-        :return: A new Vector2 position in the same relative space as this Transform.
-        """
-        # TODO Remove this method, unneeded.
-        scaled_position = self.scale.elementwise() * Vector2(position)
-        rotated_position = scaled_position.rotate(self.rotation)
-        return self.position + rotated_position
-
     def __mul__(self, other_transform: HasTransformAttributes) -> Transform:
         return Transform.generalize(other_transform, self)
 
@@ -231,25 +209,6 @@ class Transform:
         new_transform._rotation = new_rotation
         new_transform._scale = new_scale
         return new_transform
-
-    def localize_position(self, position: Point) -> Vector2:
-        """
-        Takes a position in the same relative space as the Transform, and derives it in
-        the local space of the Transform.
-
-        :Example:
-        transform = Transform((10, 10), 0, (2,2))
-        position = Vector2(20, 20)
-
-        transform.generalize_position(position) == Vector2(5, 5)
-
-        :param position: A position (as a Point) that is local to this Transform.
-        :return: A new Vector2 position in the same relative space as this Transform.
-        """
-        # TODO Remove this method, unneeded.
-        translated_position = Vector2(position) - self.position
-        rotated_position = translated_position.rotate(self.rotation)
-        return rotated_position / self.scale.elementwise()
 
     def __truediv__(self, other: HasTransformAttributes) -> Transform:
         return Transform.localize(self, other)
