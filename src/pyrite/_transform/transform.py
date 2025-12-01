@@ -92,7 +92,7 @@ class Transform:
         self._scale = glm.vec3(scale_3d)
 
     @property
-    def matrix(self) -> glm.mat4:
+    def matrix(self) -> glm.mat4x4:
         matrix = glm.translate(self._position) * glm.mat4(self._rotation)
         return glm.scale(matrix, self._scale)
 
@@ -140,14 +140,23 @@ class Transform:
         :return: A new transform, representing the current transform in the local space
             of _root_.
         """
-        new_scale = branch.scale.elementwise() * root.scale
-        new_rotation = branch.rotation + root.rotation
+        new_matrix = root.matrix * branch.matrix
 
-        scaled_position = branch.position.elementwise() * root.scale
-        rotated_position = scaled_position.rotate(root.rotation)
-        new_position = root.position + rotated_position
+        new_scale: glm.vec3 = glm.vec3()
+        new_rotation: glm.quat = glm.quat()
+        new_position: glm.vec3 = glm.vec3()
+        skew: glm.vec3 = glm.vec3()
+        perspective: glm.vec4 = glm.vec4()
 
-        return Transform(new_position, new_rotation, new_scale)
+        glm.decompose(
+            new_matrix, new_scale, new_rotation, new_position, skew, perspective
+        )
+        new_transform = Transform()
+
+        new_transform._position = new_position
+        new_transform._rotation = new_rotation
+        new_transform._scale = new_scale
+        return new_transform
 
     def generalize_position(self, position: Point) -> Vector2:
         """
@@ -166,6 +175,7 @@ class Transform:
         :param position: A position (as a Point) that is local to this Transform.
         :return: A new Vector2 position in the same relative space as this Transform.
         """
+        # TODO Remove this method, unneeded.
         scaled_position = self.scale.elementwise() * Vector2(position)
         rotated_position = scaled_position.rotate(self.rotation)
         return self.position + rotated_position
@@ -204,16 +214,23 @@ class Transform:
         :return: A new transform, equivalent to the difference between the current
             transform and _root_.
         """
+        new_matrix = glm.inverse(root.matrix) * branch.matrix
 
-        translated_position = branch.position - root.position
-        rotated_position = translated_position.rotate(root.rotation)
-        new_position = rotated_position.elementwise() / root.scale
+        new_scale: glm.vec3 = glm.vec3()
+        new_rotation: glm.quat = glm.quat()
+        new_position: glm.vec3 = glm.vec3()
+        skew: glm.vec3 = glm.vec3()
+        perspective: glm.vec4 = glm.vec4()
 
-        new_rotation = branch.rotation - root.rotation
+        glm.decompose(
+            new_matrix, new_scale, new_rotation, new_position, skew, perspective
+        )
+        new_transform = Transform()
 
-        new_scale = branch.scale.elementwise() / root.scale
-
-        return Transform(new_position, new_rotation, new_scale)
+        new_transform._position = new_position
+        new_transform._rotation = new_rotation
+        new_transform._scale = new_scale
+        return new_transform
 
     def localize_position(self, position: Point) -> Vector2:
         """
@@ -229,6 +246,7 @@ class Transform:
         :param position: A position (as a Point) that is local to this Transform.
         :return: A new Vector2 position in the same relative space as this Transform.
         """
+        # TODO Remove this method, unneeded.
         translated_position = Vector2(position) - self.position
         rotated_position = translated_position.rotate(self.rotation)
         return rotated_position / self.scale.elementwise()
