@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from pygame import Rect, Surface, Vector2
     from pygame.typing import Point
+    from pyglm import glm
     from pyrite._component.transform_component import TransformComponent
     from pyrite.types import CubeLike
 
@@ -120,3 +121,6 @@ class HasTransformAttributes(Protocol):
 
     @scale.setter
     def scale(self, scale: Point): ...
+
+    @property
+    def matrix(self) -> glm.mat4x4: ...
