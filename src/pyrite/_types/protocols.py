@@ -8,8 +8,9 @@ if TYPE_CHECKING:
     from pygame import Rect, Surface, Vector2
     from pygame.typing import Point
     from pyglm import glm
-    from pyrite._component.transform_component import TransformComponent
-    from pyrite.types import CubeLike
+
+    # from pyrite._component.transform_component import TransformComponent
+    from pyrite.types import CubeLike, TransformLike
 
 
 class HasPosition(Protocol):
@@ -28,7 +29,7 @@ class HasTransform(Protocol):
     An object with a TransformComponent attribute called _transform_.
     """
 
-    transform: TransformComponent
+    transform: TransformLike
 
 
 class HasTransformProperty(Protocol):
@@ -37,10 +38,7 @@ class HasTransformProperty(Protocol):
     """
 
     @property
-    def transform(self) -> TransformComponent: ...
-
-    @transform.setter
-    def transform(self, value: TransformComponent) -> None: ...
+    def transform(self) -> TransformLike | Callable[[], TransformLike]: ...
 
 
 class HasTexture(Protocol):

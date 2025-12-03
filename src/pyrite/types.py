@@ -50,6 +50,8 @@ RenderTarget = pyrite._types.protocols.RenderTarget
 HasTransformAttributes = pyrite._types.protocols.HasTransformAttributes
 
 if TYPE_CHECKING:
+    from pyglm import glm
+    from pyrite._transform.transform import Transform
 
     Point3D = SequenceLike[float]
 
@@ -68,8 +70,32 @@ if TYPE_CHECKING:
 
     CuboidTuple = tuple[float, float, float, float, float, float]
 
+    Transform2DTuple = tuple[Point, float, Point]
+    Transform3DPoints = tuple[Point3D, Point3D, Point3D]
+
+    type _SequenceTransformLike = (Transform3DPoints | Transform2DTuple)
+
+    type _HasTransformAccessible = HasTransform | HasTransformProperty
+
+    type _TransformLikeNoAttribute = (
+        Transform | _HasTransformAccessible | _SequenceTransformLike | glm.mat4x4
+    )
+
+    type TransformLike = (_TransformLikeNoAttribute | HasTransformAttributes)
+
+    TransformTuple = tuple[glm.vec3, glm.quat, glm.vec3]
+
 
 # TODO Consider if these should be here or int the _types folder and imported to here.
+
+
+def is_sequencelike(obj: Any) -> TypeGuard[SequenceLike]:
+    if not hasattr(obj, "__len__"):
+        return False
+    if not hasattr(obj, "__getitem__"):
+        return False
+
+    return True
 
 
 def has_cubelike_attribute(obj: Any) -> TypeGuard[_HasCuboidAttribute]:
@@ -100,3 +126,24 @@ def has_rect_like(obj: _SequenceBased) -> TypeGuard[RectPoint | RectBased]:
         except TypeError:
             pass
     return False
+
+
+def has_transform(obj: Any) -> TypeGuard[_HasTransformAccessible]:
+    return hasattr(obj, "transform")
+
+
+def is_sequence_transformlike(obj: Any) -> TypeGuard[_SequenceTransformLike]:
+    if not isinstance(obj, tuple):
+        return False
+    if len(obj) < 3:
+        return False
+    if not is_sequencelike(obj[0]):
+        return False
+    if not is_sequencelike(obj[2]):
+        return False
+
+    return True
+
+
+def is_2d_transform(obj: _SequenceTransformLike) -> TypeGuard[Transform2DTuple]:
+    return isinstance(obj[1], int | float)

@@ -1,30 +1,90 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import overload, TYPE_CHECKING
 
 from pygame import Vector2, Vector3
 from pyglm import glm
 
 from pyrite._types.protocols import HasTransformAttributes
 
+from pyrite.types import (
+    is_sequencelike,
+    is_sequence_transformlike,
+    is_2d_transform,
+    has_transform,
+)
+
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pyrite.types import Point3D
+    from pyrite.types import (
+        Point3D,
+        Transform2DTuple,
+        Transform3DPoints,
+        TransformLike,
+        TransformTuple,
+        _TransformLikeNoAttribute,
+        _HasTransformAccessible,
+    )
+
+
+BAD_TRANSFORMLIKE_EXCEPTION = TypeError("Expected Transform-style object")
 
 
 class Transform:
 
+    @overload
+    def __init__(self, transformlike: TransformLike) -> None: ...
+
+    @overload
     def __init__(
         self, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
+    ) -> None: ...
+
+    def __init__(  # type:ignore
+        self,
+        position: Point | TransformLike = (0, 0),
+        rotation: float = 0,
+        scale: Point = (1, 1),
+        transformlike: TransformLike | None = None,
     ) -> None:
-        # self._position = Vector2(position)
-        if len(position) < 3:
-            position = position[0], position[1], 0
-        if len(scale) < 3:
-            scale = scale[0], scale[1], 1
-        self._position = glm.vec3(position)
-        self._rotation = glm.quat(glm.vec3(0, 0, glm.radians(rotation)))
-        self._scale = glm.vec3(scale)
+        if transformlike is None:
+            if is_sequencelike(position):
+                transformlike = (position, rotation, scale)
+
+        if has_transform(transformlike):
+            position = self._extract_transformlike_from_attribute(transformlike)
+        if isinstance(transformlike, Transform):
+            pos_vec3 = transformlike._position
+            rot_quat = transformlike._rotation
+            scale_vec3 = transformlike._scale
+        elif isinstance(transformlike, glm.mat4x4):
+            scale_vec3: glm.vec3 = glm.vec3()
+            rot_quat: glm.quat = glm.quat()
+            pos_vec3: glm.vec3 = glm.vec3()
+            skew: glm.vec3 = glm.vec3()
+            perspective: glm.vec4 = glm.vec4()
+
+            glm.decompose(position, scale_vec3, rot_quat, pos_vec3, skew, perspective)
+        elif is_sequence_transformlike(transformlike):
+            if is_2d_transform(transformlike):
+                pos_vec3, rot_quat, scale_vec3 = (
+                    self._deconstruct_2d_transform_sequence(transformlike)
+                )
+            else:
+                # transformlike must be type Transform3DPoints by now
+                # TODO upgrade Python and make TypeGuards to TypeIs
+                pos_vec3, rot_quat, scale_vec3 = (
+                    self._deconstruct_3d_transform_sequence(
+                        transformlike  # type:ignore
+                    )
+                )
+
+        else:
+            raise BAD_TRANSFORMLIKE_EXCEPTION
+
+        self._position = pos_vec3
+        self._rotation = rot_quat
+        self._scale = scale_vec3
 
     @property
     def position(self) -> Vector2:
@@ -103,6 +163,57 @@ class Transform:
             value.position == self.position
             and value.rotation == self.rotation
             and value.scale == self.scale
+        )
+
+    @staticmethod
+    def _extract_transformlike_from_attribute(
+        has_transformlike_attribute: _HasTransformAccessible,
+    ) -> _TransformLikeNoAttribute:
+        """
+        Takes an object with a `transform` attribute and extracts the transformlike
+        value from it. Calls recursively if needed.
+
+        :param has_transformlike_attribute: An object with a cuboid attribute, as
+            defined by the _HasTransformAccessible protocol.
+        :return: A TransformLike object that isn't _TransformLikeNoAttribute.
+        """
+        transformlike = has_transformlike_attribute.transform
+        if callable(transformlike):
+            transformlike = transformlike()
+        if has_transform(transformlike):
+            # Recursive check, incase somehow we end up with a multi-layer-deep
+            # nest of _HasTransformAccessible.
+            # Worth note that this will be a problem if the nesting is infinite,
+            # of course.
+            transformlike = Transform._extract_transformlike_from_attribute(
+                transformlike
+            )
+
+        # Currently in python 3.12, so TypeIs is not available, and TypeGuard isn't
+        # smart enough to determine that there can no longer be a
+        # _HasTransformAccessible.
+        # Need to use type:ignore to get around this.
+        # TODO: Update python and switch to TypeIs
+        return transformlike  # type:ignore
+
+    @staticmethod
+    def _deconstruct_2d_transform_sequence(
+        transform_2d_sequence: Transform2DTuple,
+    ) -> TransformTuple:
+        return (
+            glm.vec3(transform_2d_sequence[0][0], transform_2d_sequence[0][1], 0),
+            glm.quat(glm.vec3(0, 0, glm.radians(transform_2d_sequence[1]))),
+            glm.vec3(transform_2d_sequence[2][0], transform_2d_sequence[2][1], 1),
+        )
+
+    @staticmethod
+    def _deconstruct_3d_transform_sequence(
+        transform_3d_sequence: Transform3DPoints,
+    ) -> TransformTuple:
+        return (
+            glm.vec3(transform_3d_sequence[0]),
+            glm.quat(glm.vec3(transform_3d_sequence[1])),
+            glm.vec3(transform_3d_sequence[2]),
         )
 
     def copy(self) -> Transform:
