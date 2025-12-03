@@ -50,6 +50,9 @@ class Transform:
         if transformlike is None:
             if is_sequencelike(position):
                 transformlike = (position, rotation, scale)
+            else:
+                # position must be TransformLike, TypeGuard issue.
+                transformlike = position  # type:ignore
 
         if has_transform(transformlike):
             position = self._extract_transformlike_from_attribute(transformlike)
@@ -222,7 +225,7 @@ class Transform:
     @staticmethod
     def generalize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> Transform:
+    ) -> TransformLike:
         """
         Applies a root transform to a local transform, converting it into the same
         relative space.
@@ -269,10 +272,10 @@ class Transform:
         new_transform._scale = new_scale
         return new_transform
 
-    def __mul__(self, other_transform: HasTransformAttributes) -> Transform:
+    def __mul__(self, other_transform: HasTransformAttributes) -> TransformLike:
         return Transform.generalize(other_transform, self)
 
-    def __rmul__(self, other_transform: HasTransformAttributes) -> Transform:
+    def __rmul__(self, other_transform: HasTransformAttributes) -> TransformLike:
         return Transform.generalize(self, other_transform)
 
     @staticmethod
