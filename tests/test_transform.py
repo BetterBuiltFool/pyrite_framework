@@ -29,7 +29,7 @@ class TestTransform(unittest.TestCase):
 
         local_transform = Transform((5, 0), 0, (1, 1))
 
-        modified = Transform.generalize(local_transform, world_transform)
+        modified = Transform(Transform.generalize(local_transform, world_transform))
 
         expected = Transform((10, 20), 90, (2, 2))
 
@@ -43,7 +43,7 @@ class TestTransform(unittest.TestCase):
 
         local_transform = Transform((5, 0), 0, (1, 1))
 
-        modified: Transform = world_transform * local_transform
+        modified: Transform = Transform(world_transform * local_transform)
 
         expected = Transform((10, 20), 90, (2, 2))
 
@@ -61,7 +61,7 @@ class TestTransform(unittest.TestCase):
 
         # TransformComponent has no __mul__, so Transform.__rmul__ takes over and
         # treats it like a transform.
-        modified: Transform = world_transform * local_transform
+        modified: Transform = Transform(world_transform * local_transform)
 
         expected = Transform((10, 20), 90, (2, 2))
 
@@ -75,7 +75,7 @@ class TestTransform(unittest.TestCase):
         branch_transform = Transform((10, 20), 90, (2, 2))
 
         expected = Transform((5, 0), 0, (1, 1))
-        modified = Transform.localize(branch_transform, root_transform)
+        modified = Transform(Transform.localize(branch_transform, root_transform))
 
         # Literally just the inverse of generalize()
 
