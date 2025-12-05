@@ -91,8 +91,7 @@ class TestCameraService(unittest.TestCase):
         for index, (case, params) in enumerate(test_params.items()):
             with self.subTest(case, i=index):
                 projection, local_position, expected, zoom_level = params
-                test_cam = MockCamera(projection)
-                test_cam.zoom_level = zoom_level
+                test_cam = MockCamera(projection.zoom(zoom_level))
                 ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
                 self.assertEqual(ndc_coords, expected)
 
@@ -147,8 +146,7 @@ class TestCameraService(unittest.TestCase):
         for index, (case, params) in enumerate(test_params.items()):
             with self.subTest(case, i=index):
                 projection, ndc_coords, expected, zoom_level = params
-                test_cam = MockCamera(projection)
-                test_cam.zoom_level = zoom_level
+                test_cam = MockCamera(projection.zoom(zoom_level))
                 local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
                 self.assertEqual(local_position, expected)
 
