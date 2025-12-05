@@ -254,23 +254,9 @@ class Transform:
         :return: A new transform, representing the current transform in the local space
             of _root_.
         """
-        new_matrix = root.matrix * branch.matrix
-
-        new_scale: glm.vec3 = glm.vec3()
-        new_rotation: glm.quat = glm.quat()
-        new_position: glm.vec3 = glm.vec3()
-        skew: glm.vec3 = glm.vec3()
-        perspective: glm.vec4 = glm.vec4()
-
-        glm.decompose(
-            new_matrix, new_scale, new_rotation, new_position, skew, perspective
-        )
-        new_transform = Transform()
-
-        new_transform._position = new_position
-        new_transform._rotation = new_rotation
-        new_transform._scale = new_scale
-        return new_transform
+        # Not sure why this thinks this results in a mat4x2, it's mat4x4.
+        # This might be a pyglm bug.
+        return root.matrix * branch.matrix  # type:ignore
 
     def __mul__(self, other_transform: HasTransformAttributes) -> TransformLike:
         return Transform.generalize(other_transform, self)
@@ -281,7 +267,7 @@ class Transform:
     @staticmethod
     def localize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> Transform:
+    ) -> TransformLike:
         """
         Given two Transforms in the same relative space, finds the Transform local to
         the root that is equivalent of this Transform.
@@ -306,28 +292,12 @@ class Transform:
         :return: A new transform, equivalent to the difference between the current
             transform and _root_.
         """
-        new_matrix = glm.inverse(root.matrix) * branch.matrix
+        return glm.inverse(root.matrix) * branch.matrix  # type:ignore
 
-        new_scale: glm.vec3 = glm.vec3()
-        new_rotation: glm.quat = glm.quat()
-        new_position: glm.vec3 = glm.vec3()
-        skew: glm.vec3 = glm.vec3()
-        perspective: glm.vec4 = glm.vec4()
-
-        glm.decompose(
-            new_matrix, new_scale, new_rotation, new_position, skew, perspective
-        )
-        new_transform = Transform()
-
-        new_transform._position = new_position
-        new_transform._rotation = new_rotation
-        new_transform._scale = new_scale
-        return new_transform
-
-    def __truediv__(self, other: HasTransformAttributes) -> Transform:
+    def __truediv__(self, other: HasTransformAttributes) -> TransformLike:
         return Transform.localize(self, other)
 
-    def __rtruediv__(self, other: HasTransformAttributes) -> Transform:
+    def __rtruediv__(self, other: HasTransformAttributes) -> TransformLike:
         return Transform.localize(other, self)
 
     def __repr__(self) -> str:
