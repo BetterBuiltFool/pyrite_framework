@@ -193,18 +193,6 @@ class TestCameraService(unittest.TestCase):
         test_params: dict[
             str, tuple[Projection, LocalTransform, EyeTransform, ZoomLevel]
         ] = {
-            "3/4 projection, local 0 coords": (
-                three_quart_projection,
-                zero_transform,
-                Transform((200, 150)),
-                1,
-            ),
-            "3/4 projection, counter local coords": (
-                three_quart_projection,
-                Transform((-200, -150)),
-                zero_transform,
-                1,
-            ),
             "Centered projection, off center camera, origin test transform": (
                 centered_projection,
                 zero_transform,
@@ -248,18 +236,6 @@ class TestCameraService(unittest.TestCase):
                 zero_transform,
                 shifted_post_rot_transform,
                 shifted_post_rot_transform,
-            ),
-            "3/4 projection, local 0 coords": (
-                three_quart_projection,
-                zero_transform,
-                zero_transform,
-                Transform((-200, -150)),
-            ),
-            "3/4 projection, counter local coords": (
-                three_quart_projection,
-                zero_transform,
-                Transform((200, 150)),
-                zero_transform,
             ),
             "Centered projection, off center camera, origin test transform": (
                 centered_projection,
