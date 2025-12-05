@@ -63,13 +63,7 @@ class Transform:
             rot_quat = transformlike._rotation
             scale_vec3 = transformlike._scale
         elif isinstance(transformlike, glm.mat4x4):
-            scale_vec3: glm.vec3 = glm.vec3()
-            rot_quat: glm.quat = glm.quat()
-            pos_vec3: glm.vec3 = glm.vec3()
-            skew: glm.vec3 = glm.vec3()
-            perspective: glm.vec4 = glm.vec4()
-
-            glm.decompose(position, scale_vec3, rot_quat, pos_vec3, skew, perspective)
+            pos_vec3, rot_quat, scale_vec3 = self._deconstruct_matrix(transformlike)
         elif is_sequence_transformlike(transformlike):
             if is_2d_transform(transformlike):
                 pos_vec3, rot_quat, scale_vec3 = (
@@ -220,6 +214,18 @@ class Transform:
             glm.quat(glm.vec3(transform_3d_sequence[1])),
             glm.vec3(transform_3d_sequence[2]),
         )
+
+    @staticmethod
+    def _deconstruct_matrix(matrix: glm.mat4x4) -> TransformTuple:
+        scale: glm.vec3 = glm.vec3()
+        rotation: glm.quat = glm.quat()
+        position: glm.vec3 = glm.vec3()
+        skew: glm.vec3 = glm.vec3()
+        perspective: glm.vec4 = glm.vec4()
+
+        glm.decompose(matrix, scale, rotation, position, skew, perspective)
+
+        return position, rotation, scale
 
     def copy(self) -> Transform:
         return Transform(self._position, self.rotation, self._scale)
