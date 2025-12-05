@@ -287,6 +287,7 @@ class Transform:
         ```
 
         _______________________________________________________________________________
+
         :param branch: A transform-like object to be made local to the _root_
         :param root: A transform-like object in the same space as the _branch_.
         :return: A new transform, equivalent to the difference between the current
