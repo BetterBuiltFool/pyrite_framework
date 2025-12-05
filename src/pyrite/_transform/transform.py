@@ -48,10 +48,12 @@ class Transform:
         transformlike: TransformLike | None = None,
     ) -> None:
         if transformlike is None:
-            if is_sequencelike(position):
+            if not isinstance(position, glm.mat4x4) and is_sequencelike(position):
                 transformlike = (position, rotation, scale)
             else:
                 # position must be TransformLike, TypeGuard issue.
+                # Also, type hint now has None as a possible type? How?
+                # position can't be None
                 transformlike = position  # type:ignore
 
         if has_transform(transformlike):
