@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
 
     from pyrite._component.collider_component import ColliderComponent
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
 
 
 class Circle(Shape[pymunk.Circle]):
@@ -58,7 +58,7 @@ class Polygon(Shape[pymunk.Poly]):
         self,
         collider: ColliderComponent | None,
         verts: Sequence[Point],
-        transform: TransformLike | None = None,
+        transform: HasTransformAttributes | None = None,
         radius: float = 0,
     ) -> None:
         vert_transform: pymunk.Transform | None = None

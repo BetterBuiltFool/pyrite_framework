@@ -21,5 +21,6 @@ classifiers = [
 ]
 dependencies = [
     "pygame_ce >= 2.5.2",
+    "pyglm >= 2.8.3",
     "weaktree >= 0.1.0, < 1"
 ]

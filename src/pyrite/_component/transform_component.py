@@ -9,11 +9,12 @@ from pyrite._transform.transform import Transform
 from pyrite._services.transform_service import (
     TransformServiceProvider as TransformService,
 )
-from pyrite._types.protocols import TransformLike
+from pyrite._types.protocols import HasTransformAttributes
 
 
 if TYPE_CHECKING:
     from pygame.typing import Point
+    from pyglm import glm
 
 
 class TransformComponent(BaseComponent):
@@ -114,6 +115,11 @@ class TransformComponent(BaseComponent):
         world.scale = scale
         TransformService.set_world(self, world)
 
+    @property
+    def matrix(self) -> glm.mat4x4:
+        # TODO: Consider if this should be outsourced to the TransformService.
+        return TransformService.get_local(self).matrix
+
     def is_dirty(self) -> bool:
         """
         :return: True if the component is in need of updates.
@@ -143,7 +149,9 @@ class TransformComponent(BaseComponent):
         return f"Local: {self.raw()}, World: {self.world()}"
 
     @staticmethod
-    def from_transform(owner: Any, transform: TransformLike) -> TransformComponent:
+    def from_transform(
+        owner: Any, transform: HasTransformAttributes
+    ) -> TransformComponent:
         """
         Create a transform component based on another transform.
 

@@ -9,9 +9,9 @@ from pyrite._types.service import Service
 if TYPE_CHECKING:
     from pyrite._types.bounds import CullingBounds
     from pyrite._types.renderable import Renderable
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
 
-    type BoundsData = tuple[CullingBounds, TransformLike]
+    type BoundsData = tuple[CullingBounds, HasTransformAttributes]
 
 
 class BoundsService(Service):

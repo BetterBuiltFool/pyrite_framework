@@ -8,6 +8,7 @@ from pygame import Vector2
 from pyrite._camera.camera import BaseCamera
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     from pygame.typing import Point
@@ -37,7 +38,7 @@ class TestBaseCamera(unittest.TestCase):
             with self.subTest(i=case):
                 local_pos = camera._get_mouse_position(viewport, mouse_pos)
 
-                self.assertEqual(Vector2(expected_pos), local_pos)
+                self.assertEqual(Transform(Vector2(expected_pos)), local_pos)
 
 
 if __name__ == "__main__":

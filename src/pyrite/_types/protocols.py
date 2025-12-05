@@ -7,8 +7,10 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from pygame import Rect, Surface, Vector2
     from pygame.typing import Point
-    from pyrite._component.transform_component import TransformComponent
-    from pyrite.types import CubeLike
+    from pyglm import glm
+
+    # from pyrite._component.transform_component import TransformComponent
+    from pyrite.types import CubeLike, TransformLike
 
 
 class HasPosition(Protocol):
@@ -27,7 +29,7 @@ class HasTransform(Protocol):
     An object with a TransformComponent attribute called _transform_.
     """
 
-    transform: TransformComponent
+    transform: TransformLike
 
 
 class HasTransformProperty(Protocol):
@@ -36,10 +38,7 @@ class HasTransformProperty(Protocol):
     """
 
     @property
-    def transform(self) -> TransformComponent: ...
-
-    @transform.setter
-    def transform(self, value: TransformComponent) -> None: ...
+    def transform(self) -> TransformLike | Callable[[], TransformLike]: ...
 
 
 class HasTexture(Protocol):
@@ -101,7 +100,7 @@ class RenderTarget(Protocol):
 
 
 @runtime_checkable
-class TransformLike(Protocol):
+class HasTransformAttributes(Protocol):
 
     @property
     def position(self) -> Vector2: ...
@@ -120,3 +119,6 @@ class TransformLike(Protocol):
 
     @scale.setter
     def scale(self, scale: Point): ...
+
+    @property
+    def matrix(self) -> glm.mat4x4: ...

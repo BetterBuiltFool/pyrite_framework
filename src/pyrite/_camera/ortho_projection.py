@@ -11,7 +11,7 @@ from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     # from pygame.typing import RectLike
-    from pyrite._types.protocols import TransformLike
+    from pyrite._types.protocols import HasTransformAttributes
     from pyrite.types import CubeLike
 
 
@@ -75,13 +75,13 @@ class OrthoProjection(Projection):
             and value.projection_data == self.projection_data
         )
 
-    def local_to_eye(self, local_coords: TransformLike) -> Transform:
+    def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
         return Transform(local_coords.position)
 
-    def eye_to_local(self, eye_coords: TransformLike) -> Transform:
+    def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
         return Transform(eye_coords.position)
 
-    def ndc_to_eye(self, ndc_coords: TransformLike) -> Transform:
+    def ndc_to_eye(self, ndc_coords: HasTransformAttributes) -> Transform:
         rect = self.projection_data.face_xy
         center = Vector2(rect.center)
         ndc_position = ndc_coords.position
@@ -89,7 +89,7 @@ class OrthoProjection(Projection):
         y_scaled = ndc_position.y * (rect.height / 2)
         return Transform((x_scaled + center.x, y_scaled - center.y))
 
-    def eye_to_ndc(self, eye_coords: TransformLike) -> Transform:
+    def eye_to_ndc(self, eye_coords: HasTransformAttributes) -> Transform:
         rect = self.projection_data.face_xy
         center = Vector2(rect.center)
         eye_position = eye_coords.position
