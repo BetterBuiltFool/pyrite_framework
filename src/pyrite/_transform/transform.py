@@ -356,6 +356,29 @@ class Transform:
         )
 
     @staticmethod
+    def from_euler_rotation(
+        position: Point3D, rotation: Point3D, scale: Point3D | float = 1
+    ) -> Transform:
+        """
+        Creates a new Transform from 3D data, using Euler numbers for rotation.
+
+        :param position: A point in 3D space.
+        :param rotation: Rotation, defined by yaw, pitch, and roll, in degrees.
+        :param scale: A tuple describing the scale of the Transform, either as a tuple,
+            or as a single number for uniform scaling, defaults to 1
+        :return: A new transform with the provided parameters.
+        """
+        if isinstance(scale, float | int):
+            scale = (scale, scale, scale)
+        return Transform(
+            (
+                glm.vec3(position),
+                glm.quat(glm.radians(glm.vec3(rotation))),
+                glm.vec3(scale),
+            )
+        )
+
+    @staticmethod
     def from_matrix(matrix: glm.mat4x4) -> Transform:
         """
         Creates a new Transform from a 4x4 affine matrix.
