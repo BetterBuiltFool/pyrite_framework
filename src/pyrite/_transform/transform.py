@@ -311,3 +311,17 @@ class Transform:
 
     def __repr__(self) -> str:
         return f"Transform({self.position}, {self.rotation}, {self.scale})"
+
+    @staticmethod
+    def from_transform(
+        transformlike: Transform,
+    ) -> Transform:
+        """
+        Creates a new Transform from an existing Transform.
+
+        :param transformlike: A Transform object
+        :return: A duplicate of transformlike
+        """
+        return Transform(
+            (transformlike._position, transformlike._rotation, transformlike._scale)
+        )
