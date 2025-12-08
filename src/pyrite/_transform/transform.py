@@ -354,3 +354,21 @@ class Transform:
                 glm.vec3(scale),
             )
         )
+
+    @staticmethod
+    def from_matrix(matrix: glm.mat4x4) -> Transform:
+        """
+        Creates a new Transform from a 4x4 affine matrix.
+
+        :param matrix: A 4x4 affine matrix.
+        :return: A new Transform, from which to_matrix should match the input matrix.
+        """
+        scale: glm.vec3 = glm.vec3()
+        rotation: glm.quat = glm.quat()
+        position: glm.vec3 = glm.vec3()
+        skew: glm.vec3 = glm.vec3()
+        perspective: glm.vec4 = glm.vec4()
+
+        glm.decompose(matrix, scale, rotation, position, skew, perspective)
+
+        return Transform((position, rotation, scale))
