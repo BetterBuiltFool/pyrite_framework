@@ -313,6 +313,37 @@ class Transform:
         return f"Transform({self.position}, {self.rotation}, {self.scale})"
 
     @staticmethod
+    def new(transformlike: TransformLike) -> Transform:
+        """
+        Creates a new Transform from any TransformLike value.
+
+        Note: If you know the subtype of your TransformLike, it will always be faster
+        to create it directly with the appropriate method.
+
+        :param transformlike: Any TransformLike value.
+        :raises BAD_TRANSFORMLIKE_EXCEPTION: If a transform cannot be constructed from
+            the given value.
+        :return: A new Transform.
+        """
+        if has_transform(transformlike):
+            transformlike = Transform._extract_transformlike_from_attribute(
+                transformlike
+            )
+        if isinstance(transformlike, Transform):
+            return Transform.from_transform(transformlike)
+        elif isinstance(transformlike, glm.mat4x4):
+            return Transform.from_matrix(transformlike)
+        elif is_sequence_transformlike(transformlike):
+            if is_2d_transform(transformlike):
+                return Transform.from_2d(*transformlike)
+            else:
+                # transformlike must be type Transform3DPoints by now
+                # TODO upgrade Python and make TypeGuards to TypeIs
+                return Transform.from_euler_rotation(*transformlike)  # type:ignore
+
+        raise BAD_TRANSFORMLIKE_EXCEPTION
+
+    @staticmethod
     def from_transform(
         transformlike: Transform,
     ) -> Transform:
