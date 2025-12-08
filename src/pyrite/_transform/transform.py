@@ -325,3 +325,32 @@ class Transform:
         return Transform(
             (transformlike._position, transformlike._rotation, transformlike._scale)
         )
+
+    @staticmethod
+    def from_2d(
+        position: Point = (0, 0), rotation: float = 0, scale: Point | float = 1
+    ) -> Transform:
+        """
+        Creates a new Transform from a sequence of 2D transform data.
+
+        3D info is filled with default values.
+
+        :param position: A point in space, must be at least 2D, defaults to (0, 0)
+        :param rotation: Rotation along the z-axis, in degrees, defaults to 0
+        :param scale: A tuple describing the scale of the Transform, either as a tuple,
+            or as a single number for uniform scaling, defaults to 1
+        :return: A new transform with the provided parameters.
+        """
+        if len(position) < 3:
+            position = (position[0], position[1], 0)
+        if isinstance(scale, float | int):
+            scale = (scale, scale, scale)
+        if len(scale) < 3:
+            scale = (scale[0], scale[1], 1)
+        return Transform(
+            (
+                glm.vec3(position),
+                glm.quat(glm.vec3(0, 0, glm.radians(rotation))),
+                glm.vec3(scale),
+            )
+        )
