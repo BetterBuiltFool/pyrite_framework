@@ -240,7 +240,7 @@ class DefaultTransformService(TransformService):
         node = self.transform_nodes[component]
         if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
             return value.copy()
-        return value / trunk_transform.world()
+        return value.new(value / trunk_transform.world())
 
     def _calc_world_from_local(
         self, component: TransformComponent, value: Transform
@@ -248,7 +248,7 @@ class DefaultTransformService(TransformService):
         node = self.transform_nodes[component]
         if not (trunk := node.trunk) or not (trunk_transform := trunk.data):
             return value.copy()
-        return trunk_transform.world() * value
+        return value.new(trunk_transform.world() * value)
 
     def get_relative_of(
         self, component: TransformComponent

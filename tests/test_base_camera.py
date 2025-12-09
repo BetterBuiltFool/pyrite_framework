@@ -38,7 +38,7 @@ class TestBaseCamera(unittest.TestCase):
             with self.subTest(i=case):
                 local_pos = camera._get_mouse_position(viewport, mouse_pos)
 
-                self.assertEqual(Transform(Vector2(expected_pos)), local_pos)
+                self.assertEqual(Transform.from_2d(Vector2(expected_pos)), local_pos)
 
 
 if __name__ == "__main__":

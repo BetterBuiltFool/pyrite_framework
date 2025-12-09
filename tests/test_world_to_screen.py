@@ -75,9 +75,9 @@ class TestWorldToScreen(unittest.TestCase):
             world_point,
         ) in test_params.items():
             with self.subTest(i=case):
-                world_transform = Transform(world_point)
+                world_transform = Transform.from_2d(world_point)
                 eye_pos = camera.to_eye(camera.to_local(world_transform)).position
-                ndc_pos = camera.projection.eye_to_ndc(Transform(eye_pos))
+                ndc_pos = camera.projection.eye_to_ndc(Transform.from_2d(eye_pos))
                 screen_pos = viewport.ndc_to_screen(ndc_pos)
 
                 self.assertEqual(expected_point, screen_pos)

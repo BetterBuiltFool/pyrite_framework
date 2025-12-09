@@ -25,13 +25,13 @@ class TestTransform(unittest.TestCase):
 
     def test_generalize(self):
 
-        world_transform = Transform((10, 10), 90, (2, 2))
+        world_transform = Transform.from_2d((10, 10), 90, (2, 2))
 
-        local_transform = Transform((5, 0), 0, (1, 1))
+        local_transform = Transform.from_2d((5, 0), 0, (1, 1))
 
-        modified = Transform(Transform.generalize(local_transform, world_transform))
+        modified = Transform.new(Transform.generalize(local_transform, world_transform))
 
-        expected = Transform((10, 20), 90, (2, 2))
+        expected = Transform.from_2d((10, 20), 90, (2, 2))
 
         self.assertAlmostEqualVector3(modified._position, expected._position, 5)
         self.assertEqual(modified.rotation, expected.rotation)
@@ -39,13 +39,13 @@ class TestTransform(unittest.TestCase):
 
     def test_rmul(self):
 
-        world_transform = Transform((10, 10), 90, (2, 2))
+        world_transform = Transform.from_2d((10, 10), 90, (2, 2))
 
-        local_transform = Transform((5, 0), 0, (1, 1))
+        local_transform = Transform.from_2d((5, 0), 0, (1, 1))
 
-        modified: Transform = Transform(world_transform * local_transform)
+        modified: Transform = Transform.new(world_transform * local_transform)
 
-        expected = Transform((10, 20), 90, (2, 2))
+        expected = Transform.from_2d((10, 20), 90, (2, 2))
 
         self.assertAlmostEqualVector3(modified._position, expected._position, 5)
         self.assertEqual(modified.rotation, expected.rotation)
@@ -57,13 +57,13 @@ class TestTransform(unittest.TestCase):
 
         world_transform = TransformComponent(empty, (10, 10), 90, (2, 2))
 
-        local_transform = Transform((5, 0), 0, (1, 1))
+        local_transform = Transform.from_2d((5, 0), 0, (1, 1))
 
         # TransformComponent has no __mul__, so Transform.__rmul__ takes over and
         # treats it like a transform.
-        modified: Transform = Transform(world_transform * local_transform)
+        modified: Transform = Transform.new(world_transform * local_transform)
 
-        expected = Transform((10, 20), 90, (2, 2))
+        expected = Transform.from_2d((10, 20), 90, (2, 2))
 
         self.assertEqual(modified.position, expected.position)
         self.assertEqual(modified.rotation, expected.rotation)
@@ -71,11 +71,11 @@ class TestTransform(unittest.TestCase):
 
     def test_localize(self):
 
-        root_transform = Transform((10, 10), 90, (2, 2))
-        branch_transform = Transform((10, 20), 90, (2, 2))
+        root_transform = Transform.from_2d((10, 10), 90, (2, 2))
+        branch_transform = Transform.from_2d((10, 20), 90, (2, 2))
 
-        expected = Transform((5, 0), 0, (1, 1))
-        modified = Transform(Transform.localize(branch_transform, root_transform))
+        expected = Transform.from_2d((5, 0), 0, (1, 1))
+        modified = Transform.new(Transform.localize(branch_transform, root_transform))
 
         # Literally just the inverse of generalize()
 

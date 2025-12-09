@@ -66,7 +66,7 @@ class TestDefaultSpriteRenderer(unittest.TestCase):
                 camera = Camera(projection, camera_pos)
 
                 surface_pos = self.renderer._get_surface_pos(
-                    camera, Transform(world_pos)
+                    camera, Transform.from_2d(world_pos)
                 )
 
                 self.assertEqual(surface_pos, expected_pos)
