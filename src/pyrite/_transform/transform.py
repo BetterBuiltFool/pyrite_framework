@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import overload, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pygame import Vector2, Vector3
 from pyglm import glm
@@ -8,7 +8,7 @@ from pyglm import glm
 from pyrite._types.protocols import HasTransformAttributes
 
 from pyrite.types import (
-    is_sequencelike,
+    # is_sequencelike,
     is_sequence_transformlike,
     is_2d_transform,
     has_transform,
@@ -32,58 +32,15 @@ BAD_TRANSFORMLIKE_EXCEPTION = TypeError("Expected Transform-style object")
 
 class Transform:
 
-    @overload
-    def __init__(self, transformlike: TransformLike) -> None: ...
-
-    @overload
     def __init__(
-        self, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
-    ) -> None: ...
-
-    def __init__(  # type:ignore
         self,
-        position: Point | TransformLike = (0, 0),
-        rotation: float = 0,
-        scale: Point = (1, 1),
-        transformlike: TransformLike | None = None,
+        position: glm.vec3 = glm.vec3(),
+        rotation: glm.quat = glm.quat(),
+        scale: glm.vec3 = glm.vec3(1, 1, 1),
     ) -> None:
-        if transformlike is None:
-            if not isinstance(position, glm.mat4x4) and is_sequencelike(position):
-                transformlike = (position, rotation, scale)
-            else:
-                # position must be TransformLike, TypeGuard issue.
-                # Also, type hint now has None as a possible type? How?
-                # position can't be None
-                transformlike = position  # type:ignore
-
-        if has_transform(transformlike):
-            position = self._extract_transformlike_from_attribute(transformlike)
-        if isinstance(transformlike, Transform):
-            pos_vec3 = transformlike._position
-            rot_quat = transformlike._rotation
-            scale_vec3 = transformlike._scale
-        elif isinstance(transformlike, glm.mat4x4):
-            pos_vec3, rot_quat, scale_vec3 = self._deconstruct_matrix(transformlike)
-        elif is_sequence_transformlike(transformlike):
-            if is_2d_transform(transformlike):
-                pos_vec3, rot_quat, scale_vec3 = (
-                    self._deconstruct_2d_transform_sequence(transformlike)
-                )
-            else:
-                # transformlike must be type Transform3DPoints by now
-                # TODO upgrade Python and make TypeGuards to TypeIs
-                pos_vec3, rot_quat, scale_vec3 = (
-                    self._deconstruct_3d_transform_sequence(
-                        transformlike  # type:ignore
-                    )
-                )
-
-        else:
-            raise BAD_TRANSFORMLIKE_EXCEPTION
-
-        self._position = pos_vec3
-        self._rotation = rot_quat
-        self._scale = scale_vec3
+        self._position = position
+        self._rotation = rotation
+        self._scale = scale
 
     @property
     def position(self) -> Vector2:
@@ -228,7 +185,7 @@ class Transform:
         return position, rotation, scale
 
     def copy(self) -> Transform:
-        return Transform(self._position, self.rotation, self._scale)
+        return Transform(self._position, self._rotation, self._scale)
 
     @staticmethod
     def generalize(
@@ -354,7 +311,7 @@ class Transform:
         :return: A duplicate of transformlike
         """
         return Transform(
-            (transformlike._position, transformlike._rotation, transformlike._scale)
+            transformlike._position, transformlike._rotation, transformlike._scale
         )
 
     @staticmethod
@@ -379,11 +336,9 @@ class Transform:
         if len(scale) < 3:
             scale = (scale[0], scale[1], 1)
         return Transform(
-            (
-                glm.vec3(position),
-                glm.quat(glm.vec3(0, 0, glm.radians(rotation))),
-                glm.vec3(scale),
-            )
+            glm.vec3(position),
+            glm.quat(glm.vec3(0, 0, glm.radians(rotation))),
+            glm.vec3(scale),
         )
 
     @staticmethod
@@ -402,11 +357,9 @@ class Transform:
         if isinstance(scale, float | int):
             scale = (scale, scale, scale)
         return Transform(
-            (
-                glm.vec3(position),
-                glm.quat(glm.radians(glm.vec3(rotation))),
-                glm.vec3(scale),
-            )
+            glm.vec3(position),
+            glm.quat(glm.radians(glm.vec3(rotation))),
+            glm.vec3(scale),
         )
 
     @staticmethod
@@ -425,4 +378,4 @@ class Transform:
 
         glm.decompose(matrix, scale, rotation, position, skew, perspective)
 
-        return Transform((position, rotation, scale))
+        return Transform(position, rotation, scale)
