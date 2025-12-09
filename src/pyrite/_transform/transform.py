@@ -8,7 +8,6 @@ from pyglm import glm
 from pyrite._types.protocols import HasTransformAttributes
 
 from pyrite.types import (
-    # is_sequencelike,
     is_sequence_transformlike,
     is_2d_transform,
     has_transform,
@@ -18,10 +17,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite.types import (
         Point3D,
-        Transform2DTuple,
-        Transform3DPoints,
         TransformLike,
-        TransformTuple,
         _TransformLikeNoAttribute,
         _HasTransformAccessible,
     )
@@ -151,38 +147,6 @@ class Transform:
         # Need to use type:ignore to get around this.
         # TODO: Update python and switch to TypeIs
         return transformlike  # type:ignore
-
-    @staticmethod
-    def _deconstruct_2d_transform_sequence(
-        transform_2d_sequence: Transform2DTuple,
-    ) -> TransformTuple:
-        return (
-            glm.vec3(transform_2d_sequence[0][0], transform_2d_sequence[0][1], 0),
-            glm.quat(glm.vec3(0, 0, glm.radians(transform_2d_sequence[1]))),
-            glm.vec3(transform_2d_sequence[2][0], transform_2d_sequence[2][1], 1),
-        )
-
-    @staticmethod
-    def _deconstruct_3d_transform_sequence(
-        transform_3d_sequence: Transform3DPoints,
-    ) -> TransformTuple:
-        return (
-            glm.vec3(transform_3d_sequence[0]),
-            glm.quat(glm.vec3(transform_3d_sequence[1])),
-            glm.vec3(transform_3d_sequence[2]),
-        )
-
-    @staticmethod
-    def _deconstruct_matrix(matrix: glm.mat4x4) -> TransformTuple:
-        scale: glm.vec3 = glm.vec3()
-        rotation: glm.quat = glm.quat()
-        position: glm.vec3 = glm.vec3()
-        skew: glm.vec3 = glm.vec3()
-        perspective: glm.vec4 = glm.vec4()
-
-        glm.decompose(matrix, scale, rotation, position, skew, perspective)
-
-        return position, rotation, scale
 
     def copy(self) -> Transform:
         return Transform(self._position, self._rotation, self._scale)
