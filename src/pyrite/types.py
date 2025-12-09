@@ -83,8 +83,6 @@ if TYPE_CHECKING:
 
     type TransformLike = (_TransformLikeNoAttribute | HasTransformAttributes)
 
-    TransformTuple = tuple[glm.vec3, glm.quat, glm.vec3]
-
 
 # TODO Consider if these should be here or int the _types folder and imported to here.
 
