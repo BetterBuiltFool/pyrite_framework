@@ -3,15 +3,37 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import unittest
 
+from pyglm import glm
+
 from pyrite.transform import Transform, TransformComponent  # noqa:E402
 
 if TYPE_CHECKING:
-    from pyglm import glm
+    from collections.abc import Callable
+    from typing import Any
+
+    from pygame.typing import Point
+
+    from pyrite.types import TransformLike
 
 
 class Empty:
 
     pass
+
+
+def transform_from_euler(
+    transformlike: tuple[Point, Point, Point | float],
+) -> Transform:
+    """
+    A function for calling Transform.from_euler_rotation with a packed tuple.
+    """
+    return Transform.from_euler_rotation(
+        transformlike[0], transformlike[1], transformlike[2]
+    )
+
+
+def transform_from_2d(transformlike: tuple[Point, float, Point | float]) -> Transform:
+    return Transform.from_2d(transformlike[0], transformlike[1], transformlike[2])
 
 
 class TestTransform(unittest.TestCase):
@@ -22,6 +44,27 @@ class TestTransform(unittest.TestCase):
         self.assertAlmostEqual(first.x, second.x, places)
         self.assertAlmostEqual(first.y, second.y, places)
         self.assertAlmostEqual(first.z, second.z, places)
+
+    def test_inits(self) -> None:
+        test_data = ((10, 10, 0), (0, 0, 0), (1, 1, 1))
+
+        test_transform = Transform(
+            glm.vec3(test_data[0]),
+            glm.quat(glm.vec3(test_data[1])),
+            glm.vec3(test_data[2]),
+        )
+
+        params: dict[str, tuple[TransformLike, Callable[[Any], Transform]]] = {
+            "From Transform": (test_transform, Transform.from_transform),
+            "From Euler Rotation": (test_data, transform_from_euler),
+            "From 2D": (((10, 10), 0, (1, 1)), transform_from_2d),
+            "From Matrix": (test_transform.matrix, Transform.from_matrix),
+        }
+
+        for case, (transformlike, constructor) in params.items():
+            with self.subTest(i=case):
+                self.assertEqual(test_transform, constructor(transformlike))
+                self.assertEqual(test_transform, Transform.new(transformlike))
 
     def test_generalize(self):
 
