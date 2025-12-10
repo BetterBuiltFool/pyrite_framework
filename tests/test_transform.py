@@ -29,7 +29,9 @@ class TestTransform(unittest.TestCase):
 
         local_transform = Transform.from_2d((5, 0), 0, (1, 1))
 
-        modified = Transform.new(Transform.generalize(local_transform, world_transform))
+        modified = Transform.from_matrix(
+            Transform.generalize(local_transform, world_transform)
+        )
 
         expected = Transform.from_2d((10, 20), 90, (2, 2))
 
@@ -43,7 +45,7 @@ class TestTransform(unittest.TestCase):
 
         local_transform = Transform.from_2d((5, 0), 0, (1, 1))
 
-        modified: Transform = Transform.new(world_transform * local_transform)
+        modified: Transform = Transform.from_matrix(world_transform * local_transform)
 
         expected = Transform.from_2d((10, 20), 90, (2, 2))
 
@@ -61,7 +63,7 @@ class TestTransform(unittest.TestCase):
 
         # TransformComponent has no __mul__, so Transform.__rmul__ takes over and
         # treats it like a transform.
-        modified: Transform = Transform.new(world_transform * local_transform)
+        modified: Transform = Transform.from_matrix(world_transform * local_transform)
 
         expected = Transform.from_2d((10, 20), 90, (2, 2))
 
@@ -75,7 +77,9 @@ class TestTransform(unittest.TestCase):
         branch_transform = Transform.from_2d((10, 20), 90, (2, 2))
 
         expected = Transform.from_2d((5, 0), 0, (1, 1))
-        modified = Transform.new(Transform.localize(branch_transform, root_transform))
+        modified = Transform.from_matrix(
+            Transform.localize(branch_transform, root_transform)
+        )
 
         # Literally just the inverse of generalize()
 
