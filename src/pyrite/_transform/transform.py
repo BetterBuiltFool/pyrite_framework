@@ -154,7 +154,7 @@ class Transform:
     @staticmethod
     def generalize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> TransformLike:
+    ) -> glm.mat4x4:
         """
         Applies a root transform to a local transform, converting it into the same
         relative space.
@@ -187,16 +187,24 @@ class Transform:
         # This might be a pyglm bug.
         return root.matrix * branch.matrix  # type:ignore
 
-    def __mul__(self, other_transform: HasTransformAttributes) -> TransformLike:
+    def __mul__(
+        self, other_transform: HasTransformAttributes | glm.mat4x4
+    ) -> glm.mat4x4:
+        if isinstance(other_transform, glm.mat4x4):
+            return self.matrix * other_transform  # type:ignore
         return Transform.generalize(other_transform, self)
 
-    def __rmul__(self, other_transform: HasTransformAttributes) -> TransformLike:
+    def __rmul__(
+        self, other_transform: HasTransformAttributes | glm.mat4x4
+    ) -> glm.mat4x4:
+        if isinstance(other_transform, glm.mat4x4):
+            return self.matrix * other_transform  # type:ignore
         return Transform.generalize(self, other_transform)
 
     @staticmethod
     def localize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> TransformLike:
+    ) -> glm.mat4x4:
         """
         Given two Transforms in the same relative space, finds the Transform local to
         the root that is equivalent of this Transform.
@@ -224,10 +232,14 @@ class Transform:
         """
         return glm.inverse(root.matrix) * branch.matrix  # type:ignore
 
-    def __truediv__(self, other: HasTransformAttributes) -> TransformLike:
+    def __truediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
+        if isinstance(other, glm.mat4x4):
+            return glm.inverse(self.matrix) * other  # type:ignore
         return Transform.localize(self, other)
 
-    def __rtruediv__(self, other: HasTransformAttributes) -> TransformLike:
+    def __rtruediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
+        if isinstance(other, glm.mat4x4):
+            return glm.inverse(other) * self.matrix  # type:ignore
         return Transform.localize(other, self)
 
     def __repr__(self) -> str:
