@@ -21,6 +21,16 @@ class Empty:
     pass
 
 
+class ObjectWithTransform:
+
+    def __init__(self, transform: TransformLike) -> None:
+        self._transform = transform
+
+    @property
+    def transform(self) -> TransformLike:
+        return self._transform
+
+
 def transform_from_euler(
     transformlike: tuple[Point, Point, Point | float],
 ) -> Transform:
@@ -56,6 +66,7 @@ class TestTransform(unittest.TestCase):
 
         params: dict[str, tuple[TransformLike, Callable[[Any], Transform]]] = {
             "From Transform": (test_transform, Transform.from_transform),
+            "From Attribute": (ObjectWithTransform(test_transform), Transform.new),
             "From Euler Rotation": (test_data, transform_from_euler),
             "From 2D": (((10, 10), 0, (1, 1)), transform_from_2d),
             "From Matrix": (test_transform.matrix, Transform.from_matrix),
