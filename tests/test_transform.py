@@ -57,6 +57,7 @@ class TestTransform(unittest.TestCase):
 
     def test_inits(self) -> None:
         test_data = ((10, 10, 0), (0, 0, 0), (1, 1, 1))
+        empty = Empty()
 
         test_transform = Transform(
             glm.vec3(test_data[0]),
@@ -66,6 +67,15 @@ class TestTransform(unittest.TestCase):
 
         params: dict[str, tuple[TransformLike, Callable[[Any], Transform]]] = {
             "From Transform": (test_transform, Transform.from_transform),
+            "From TransformComponent": (
+                TransformComponent(
+                    empty,
+                    test_transform.position,
+                    test_transform.rotation,
+                    test_transform.scale,
+                ),
+                Transform.new,
+            ),
             "From Attribute": (ObjectWithTransform(test_transform), Transform.new),
             "From Euler Rotation": (test_data, transform_from_euler),
             "From 2D": (((10, 10), 0, (1, 1)), transform_from_2d),
