@@ -264,6 +264,8 @@ class Transform:
             )
         if isinstance(transformlike, Transform):
             return Transform.from_transform(transformlike)
+        elif isinstance(transformlike, HasTransformAttributes):
+            return Transform.from_matrix(transformlike.matrix)
         elif isinstance(transformlike, glm.mat4x4):
             return Transform.from_matrix(transformlike)
         elif is_sequence_transformlike(transformlike):
