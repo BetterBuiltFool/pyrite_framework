@@ -98,6 +98,15 @@ class BaseCamera(Camera):
 
     @property
     def projection(self) -> Projection:
+        """
+        The projection used by the camera for converting items to the view space.
+
+        Returns the zoomed version of the projection. To get the reference projection,
+        use `camera._projection`.
+
+        Setting the projection will set the reference projection, and zoom to the
+        current zoom level.
+        """
         return self._active_projection
 
     @projection.setter
@@ -107,6 +116,13 @@ class BaseCamera(Camera):
 
     @property
     def zoom_level(self):
+        """
+        The degree to which the camera is zoomed.
+
+        Larger number = smaller view.
+
+        This carries over even if the projection of the camera is otherwise changed.
+        """
         return self._zoom_level
 
     @zoom_level.setter
@@ -122,6 +138,18 @@ class BaseCamera(Camera):
         ease_factor: float = 8.0,
         max_distance: float = -1.0,
     ) -> None:
+        """
+        Causes the camera to chase after the target.
+
+
+        :param target: Any object that has a transform component.
+        :param ease_factor: The rate at which the camera will try to recenter around
+            the target, defaults to 8.0
+        :param max_distance: The maximum distance the camera can be from the target,
+            defaults to -1.0. If the target is moving too fast for the ease factor to
+            keep up, the camera will be sped up to preserve this distance. -1 will
+            disable.
+        """
         if self.chaser:
             self.chaser.stop()
         self.chaser = EntityChaser(
@@ -134,6 +162,9 @@ class BaseCamera(Camera):
         )
 
     def stop_chase(self) -> None:
+        """
+        Stops chasing the current target, if it exists.
+        """
         if self.chaser:
             self.chaser.stop()
         self.chaser = None
@@ -164,6 +195,15 @@ class BaseCamera(Camera):
         return CameraService.to_world(self, point)
 
     def get_mouse_position(self, viewport: Viewport | None = None) -> Transform:
+        """
+        Gets the current mouse position, relative to a viewport. If no viewport is
+        specified, the first viewport of the camera is used.
+
+        :param viewport: The target viewport, defaults to None
+        :raises RuntimeError: If no viewport is specified, and the camera only renders
+            to RenderTextures
+        :return: A Transform representing the mouse position, local to the camera.
+        """
         screen_pos = pygame.mouse.get_pos()
         if not viewport:
             if len(self._viewports) < 1:
