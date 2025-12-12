@@ -151,8 +151,8 @@ class TestCameraService(unittest.TestCase):
                 self.assertEqual(local_position, expected)
 
     def test_to_local(self):
-        shifted_pos_transform = Transform((10, 0))
-        shifted_post_rot_transform = Transform((10, 0), 90)
+        shifted_pos_transform = Transform.from_2d((10, 0))
+        shifted_post_rot_transform = Transform.from_2d((10, 0), 90)
 
         test_params: dict[
             str, tuple[WorldTransform, WorldTransform, LocalTransform]
@@ -171,7 +171,7 @@ class TestCameraService(unittest.TestCase):
             "Shifted camera, Default test position": (
                 shifted_pos_transform,
                 zero_transform,
-                Transform((-10, 0)),
+                Transform.from_2d((-10, 0)),
             ),
         }
 
@@ -213,8 +213,8 @@ class TestCameraService(unittest.TestCase):
                 self.assertEqual(eye_transform, expected)
 
     def test_to_world(self):
-        shifted_pos_transform = Transform((10, 0))
-        shifted_post_rot_transform = Transform((10, 0), 90)
+        shifted_pos_transform = Transform.from_2d((10, 0))
+        shifted_post_rot_transform = Transform.from_2d((10, 0), 90)
 
         test_params: dict[
             str, tuple[Projection, WorldTransform, LocalTransform, WorldTransform]
@@ -239,15 +239,15 @@ class TestCameraService(unittest.TestCase):
             ),
             "Centered projection, off center camera, origin test transform": (
                 centered_projection,
-                Transform((100, 100)),
+                Transform.from_2d((100, 100)),
                 zero_transform,
-                Transform((100, 100)),
+                Transform.from_2d((100, 100)),
             ),
             "Centered projection, off center rotated camera, origin test transform": (
                 centered_projection,
-                Transform((100, 100), 90),
+                Transform.from_2d((100, 100), 90),
                 zero_transform,
-                Transform((100, 100), 90),
+                Transform.from_2d((100, 100), 90),
             ),
         }
 

@@ -120,7 +120,7 @@ class TestPymunkPhysicsService(unittest.TestCase):
         phys_object.rigidbody.body.position = (10, 10)
         phys_object.rigidbody.body.angle = math.radians(45)
 
-        transform = Transform((100, 100), 90)
+        transform = Transform.from_2d((100, 100), 90)
         phys_object.transform.world_position = transform.position
         phys_object.transform.world_rotation = transform.rotation
 
@@ -148,11 +148,11 @@ class TestPymunkPhysicsService(unittest.TestCase):
         phys_object.rigidbody.body.position = (0, 0)
         phys_object.rigidbody.body.angle = math.radians(0)
 
-        transform = Transform((100, 100), 90)
+        transform = Transform.from_2d((100, 100), 90)
         phys_object.transform.world_position = transform.position
         phys_object.transform.world_rotation = transform.rotation
 
-        expected = Transform((50, 50), 45)
+        expected = Transform.from_2d((50, 50), 45)
 
         for _, transform in self.physics_service.get_updated_transforms_for_bodies():
             self.assertEqual(transform.position, expected.position)

@@ -28,7 +28,7 @@ class TransformComponent(BaseComponent):
     ) -> None:
         super().__init__(owner)
         TransformService.initialize_component(
-            self, Transform(position, rotation, scale)
+            self, Transform.from_2d(position, rotation, scale)
         )
         self._dirty = False
 

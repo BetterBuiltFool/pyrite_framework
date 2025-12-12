@@ -151,7 +151,7 @@ class DefaultCameraService(CameraService):
         self._surfaces[camera] = Surface(display_size)
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
-        return Transform(point.localize(point, camera.transform.world()))
+        return Transform.new(point.localize(point, camera.transform.world()))
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
         return camera.projection.local_to_eye(point)
@@ -172,12 +172,12 @@ class DefaultCameraService(CameraService):
         return camera.projection.eye_to_local(point)
 
     def to_world(self, camera: Camera, point: Transform) -> Transform:
-        return Transform(point.generalize(point, camera.transform.world()))
+        return Transform.new(point.generalize(point, camera.transform.world()))
 
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
     ) -> Point:
-        world_transform = Transform(point)
+        world_transform = Transform.from_2d(point)
         local_coords = self.to_local(camera, world_transform)
         eye_coords = self.to_eye(camera, local_coords)
         ndc_coords = camera.projection.eye_to_ndc(eye_coords)

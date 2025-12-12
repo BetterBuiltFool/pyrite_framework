@@ -81,7 +81,7 @@ class TestViewport(unittest.TestCase):
                 viewport._update_display_rect(display_size)
 
                 screen_coords = viewport.ndc_to_screen(
-                    Transform(Vector3(ndc_coords).xy)
+                    Transform.from_2d(Vector3(ndc_coords).xy)
                 )
 
                 self.assertEqual(screen_coords, expected_coords)

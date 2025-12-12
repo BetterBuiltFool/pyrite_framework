@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import overload, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from pygame import Vector2, Vector3
 from pyglm import glm
@@ -8,7 +8,6 @@ from pyglm import glm
 from pyrite._types.protocols import HasTransformAttributes
 
 from pyrite.types import (
-    is_sequencelike,
     is_sequence_transformlike,
     is_2d_transform,
     has_transform,
@@ -18,10 +17,7 @@ if TYPE_CHECKING:
     from pygame.typing import Point
     from pyrite.types import (
         Point3D,
-        Transform2DTuple,
-        Transform3DPoints,
         TransformLike,
-        TransformTuple,
         _TransformLikeNoAttribute,
         _HasTransformAccessible,
     )
@@ -32,58 +28,15 @@ BAD_TRANSFORMLIKE_EXCEPTION = TypeError("Expected Transform-style object")
 
 class Transform:
 
-    @overload
-    def __init__(self, transformlike: TransformLike) -> None: ...
-
-    @overload
     def __init__(
-        self, position: Point = (0, 0), rotation: float = 0, scale: Point = (1, 1)
-    ) -> None: ...
-
-    def __init__(  # type:ignore
         self,
-        position: Point | TransformLike = (0, 0),
-        rotation: float = 0,
-        scale: Point = (1, 1),
-        transformlike: TransformLike | None = None,
+        position: glm.vec3 = glm.vec3(),
+        rotation: glm.quat = glm.quat(),
+        scale: glm.vec3 = glm.vec3(1, 1, 1),
     ) -> None:
-        if transformlike is None:
-            if not isinstance(position, glm.mat4x4) and is_sequencelike(position):
-                transformlike = (position, rotation, scale)
-            else:
-                # position must be TransformLike, TypeGuard issue.
-                # Also, type hint now has None as a possible type? How?
-                # position can't be None
-                transformlike = position  # type:ignore
-
-        if has_transform(transformlike):
-            position = self._extract_transformlike_from_attribute(transformlike)
-        if isinstance(transformlike, Transform):
-            pos_vec3 = transformlike._position
-            rot_quat = transformlike._rotation
-            scale_vec3 = transformlike._scale
-        elif isinstance(transformlike, glm.mat4x4):
-            pos_vec3, rot_quat, scale_vec3 = self._deconstruct_matrix(transformlike)
-        elif is_sequence_transformlike(transformlike):
-            if is_2d_transform(transformlike):
-                pos_vec3, rot_quat, scale_vec3 = (
-                    self._deconstruct_2d_transform_sequence(transformlike)
-                )
-            else:
-                # transformlike must be type Transform3DPoints by now
-                # TODO upgrade Python and make TypeGuards to TypeIs
-                pos_vec3, rot_quat, scale_vec3 = (
-                    self._deconstruct_3d_transform_sequence(
-                        transformlike  # type:ignore
-                    )
-                )
-
-        else:
-            raise BAD_TRANSFORMLIKE_EXCEPTION
-
-        self._position = pos_vec3
-        self._rotation = rot_quat
-        self._scale = scale_vec3
+        self._position = position
+        self._rotation = rotation
+        self._scale = scale
 
     @property
     def position(self) -> Vector2:
@@ -195,45 +148,13 @@ class Transform:
         # TODO: Update python and switch to TypeIs
         return transformlike  # type:ignore
 
-    @staticmethod
-    def _deconstruct_2d_transform_sequence(
-        transform_2d_sequence: Transform2DTuple,
-    ) -> TransformTuple:
-        return (
-            glm.vec3(transform_2d_sequence[0][0], transform_2d_sequence[0][1], 0),
-            glm.quat(glm.vec3(0, 0, glm.radians(transform_2d_sequence[1]))),
-            glm.vec3(transform_2d_sequence[2][0], transform_2d_sequence[2][1], 1),
-        )
-
-    @staticmethod
-    def _deconstruct_3d_transform_sequence(
-        transform_3d_sequence: Transform3DPoints,
-    ) -> TransformTuple:
-        return (
-            glm.vec3(transform_3d_sequence[0]),
-            glm.quat(glm.vec3(transform_3d_sequence[1])),
-            glm.vec3(transform_3d_sequence[2]),
-        )
-
-    @staticmethod
-    def _deconstruct_matrix(matrix: glm.mat4x4) -> TransformTuple:
-        scale: glm.vec3 = glm.vec3()
-        rotation: glm.quat = glm.quat()
-        position: glm.vec3 = glm.vec3()
-        skew: glm.vec3 = glm.vec3()
-        perspective: glm.vec4 = glm.vec4()
-
-        glm.decompose(matrix, scale, rotation, position, skew, perspective)
-
-        return position, rotation, scale
-
     def copy(self) -> Transform:
-        return Transform(self._position, self.rotation, self._scale)
+        return Transform(self._position, self._rotation, self._scale)
 
     @staticmethod
     def generalize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> TransformLike:
+    ) -> glm.mat4x4:
         """
         Applies a root transform to a local transform, converting it into the same
         relative space.
@@ -266,16 +187,24 @@ class Transform:
         # This might be a pyglm bug.
         return root.matrix * branch.matrix  # type:ignore
 
-    def __mul__(self, other_transform: HasTransformAttributes) -> TransformLike:
+    def __mul__(
+        self, other_transform: HasTransformAttributes | glm.mat4x4
+    ) -> glm.mat4x4:
+        if isinstance(other_transform, glm.mat4x4):
+            return self.matrix * other_transform  # type:ignore
         return Transform.generalize(other_transform, self)
 
-    def __rmul__(self, other_transform: HasTransformAttributes) -> TransformLike:
+    def __rmul__(
+        self, other_transform: HasTransformAttributes | glm.mat4x4
+    ) -> glm.mat4x4:
+        if isinstance(other_transform, glm.mat4x4):
+            return self.matrix * other_transform  # type:ignore
         return Transform.generalize(self, other_transform)
 
     @staticmethod
     def localize(
         branch: HasTransformAttributes, root: HasTransformAttributes
-    ) -> TransformLike:
+    ) -> glm.mat4x4:
         """
         Given two Transforms in the same relative space, finds the Transform local to
         the root that is equivalent of this Transform.
@@ -303,11 +232,128 @@ class Transform:
         """
         return glm.inverse(root.matrix) * branch.matrix  # type:ignore
 
-    def __truediv__(self, other: HasTransformAttributes) -> TransformLike:
+    def __truediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
+        if isinstance(other, glm.mat4x4):
+            return glm.inverse(self.matrix) * other  # type:ignore
         return Transform.localize(self, other)
 
-    def __rtruediv__(self, other: HasTransformAttributes) -> TransformLike:
+    def __rtruediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
+        if isinstance(other, glm.mat4x4):
+            return glm.inverse(other) * self.matrix  # type:ignore
         return Transform.localize(other, self)
 
     def __repr__(self) -> str:
         return f"Transform({self.position}, {self.rotation}, {self.scale})"
+
+    @staticmethod
+    def new(transformlike: TransformLike) -> Transform:
+        """
+        Creates a new Transform from any TransformLike value.
+
+        Note: If you know the subtype of your TransformLike, it will always be faster
+        to create it directly with the appropriate method.
+
+        :param transformlike: Any TransformLike value.
+        :raises BAD_TRANSFORMLIKE_EXCEPTION: If a transform cannot be constructed from
+            the given value.
+        :return: A new Transform.
+        """
+        if has_transform(transformlike):
+            transformlike = Transform._extract_transformlike_from_attribute(
+                transformlike
+            )
+        if isinstance(transformlike, Transform):
+            return Transform.from_transform(transformlike)
+        elif isinstance(transformlike, HasTransformAttributes):
+            return Transform.from_matrix(transformlike.matrix)
+        elif isinstance(transformlike, glm.mat4x4):
+            return Transform.from_matrix(transformlike)
+        elif is_sequence_transformlike(transformlike):
+            if is_2d_transform(transformlike):
+                return Transform.from_2d(*transformlike)
+            else:
+                # transformlike must be type Transform3DPoints by now
+                # TODO upgrade Python and make TypeGuards to TypeIs
+                return Transform.from_euler_rotation(*transformlike)  # type:ignore
+
+        raise BAD_TRANSFORMLIKE_EXCEPTION
+
+    @staticmethod
+    def from_transform(
+        transformlike: Transform,
+    ) -> Transform:
+        """
+        Creates a new Transform from an existing Transform.
+
+        :param transformlike: A Transform object
+        :return: A duplicate of transformlike
+        """
+        return Transform(
+            transformlike._position, transformlike._rotation, transformlike._scale
+        )
+
+    @staticmethod
+    def from_2d(
+        position: Point = (0, 0), rotation: float = 0, scale: Point | float = 1
+    ) -> Transform:
+        """
+        Creates a new Transform from a sequence of 2D transform data.
+
+        3D info is filled with default values.
+
+        :param position: A point in space, must be at least 2D, defaults to (0, 0)
+        :param rotation: Rotation along the z-axis, in degrees, defaults to 0
+        :param scale: A tuple describing the scale of the Transform, either as a tuple,
+            or as a single number for uniform scaling, defaults to 1
+        :return: A new transform with the provided parameters.
+        """
+        if len(position) < 3:
+            position = (position[0], position[1], 0)
+        if isinstance(scale, float | int):
+            scale = (scale, scale, scale)
+        if len(scale) < 3:
+            scale = (scale[0], scale[1], 1)
+        return Transform(
+            glm.vec3(position),
+            glm.quat(glm.vec3(0, 0, glm.radians(rotation))),
+            glm.vec3(scale),
+        )
+
+    @staticmethod
+    def from_euler_rotation(
+        position: Point3D, rotation: Point3D, scale: Point3D | float = 1
+    ) -> Transform:
+        """
+        Creates a new Transform from 3D data, using Euler numbers for rotation.
+
+        :param position: A point in 3D space.
+        :param rotation: Rotation, defined by yaw, pitch, and roll, in degrees.
+        :param scale: A tuple describing the scale of the Transform, either as a tuple,
+            or as a single number for uniform scaling, defaults to 1
+        :return: A new transform with the provided parameters.
+        """
+        if isinstance(scale, float | int):
+            scale = (scale, scale, scale)
+        return Transform(
+            glm.vec3(position),
+            glm.quat(glm.radians(glm.vec3(rotation))),
+            glm.vec3(scale),
+        )
+
+    @staticmethod
+    def from_matrix(matrix: glm.mat4x4) -> Transform:
+        """
+        Creates a new Transform from a 4x4 affine matrix.
+
+        :param matrix: A 4x4 affine matrix.
+        :return: A new Transform, from which to_matrix should match the input matrix.
+        """
+        scale: glm.vec3 = glm.vec3()
+        rotation: glm.quat = glm.quat()
+        position: glm.vec3 = glm.vec3()
+        skew: glm.vec3 = glm.vec3()
+        perspective: glm.vec4 = glm.vec4()
+
+        glm.decompose(matrix, scale, rotation, position, skew, perspective)
+
+        return Transform(position, rotation, scale)

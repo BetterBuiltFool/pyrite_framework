@@ -76,10 +76,10 @@ class OrthoProjection(Projection):
         )
 
     def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
-        return Transform(local_coords.position)
+        return Transform.from_2d(local_coords.position)
 
     def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
-        return Transform(eye_coords.position)
+        return Transform.from_2d(eye_coords.position)
 
     def ndc_to_eye(self, ndc_coords: HasTransformAttributes) -> Transform:
         rect = self.projection_data.face_xy
@@ -87,14 +87,16 @@ class OrthoProjection(Projection):
         ndc_position = ndc_coords.position
         x_scaled = ndc_position.x * (rect.width / 2)
         y_scaled = ndc_position.y * (rect.height / 2)
-        return Transform((x_scaled + center.x, y_scaled - center.y))
+        return Transform.from_2d((x_scaled + center.x, y_scaled - center.y))
 
     def eye_to_ndc(self, eye_coords: HasTransformAttributes) -> Transform:
         rect = self.projection_data.face_xy
         center = Vector2(rect.center)
         eye_position = eye_coords.position
         offset = (eye_position.x - center.x, eye_position.y + center.y)
-        return Transform((offset[0] / (rect.width / 2), offset[1] / (rect.height / 2)))
+        return Transform.from_2d(
+            (offset[0] / (rect.width / 2), offset[1] / (rect.height / 2))
+        )
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
         rect_center = self.projection_data.center
