@@ -108,7 +108,7 @@ class TestOrthoProjection(unittest.TestCase):
 
         for case, (projection, ndc_coords, expected_coords) in params.items():
             with self.subTest(i=case):
-                result = projection.ndc_to_eye(Transform(ndc_coords))
+                result = projection.ndc_to_eye(Transform.from_2d(ndc_coords))
 
                 self.assertEqual(result.position, expected_coords)
 
@@ -179,7 +179,7 @@ class TestOrthoProjection(unittest.TestCase):
 
         for case, (projection, eye_coords, expected_coords) in params.items():
             with self.subTest(i=case):
-                result = projection.eye_to_ndc(Transform(eye_coords.xy))
+                result = projection.eye_to_ndc(Transform.from_2d(eye_coords.xy))
 
                 self.assertEqual(result.position, expected_coords)
 
@@ -204,7 +204,7 @@ class TestOrthoProjection(unittest.TestCase):
 
         for case, (projection, local_coords, expected) in test_params.items():
             with self.subTest(i=case):
-                eye_coords = projection.local_to_eye(Transform(local_coords))
+                eye_coords = projection.local_to_eye(Transform.from_2d(local_coords))
 
                 self.assertEqual(eye_coords.position, expected)
 
@@ -229,7 +229,7 @@ class TestOrthoProjection(unittest.TestCase):
 
         for case, (projection, expected, eye_coords) in test_params.items():
             with self.subTest(i=case):
-                local_coords = projection.eye_to_local(Transform(eye_coords))
+                local_coords = projection.eye_to_local(Transform.from_2d(eye_coords))
 
                 self.assertEqual(local_coords.position, expected)
 
