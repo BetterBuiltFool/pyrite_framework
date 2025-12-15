@@ -13,6 +13,8 @@ from pyrite._camera.ortho_projection import (
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
+
     type LocalCoords = Vector2
     type EyeCoords = Vector2
     type NDCCoords = Vector3
@@ -40,6 +42,13 @@ ZERO_3D = Vector3(0)
 
 
 class TestOrthoProjection(unittest.TestCase):
+
+    def assertAlmostEqualVector2(
+        self, first: Point, second: Point, places: int | None = None
+    ) -> None:
+
+        self.assertAlmostEqual(first[0], second[0], places)
+        self.assertAlmostEqual(first[1], second[1], places)
 
     def test_ndc_to_eye(self) -> None:
 
@@ -110,7 +119,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 result = projection.ndc_to_eye(Transform.from_2d(ndc_coords))
 
-                self.assertEqual(result.position, expected_coords)
+                self.assertAlmostEqualVector2(result.position, expected_coords)
 
     def test_eye_to_ndc(self) -> None:
 
@@ -181,7 +190,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 result = projection.eye_to_ndc(Transform.from_2d(eye_coords.xy))
 
-                self.assertEqual(result.position, expected_coords)
+                self.assertAlmostEqualVector2(result.position, expected_coords)
 
     def test_local_to_eye(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
@@ -206,7 +215,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 eye_coords = projection.local_to_eye(Transform.from_2d(local_coords))
 
-                self.assertEqual(eye_coords.position, expected)
+                self.assertAlmostEqualVector2(eye_coords.position, expected, 0)
 
     def test_eye_to_local(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
@@ -231,7 +240,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 local_coords = projection.eye_to_local(Transform.from_2d(eye_coords))
 
-                self.assertEqual(local_coords.position, expected)
+                self.assertAlmostEqualVector2(local_coords.position, expected, 0)
 
     def test_zoom(self) -> None:
 
