@@ -12,6 +12,7 @@ from pyrite._types.service import Service
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
+    from pyglm import glm
     from pygame import Rect
     from pygame.typing import Point
     from pyrite._types.camera import Camera
@@ -86,17 +87,23 @@ class DefaultCameraService(CameraService):
 
     def __init__(self) -> None:
         self._surfaces: WeakKeyDictionary[Camera, Surface] = WeakKeyDictionary()
+        self._projections: WeakKeyDictionary[Camera, glm.mat4x4] = WeakKeyDictionary()
 
     def transfer(self, target_service: CameraService):
         for camera in self._surfaces:
             target_service.add_camera(camera)
 
+    def _update_projection_matrix(self, camera: Camera) -> None:
+        self._projections[camera] = camera.projection.get_matrix()
+
     def add_camera(self, camera: Camera):
+        self._update_projection_matrix(camera)
         return self._rebuild_surface(camera)
 
     def refresh(self, camera: Camera):
         surface = self._surfaces[camera]
         surface.fill((0, 0, 0, 0))
+        self._update_projection_matrix(camera)
 
     def get_view_bounds(self, camera: Camera) -> CameraViewBounds:
         return ViewPlane(self._get_view_rect(camera))
@@ -156,7 +163,8 @@ class DefaultCameraService(CameraService):
         return Transform.new(point.localize(point, camera.transform.world()))
 
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        return camera.projection.local_to_eye(point)
+        projection = self._projections[camera]
+        return Transform.from_matrix(projection * point)  # type:ignore
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:
         # TODO: Remove
