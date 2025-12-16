@@ -51,6 +51,7 @@ class CameraService(Service):
 
     @abstractmethod
     def point_to_local(self, camera: Camera, point: Point) -> Point:
+        # TODO: Remove
         pass
 
     @abstractmethod
@@ -157,6 +158,7 @@ class DefaultCameraService(CameraService):
         return camera.projection.local_to_eye(point)
 
     def point_to_local(self, camera: Camera, point: Point) -> Point:
+        # TODO: Remove
         camera_transform = camera.transform.world()
         offset_point = Vector2(point) - camera_transform.position
         rotated_position = offset_point.rotate(camera_transform.rotation)

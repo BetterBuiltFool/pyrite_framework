@@ -170,6 +170,7 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         :param point: A point in world space. Position only.
         :return: A point, as it exists relative to the camera.
         """
+        # TODO: Remove
         return cls._service.point_to_local(camera, point)
 
     @classmethod
