@@ -56,6 +56,7 @@ class CameraService(Service):
 
     @abstractmethod
     def local_point_to_projection(self, camera: Camera, point: Point) -> Point:
+        # TODO: Remove
         pass
 
     @abstractmethod
@@ -167,6 +168,7 @@ class DefaultCameraService(CameraService):
         return new_position
 
     def local_point_to_projection(self, camera: Camera, point: Point) -> Point:
+        # TODO: Remove
         far_plane_center = camera.projection.far_plane.center
         return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 

@@ -183,6 +183,7 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         :param point: A point local to the camera. Position only.
         :return: A point, as it exists relative to the projection.
         """
+        # TODO: Remove
         return cls._service.local_point_to_projection(camera, point)
 
     @classmethod
