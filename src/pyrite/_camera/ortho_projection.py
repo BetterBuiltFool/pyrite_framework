@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect, Vector2
 
+from pyglm import glm
+
 from pyrite.cuboid import Cuboid
 from pyrite._types.projection import Projection
 from pyrite._transform.transform import Transform
@@ -75,7 +77,18 @@ class OrthoProjection(Projection):
             and value.projection_data == self.projection_data
         )
 
+    def get_matrix(self) -> glm.mat4x4:
+        return glm.orthoLH(
+            self.projection_data.left,
+            self.projection_data.right,
+            self.projection_data.bottom,
+            self.projection_data.top,
+            self.projection_data.front,
+            self.projection_data.back,
+        )
+
     def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
+        print("Do dah")
         return Transform.from_2d(local_coords.position)
 
     def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
