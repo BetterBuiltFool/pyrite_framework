@@ -88,7 +88,6 @@ class OrthoProjection(Projection):
         )
 
     def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
-        print("Do dah")
         return Transform.from_2d(local_coords.position)
 
     def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
