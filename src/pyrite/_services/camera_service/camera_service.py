@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from weakref import WeakKeyDictionary
 
-from pygame import Surface, Vector2, Vector3
+from pygame import Surface, Vector3
 
 from pyrite._rendering.view_plane import ViewPlane
 from pyrite._types.service import Service
@@ -48,16 +48,6 @@ class CameraService(Service):
 
     @abstractmethod
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        pass
-
-    @abstractmethod
-    def point_to_local(self, camera: Camera, point: Point) -> Point:
-        # TODO: Remove
-        pass
-
-    @abstractmethod
-    def local_point_to_projection(self, camera: Camera, point: Point) -> Point:
-        # TODO: Remove
         pass
 
     @abstractmethod
@@ -165,20 +155,6 @@ class DefaultCameraService(CameraService):
     def to_eye(self, camera: Camera, point: Transform) -> Transform:
         projection = self._projections[camera]
         return Transform.from_matrix(projection * point)  # type:ignore
-
-    def point_to_local(self, camera: Camera, point: Point) -> Point:
-        # TODO: Remove
-        camera_transform = camera.transform.world()
-        offset_point = Vector2(point) - camera_transform.position
-        rotated_position = offset_point.rotate(camera_transform.rotation)
-        new_position = rotated_position.elementwise() / camera_transform.scale
-
-        return new_position
-
-    def local_point_to_projection(self, camera: Camera, point: Point) -> Point:
-        # TODO: Remove
-        far_plane_center = camera.projection.far_plane.center
-        return point[0] + far_plane_center[0], point[1] + far_plane_center[1]
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
         return camera.projection.eye_to_local(point)
