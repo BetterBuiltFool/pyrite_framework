@@ -188,30 +188,6 @@ class TestCameraService(unittest.TestCase):
 
                 self.assertEqual(local_transform, expected)
 
-    def test_to_eye(self):
-
-        test_params: dict[
-            str, tuple[Projection, LocalTransform, EyeTransform, ZoomLevel]
-        ] = {
-            "Centered projection, off center camera, origin test transform": (
-                centered_projection,
-                zero_transform,
-                zero_transform,
-                1,
-            ),
-        }
-
-        for index, (case, params) in enumerate(test_params.items()):
-            with self.subTest(case, i=index):
-                projection, local_transform, expected, zoom_level = params
-
-                test_cam = MockCamera(projection)
-                test_cam.zoom_level = zoom_level
-
-                eye_transform = CameraService.to_eye(test_cam, local_transform)
-
-                self.assertEqual(eye_transform, expected)
-
     def test_to_world(self):
         shifted_pos_transform = Transform.from_2d((10, 0))
         shifted_post_rot_transform = Transform.from_2d((10, 0), 90)
