@@ -215,7 +215,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 eye_coords = projection.local_to_eye(Transform.from_2d(local_coords))
 
-                self.assertAlmostEqualVector2(eye_coords.position, expected, 0)
+                self.assertAlmostEqualVector2(eye_coords.position, expected, 7)
 
     def test_eye_to_local(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
@@ -240,7 +240,7 @@ class TestOrthoProjection(unittest.TestCase):
             with self.subTest(i=case):
                 local_coords = projection.eye_to_local(Transform.from_2d(eye_coords))
 
-                self.assertAlmostEqualVector2(local_coords.position, expected, 0)
+                self.assertAlmostEqualVector2(local_coords.position, expected, 7)
 
     def test_zoom(self) -> None:
 
