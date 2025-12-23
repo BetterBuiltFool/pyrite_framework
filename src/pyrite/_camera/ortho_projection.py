@@ -81,13 +81,21 @@ class OrthoProjection(Projection):
         # +1s are to fix an off-by-one error, likely a difference in assumptions
         # between inclusive and exclusive ranges, but I can't be sure.
         # Either that, or my original results pre-matrices were wrong.
+        ltb_offset = 0
+        rbf_offset = 0
+        left = self.projection_data.left
+        right = self.projection_data.right
+        bottom = self.projection_data.bottom
+        top = self.projection_data.top
+        front = self.projection_data.front
+        back = self.projection_data.back
         return glm.orthoLH(
-            self.projection_data.left,
-            self.projection_data.right + 1,
-            self.projection_data.bottom + 1,
-            self.projection_data.top,
-            self.projection_data.front,
-            self.projection_data.back + 1,
+            left + ltb_offset,
+            right + rbf_offset,
+            bottom + rbf_offset,
+            top + ltb_offset,
+            front + rbf_offset,
+            back + ltb_offset,
         )
 
     def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
