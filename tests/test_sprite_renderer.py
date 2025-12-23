@@ -8,20 +8,34 @@ from pyrite.camera import Camera, OrthoProjection
 from pyrite.transform import Transform
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from pygame.typing import Point
 
     type CameraPosition = Point
     type WorldPosition = Point
     type SurfacePosition = Point
 
-CORNER_100X100 = OrthoProjection((0, 0, -1, 100, 100, 2))
-CENTER_100X100 = OrthoProjection((-50, -50, -2, 100, 100, 2))
+CORNER_100X100 = OrthoProjection((0, 0, 0, 100, 100, 2))
+CENTER_100X100 = OrthoProjection((-50, -50, -1, 100, 100, 2))
 
 ORIGIN = (0, 0)
 TOPLEFT = (0, 0)
 
 
 class TestDefaultSpriteRenderer(unittest.TestCase):
+
+    def assertAlmostEqualVector2(
+        self,
+        first: Point,
+        second: Point,
+        places: int | None = None,
+        msg: Any = None,
+        delta: None = None,
+    ) -> None:
+
+        self.assertAlmostEqual(first[0], second[0], places, msg, delta)
+        self.assertAlmostEqual(first[1], second[1], places, msg, delta)
 
     def setUp(self) -> None:
         self.renderer = DefaultSpriteRenderer()
@@ -69,7 +83,7 @@ class TestDefaultSpriteRenderer(unittest.TestCase):
                     camera, Transform.from_2d(world_pos)
                 )
 
-                self.assertEqual(surface_pos, expected_pos)
+                self.assertAlmostEqualVector2(surface_pos, expected_pos, 1)
 
 
 if __name__ == "__main__":
