@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
+from pyglm import glm
 from weakref import WeakKeyDictionary
 
 from pygame import Surface, Vector3
@@ -12,7 +13,6 @@ from pyrite._types.service import Service
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
-    from pyglm import glm
     from pygame import Rect
     from pygame.typing import Point
     from pyrite._types.camera import Camera
@@ -84,7 +84,15 @@ class DefaultCameraService(CameraService):
             target_service.add_camera(camera)
 
     def _update_projection_matrix(self, camera: Camera) -> None:
-        self._projections[camera] = camera.projection.get_matrix()
+        self._projections[camera] = self._premult_matrix(
+            camera.projection.get_matrix(),
+            camera.transform.world().matrix,
+        )
+
+    def _premult_matrix(
+        self, projection: glm.mat4x4, view_matrix: glm.mat4x4
+    ) -> glm.mat4x4:
+        return projection * glm.inverse(view_matrix)  # type:ignore
 
     def add_camera(self, camera: Camera):
         self._update_projection_matrix(camera)
