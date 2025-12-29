@@ -120,6 +120,10 @@ class DefaultCameraService(CameraService):
         center_x, center_y = far_plane.center
         return width, height, depth, center_x, center_y
 
+    def world_to_clip(self, camera: Camera, world_coords: Transform) -> Transform:
+        projection = self._projections[camera]
+        return Transform.from_matrix(projection * world_coords)  # type:ignore
+
     def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
 
         width, height, depth, center_x, center_y = self._get_projection_data(camera)
