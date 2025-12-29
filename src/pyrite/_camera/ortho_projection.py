@@ -89,6 +89,9 @@ class OrthoProjection(Projection):
         top = self.projection_data.top
         front = self.projection_data.front
         back = self.projection_data.back
+        # Invert y
+        bottom = bottom - self.projection_data.height
+        top = top + self.projection_data.height
         return glm.orthoLH(
             left + ltb_offset,
             right + rbf_offset,
