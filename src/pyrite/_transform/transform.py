@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pygame import Vector2, Vector3
-from pyglm import glm
+
+import glm
 
 from pyrite._types.protocols import HasTransformAttributes
 
@@ -43,14 +44,14 @@ class Transform:
         """
         Represents the local position of the transform
         """
-        return Vector2(self._position.xy)
+        return Vector2(self._position.x, self._position.y)
 
     @position.setter
     def position(self, position: Point):
         if len(position) < 3:
             # Keep current z if a new one is not provided.
             position = position[0], position[1], self._position.z
-        self._position = glm.vec3(position)
+        self._position = glm.vec3(*position)
 
     @property
     def position_3d(self) -> Vector3:
@@ -62,7 +63,7 @@ class Transform:
     @position_3d.setter
     def position_3d(self, position_3d: Point3D) -> None:
         # Skip the length check since we're assuming it's already a valid vec3 param
-        self._position = glm.vec3(position_3d)
+        self._position = glm.vec3(*position_3d)
 
     @property
     def rotation(self) -> float:
@@ -84,13 +85,13 @@ class Transform:
         """
         Represents the local scaling of the transform
         """
-        return Vector2(self._scale.xy)
+        return Vector2(self._scale.x, self._scale.y)
 
     @scale.setter
     def scale(self, scale: Point):
         if len(scale) < 3:
             scale = scale[0], scale[1], 1
-        self._scale = glm.vec3(scale)
+        self._scale = glm.vec3(*scale)
 
     @property
     def scale_3d(self) -> Vector3:
@@ -101,11 +102,11 @@ class Transform:
 
     @scale_3d.setter
     def scale_3d(self, scale_3d: Point3D):
-        self._scale = glm.vec3(scale_3d)
+        self._scale = glm.vec3(*scale_3d)
 
     @property
     def matrix(self) -> glm.mat4x4:
-        matrix = glm.translate(self._position) * glm.mat4(self._rotation)
+        matrix = glm.translate(self._position) * glm.mat4_cast(self._rotation)
         return glm.scale(matrix, self._scale)
 
     def __eq__(self, value: object) -> bool:
@@ -183,9 +184,7 @@ class Transform:
         :return: A new transform, representing the current transform in the local space
             of _root_.
         """
-        # Not sure why this thinks this results in a mat4x2, it's mat4x4.
-        # This might be a pyglm bug.
-        return root.matrix * branch.matrix  # type:ignore
+        return root.matrix * branch.matrix
 
     def __mul__(
         self, other_transform: HasTransformAttributes | glm.mat4x4

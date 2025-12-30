@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame import Rect
-    from pyglm import glm
+
+    import glm
 
     from pyrite._transform.transform import Transform
     from pyrite._types.protocols import HasTransformAttributes

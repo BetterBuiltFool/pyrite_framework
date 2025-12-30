@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from pyglm import glm
+import glm
 from weakref import WeakKeyDictionary
 
 from pygame import Surface, Vector3
@@ -92,7 +92,8 @@ class DefaultCameraService(CameraService):
     def _premult_matrix(
         self, projection: glm.mat4x4, view_matrix: glm.mat4x4
     ) -> glm.mat4x4:
-        return projection * glm.inverse(view_matrix)  # type:ignore
+        return projection * glm.inverse(view_matrix)
+        # return projection * view_matrix
 
     def add_camera(self, camera: Camera):
         self._update_projection_matrix(camera)
@@ -122,7 +123,7 @@ class DefaultCameraService(CameraService):
 
     def world_to_clip(self, camera: Camera, world_coords: Transform) -> Transform:
         projection = self._projections[camera]
-        return Transform.from_matrix(projection * world_coords)  # type:ignore
+        return Transform.from_matrix(projection * world_coords)
 
     def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
 

@@ -14,7 +14,8 @@ from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pyglm import glm
+
+    import glm
 
 
 class TransformComponent(BaseComponent):

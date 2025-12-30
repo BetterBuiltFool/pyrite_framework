@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pygame
 from pygame import Rect, Vector2
 
-from pyglm import glm
+import glm
 
 from pyrite.cuboid import Cuboid
 from pyrite._types.projection import Projection

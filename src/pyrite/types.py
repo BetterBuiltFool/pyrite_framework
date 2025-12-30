@@ -50,7 +50,7 @@ RenderTarget = pyrite._types.protocols.RenderTarget
 HasTransformAttributes = pyrite._types.protocols.HasTransformAttributes
 
 if TYPE_CHECKING:
-    from pyglm import glm
+    import glm
     from pyrite._transform.transform import Transform
 
     Point3D = SequenceLike[float]
