@@ -313,9 +313,9 @@ class Transform:
         if len(scale) < 3:
             scale = (scale[0], scale[1], 1)
         return Transform(
-            glm.vec3(position),
+            glm.vec3(*position),
             glm.quat(glm.vec3(0, 0, glm.radians(rotation))),
-            glm.vec3(scale),
+            glm.vec3(*scale),
         )
 
     @staticmethod
@@ -334,9 +334,9 @@ class Transform:
         if isinstance(scale, float | int):
             scale = (scale, scale, scale)
         return Transform(
-            glm.vec3(position),
-            glm.quat(glm.radians(glm.vec3(rotation))),
-            glm.vec3(scale),
+            glm.vec3(*position),
+            glm.quat(glm.radians(glm.vec3(*rotation))),
+            glm.vec3(*scale),
         )
 
     @staticmethod
@@ -353,6 +353,10 @@ class Transform:
         skew: glm.vec3 = glm.vec3()
         perspective: glm.vec4 = glm.vec4()
 
-        glm.decompose(matrix, scale, rotation, position, skew, perspective)
+        # glm not recognizing the typing properly, but this does run as expecter
+        # so, it gets ignored.
+        glm.decompose(
+            matrix, scale, rotation, position, skew, perspective  # type:ignore
+        )
 
         return Transform(position, rotation, scale)
