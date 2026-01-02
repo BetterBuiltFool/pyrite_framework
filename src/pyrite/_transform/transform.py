@@ -190,14 +190,14 @@ class Transform:
         self, other_transform: HasTransformAttributes | glm.mat4x4
     ) -> glm.mat4x4:
         if isinstance(other_transform, glm.mat4x4):
-            return self.matrix * other_transform  # type:ignore
+            return self.matrix * other_transform
         return Transform.generalize(other_transform, self)
 
     def __rmul__(
         self, other_transform: HasTransformAttributes | glm.mat4x4
     ) -> glm.mat4x4:
         if isinstance(other_transform, glm.mat4x4):
-            return self.matrix * other_transform  # type:ignore
+            return self.matrix * other_transform
         return Transform.generalize(self, other_transform)
 
     @staticmethod
@@ -229,16 +229,16 @@ class Transform:
         :return: A new transform, equivalent to the difference between the current
             transform and _root_.
         """
-        return glm.inverse(root.matrix) * branch.matrix  # type:ignore
+        return glm.inverse(root.matrix) * branch.matrix
 
     def __truediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
         if isinstance(other, glm.mat4x4):
-            return glm.inverse(self.matrix) * other  # type:ignore
+            return glm.inverse(self.matrix) * other
         return Transform.localize(self, other)
 
     def __rtruediv__(self, other: HasTransformAttributes | glm.mat4x4) -> glm.mat4x4:
         if isinstance(other, glm.mat4x4):
-            return glm.inverse(other) * self.matrix  # type:ignore
+            return glm.inverse(other) * self.matrix
         return Transform.localize(other, self)
 
     def __repr__(self) -> str:
