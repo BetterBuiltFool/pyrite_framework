@@ -197,7 +197,7 @@ class Transform:
         self, other_transform: HasTransformAttributes | glm.mat4x4
     ) -> glm.mat4x4:
         if isinstance(other_transform, glm.mat4x4):
-            return self.matrix * other_transform
+            return other_transform * self.matrix
         return Transform.generalize(self, other_transform)
 
     @staticmethod
