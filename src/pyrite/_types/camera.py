@@ -110,16 +110,6 @@ class Camera(ABC):
         pass
 
     @abstractmethod
-    def to_eye(self, point: Transform) -> Transform:
-        """
-        Converts a point in local space to the eye space of the camera, using the
-        camera's projection.
-
-        :param point: A transform, in local space of the camera
-        :return: The eye space equivalent of _point_
-        """
-
-    @abstractmethod
     def to_world(self, point: Transform) -> Transform:
         """
         Converts a point in local space of the camera to world space.
