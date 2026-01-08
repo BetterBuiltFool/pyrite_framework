@@ -108,28 +108,28 @@ class TestCameraService(unittest.TestCase):
                 zero_vector,
                 1,
             ),
-            "Centered projection, corner coords": (
+            "Centered projection, topleft corner coords": (
                 centered_projection,
-                Vector3(-400, -300, 1),
-                Vector3(-1, -1, 1),
+                Vector3(-400, 300, 1),
+                Vector3(-1, 1, 1),
                 1,
             ),
             "3/4 projection, 0 coords": (
                 three_quart_projection,
                 zero_vector,
-                Vector3(-0.5, -0.5, 0),
+                Vector3(-0.5, 0.5, 0),
                 1,
             ),
             "3/4 projection, center coords": (
                 three_quart_projection,
-                Vector3(200, 150, 0),
+                Vector3(200, -150, 0),
                 zero_vector,
                 1,
             ),
-            "3/4 projection, corner coords": (
+            "3/4 projection, topleft corner coords": (
                 three_quart_projection,
-                Vector3(-200, -150, 0),
-                Vector3(-1, -1, 0),
+                Vector3(-200, 150, 0),
+                Vector3(-1, 1, 0),
                 1,
             ),
             "Centered projection, center coords, zoom level 2": (
@@ -138,10 +138,10 @@ class TestCameraService(unittest.TestCase):
                 zero_vector,
                 2,
             ),
-            "Centered projection, corner coords, zoom level 2": (
+            "Centered projection, topleft corner coords, zoom level 2": (
                 centered_projection,
-                Vector3(-200, -150, 1),
-                Vector3(-1, -1, 1),
+                Vector3(-200, 150, 1),
+                Vector3(-1, 1, 1),
                 2,
             ),
         }
