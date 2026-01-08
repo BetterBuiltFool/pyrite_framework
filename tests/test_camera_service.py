@@ -5,6 +5,7 @@ import unittest
 import glm
 from pygame import Vector3
 
+from pyrite.rendering import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._services.camera_service.camera_service import DefaultCameraService
 from pyrite.camera import OrthoProjection
@@ -13,6 +14,7 @@ from pyrite._types.camera import Camera
 from pyrite.transform import TransformComponent, Transform
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
 
     type WorldCoords = Vector3
     type LocalCoords = Vector3
@@ -21,12 +23,17 @@ if TYPE_CHECKING:
     type WorldTransform = Transform
     type LocalTransform = Transform
     type EyeTransform = Transform
+    type ScreenPoint = Point
 
 
 centered_projection = OrthoProjection(((-400, -300, 800, 600), -1, 2))
 three_quart_projection = OrthoProjection(((-200, -150, 800, 600), -1, 2))
 zero_vector = Vector3(0, 0, 0)
 zero_transform = Transform()
+ORIGIN: WorldCoords = Vector3(0, 0, 0)
+SCREEN_CENTER: Point = (50, 50)
+
+Viewport.DEFAULT._update_display_rect((100, 100))
 
 
 class MockCamera:
@@ -307,6 +314,32 @@ class TestCameraService(unittest.TestCase):
                 world_transform = CameraService.to_world(test_cam, local_transform)
 
                 self.assertEqual(world_transform, expected)
+
+    def test_world_to_screen(self) -> None:
+        test_params: dict[
+            str, tuple[Projection, Viewport, ScreenPoint, WorldCoords]
+        ] = {
+            "Centered projection, default Viewport": (
+                centered_projection,
+                Viewport.DEFAULT,
+                SCREEN_CENTER,
+                ORIGIN,
+            )
+        }
+
+        for case, (
+            projection,
+            viewport,
+            expected_point,
+            world_point,
+        ) in test_params.items():
+            with self.subTest(i=case):
+                test_cam = MockCamera(projection)
+                screen_pos = CameraService.world_to_screen(
+                    world_point, test_cam, viewport
+                )
+
+                self.assertEqual(expected_point, screen_pos)
 
 
 if __name__ == "__main__":
