@@ -47,10 +47,6 @@ class CameraService(Service):
         pass
 
     @abstractmethod
-    def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        pass
-
-    @abstractmethod
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
         pass
 
@@ -168,10 +164,6 @@ class DefaultCameraService(CameraService):
 
     def to_local(self, camera: Camera, point: Transform) -> Transform:
         return Transform.new(point.localize(point, camera.transform.world()))
-
-    def to_eye(self, camera: Camera, point: Transform) -> Transform:
-        projection = self._projections[camera]
-        return Transform.from_matrix(projection * point)  # type:ignore
 
     def from_eye(self, camera: Camera, point: Transform) -> Transform:
         return camera.projection.eye_to_local(point)
