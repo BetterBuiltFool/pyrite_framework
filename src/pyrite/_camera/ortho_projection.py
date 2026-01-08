@@ -81,6 +81,7 @@ class OrthoProjection(Projection):
         # +1s are to fix an off-by-one error, likely a difference in assumptions
         # between inclusive and exclusive ranges, but I can't be sure.
         # Either that, or my original results pre-matrices were wrong.
+        # TODO: Eliminate these, they don't do what I thought they did.
         ltb_offset = 0
         rbf_offset = 0
         left = self.projection_data.left
@@ -89,16 +90,26 @@ class OrthoProjection(Projection):
         top = self.projection_data.top
         front = self.projection_data.front
         back = self.projection_data.back
-        # Invert y
+        # Invert y, since world coords are y-up but Cuboid is y-down
         bottom = bottom - self.projection_data.height
         top = top + self.projection_data.height
-        return glm.orthoLH(
+
+        projection = glm.orthoLH(
             left + ltb_offset,
             right + rbf_offset,
             bottom + rbf_offset,
             top + ltb_offset,
             front + rbf_offset,
             back + ltb_offset,
+        )
+
+        # Inverting breaks the expectation of the projection orientation due to the
+        # coordinate system mismatch, but adding the height breaks everything but cases
+        # where the top = 0.
+        # However, centery is deviation from y=0, so by doubling that and shifting by
+        # it, we can cancel out the y change from inversion.
+        return glm.translate(
+            projection, glm.vec3(0, 2 * self.projection_data.centery, 0)
         )
 
     def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
