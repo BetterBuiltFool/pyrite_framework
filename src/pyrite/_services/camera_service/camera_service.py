@@ -59,6 +59,10 @@ class CameraService(Service):
         pass
 
     @abstractmethod
+    def world_to_clip(self, camera: Camera, world_coords: Transform) -> Transform:
+        pass
+
+    @abstractmethod
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
     ) -> Point:
