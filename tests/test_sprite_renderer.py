@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import cast, TYPE_CHECKING
 import unittest
 
 from pyrite._rendering.sprite_renderer.sprite_renderer import DefaultSpriteRenderer
+from pyrite._services.camera_service import CameraServiceProvider as CameraService
+from pyrite._services.camera_service.camera_service import DefaultCameraService
 from pyrite.camera import Camera, OrthoProjection
 from pyrite.transform import Transform
 
@@ -19,8 +21,8 @@ if TYPE_CHECKING:
 CORNER_100X100 = OrthoProjection((0, 0, 0, 100, 100, 2))
 CENTER_100X100 = OrthoProjection((-50, -50, -1, 100, 100, 2))
 
-ORIGIN = (0, 0)
-TOPLEFT = (0, 0)
+ORIGIN: WorldPosition = (0, 0)
+TOPLEFT: SurfacePosition = (0, 0)
 
 
 class TestDefaultSpriteRenderer(unittest.TestCase):
@@ -79,8 +81,14 @@ class TestDefaultSpriteRenderer(unittest.TestCase):
             with self.subTest(i=case):
                 camera = Camera(projection, camera_pos)
 
+                camera_service = cast(DefaultCameraService, CameraService._service)
+
+                surface = camera_service._surfaces[camera]
+
+                world_transform = Transform.from_2d(world_pos)
+
                 surface_pos = self.renderer._get_surface_pos(
-                    camera, Transform.from_2d(world_pos)
+                    camera, world_transform, surface.get_rect()
                 )
 
                 self.assertAlmostEqualVector2(surface_pos, expected_pos, 1)

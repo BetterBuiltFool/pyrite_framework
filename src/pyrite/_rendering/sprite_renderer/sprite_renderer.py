@@ -5,7 +5,7 @@ from typing import cast, TYPE_CHECKING
 from weakref import WeakKeyDictionary
 
 import pygame
-from pygame import Surface, Vector2
+from pygame import Rect, Surface
 
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._services.camera_service.camera_service import DefaultCameraService
@@ -104,17 +104,21 @@ class DefaultSpriteRenderer(SpriteRenderer):
 
         self._draw_to_camera(target, surface, draw_transform)
 
-    def _get_surface_pos(self, camera: Camera, transform: Transform) -> Point:
+    def _get_surface_pos(
+        self, camera: Camera, transform: Transform, display_rect: Rect
+    ) -> Point:
 
-        local_transform = camera.to_local(transform)
-        eye_coords = camera.to_eye(local_transform)
+        # TODO Outsource this to Viewport? It already has similar functionality.
+        clip_coords = CameraService.world_to_clip(camera, transform)
 
-        eye_position = eye_coords.position
-        screen_pos = Vector2(
-            eye_position.x,
-            -eye_position.y,
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        ndc_position = clip_coords.position
+        view_point = (
+            center_x - int(ndc_position.x * (-surface_width / 2)),
+            center_y - int(ndc_position.y * (surface_height / 2)),
         )
-        return screen_pos - camera.projection.far_plane.topleft
+        return view_point
 
     def _draw_to_camera(
         self, camera: Camera, sprite_surface: Surface, transform: Transform
@@ -122,21 +126,10 @@ class DefaultSpriteRenderer(SpriteRenderer):
         camera_service = cast(DefaultCameraService, CameraService._service)
         surface = camera_service._surfaces[camera]
 
-        # local_position = camera.to_eye(camera.to_local(transform)).position
-        # local_position = local_position - camera.projection.far_plane.topleft
-        # local_position.y = surface.size[1] - local_position.y
-        # ^ It's gotta be something to do with here.
-        # what we need to do:
-        # 1. Take a world pos
-        # 2. Convert it to camera-local
-        # 3. Find out where it belongs in the projection
-        # 4. Convert that to the surface location
-        # 5. Blit
-        # I think I might be missing step 4.
-        # Surface rect is (0, 0, farplane.size)
-        # So we should just need to shift
-
-        surface.blit(sprite_surface, self._get_surface_pos(camera, transform))
+        surface.blit(
+            sprite_surface,
+            self._get_surface_pos(camera, transform, surface.get_rect()),
+        )
 
     def redraw_sprite(self, sprite: Sprite) -> Surface:
         return self._redraw_sprite(sprite)
