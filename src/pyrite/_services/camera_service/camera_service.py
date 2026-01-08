@@ -182,10 +182,8 @@ class DefaultCameraService(CameraService):
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport
     ) -> Point:
-        world_transform = Transform.from_2d(point)
-        local_coords = self.to_local(camera, world_transform)
-        eye_coords = self.to_eye(camera, local_coords)
-        ndc_coords = camera.projection.eye_to_ndc(eye_coords)
+        world_coords = Transform.from_2d(point)
+        ndc_coords = self.world_to_clip(camera, world_coords)
         return viewport.ndc_to_screen(ndc_coords)
 
     def update_default_camera(self, default_camera: Camera, size: Point):
