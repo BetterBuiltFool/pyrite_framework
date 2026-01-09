@@ -78,6 +78,9 @@ class DefaultCameraService(CameraService):
     def __init__(self) -> None:
         self._surfaces: WeakKeyDictionary[Camera, Surface] = WeakKeyDictionary()
         self._projections: WeakKeyDictionary[Camera, glm.mat4x4] = WeakKeyDictionary()
+        self._invert_projections: WeakKeyDictionary[Camera, glm.mat4x4] = (
+            WeakKeyDictionary()
+        )
 
     def transfer(self, target_service: CameraService):
         for camera in self._surfaces:
@@ -88,12 +91,20 @@ class DefaultCameraService(CameraService):
             camera.projection.get_matrix(),
             camera.transform.world().matrix,
         )
+        self._invert_projections[camera] = self._premult_invert(
+            camera.projection.get_matrix(),
+            camera.transform.world().matrix,
+        )
 
     def _premult_matrix(
         self, projection: glm.mat4x4, view_matrix: glm.mat4x4
     ) -> glm.mat4x4:
         return projection * glm.inverse(view_matrix)
-        # return projection * view_matrix
+
+    def _premult_invert(
+        self, projection: glm.mat4x4, view_matrix: glm.mat4x4
+    ) -> glm.mat4x4:
+        return glm.inverse(projection) * view_matrix
 
     def add_camera(self, camera: Camera):
         self._update_projection_matrix(camera)
