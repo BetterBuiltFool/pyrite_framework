@@ -184,6 +184,19 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.world_to_clip(camera, world_coords)
 
     @classmethod
+    def clip_to_world(cls, camera: Camera, clip_coords: Transform) -> Transform:
+        """
+        Converts a transform from Normalized Device Coordinates appropriate to
+        _camera_'s view and projection to world-space coordinates.
+
+        :param camera: The Camera object, whose clip space is being referenced.
+        :param world_coords: The input transform, in clip space.
+        :return: A transform with equivalent world coordinates.
+        """
+
+        return cls._service.clip_to_world(camera, clip_coords)
+
+    @classmethod
     def world_to_screen(cls, point: Point, camera: Camera, viewport: Viewport) -> Point:
         """
         Converts the given point into screen space for the given camera and viewport.
