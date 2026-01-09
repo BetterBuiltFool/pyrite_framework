@@ -161,16 +161,67 @@ class TestCameraService(unittest.TestCase):
                 ndc_coords = CameraService._service.world_to_clip(
                     test_cam, Transform(glm.vec3(*world_position))
                 )
-                projection = CameraService._service._projections[test_cam]
-                world_matrix = glm.translate(glm.vec3(*world_position))
-
-                ndc_matrix = projection * world_matrix
-
-                other_ndc = Transform.from_matrix(ndc_matrix)
-
-                self.assertEqual(other_ndc.position_3d, expected)
 
                 self.assertEqual(ndc_coords.position_3d, expected)
+
+    def test_clip_to_world(self) -> None:
+        test_params: dict[
+            str, tuple[OrthoProjection, WorldCoords, NDCCoords, ZoomLevel]
+        ] = {
+            "Centered projection, center coords": (
+                centered_projection,
+                zero_vector,
+                zero_vector,
+                1,
+            ),
+            "Centered projection, topleft corner coords": (
+                centered_projection,
+                Vector3(-400, 300, 1),
+                Vector3(-1, 1, 1),
+                1,
+            ),
+            "3/4 projection, 0 coords": (
+                three_quart_projection,
+                zero_vector,
+                Vector3(-0.5, 0.5, 0),
+                1,
+            ),
+            "3/4 projection, center coords": (
+                three_quart_projection,
+                Vector3(200, -150, 0),
+                zero_vector,
+                1,
+            ),
+            "3/4 projection, topleft corner coords": (
+                three_quart_projection,
+                Vector3(-200, 150, 0),
+                Vector3(-1, 1, 0),
+                1,
+            ),
+            "Centered projection, center coords, zoom level 2": (
+                centered_projection,
+                zero_vector,
+                zero_vector,
+                2,
+            ),
+            "Centered projection, topleft corner coords, zoom level 2": (
+                centered_projection,
+                Vector3(-200, 150, 1),
+                Vector3(-1, 1, 1),
+                2,
+            ),
+        }
+
+        CameraService._service = cast(DefaultCameraService, CameraService._service)
+        for index, (case, params) in enumerate(test_params.items()):
+            with self.subTest(case, i=index):
+                projection, expected, clip_coords, zoom_level = params
+                test_cam = MockCamera(projection.zoom(zoom_level))
+                world_coords = CameraService._service.clip_to_world(
+                    test_cam, Transform(glm.vec3(*clip_coords))
+                )
+
+                self.assertEqual(world_coords.position_3d, expected)
 
     def test_ndc_to_local(self):
         test_params: dict[
