@@ -91,14 +91,12 @@ class DefaultCameraService(CameraService):
             target_service.add_camera(camera)
 
     def _update_projection_matrix(self, camera: Camera) -> None:
-        self._projections[camera] = self._premult_matrix(
+        projection = self._premult_matrix(
             camera.projection.get_matrix(),
             camera.transform.world().matrix,
         )
-        self._invert_projections[camera] = self._premult_invert(
-            camera.projection.get_matrix(),
-            camera.transform.world().matrix,
-        )
+        self._projections[camera] = projection
+        self._invert_projections[camera] = glm.inverse(projection)
 
     def _premult_matrix(
         self, projection: glm.mat4x4, view_matrix: glm.mat4x4
@@ -142,7 +140,10 @@ class DefaultCameraService(CameraService):
 
     def clip_to_world(self, camera: Camera, clip_coords: Transform) -> Transform:
         projection = self._invert_projections[camera]
-        return Transform.from_matrix(projection * clip_coords)
+        world_coords = Transform.from_matrix(projection * clip_coords)
+        # projection inversion messes up the scaling, so we reset it here.
+        world_coords.scale = (1, 1)
+        return world_coords
 
     def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
 
