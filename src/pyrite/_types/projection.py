@@ -73,15 +73,6 @@ class Projection(ABC):
         """
 
     @abstractmethod
-    def ndc_to_eye(self, ndc_coords: HasTransformAttributes) -> Transform:
-        """
-        Converts Normalized Device Coordinates into eye coordinates for the projection.
-
-        :param ndc_coords: A 3D point in NDC space.
-        :return: The equivalent point in the projection's local space.
-        """
-
-    @abstractmethod
     def eye_to_ndc(self, eye_coords: HasTransformAttributes) -> Transform:
         """
         Converts a point in the projection's local space into Normalized Device
