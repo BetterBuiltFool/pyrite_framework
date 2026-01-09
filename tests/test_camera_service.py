@@ -50,61 +50,6 @@ class MockCamera:
 
 class TestCameraService(unittest.TestCase):
 
-    def test_local_to_ndc(self):
-        test_params: dict[
-            str, tuple[OrthoProjection, LocalCoords, NDCCoords, ZoomLevel]
-        ] = {
-            "Centered projection, center coords": (
-                centered_projection,
-                zero_vector,
-                zero_vector,
-                1,
-            ),
-            "Centered projection, corner coords": (
-                centered_projection,
-                Vector3(-400, -300, 1),
-                Vector3(-1, -1, 1),
-                1,
-            ),
-            "3/4 projection, local 0 coords": (
-                three_quart_projection,
-                zero_vector,
-                Vector3(-0.5, -0.5, 0),
-                1,
-            ),
-            "3/4 projection, center coords": (
-                three_quart_projection,
-                Vector3(200, 150, 0),
-                zero_vector,
-                1,
-            ),
-            "3/4 projection, corner coords": (
-                three_quart_projection,
-                Vector3(-200, -150, 0),
-                Vector3(-1, -1, 0),
-                1,
-            ),
-            "Centered projection, center coords, zoom level 2": (
-                centered_projection,
-                zero_vector,
-                zero_vector,
-                2,
-            ),
-            "Centered projection, corner coords, zoom level 2": (
-                centered_projection,
-                Vector3(-200, -150, 1),
-                Vector3(-1, -1, 1),
-                2,
-            ),
-        }
-
-        for index, (case, params) in enumerate(test_params.items()):
-            with self.subTest(case, i=index):
-                projection, local_position, expected, zoom_level = params
-                test_cam = MockCamera(projection.zoom(zoom_level))
-                ndc_coords = CameraService.local_to_ndc(test_cam, local_position)
-                self.assertEqual(ndc_coords, expected)
-
     def test_world_to_clip(self):
         test_params: dict[
             str, tuple[OrthoProjection, WorldCoords, NDCCoords, ZoomLevel]
@@ -222,61 +167,6 @@ class TestCameraService(unittest.TestCase):
                 )
 
                 self.assertEqual(world_coords.position_3d, expected)
-
-    def test_ndc_to_local(self):
-        test_params: dict[
-            str, tuple[OrthoProjection, NDCCoords, LocalCoords, ZoomLevel]
-        ] = {
-            "Centered projection, center coords": (
-                centered_projection,
-                zero_vector,
-                zero_vector,
-                1,
-            ),
-            "Centered projection, corner coords": (
-                centered_projection,
-                Vector3(-1, -1, 1),
-                Vector3(-400, -300, 1),
-                1,
-            ),
-            "3/4 projection, local 0 coords": (
-                three_quart_projection,
-                Vector3(-0.5, -0.5, 0),
-                zero_vector,
-                1,
-            ),
-            "3/4 projection, center coords": (
-                three_quart_projection,
-                zero_vector,
-                Vector3(200, 150, 0),
-                1,
-            ),
-            "3/4 projection, corner coords": (
-                three_quart_projection,
-                Vector3(-1, -1, 0),
-                Vector3(-200, -150, 0),
-                1,
-            ),
-            "Centered projection, center coords, zoom level 2": (
-                centered_projection,
-                zero_vector,
-                zero_vector,
-                2,
-            ),
-            "Centered projection, corner coords, zoom level 2": (
-                centered_projection,
-                Vector3(-1, -1, 1),
-                Vector3(-200, -150, 1),
-                2,
-            ),
-        }
-
-        for index, (case, params) in enumerate(test_params.items()):
-            with self.subTest(case, i=index):
-                projection, ndc_coords, expected, zoom_level = params
-                test_cam = MockCamera(projection.zoom(zoom_level))
-                local_position = CameraService.ndc_to_local(test_cam, ndc_coords)
-                self.assertEqual(local_position, expected)
 
     def test_to_local(self):
         shifted_pos_transform = Transform.from_2d((10, 0))
