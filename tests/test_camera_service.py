@@ -168,56 +168,6 @@ class TestCameraService(unittest.TestCase):
 
                 self.assertEqual(world_coords.position_3d, expected)
 
-    def test_to_world(self):
-        shifted_pos_transform = Transform.from_2d((10, 0))
-        shifted_post_rot_transform = Transform.from_2d((10, 0), 90)
-
-        test_params: dict[
-            str, tuple[Projection, WorldTransform, LocalTransform, WorldTransform]
-        ] = {
-            "Centered projection, both default transform": (
-                centered_projection,
-                zero_transform,
-                zero_transform,
-                zero_transform,
-            ),
-            "Centered Projection, Different test position": (
-                centered_projection,
-                zero_transform,
-                shifted_pos_transform,
-                shifted_pos_transform,
-            ),
-            "Centered Projection, Different test position, rotation": (
-                centered_projection,
-                zero_transform,
-                shifted_post_rot_transform,
-                shifted_post_rot_transform,
-            ),
-            "Centered projection, off center camera, origin test transform": (
-                centered_projection,
-                Transform.from_2d((100, 100)),
-                zero_transform,
-                Transform.from_2d((100, 100)),
-            ),
-            "Centered projection, off center rotated camera, origin test transform": (
-                centered_projection,
-                Transform.from_2d((100, 100), 90),
-                zero_transform,
-                Transform.from_2d((100, 100), 90),
-            ),
-        }
-
-        for index, (case, params) in enumerate(test_params.items()):
-            with self.subTest(case, i=index):
-                projection, cam_transform, local_transform, expected = params
-                test_cam = MockCamera(projection)
-                test_cam.transform.world_position = cam_transform.position
-                test_cam.transform.world_rotation = cam_transform.rotation
-
-                world_transform = CameraService.to_world(test_cam, local_transform)
-
-                self.assertEqual(world_transform, expected)
-
     def test_world_to_screen(self) -> None:
         test_params: dict[
             str, tuple[Projection, Viewport, ScreenPoint, WorldCoords]

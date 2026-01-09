@@ -185,9 +185,6 @@ class BaseCamera(Camera):
     def render(self, render_target: RenderTarget):
         CameraRenderer.render(self, render_target)
 
-    def to_world(self, point: Transform) -> Transform:
-        return CameraService.to_world(self, point)
-
     def get_mouse_position(self, viewport: Viewport | None = None) -> Transform:
         """
         Gets the current mouse position, relative to a viewport. If no viewport is

@@ -35,10 +35,6 @@ class CameraService(Service):
         pass
 
     @abstractmethod
-    def to_world(self, camera: Camera, point: Transform) -> Transform:
-        pass
-
-    @abstractmethod
     def world_to_clip(self, camera: Camera, world_coords: Transform) -> Transform:
         pass
 
@@ -132,9 +128,6 @@ class DefaultCameraService(CameraService):
     def _rebuild_surface(self, camera: Camera):
         display_size = camera.projection.far_plane.size
         self._surfaces[camera] = Surface(display_size)
-
-    def to_world(self, camera: Camera, point: Transform) -> Transform:
-        return Transform.new(point.generalize(point, camera.transform.world()))
 
     def world_to_screen(
         self, point: Point, camera: Camera, viewport: Viewport

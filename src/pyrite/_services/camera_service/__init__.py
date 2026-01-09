@@ -115,17 +115,6 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.get_view_bounds(camera)
 
     @classmethod
-    def to_world(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts a point local to the camera to its world space equivalent.
-
-        :param camera: The Camera object, which the point is local to.
-        :param point: A Transform representing a local space to the camera.
-        :return: A Transform in the world space.
-        """
-        return cls._service.to_world(camera, point)
-
-    @classmethod
     def world_to_clip(cls, camera: Camera, world_coords: Transform) -> Transform:
         """
         Converts a transform from world-space coordinates to Normalized Device
