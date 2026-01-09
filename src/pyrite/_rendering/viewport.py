@@ -5,6 +5,8 @@ from typing import Any, TYPE_CHECKING
 import pygame
 from pygame import FRect, Rect, Vector3
 
+from pyrite._transform.transform import Transform
+
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point, RectLike
@@ -95,6 +97,40 @@ class Viewport:
         """
         cls._viewports[label] = viewport
         return viewport
+
+    def clip_to_viewport(self, clip_coords: Transform) -> Point:
+        """
+        Converts a point in clip space to viewport space.
+
+        :param clip_coords: A Transform value in clip space.
+        :return: The equivalent point in viewport space.
+        """
+
+        display_rect = self._display_rect
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        ndc_position = clip_coords.position
+        view_point = (
+            center_x - int(ndc_position.x * (-surface_width / 2)),
+            center_y - int(ndc_position.y * (surface_height / 2)),
+        )
+        return view_point
+
+    def viewport_to_clip(self, screen_point: Point) -> Transform:
+        """
+        Converts a point in viewport space to clip space.
+
+        :param screen_point: A point in viewport space.
+        :return: A Transform representing clip space coordinates.
+        """
+        display_rect = self._display_rect
+        surface_width, surface_height = display_rect.size
+        center_x, center_y = display_rect.center
+        ndc_point = (
+            (screen_point[0] - center_x) / (surface_width / 2),
+            (screen_point[1] - center_y) / (-surface_height / 2),
+        )
+        return Transform.from_2d(ndc_point)
 
     def ndc_to_screen(self, ndc_coord: HasTransformAttributes) -> Point:
         """
