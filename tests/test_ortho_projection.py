@@ -121,31 +121,6 @@ class TestOrthoProjection(unittest.TestCase):
 
                 self.assertAlmostEqualVector2(result.position, expected_coords)
 
-    def test_local_to_eye(self) -> None:
-        test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
-            "3/4 projection, local 0 coords": (
-                THREE_QUART_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-            "3/4 projection, center coords": (
-                THREE_QUART_800X600,
-                Vector2(-200, -150),
-                Vector2(-200, -150),
-            ),
-            "Centered projection, off center camera, origin test transform": (
-                CENTERED_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-        }
-
-        for case, (projection, local_coords, expected) in test_params.items():
-            with self.subTest(i=case):
-                eye_coords = projection.local_to_eye(Transform.from_2d(local_coords))
-
-                self.assertAlmostEqualVector2(eye_coords.position, expected, 7)
-
     def test_eye_to_local(self) -> None:
         test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
             "3/4 projection, local 0 coords": (

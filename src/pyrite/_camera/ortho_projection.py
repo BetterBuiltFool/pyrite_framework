@@ -112,9 +112,6 @@ class OrthoProjection(Projection):
             projection, glm.vec3(0, 2 * self.projection_data.centery, 0)
         )
 
-    def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
-        return Transform.from_2d(local_coords.position)
-
     def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
         return Transform.from_2d(eye_coords.position)
 

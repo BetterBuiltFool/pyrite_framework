@@ -54,16 +54,6 @@ class Projection(ABC):
         """
 
     @abstractmethod
-    def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
-        """
-        Converts from a position in local space to the camera to the eye coordinates of
-        the projection.
-
-        :param local_coords: A point in camera-local space
-        :return: A point in 3D eye space
-        """
-
-    @abstractmethod
     def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
         """
         Converts an eye-coordinate position to the local space of the camera.
