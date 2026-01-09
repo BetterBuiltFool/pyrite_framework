@@ -149,17 +149,6 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.to_local(camera, point)
 
     @classmethod
-    def from_eye(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts a transform from eye-space coordinates to local space of the camera.
-
-        :param camera: The Camera object, which the point is being made relative to.
-        :param point: A Transform in the eye space of the camera.
-        :return: A Transform in the local space of the camera.
-        """
-        return cls._service.from_eye(camera, point)
-
-    @classmethod
     def to_world(cls, camera: Camera, point: Transform) -> Transform:
         """
         Converts a point local to the camera to its world space equivalent.
