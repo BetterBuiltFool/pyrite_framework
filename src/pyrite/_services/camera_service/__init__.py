@@ -115,18 +115,6 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.get_view_bounds(camera)
 
     @classmethod
-    def to_local(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts the transform into the local space of the camera.
-
-        :param camera: A Camera object whose local space is being considered.
-        :param point: A Transform, in world space, being converted to the local space
-            of the camera.
-        :return: A Transform representing the point, as relative to the camera.
-        """
-        return cls._service.to_local(camera, point)
-
-    @classmethod
     def to_world(cls, camera: Camera, point: Transform) -> Transform:
         """
         Converts a point local to the camera to its world space equivalent.

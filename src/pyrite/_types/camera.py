@@ -100,16 +100,6 @@ class Camera(ABC):
         pass
 
     @abstractmethod
-    def to_local(self, point: Transform) -> Transform:
-        """
-        Converts a point in world space to local space of the camera
-
-        :param point: A transform, in world space
-        :return: The local space equivalent of _point_
-        """
-        pass
-
-    @abstractmethod
     def to_world(self, point: Transform) -> Transform:
         """
         Converts a point in local space of the camera to world space.

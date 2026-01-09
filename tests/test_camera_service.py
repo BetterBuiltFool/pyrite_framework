@@ -168,44 +168,6 @@ class TestCameraService(unittest.TestCase):
 
                 self.assertEqual(world_coords.position_3d, expected)
 
-    def test_to_local(self):
-        shifted_pos_transform = Transform.from_2d((10, 0))
-        shifted_post_rot_transform = Transform.from_2d((10, 0), 90)
-
-        test_params: dict[
-            str, tuple[WorldTransform, WorldTransform, LocalTransform]
-        ] = {
-            "Both default transform": (zero_transform, zero_transform, zero_transform),
-            "Default camera, Different test position": (
-                zero_transform,
-                shifted_pos_transform,
-                shifted_pos_transform,
-            ),
-            "Default camera, Different test position, rotation": (
-                zero_transform,
-                shifted_post_rot_transform,
-                shifted_post_rot_transform,
-            ),
-            "Shifted camera, Default test position": (
-                shifted_pos_transform,
-                zero_transform,
-                Transform.from_2d((-10, 0)),
-            ),
-        }
-
-        for index, (case, params) in enumerate(test_params.items()):
-            with self.subTest(case, i=index):
-                camera_transform, world_transform, expected = params
-
-                test_cam = MockCamera(centered_projection)
-                test_cam.transform.world_position = camera_transform.position
-                test_cam.transform.world_rotation = camera_transform.rotation
-                test_cam.transform.world_scale = camera_transform.scale
-
-                local_transform = CameraService.to_local(test_cam, world_transform)
-
-                self.assertEqual(local_transform, expected)
-
     def test_to_world(self):
         shifted_pos_transform = Transform.from_2d((10, 0))
         shifted_post_rot_transform = Transform.from_2d((10, 0), 90)

@@ -185,9 +185,6 @@ class BaseCamera(Camera):
     def render(self, render_target: RenderTarget):
         CameraRenderer.render(self, render_target)
 
-    def to_local(self, point: Transform) -> Transform:
-        return CameraService.to_local(self, point)
-
     def to_world(self, point: Transform) -> Transform:
         return CameraService.to_world(self, point)
 
