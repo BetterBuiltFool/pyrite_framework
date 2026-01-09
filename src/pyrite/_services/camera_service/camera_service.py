@@ -136,6 +136,10 @@ class DefaultCameraService(CameraService):
         projection = self._projections[camera]
         return Transform.from_matrix(projection * world_coords)
 
+    def clip_to_world(self, camera: Camera, clip_coords: Transform) -> Transform:
+        projection = self._invert_projections[camera]
+        return Transform.from_matrix(projection * clip_coords)
+
     def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
 
         width, height, depth, center_x, center_y = self._get_projection_data(camera)
