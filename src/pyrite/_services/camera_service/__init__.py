@@ -10,7 +10,6 @@ from pyrite._services.camera_service.camera_service import (
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pygame import Vector3
 
     from pyrite._transform.transform import Transform
     from pyrite._types.camera import Camera
@@ -114,27 +113,6 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         :return: The viewing bounds of the camera.
         """
         return cls._service.get_view_bounds(camera)
-
-    @classmethod
-    def local_to_ndc(cls, camera: Camera, local_coords: Vector3) -> Vector3:
-        """
-        Takes a point in local coordinates and transforms it into ndc space.
-
-        :param clip_coords: A 3D point in the local space of the camera.
-            For 2D, the Z axis is ignored.
-        :return: A 3D point in standard ndc space.
-        """
-        return cls._service.local_to_ndc(camera, local_coords)
-
-    @classmethod
-    def ndc_to_local(cls, camera: Camera, ndc_coords: Vector3) -> Vector3:
-        """
-        Takes a point in ndc space and transforms it into local coordinates
-
-        :param ndc_coords: A 3D point in ndc space.
-        :return: A 3D point in clip coordinates of the projection.
-        """
-        return cls._service.ndc_to_local(camera, ndc_coords)
 
     @classmethod
     def to_local(cls, camera: Camera, point: Transform) -> Transform:

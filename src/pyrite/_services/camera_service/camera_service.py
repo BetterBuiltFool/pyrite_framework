@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import glm
 from weakref import WeakKeyDictionary
 
-from pygame import Surface, Vector3
+from pygame import Surface
 
 from pyrite._rendering.view_plane import ViewPlane
 from pyrite._types.service import Service
@@ -32,14 +32,6 @@ class CameraService(Service):
 
     @abstractmethod
     def get_view_bounds(self, camera: Camera) -> CameraViewBounds:
-        pass
-
-    @abstractmethod
-    def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
-        pass
-
-    @abstractmethod
-    def ndc_to_local(self, camera: Camera, ndc_coords: Vector3) -> Vector3:
         pass
 
     @abstractmethod
@@ -140,39 +132,6 @@ class DefaultCameraService(CameraService):
         # projection inversion messes up the scaling, so we reset it here.
         world_coords.scale = (1, 1)
         return world_coords
-
-    def local_to_ndc(self, camera: Camera, local_coords: Vector3) -> Vector3:
-
-        width, height, depth, center_x, center_y = self._get_projection_data(camera)
-        # Convert the local coords to projection space center.
-        eye_point = (
-            (local_coords.x) - center_x,
-            (local_coords.y) - center_y,
-            local_coords.z,
-        )
-        # Divide by projection size to normalize.
-        ndc_coords = Vector3(
-            eye_point[0] / (width / 2),
-            eye_point[1] / (height / 2),
-            eye_point[2] / (depth / 2),
-        )
-        return ndc_coords
-
-    def ndc_to_local(self, camera: Camera, ndc_coords: Vector3) -> Vector3:
-        width, height, depth, center_x, center_y = self._get_projection_data(camera)
-        # Convert into projection space coords
-        projection_coords = (
-            int(ndc_coords[0] * (width / 2)),
-            int(ndc_coords[1] * (height / 2)),
-            int(ndc_coords[2] * (depth / 2)),
-        )
-        # Translate to local camera space.
-        local_coords = Vector3(
-            center_x + projection_coords[0],
-            center_y + projection_coords[1],
-            projection_coords[2],
-        )
-        return local_coords
 
     def _rebuild_surface(self, camera: Camera):
         display_size = camera.projection.far_plane.size
