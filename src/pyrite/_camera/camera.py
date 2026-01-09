@@ -199,7 +199,7 @@ class BaseCamera(Camera):
         :param viewport: The target viewport, defaults to None
         :raises RuntimeError: If no viewport is specified, and the camera only renders
             to RenderTextures
-        :return: A Transform representing the mouse position, local to the camera.
+        :return: A Transform representing the mouse position in world space.
         """
         screen_pos = pygame.mouse.get_pos()
         if not viewport:
@@ -213,9 +213,8 @@ class BaseCamera(Camera):
         return self._get_mouse_position(viewport, screen_pos)
 
     def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Transform:
-        ndc_coords = viewport.screen_to_ndc(screen_pos)
-        eye_coords = self.projection.ndc_to_eye(Transform.from_2d(ndc_coords.xy))
-        return self.projection.eye_to_local(eye_coords)
+        clip_coords = viewport.viewport_to_clip(screen_pos)
+        return CameraService.clip_to_world(self, clip_coords)
 
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
