@@ -3,17 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector2
+from pygame import Rect
 
 import glm
 
 from pyrite.cuboid import Cuboid
 from pyrite._types.projection import Projection
-from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
-    # from pygame.typing import RectLike
-    from pyrite._types.protocols import HasTransformAttributes
     from pyrite.types import CubeLike
 
 
@@ -110,18 +107,6 @@ class OrthoProjection(Projection):
         # it, we can cancel out the y change from inversion.
         return glm.translate(
             projection, glm.vec3(0, 2 * self.projection_data.centery, 0)
-        )
-
-    def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
-        return Transform.from_2d(eye_coords.position)
-
-    def eye_to_ndc(self, eye_coords: HasTransformAttributes) -> Transform:
-        rect = self.projection_data.face_xy
-        center = Vector2(rect.center)
-        eye_position = eye_coords.position
-        offset = (eye_position.x - center.x, eye_position.y + center.y)
-        return Transform.from_2d(
-            (offset[0] / (rect.width / 2), offset[1] / (rect.height / 2))
         )
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
