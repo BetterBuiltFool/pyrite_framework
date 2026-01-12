@@ -75,29 +75,21 @@ class OrthoProjection(Projection):
         )
 
     def get_matrix(self) -> glm.mat4x4:
-        # +1s are to fix an off-by-one error, likely a difference in assumptions
-        # between inclusive and exclusive ranges, but I can't be sure.
-        # Either that, or my original results pre-matrices were wrong.
-        # TODO: Eliminate these, they don't do what I thought they did.
-        ltb_offset = 0
-        rbf_offset = 0
-        left = self.projection_data.left
-        right = self.projection_data.right
-        bottom = self.projection_data.bottom
-        top = self.projection_data.top
-        front = self.projection_data.front
-        back = self.projection_data.back
+        proj_data = self.projection_data
+
+        bottom = proj_data.bottom
+        top = proj_data.top
         # Invert y, since world coords are y-up but Cuboid is y-down
-        bottom = bottom - self.projection_data.height
-        top = top + self.projection_data.height
+        bottom = bottom - proj_data.height
+        top = top + proj_data.height
 
         projection = glm.orthoLH(
-            left + ltb_offset,
-            right + rbf_offset,
-            bottom + rbf_offset,
-            top + ltb_offset,
-            front + rbf_offset,
-            back + ltb_offset,
+            proj_data.left,
+            proj_data.right,
+            bottom,
+            top,
+            proj_data.front,
+            proj_data.back,
         )
 
         # Inverting breaks the expectation of the projection orientation due to the
@@ -105,9 +97,7 @@ class OrthoProjection(Projection):
         # where the top = 0.
         # However, centery is deviation from y=0, so by doubling that and shifting by
         # it, we can cancel out the y change from inversion.
-        return glm.translate(
-            projection, glm.vec3(0, 2 * self.projection_data.centery, 0)
-        )
+        return glm.translate(projection, glm.vec3(0, 2 * proj_data.centery, 0))
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
         rect_center = self.projection_data.center
