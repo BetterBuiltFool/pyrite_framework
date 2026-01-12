@@ -35,61 +35,58 @@ class OrthoProjection(Projection):
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
             cuboid = (projection_rect, DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH)
-        self.projection_data = Cuboid(cuboid)
+        self.volume = Cuboid(cuboid)
 
     @property
     def far_plane(self) -> Rect:
-        return self.projection_data.face_xy
+        return self.volume.face_xy
 
     @property
     def z_near(self) -> float:
-        return self.projection_data.front
+        return self.volume.front
 
     @z_near.setter
     def z_near(self, z_near: float):
-        self.projection_data.front = z_near
+        self.volume.front = z_near
 
     @property
     def z_far(self) -> float:
-        return self.projection_data.back
+        return self.volume.back
 
     @z_far.setter
     def z_far(self, z_far: float):
-        self.projection_data.back = z_far
+        self.volume.back = z_far
 
     @property
     def z_depth(self) -> float:
-        return self.projection_data.depth
+        return self.volume.depth
 
     @property
     def center_z(self) -> float:
-        return self.projection_data.centerz
+        return self.volume.centerz
 
     def __repr__(self) -> str:
-        return f"<OrthoProjection {self.projection_data}>"
+        return f"<OrthoProjection {self.volume}>"
 
     def __eq__(self, value: object) -> bool:
-        return (
-            isinstance(value, OrthoProjection)
-            and value.projection_data == self.projection_data
-        )
+        return isinstance(value, OrthoProjection) and value.volume == self.volume
 
     def get_matrix(self) -> glm.mat4x4:
-        proj_data = self.projection_data
+        volume = self.volume
 
-        bottom = proj_data.bottom
-        top = proj_data.top
+        bottom = volume.bottom
+        top = volume.top
         # Invert y, since world coords are y-up but Cuboid is y-down
-        bottom = bottom - proj_data.height
-        top = top + proj_data.height
+        bottom = bottom - volume.height
+        top = top + volume.height
 
         projection = glm.orthoLH(
-            proj_data.left,
-            proj_data.right,
+            volume.left,
+            volume.right,
             bottom,
             top,
-            proj_data.front,
-            proj_data.back,
+            volume.front,
+            volume.back,
         )
 
         # Inverting breaks the expectation of the projection orientation due to the
@@ -97,17 +94,15 @@ class OrthoProjection(Projection):
         # where the top = 0.
         # However, centery is deviation from y=0, so by doubling that and shifting by
         # it, we can cancel out the y change from inversion.
-        return glm.translate(projection, glm.vec3(0, 2 * proj_data.centery, 0))
+        return glm.translate(projection, glm.vec3(0, 2 * volume.centery, 0))
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
-        rect_center = self.projection_data.center
+        rect_center = self.volume.center
         new_rect = Rect(
             0,
             0,
-            self.projection_data.width / zoom_factor,
-            self.projection_data.height / zoom_factor,
+            self.volume.width / zoom_factor,
+            self.volume.height / zoom_factor,
         )
         new_rect.center = rect_center[0] / zoom_factor, rect_center[1] / zoom_factor
-        return OrthoProjection(
-            (new_rect, self.projection_data.front, self.projection_data.depth)
-        )
+        return OrthoProjection((new_rect, self.volume.front, self.volume.depth))
