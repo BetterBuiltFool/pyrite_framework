@@ -106,14 +106,6 @@ class DefaultCameraService(CameraService):
         surface_rect.center = camera.transform.world_position
         return surface_rect
 
-    def _get_projection_data(self, camera: Camera) -> tuple[float, ...]:
-        projection = camera.projection
-        far_plane = projection.far_plane
-        width, height = far_plane.size
-        depth = projection.z_depth
-        center_x, center_y = far_plane.center
-        return width, height, depth, center_x, center_y
-
     def world_to_clip(self, camera: Camera, world_coords: Transform) -> Transform:
         projection = self._projections[camera]
         return Transform.from_matrix(projection * world_coords)
