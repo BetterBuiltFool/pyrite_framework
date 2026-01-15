@@ -229,5 +229,15 @@ class BaseCamera(Camera):
         )
 
     @staticmethod
-    def perspective() -> BaseCamera:
-        raise NotImplementedError()
+    def perspective(
+        fov_y: float,
+        aspect_ratio: float,
+        z_near: float,
+        z_far: float,
+        position: Point = (0, 0),
+        transform: HasTransformAttributes | None = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
+        layer_mask: Sequence[Layer] | None = None,
+        enabled=True,
+    ) -> BaseCamera:
+        raise NotImplementedError("Perspective projection not yet working as intended.")
