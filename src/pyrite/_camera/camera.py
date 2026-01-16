@@ -204,11 +204,7 @@ class BaseCamera(Camera):
                     " get_mouse_position."
                 )
             viewport = self._viewports[0]
-        return self._get_mouse_position(viewport, screen_pos)
-
-    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Transform:
-        clip_coords = viewport.viewport_to_clip(screen_pos)
-        return CameraService.clip_to_world(self, clip_coords)
+        return CameraService.screen_to_world(screen_pos, self, viewport)
 
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
