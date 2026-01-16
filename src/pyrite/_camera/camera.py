@@ -216,13 +216,32 @@ class BaseCamera(Camera):
 
     @staticmethod
     def ortho(
-        cuboid: CubeLike,
+        cuboid: CubeLike | None = None,
         position: Point = (0, 0),
         transform: HasTransformAttributes | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
     ) -> BaseCamera:
+        """
+        Create a new orthographic camera.
+
+        :param cuboid: Dimensions for the projection, None results in a camera the
+            scaled to the device, defaults to None
+        :param position: The starting position of the camera, in world space, defaults
+            to (0, 0)
+        :param transform: A Transform object or TransformComponent, used for setting up
+            the new camera's TransformComponent, defaults to None. If none, a new
+                component will be constructed using _position_.
+        :param render_targets: A destination or sequence of destinations that the
+            camera will render to, defaults to None. If None, will target the default
+            viewport.
+        :param layer_mask: A sequence of layers that are invisible to the camera,
+            defaults to None
+        :param enabled: Determines if the camera starts in a functioning state,
+            defaults to True
+        :return: A Camera object with an orthographic projection.
+        """
         projection = OrthoProjection(cuboid)
         return BaseCamera(
             projection, position, transform, render_targets, layer_mask, enabled
@@ -240,4 +259,27 @@ class BaseCamera(Camera):
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
     ) -> BaseCamera:
+        """
+        Create a new perspective camera.
+
+        :param fov_y: Angle, in radians, of the y axis of the projection.
+        :param aspect_ratio: Ratio between height and width of the view.
+        :param z_near: Cut-off distance closer to the view angle. Should not be
+            negative.
+        :param z_far: Cut-off distance further from the view angle.
+        :param position: The starting position of the camera, in world space, defaults
+            to (0, 0)
+        :param transform: A Transform object or TransformComponent, used for setting up
+            the new camera's TransformComponent, defaults to None. If none, a new
+                component will be constructed using _position_.
+        :param render_targets: A destination or sequence of destinations that the
+            camera will render to, defaults to None. If None, will target the default
+            viewport.
+        :param layer_mask: A sequence of layers that are invisible to the camera,
+            defaults to None
+        :param enabled: Determines if the camera starts in a functioning state,
+            defaults to True
+        :raises NotImplementedError: _description_
+        :return: A Camera object with a perspective projection.
+        """
         raise NotImplementedError("Perspective projection not yet working as intended.")
