@@ -49,6 +49,12 @@ class CameraService(Service):
         pass
 
     @abstractmethod
+    def screen_to_world(
+        self, point: Point, camera: Camera, viewport: Viewport
+    ) -> Transform:
+        pass
+
+    @abstractmethod
     def update_default_camera(self, default_camera: Camera, size: Point):
         pass
 
@@ -127,6 +133,12 @@ class DefaultCameraService(CameraService):
         world_coords = Transform.from_2d(point)
         ndc_coords = self.world_to_clip(camera, world_coords)
         return viewport.ndc_to_screen(ndc_coords)
+
+    def screen_to_world(
+        self, point: Point, camera: Camera, viewport: Viewport
+    ) -> Transform:
+        clip_coords = viewport.viewport_to_clip(point)
+        return self.clip_to_world(camera, clip_coords)
 
     def update_default_camera(self, default_camera: Camera, size: Point):
         self._surfaces[default_camera] = Surface(size)

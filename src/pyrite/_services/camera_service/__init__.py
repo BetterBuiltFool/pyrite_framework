@@ -154,6 +154,25 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.world_to_screen(point, camera, viewport)
 
     @classmethod
+    def screen_to_world(
+        cls, screen_point: Point, camera: Camera, viewport: Viewport
+    ) -> Transform:
+        """
+        Converts the given point on the screen and converts it to world space for the
+        given camera.
+
+        The screen in considered to be halfway between z-near and z-far, for the
+        purpose of distance from the camera.
+
+        :param screen_point: A point, in screen space.
+        :param camera: A Camera object, whose view is being considered.
+        :param viewport: The viewport to specify which portion of the screen is being
+            referenced.
+        :return: A transform in world space.
+        """
+        return cls._service.screen_to_world(screen_point, camera, viewport)
+
+    @classmethod
     def update_default_camera(cls, size: Point):
         """
         Returns the viewable area of the given camera.
