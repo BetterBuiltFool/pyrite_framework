@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     type LocalTransform = Transform
     type EyeTransform = Transform
     type ScreenPoint = Point
+    type LocalPoint = Point
 
 
 centered_projection = OrthoProjection(((-400, -300, 800, 600), -1, 2))
@@ -34,6 +35,10 @@ ORIGIN: WorldCoords = Vector3(0, 0, 0)
 SCREEN_CENTER: Point = (50, 50)
 
 Viewport.DEFAULT._update_display_rect((100, 100))
+
+# Represents the top left quarter of the screen.
+TOPLEFT_QUADRANT_VIEW = Viewport((-1, 1, 1, 1))
+TOPLEFT_QUADRANT_VIEW._update_display_rect((100, 100))
 
 
 class MockCamera:
@@ -193,6 +198,21 @@ class TestCameraService(unittest.TestCase):
                 )
 
                 self.assertEqual(expected_point, screen_pos)
+
+    def test_screen_to_world(self) -> None:
+        params: dict[str, tuple[Viewport, ScreenPoint, LocalPoint]] = {
+            "Centered mouse": (Viewport.DEFAULT, SCREEN_CENTER, (0, 0)),
+            "Topleft mouse": (Viewport.DEFAULT, (0, 0), (-400, 300)),
+            "Bottomright mouse": (Viewport.DEFAULT, (100, 100), (400, -300)),
+            "Centered TL Quad": (TOPLEFT_QUADRANT_VIEW, SCREEN_CENTER, (400, -300)),
+        }
+
+        for case, (viewport, mouse_pos, expected_pos) in params.items():
+            with self.subTest(i=case):
+                test_cam = MockCamera(centered_projection)
+                local_pos = CameraService.screen_to_world(mouse_pos, test_cam, viewport)
+
+                self.assertEqual(Transform.from_2d(expected_pos), local_pos)
 
 
 if __name__ == "__main__":
