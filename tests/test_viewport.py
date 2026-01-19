@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import unittest
 
+import glm
 from pygame import FRect, Rect, Vector3
 
 from pyrite._rendering.viewport import Viewport
@@ -47,7 +48,7 @@ class TestViewport(unittest.TestCase):
 
                 self.assertEqual(display_rect, expected_rect)
 
-    def test_ndc_to_screen(self):
+    def test_clip_to_viewport(self):
 
         test_params: dict[str, tuple[FRect, NDCCoords, ScreenCoords]] = {
             "Full screen, top left point": (fullscreen, (-1, 1, 0), TOPLEFT),
@@ -80,13 +81,13 @@ class TestViewport(unittest.TestCase):
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
 
-                screen_coords = viewport.ndc_to_screen(
+                screen_coords = viewport.clip_to_viewport(
                     Transform.from_2d(Vector3(ndc_coords).xy)
                 )
 
                 self.assertEqual(screen_coords, expected_coords)
 
-    def test_screen_to_ndc(self):
+    def test_viewport_to_clip(self):
 
         test_params: dict[str, tuple[FRect, ScreenCoords, NDCCoords]] = {
             "Full screen, top left point": (fullscreen, TOPLEFT, (-1, 1, 0)),
@@ -115,9 +116,9 @@ class TestViewport(unittest.TestCase):
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
 
-                ndc_coords = viewport.screen_to_ndc(screen_coords)
+                ndc_coords = viewport.viewport_to_clip(screen_coords)
 
-                self.assertEqual(ndc_coords, expected_coords)
+                self.assertEqual(ndc_coords, Transform(glm.vec3(*expected_coords)))
 
 
 if __name__ == "__main__":
