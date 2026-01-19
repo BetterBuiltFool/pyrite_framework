@@ -3,15 +3,13 @@ from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 
 import pygame
-from pygame import FRect, Rect, Vector3
+from pygame import FRect, Rect
 
 from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point, RectLike
-
-    from pyrite._types.protocols import HasTransformAttributes
 
 
 class Viewport:
@@ -131,40 +129,6 @@ class Viewport:
             (screen_point[1] - center_y) / (-surface_height / 2),
         )
         return Transform.from_2d(ndc_point)
-
-    def ndc_to_screen(self, ndc_coord: HasTransformAttributes) -> Point:
-        """
-        Converts a point in ndc space to screen coordinates on the current display.
-
-        :param point: A point in ndc space
-        :return: A point in pygame screen coordinates.
-        """
-
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_position = ndc_coord.position
-        view_point = (
-            center_x - int(ndc_position.x * (-surface_width / 2)),
-            center_y - int(ndc_position.y * (surface_height / 2)),
-        )
-        return view_point
-
-    def screen_to_ndc(self, screen_point: Point) -> Vector3:
-        """
-        Converts a point in screen space on the current display to ndc space.
-
-        :param screen_point: A point in pygame screen space.
-        :return: A point in ndc space
-        """
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_point = (
-            (screen_point[0] - center_x) / (surface_width / 2),
-            (screen_point[1] - center_y) / (-surface_height / 2),
-        )
-        return Vector3(*ndc_point, 0)
 
     def get_display_rect(self) -> Rect:
         """
