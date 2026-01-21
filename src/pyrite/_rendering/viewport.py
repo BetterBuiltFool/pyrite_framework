@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+import glm
 import pygame
 from pygame import FRect, Rect
 
@@ -48,6 +49,30 @@ class Viewport:
         """
         return self._display_rect
 
+    @property
+    def matrix(self) -> glm.mat4x4:
+        """
+        A matrix for converting clip coordinates into screen coordinates. Uses the
+        display_rect.
+        """
+        display_rect = self.display_rect
+
+        left = display_rect.left
+        right = display_rect.right
+        bottom = display_rect.bottom
+        top = display_rect.top
+
+        matrix = glm.orthoLH(
+            left,
+            right,
+            bottom,
+            top,
+            -1,
+            1,
+        )
+        matrix = glm.inverse(matrix)
+        return matrix
+
     @classmethod
     def add_new_viewport(
         cls, label: Any, relative_rect: FRect | RectLike | None = None, **kwds
@@ -83,23 +108,15 @@ class Viewport:
         cls._viewports[label] = viewport
         return viewport
 
-    def clip_to_viewport(self, clip_coords: Transform) -> Point:
+    def clip_to_viewport(self, clip_coords: Transform) -> Transform:
         """
         Converts a point in clip space to viewport space.
 
         :param clip_coords: A Transform value in clip space.
-        :return: The equivalent point in viewport space.
+        :return: The equivalent transform in viewport space.
         """
 
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_position = clip_coords.position
-        view_point = (
-            center_x - int(ndc_position.x * (-surface_width / 2)),
-            center_y - int(ndc_position.y * (surface_height / 2)),
-        )
-        return view_point
+        return Transform.from_matrix(self.matrix * clip_coords.matrix)
 
     def viewport_to_clip(self, screen_point: Point) -> Transform:
         """

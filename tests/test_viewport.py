@@ -81,11 +81,10 @@ class TestViewport(unittest.TestCase):
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
 
-                screen_coords = viewport.clip_to_viewport(
-                    Transform.from_2d(Vector3(ndc_coords).xy)
-                )
+                clip_coords = Transform.from_2d(Vector3(ndc_coords).xy)
+                screen_coords = viewport.clip_to_viewport(clip_coords)
 
-                self.assertEqual(screen_coords, expected_coords)
+                self.assertEqual(screen_coords.position, expected_coords)
 
     def test_viewport_to_clip(self):
 
