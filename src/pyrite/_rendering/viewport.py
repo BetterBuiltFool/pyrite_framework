@@ -143,6 +143,7 @@ class Viewport:
         """
         return self._display_rect
 
+    # Implement RenderTarget
     def get_target_surface(self) -> Surface:
         """
         Gets the target surface for the viewport. This will always be the current
@@ -152,6 +153,7 @@ class Viewport:
         assert surface is not None
         return surface
 
+    # Implement RenderTarget
     def get_target_rect(self) -> Rect:
         """
         Gets the target rect representing the subrect of the display.
