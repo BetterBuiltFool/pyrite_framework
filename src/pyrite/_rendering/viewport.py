@@ -162,6 +162,25 @@ class Viewport:
         abs_rect = self._get_subrect(self.relative_rect, size)
         self._display_rect = abs_rect
 
+    def _update_matrices(self) -> None:
+        display_rect = self.display_rect
+
+        left = display_rect.left
+        right = display_rect.right
+        bottom = display_rect.bottom
+        top = display_rect.top
+
+        matrix = glm.orthoLH(
+            left,
+            right,
+            bottom,
+            top,
+            -1,
+            1,
+        )
+        self._clip_matrix = matrix
+        self._viewport_matrix = glm.inverse(matrix)
+
     @classmethod
     def update_viewports(cls, size: Point):
         """
@@ -172,7 +191,9 @@ class Viewport:
         """
         for viewport in cls._viewports.values():
             viewport._update_display_rect(size)
+            viewport._update_matrices()
         cls.DEFAULT._update_display_rect(size)
+        cls.DEFAULT._update_matrices()
 
     @staticmethod
     def _get_subrect(relative_rect: FRect, size: Point) -> Rect:
