@@ -35,13 +35,6 @@ class PerspectiveProjection(Projection):
 
         base = glm.tan(angle) * height * 2
 
-        print(f"{height=}")
-        print(f"{self.volume.fov_y=}")
-        print(f"{glm.degrees(self.volume.fov_y)=}")
-        print(f"{angle=}")
-        print(f"{glm.degrees(angle)=}")
-        print(f"{base=}")
-        print(f"{base * self.volume.aspect_ratio=}")
         return Rect(0, 0, base * self.volume.aspect_ratio, base)
 
     @property
