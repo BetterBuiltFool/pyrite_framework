@@ -3,15 +3,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import pygame
-from pygame import Rect, Vector2
+from pygame import Rect
+
+import glm
 
 from pyrite.cuboid import Cuboid
 from pyrite._types.projection import Projection
-from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
-    # from pygame.typing import RectLike
-    from pyrite._types.protocols import HasTransformAttributes
     from pyrite.types import CubeLike
 
 
@@ -36,77 +35,74 @@ class OrthoProjection(Projection):
             projection_rect = Rect(left_top=(0, 0), width_height=display.size)
             projection_rect.center = (0, 0)
             cuboid = (projection_rect, DEFAULT_Z_NEAR, DEFAULT_Z_DEPTH)
-        self.projection_data = Cuboid(cuboid)
+        self.volume = Cuboid(cuboid)
 
     @property
     def far_plane(self) -> Rect:
-        return self.projection_data.face_xy
+        return self.volume.face_xy
 
     @property
     def z_near(self) -> float:
-        return self.projection_data.front
+        return self.volume.front
 
     @z_near.setter
     def z_near(self, z_near: float):
-        self.projection_data.front = z_near
+        self.volume.front = z_near
 
     @property
     def z_far(self) -> float:
-        return self.projection_data.back
+        return self.volume.back
 
     @z_far.setter
     def z_far(self, z_far: float):
-        self.projection_data.back = z_far
+        self.volume.back = z_far
 
     @property
     def z_depth(self) -> float:
-        return self.projection_data.depth
+        return self.volume.depth
 
     @property
     def center_z(self) -> float:
-        return self.projection_data.centerz
+        return self.volume.centerz
 
     def __repr__(self) -> str:
-        return f"<OrthoProjection {self.projection_data}>"
+        return f"<OrthoProjection {self.volume}>"
 
     def __eq__(self, value: object) -> bool:
-        return (
-            isinstance(value, OrthoProjection)
-            and value.projection_data == self.projection_data
+        return isinstance(value, OrthoProjection) and value.volume == self.volume
+
+    def get_matrix(self) -> glm.mat4x4:
+        volume = self.volume
+
+        bottom = volume.bottom
+        top = volume.top
+        # Invert y, since world coords are y-up but Cuboid is y-down
+        bottom = bottom - volume.height
+        top = top + volume.height
+
+        projection = glm.orthoLH(
+            volume.left,
+            volume.right,
+            bottom,
+            top,
+            volume.front,
+            volume.back,
         )
 
-    def local_to_eye(self, local_coords: HasTransformAttributes) -> Transform:
-        return Transform.from_2d(local_coords.position)
-
-    def eye_to_local(self, eye_coords: HasTransformAttributes) -> Transform:
-        return Transform.from_2d(eye_coords.position)
-
-    def ndc_to_eye(self, ndc_coords: HasTransformAttributes) -> Transform:
-        rect = self.projection_data.face_xy
-        center = Vector2(rect.center)
-        ndc_position = ndc_coords.position
-        x_scaled = ndc_position.x * (rect.width / 2)
-        y_scaled = ndc_position.y * (rect.height / 2)
-        return Transform.from_2d((x_scaled + center.x, y_scaled - center.y))
-
-    def eye_to_ndc(self, eye_coords: HasTransformAttributes) -> Transform:
-        rect = self.projection_data.face_xy
-        center = Vector2(rect.center)
-        eye_position = eye_coords.position
-        offset = (eye_position.x - center.x, eye_position.y + center.y)
-        return Transform.from_2d(
-            (offset[0] / (rect.width / 2), offset[1] / (rect.height / 2))
-        )
+        # Inverting breaks the expectation of the projection orientation due to the
+        # coordinate system mismatch, but adding the height breaks everything but cases
+        # where the top = 0.
+        # However, centery is deviation from y=0, so by doubling that and shifting by
+        # it, we can cancel out the y change from inversion.
+        return glm.translate(projection, glm.vec3(0, 2 * volume.centery, 0))
 
     def zoom(self, zoom_factor: float) -> OrthoProjection:
-        rect_center = self.projection_data.center
+        rect_center = self.volume.center
         new_rect = Rect(
             0,
             0,
-            self.projection_data.width / zoom_factor,
-            self.projection_data.height / zoom_factor,
+            self.volume.width / zoom_factor,
+            self.volume.height / zoom_factor,
         )
         new_rect.center = rect_center[0] / zoom_factor, rect_center[1] / zoom_factor
-        return OrthoProjection(
-            (new_rect, self.projection_data.front, self.projection_data.depth)
-        )
+        return OrthoProjection((new_rect, self.volume.front, self.volume.depth))

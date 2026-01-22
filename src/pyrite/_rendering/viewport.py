@@ -2,14 +2,15 @@ from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
 
+import glm
 import pygame
-from pygame import FRect, Rect, Vector3
+from pygame import FRect, Rect
+
+from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
     from pygame import Surface
     from pygame.typing import Point, RectLike
-
-    from pyrite._types.protocols import HasTransformAttributes
 
 
 class Viewport:
@@ -23,19 +24,6 @@ class Viewport:
 
     def __init__(self, relative_rect: FRect | RectLike) -> None:
         self._relative_rect = FRect(relative_rect)
-        # self._crop = False
-
-    # @property
-    # def crop(self) -> bool:
-    #     """
-    #     Determines if the rendering should be cropped or not.
-    #     If False, the rendering will be scaled to fit the target.
-    #     """
-    #     return self._crop
-
-    # @crop.setter
-    # def crop(self, crop: bool):
-    #     self._crop = crop
 
     @property
     def relative_rect(self) -> FRect:
@@ -60,6 +48,14 @@ class Viewport:
         left corner of the screen. Follows pygame standard, `display.topleft == (0,0)`.
         """
         return self._display_rect
+
+    @property
+    def matrix(self) -> glm.mat4x4:
+        """
+        A matrix for converting clip coordinates into screen coordinates. Uses the
+        display_rect.
+        """
+        return self._viewport_matrix
 
     @classmethod
     def add_new_viewport(
@@ -96,39 +92,30 @@ class Viewport:
         cls._viewports[label] = viewport
         return viewport
 
-    def ndc_to_screen(self, ndc_coord: HasTransformAttributes) -> Point:
+    def clip_to_viewport(self, clip_coords: Transform) -> Transform:
         """
-        Converts a point in ndc space to screen coordinates on the current display.
+        Converts a point in clip space to viewport space.
 
-        :param point: A point in ndc space
-        :return: A point in pygame screen coordinates.
+        :param clip_coords: A Transform value in clip space.
+        :return: The equivalent transform in viewport space.
         """
 
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_position = ndc_coord.position
-        view_point = (
-            center_x - int(ndc_position.x * (-surface_width / 2)),
-            center_y - int(ndc_position.y * (surface_height / 2)),
-        )
-        return view_point
+        return Transform.from_matrix(self.matrix * clip_coords.matrix)
 
-    def screen_to_ndc(self, screen_point: Point) -> Vector3:
+    def viewport_to_clip(self, screen_point: Point) -> Transform:
         """
-        Converts a point in screen space on the current display to ndc space.
+        Converts a point in viewport space to clip space.
 
-        :param screen_point: A point in pygame screen space.
-        :return: A point in ndc space
+        :param screen_point: A point in viewport space.
+        :return: A Transform representing clip space coordinates.
         """
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_point = (
-            (screen_point[0] - center_x) / (surface_width / 2),
-            (screen_point[1] - center_y) / (-surface_height / 2),
-        )
-        return Vector3(*ndc_point, 0)
+        screen_coords = Transform.from_2d(screen_point)
+
+        clip_coords = Transform.from_matrix(self._clip_matrix * screen_coords.matrix)
+        clip_coords.rotation = 0
+        clip_coords.scale = (1, 1)
+
+        return clip_coords
 
     def get_display_rect(self) -> Rect:
         """
@@ -139,6 +126,7 @@ class Viewport:
         """
         return self._display_rect
 
+    # Implement RenderTarget
     def get_target_surface(self) -> Surface:
         """
         Gets the target surface for the viewport. This will always be the current
@@ -148,6 +136,7 @@ class Viewport:
         assert surface is not None
         return surface
 
+    # Implement RenderTarget
     def get_target_rect(self) -> Rect:
         """
         Gets the target rect representing the subrect of the display.
@@ -157,6 +146,25 @@ class Viewport:
     def _update_display_rect(self, size: Point):
         abs_rect = self._get_subrect(self.relative_rect, size)
         self._display_rect = abs_rect
+
+    def _update_matrices(self) -> None:
+        display_rect = self.display_rect
+
+        left = display_rect.left
+        right = display_rect.right
+        bottom = display_rect.bottom
+        top = display_rect.top
+
+        matrix = glm.orthoLH(
+            left,
+            right,
+            bottom,
+            top,
+            -1,
+            1,
+        )
+        self._clip_matrix = matrix
+        self._viewport_matrix = glm.inverse(matrix)
 
     @classmethod
     def update_viewports(cls, size: Point):
@@ -168,7 +176,9 @@ class Viewport:
         """
         for viewport in cls._viewports.values():
             viewport._update_display_rect(size)
+            viewport._update_matrices()
         cls.DEFAULT._update_display_rect(size)
+        cls.DEFAULT._update_matrices()
 
     @staticmethod
     def _get_subrect(relative_rect: FRect, size: Point) -> Rect:

@@ -10,7 +10,6 @@ from pyrite._services.camera_service.camera_service import (
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pygame import Vector3
 
     from pyrite._transform.transform import Transform
     from pyrite._types.camera import Camera
@@ -116,95 +115,30 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         return cls._service.get_view_bounds(camera)
 
     @classmethod
-    def local_to_ndc(cls, camera: Camera, local_coords: Vector3) -> Vector3:
+    def world_to_clip(cls, camera: Camera, world_coords: Transform) -> Transform:
         """
-        Takes a point in local coordinates and transforms it into ndc space.
+        Converts a transform from world-space coordinates to Normalized Device
+        Coordinates appropriate to _camera_'s view and projection.
 
-        :param clip_coords: A 3D point in the local space of the camera.
-            For 2D, the Z axis is ignored.
-        :return: A 3D point in standard ndc space.
+        :param camera: The Camera object, whose clip coordinates are being calculated.
+        :param world_coords: The input transform, in world space.
+        :return: A transform with equivalent NDC coordinates.
         """
-        return cls._service.local_to_ndc(camera, local_coords)
 
-    @classmethod
-    def ndc_to_local(cls, camera: Camera, ndc_coords: Vector3) -> Vector3:
-        """
-        Takes a point in ndc space and transforms it into local coordinates
-
-        :param ndc_coords: A 3D point in ndc space.
-        :return: A 3D point in clip coordinates of the projection.
-        """
-        return cls._service.ndc_to_local(camera, ndc_coords)
+        return cls._service.world_to_clip(camera, world_coords)
 
     @classmethod
-    def to_local(cls, camera: Camera, point: Transform) -> Transform:
+    def clip_to_world(cls, camera: Camera, clip_coords: Transform) -> Transform:
         """
-        Converts the transform into the local space of the camera.
+        Converts a transform from Normalized Device Coordinates appropriate to
+        _camera_'s view and projection to world-space coordinates.
 
-        :param camera: A Camera object whose local space is being considered.
-        :param point: A Transform, in world space, being converted to the local space
-            of the camera.
-        :return: A Transform representing the point, as relative to the camera.
+        :param camera: The Camera object, whose clip space is being referenced.
+        :param world_coords: The input transform, in clip space.
+        :return: A transform with equivalent world coordinates.
         """
-        return cls._service.to_local(camera, point)
 
-    @classmethod
-    def to_eye(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts a transform local to the camera into the eye coordinates of the
-        camera's projection.
-
-        :param camera: The Camera object, which the point is local to.
-        :param point: A Transform local to the camera.
-        :return: A Transform from _point_, as it exists relative to the projection.
-        """
-        return cls._service.to_eye(camera, point)
-
-    @classmethod
-    def point_to_local(cls, camera: Camera, point: Point) -> Point:
-        """
-        Converts a point in world space to the local space of the camera, without the
-        baggage of a Transform.
-
-        :param camera: The Camera object, whose space is being converted to.
-        :param point: A point in world space. Position only.
-        :return: A point, as it exists relative to the camera.
-        """
-        return cls._service.point_to_local(camera, point)
-
-    @classmethod
-    def local_point_to_projection(cls, camera: Camera, point: Point) -> Point:
-        """
-        Converts a point in space local to the camera to the projection space of the
-        camera, without the baggage of a Transform.
-
-        :param camera: The Camera object, which the point is local to.
-        :param point: A point local to the camera. Position only.
-        :return: A point, as it exists relative to the projection.
-        """
-        return cls._service.local_point_to_projection(camera, point)
-
-    @classmethod
-    def from_eye(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts a transform from eye-space coordinates to local space of the camera.
-
-        :param camera: The Camera object, which the point is being made relative to.
-        :param point: A Transform in the eye space of the camera.
-        :return: A Transform in the local space of the camera.
-        """
-        return cls._service.from_eye(camera, point)
-
-    @classmethod
-    def to_world(cls, camera: Camera, point: Transform) -> Transform:
-        """
-        Converts a point local to the camera to its world space equivalent.
-
-        :param camera: The Camera object, which the point is local to.
-        :param point: A Transform representing a local space to the camera.
-        :return: A Transform in the world space.
-        """
-        return cls._service.to_world(camera, point)
+        return cls._service.clip_to_world(camera, clip_coords)
 
     @classmethod
     def world_to_screen(cls, point: Point, camera: Camera, viewport: Viewport) -> Point:
@@ -218,6 +152,25 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         :return: A point in screen space.
         """
         return cls._service.world_to_screen(point, camera, viewport)
+
+    @classmethod
+    def screen_to_world(
+        cls, screen_point: Point, camera: Camera, viewport: Viewport
+    ) -> Transform:
+        """
+        Converts the given point on the screen and converts it to world space for the
+        given camera.
+
+        The screen in considered to be halfway between z-near and z-far, for the
+        purpose of distance from the camera.
+
+        :param screen_point: A point, in screen space.
+        :param camera: A Camera object, whose view is being considered.
+        :param viewport: The viewport to specify which portion of the screen is being
+            referenced.
+        :return: A transform in world space.
+        """
+        return cls._service.screen_to_world(screen_point, camera, viewport)
 
     @classmethod
     def update_default_camera(cls, size: Point):

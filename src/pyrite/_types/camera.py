@@ -4,10 +4,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
-# from pygame import Vector2
 
 if TYPE_CHECKING:
-    # from pygame.typing import Point
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.renderable import Renderable
     from pyrite._types.projection import Projection
@@ -16,7 +14,6 @@ if TYPE_CHECKING:
     from pyrite.enum import Layer
     from pyrite.events import OnEnable as EventOnEnable
     from pyrite.events import OnDisable as EventOnDisable
-    from pyrite._transform.transform import Transform
     from pyrite._component.transform_component import TransformComponent
 
 
@@ -98,73 +95,3 @@ class Camera(ABC):
         :param render_target: _description_
         """
         pass
-
-    @abstractmethod
-    def to_local(self, point: Transform) -> Transform:
-        """
-        Converts a point in world space to local space of the camera
-
-        :param point: A transform, in world space
-        :return: The local space equivalent of _point_
-        """
-        pass
-
-    @abstractmethod
-    def to_eye(self, point: Transform) -> Transform:
-        """
-        Converts a point in local space to the eye space of the camera, using the
-        camera's projection.
-
-        :param point: A transform, in local space of the camera
-        :return: The eye space equivalent of _point_
-        """
-
-    @abstractmethod
-    def to_world(self, point: Transform) -> Transform:
-        """
-        Converts a point in local space of the camera to world space.
-
-        :param point: A transform, in local space
-        :return: The world space equivalent of _point_
-        """
-        pass
-
-    # @abstractmethod
-    # def screen_to_world(self, point: Point, viewport_index: int = 0) -> Vector2:
-    #     """
-    #     Converts a screen coordinate into world coordinates.
-    #     If the screen coordinate is outside the surface viewport, it will extrapolate
-    #     to
-    #     find the equivalent space.
-
-    #     :param point: A location in screen space, usually pygame.mouse.get_pos()
-    #     :param viewport_index: Index of the viewport to compare against, defaults to
-    #     0.
-    #     :raises IndexError: If the viewport_index is larger than the camera's
-    #     number of render_targets.
-    #     :return: The screen position, in world space relative to the camera
-    #     """
-    #     pass
-
-    # @abstractmethod
-    # def screen_to_world_clamped(
-    #     self, point: Point, viewport_index: int = 0
-    # ) -> Vector2 | None:
-    #     """
-    #     Variant of screen_to_world.
-    #     Converts a screen coordinate into world coordinates.
-    #     If the screen coordinate is outside the surface viewport, it will instead
-    #     return
-    #     None.
-
-    #     Use this when it needs to be clear that the mouse is outside the camera
-    #     view.
-
-    #     :param point: A location in screen space, usually pygame.mouse.get_pos()
-    #     :param viewport_index: Index of the viewport to compare against, defaults to
-    #     0.
-    #     :raises IndexError: If the viewport_index is larger than the camera's
-    #     number of render_targets.
-    #     :return: The screen position, in world space relative to the camera
-    #     """
-    #     pass

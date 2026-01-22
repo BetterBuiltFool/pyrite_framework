@@ -98,6 +98,15 @@ class BaseCamera(Camera):
 
     @property
     def projection(self) -> Projection:
+        """
+        The projection used by the camera for converting items to the view space.
+
+        Returns the zoomed version of the projection. To get the reference projection,
+        use `camera._projection`.
+
+        Setting the projection will set the reference projection, and zoom to the
+        current zoom level.
+        """
         return self._active_projection
 
     @projection.setter
@@ -107,6 +116,13 @@ class BaseCamera(Camera):
 
     @property
     def zoom_level(self):
+        """
+        The degree to which the camera is zoomed.
+
+        Larger number = smaller view.
+
+        This carries over even if the projection of the camera is otherwise changed.
+        """
         return self._zoom_level
 
     @zoom_level.setter
@@ -122,6 +138,18 @@ class BaseCamera(Camera):
         ease_factor: float = 8.0,
         max_distance: float = -1.0,
     ) -> None:
+        """
+        Causes the camera to chase after the target.
+
+
+        :param target: Any object that has a transform component.
+        :param ease_factor: The rate at which the camera will try to recenter around
+            the target, defaults to 8.0
+        :param max_distance: The maximum distance the camera can be from the target,
+            defaults to -1.0. If the target is moving too fast for the ease factor to
+            keep up, the camera will be sped up to preserve this distance. -1 will
+            disable.
+        """
         if self.chaser:
             self.chaser.stop()
         self.chaser = EntityChaser(
@@ -134,6 +162,9 @@ class BaseCamera(Camera):
         )
 
     def stop_chase(self) -> None:
+        """
+        Stops chasing the current target, if it exists.
+        """
         if self.chaser:
             self.chaser.stop()
         self.chaser = None
@@ -154,16 +185,16 @@ class BaseCamera(Camera):
     def render(self, render_target: RenderTarget):
         CameraRenderer.render(self, render_target)
 
-    def to_local(self, point: Transform) -> Transform:
-        return CameraService.to_local(self, point)
-
-    def to_eye(self, point: Transform) -> Transform:
-        return CameraService.to_eye(self, point)
-
-    def to_world(self, point: Transform) -> Transform:
-        return CameraService.to_world(self, point)
-
     def get_mouse_position(self, viewport: Viewport | None = None) -> Transform:
+        """
+        Gets the current mouse position, relative to a viewport. If no viewport is
+        specified, the first viewport of the camera is used.
+
+        :param viewport: The target viewport, defaults to None
+        :raises RuntimeError: If no viewport is specified, and the camera only renders
+            to RenderTextures
+        :return: A Transform representing the mouse position in world space.
+        """
         screen_pos = pygame.mouse.get_pos()
         if not viewport:
             if len(self._viewports) < 1:
@@ -173,12 +204,7 @@ class BaseCamera(Camera):
                     " get_mouse_position."
                 )
             viewport = self._viewports[0]
-        return self._get_mouse_position(viewport, screen_pos)
-
-    def _get_mouse_position(self, viewport: Viewport, screen_pos: Point) -> Transform:
-        ndc_coords = viewport.screen_to_ndc(screen_pos)
-        eye_coords = self.projection.ndc_to_eye(Transform.from_2d(ndc_coords.xy))
-        return self.projection.eye_to_local(eye_coords)
+        return CameraService.screen_to_world(screen_pos, self, viewport)
 
     def zoom(self, zoom_level: float):
         self._active_projection = self._projection.zoom(zoom_level)
@@ -186,18 +212,70 @@ class BaseCamera(Camera):
 
     @staticmethod
     def ortho(
-        cuboid: CubeLike,
+        cuboid: CubeLike | None = None,
         position: Point = (0, 0),
         transform: HasTransformAttributes | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
     ) -> BaseCamera:
+        """
+        Create a new orthographic camera.
+
+        :param cuboid: Dimensions for the projection, None results in a camera the
+            scaled to the device, defaults to None
+        :param position: The starting position of the camera, in world space, defaults
+            to (0, 0)
+        :param transform: A Transform object or TransformComponent, used for setting up
+            the new camera's TransformComponent, defaults to None. If none, a new
+                component will be constructed using _position_.
+        :param render_targets: A destination or sequence of destinations that the
+            camera will render to, defaults to None. If None, will target the default
+            viewport.
+        :param layer_mask: A sequence of layers that are invisible to the camera,
+            defaults to None
+        :param enabled: Determines if the camera starts in a functioning state,
+            defaults to True
+        :return: A Camera object with an orthographic projection.
+        """
         projection = OrthoProjection(cuboid)
         return BaseCamera(
             projection, position, transform, render_targets, layer_mask, enabled
         )
 
     @staticmethod
-    def perspective() -> BaseCamera:
-        raise NotImplementedError()
+    def perspective(
+        fov_y: float,
+        aspect_ratio: float,
+        z_near: float,
+        z_far: float,
+        position: Point = (0, 0),
+        transform: HasTransformAttributes | None = None,
+        render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
+        layer_mask: Sequence[Layer] | None = None,
+        enabled=True,
+    ) -> BaseCamera:
+        """
+        Create a new perspective camera.
+
+        :param fov_y: Angle, in radians, of the y axis of the projection.
+        :param aspect_ratio: Ratio between height and width of the view.
+        :param z_near: Cut-off distance closer to the view angle. Should not be
+            negative.
+        :param z_far: Cut-off distance further from the view angle.
+        :param position: The starting position of the camera, in world space, defaults
+            to (0, 0)
+        :param transform: A Transform object or TransformComponent, used for setting up
+            the new camera's TransformComponent, defaults to None. If none, a new
+                component will be constructed using _position_.
+        :param render_targets: A destination or sequence of destinations that the
+            camera will render to, defaults to None. If None, will target the default
+            viewport.
+        :param layer_mask: A sequence of layers that are invisible to the camera,
+            defaults to None
+        :param enabled: Determines if the camera starts in a functioning state,
+            defaults to True
+        :raises NotImplementedError: _description_
+        :return: A Camera object with a perspective projection.
+        """
+        raise NotImplementedError("Perspective projection not yet working as intended.")

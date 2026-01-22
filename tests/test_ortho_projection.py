@@ -10,9 +10,10 @@ from pyrite._camera.ortho_projection import (
     DEFAULT_Z_NEAR,
     DEFAULT_Z_DEPTH,
 )
-from pyrite._transform.transform import Transform
 
 if TYPE_CHECKING:
+    from pygame.typing import Point
+
     type LocalCoords = Vector2
     type EyeCoords = Vector2
     type NDCCoords = Vector3
@@ -41,197 +42,12 @@ ZERO_3D = Vector3(0)
 
 class TestOrthoProjection(unittest.TestCase):
 
-    def test_ndc_to_eye(self) -> None:
+    def assertAlmostEqualVector2(
+        self, first: Point, second: Point, places: int | None = None
+    ) -> None:
 
-        params: dict[str, tuple[OrthoProjection, Vector2, Vector2]] = {
-            "Base Case C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(0, 0),
-                Vector2(0, 0),
-            ),
-            "Top left corner C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(-1, 1),
-                Vector2(-50, 50),
-            ),
-            "Bottom Right corner C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(1, -1),
-                Vector2(50, -50),
-            ),
-            "3/4x 3/4y C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(0.5, 0.5),
-                Vector2(25, 25),
-            ),
-            "Base Case Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(0, 0),
-                Vector2(50, -50),
-            ),
-            "Top left corner Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(-1, 1),
-                Vector2(0, 0),
-            ),
-            "Bottom Right corner Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(1, -1),
-                Vector2(100, -100),
-            ),
-            "3/4x 3/4y Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(0.5, 0.5),
-                Vector2(75, -25),
-            ),
-            "Base Case C2x1": (
-                CENTERED_200X100,
-                Vector2(0, 0),
-                Vector2(0, 0),
-            ),
-            "Top left corner C2x1": (
-                CENTERED_200X100,
-                Vector2(-1, 1),
-                Vector2(-100, 50),
-            ),
-            "Bottom Right corner C2x1": (
-                CENTERED_200X100,
-                Vector2(1, -1),
-                Vector2(100, -50),
-            ),
-            "3/4x 3/4y C2x1": (
-                CENTERED_200X100,
-                Vector2(0.5, 0.5),
-                Vector2(50, 25),
-            ),
-        }
-
-        for case, (projection, ndc_coords, expected_coords) in params.items():
-            with self.subTest(i=case):
-                result = projection.ndc_to_eye(Transform(ndc_coords))
-
-                self.assertEqual(result.position, expected_coords)
-
-    def test_eye_to_ndc(self) -> None:
-
-        params: dict[str, tuple[OrthoProjection, Vector2, Vector2]] = {
-            "Base Case C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(0, 0),
-                Vector2(0, 0),
-            ),
-            "Top left corner C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(-50, 50),
-                Vector2(-1, 1),
-            ),
-            "Bottom Right corner C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(50, -50),
-                Vector2(1, -1),
-            ),
-            "3/4x 3/4y C100S": (
-                CENTERED_100_SQUARE,
-                Vector2(25, 25),
-                Vector2(0.5, 0.5),
-            ),
-            "Base Case Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(50, -50),
-                Vector2(0, 0),
-            ),
-            "Top left corner Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(0, 0),
-                Vector2(-1, 1),
-            ),
-            "Bottom Right corner Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(100, -100),
-                Vector2(1, -1),
-            ),
-            "3/4x 3/4y Cr100S": (
-                CORNER_100_SQUARE,
-                Vector2(75, -25),
-                Vector2(0.5, 0.5),
-            ),
-            "Base Case C2x1": (
-                CENTERED_200X100,
-                Vector2(0, 0),
-                Vector2(0, 0),
-            ),
-            "Top left corner C2x1": (
-                CENTERED_200X100,
-                Vector2(-100, 50),
-                Vector2(-1, 1),
-            ),
-            "Bottom Right corner C2x1": (
-                CENTERED_200X100,
-                Vector2(100, -50),
-                Vector2(1, -1),
-            ),
-            "3/4x 3/4y C2x1": (
-                CENTERED_200X100,
-                Vector2(50, 25),
-                Vector2(0.5, 0.5),
-            ),
-        }
-
-        for case, (projection, eye_coords, expected_coords) in params.items():
-            with self.subTest(i=case):
-                result = projection.eye_to_ndc(Transform(eye_coords.xy))
-
-                self.assertEqual(result.position, expected_coords)
-
-    def test_local_to_eye(self) -> None:
-        test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
-            "3/4 projection, local 0 coords": (
-                THREE_QUART_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-            "3/4 projection, center coords": (
-                THREE_QUART_800X600,
-                Vector2(-200, -150),
-                Vector2(-200, -150),
-            ),
-            "Centered projection, off center camera, origin test transform": (
-                CENTERED_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-        }
-
-        for case, (projection, local_coords, expected) in test_params.items():
-            with self.subTest(i=case):
-                eye_coords = projection.local_to_eye(Transform(local_coords))
-
-                self.assertEqual(eye_coords.position, expected)
-
-    def test_eye_to_local(self) -> None:
-        test_params: dict[str, tuple[OrthoProjection, LocalCoords, EyeCoords]] = {
-            "3/4 projection, local 0 coords": (
-                THREE_QUART_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-            "3/4 projection, center coords": (
-                THREE_QUART_800X600,
-                Vector2(-200, -150),
-                Vector2(-200, -150),
-            ),
-            "Centered projection, off center camera, origin test transform": (
-                CENTERED_800X600,
-                ZERO_POINT,
-                ZERO_POINT,
-            ),
-        }
-
-        for case, (projection, expected, eye_coords) in test_params.items():
-            with self.subTest(i=case):
-                local_coords = projection.eye_to_local(Transform(eye_coords))
-
-                self.assertEqual(local_coords.position, expected)
+        self.assertAlmostEqual(first[0], second[0], places)
+        self.assertAlmostEqual(first[1], second[1], places)
 
     def test_zoom(self) -> None:
 
