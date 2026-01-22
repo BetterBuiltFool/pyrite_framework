@@ -132,7 +132,7 @@ class DefaultCameraService(CameraService):
     ) -> Point:
         world_coords = Transform.from_2d(point)
         ndc_coords = self.world_to_clip(camera, world_coords)
-        return viewport.clip_to_viewport(ndc_coords)
+        return viewport.clip_to_viewport(ndc_coords).position
 
     def screen_to_world(
         self, point: Point, camera: Camera, viewport: Viewport
