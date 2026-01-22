@@ -55,23 +55,7 @@ class Viewport:
         A matrix for converting clip coordinates into screen coordinates. Uses the
         display_rect.
         """
-        display_rect = self.display_rect
-
-        left = display_rect.left
-        right = display_rect.right
-        bottom = display_rect.bottom
-        top = display_rect.top
-
-        matrix = glm.orthoLH(
-            left,
-            right,
-            bottom,
-            top,
-            -1,
-            1,
-        )
-        matrix = glm.inverse(matrix)
-        return matrix
+        return self._viewport_matrix
 
     @classmethod
     def add_new_viewport(
