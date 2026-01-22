@@ -80,6 +80,7 @@ class TestViewport(unittest.TestCase):
                 viewport_rect, ndc_coords, expected_coords = params
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
+                viewport._update_matrices()
 
                 clip_coords = Transform.from_2d(Vector3(ndc_coords).xy)
                 screen_coords = viewport.clip_to_viewport(clip_coords)
@@ -114,6 +115,7 @@ class TestViewport(unittest.TestCase):
                 viewport_rect, screen_coords, expected_coords = params
                 viewport = Viewport(viewport_rect)
                 viewport._update_display_rect(display_size)
+                viewport._update_matrices()
 
                 ndc_coords = viewport.viewport_to_clip(screen_coords)
 
