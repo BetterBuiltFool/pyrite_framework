@@ -125,14 +125,13 @@ class Viewport:
         :param screen_point: A point in viewport space.
         :return: A Transform representing clip space coordinates.
         """
-        display_rect = self._display_rect
-        surface_width, surface_height = display_rect.size
-        center_x, center_y = display_rect.center
-        ndc_point = (
-            (screen_point[0] - center_x) / (surface_width / 2),
-            (screen_point[1] - center_y) / (-surface_height / 2),
-        )
-        return Transform.from_2d(ndc_point)
+        screen_coords = Transform.from_2d(screen_point)
+
+        clip_coords = Transform.from_matrix(self._clip_matrix * screen_coords.matrix)
+        clip_coords.rotation = 0
+        clip_coords.scale = (1, 1)
+
+        return clip_coords
 
     def get_display_rect(self) -> Rect:
         """
