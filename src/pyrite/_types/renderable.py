@@ -7,8 +7,6 @@ if TYPE_CHECKING:
     from pyrite._types.camera import Camera
     from pyrite._types.bounds import CullingBounds
     from pyrite.enum import Layer
-    from pyrite.events import OnEnable as EventOnEnable
-    from pyrite.events import OnDisable as EventOnDisable
 
 
 class Renderable(ABC):
@@ -18,18 +16,6 @@ class Renderable(ABC):
 
     draw_index: int
     _layer: Layer
-    OnEnable: EventOnEnable
-    OnDisable: EventOnDisable
-
-    @property
-    @abstractmethod
-    def enabled(self) -> bool:
-        pass
-
-    @enabled.setter
-    @abstractmethod
-    def enabled(self, enabled: bool) -> None:
-        pass
 
     @property
     @abstractmethod
@@ -40,41 +26,6 @@ class Renderable(ABC):
     @abstractmethod
     def layer(self, layer: Layer):
         pass
-
-    def on_preenable(self):
-        """
-        Event called just before the object is enabled.
-        Useful if the object needs to be modified before going through the enabling
-        process.
-        Does NOT guarantee the object is not already enabled.
-
-        """
-
-    def on_enable(self):
-        """
-        Event called just after the object has been enabled.
-        Useful for when an object needs to perform actions on other objects immediately
-        after being enabled.
-        Guarantees the object is now enabled, and only runs when the object was
-        previously disabled.
-        """
-
-    def on_predisable(self):
-        """
-        Event called just before the object is disabled.
-        Useful if the object needs to perform some kind of cleanup action before
-        disabling.
-        Does NOT guarantee the object has not already been disabled.
-        """
-
-    def on_disable(self):
-        """
-        Event called just after the object has been disabled.
-        Useful if the object needs to perform and action, like cleanup, only after it
-        has been disabled.
-        Guarantees the object is now disabled, and that the object was previously
-        disabled.
-        """
 
     @abstractmethod
     def get_bounds(self) -> CullingBounds:
