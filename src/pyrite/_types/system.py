@@ -1,13 +1,10 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import typing
 
 if typing.TYPE_CHECKING:
     from pygame import Event
-
-    from pyrite.events import OnEnable as EventOnEnable
-    from pyrite.events import OnDisable as EventOnDisable
 
 
 class System(ABC):
@@ -16,18 +13,6 @@ class System(ABC):
     """
 
     order_index: int
-    OnEnable: EventOnEnable
-    OnDisable: EventOnDisable
-
-    @property
-    @abstractmethod
-    def enabled(self) -> bool:
-        pass
-
-    @enabled.setter
-    @abstractmethod
-    def enabled(self, enabled: bool):
-        pass
 
     def pre_update(self) -> None:
         """

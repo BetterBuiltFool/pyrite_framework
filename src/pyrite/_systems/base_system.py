@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 
-from pyrite.core import system_manager
+from pyrite.core.system_manager import SystemManager
+from pyrite.core.enableable import Enableable
 from pyrite.events import OnEnable, OnDisable
 from pyrite._types.system import System
 
@@ -11,7 +12,7 @@ if TYPE_CHECKING:
     pass
 
 
-class BaseSystem(System):
+class BaseSystem(System, Enableable[SystemManager], manager=SystemManager):
     """
     Base class for all systems that perform actions on components.
 
@@ -36,18 +37,5 @@ class BaseSystem(System):
         self.enabled = enabled
         self.order_index = order_index
 
-    @property
-    def enabled(self) -> bool:
-        return system_manager.is_enabled(self)
-
-    @enabled.setter
-    def enabled(self, enabled: bool):
-        if enabled:
-            system_manager.enable(self)
-            if not self._enabled:
-                self.OnEnable(self)
-        else:
-            system_manager.disable(self)
-            if self._enabled:
-                self.OnDisable(self)
-        self._enabled = enabled
+    def __init_subclass__(cls, **kwds) -> None:
+        return super().__init_subclass__(manager=SystemManager, **kwds)
