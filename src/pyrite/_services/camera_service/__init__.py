@@ -34,33 +34,37 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
     # -----------------------CameraService Specific-----------------------
 
     @classmethod
-    def enable(cls, camera: Camera):
+    def enable(cls, item: Camera) -> bool:
         """
         Marks a camera as being active and thus rendering.
 
-        :param camera: The Camera object to be enabled.
+        :param item: The Camera object to be enabled.
         """
-        cls._active_cameras.add(camera)
+        is_new = item not in cls._active_cameras
+        cls._active_cameras.add(item)
+        return is_new
 
     @classmethod
-    def disable(cls, camera: Camera):
+    def disable(cls, item: Camera) -> bool:
         """
         Marks a Camera object as being inactive, and not rendering.
 
-        :param camera: The Camera object to be disabled. Does nothing if the camera is
+        :param item: The Camera object to be disabled. Does nothing if the camera is
             already disabled.
         """
-        cls._active_cameras.discard(camera)
+        is_new = item in cls._active_cameras
+        cls._active_cameras.discard(item)
+        return is_new
 
     @classmethod
-    def is_enabled(cls, camera: Camera) -> bool:
+    def is_enabled(cls, item: Camera) -> bool:
         """
         Tells if the given camera is currently enabled.
 
-        :param camera: A Camera object of unknown status.
+        :param item: A Camera object of unknown status.
         :return: True if the camera is currently active, otherwise False
         """
-        return camera in cls._active_cameras
+        return item in cls._active_cameras
 
     @classmethod
     def get_active_cameras(cls) -> list[Camera]:
