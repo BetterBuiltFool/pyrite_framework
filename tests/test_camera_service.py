@@ -35,10 +35,12 @@ ORIGIN: WorldCoords = Vector3(0, 0, 0)
 SCREEN_CENTER: Point = (50, 50)
 
 Viewport.DEFAULT._update_display_rect((100, 100))
+Viewport.DEFAULT._update_matrices()
 
 # Represents the top left quarter of the screen.
 TOPLEFT_QUADRANT_VIEW = Viewport((-1, 1, 1, 1))
 TOPLEFT_QUADRANT_VIEW._update_display_rect((100, 100))
+TOPLEFT_QUADRANT_VIEW._update_matrices()
 
 
 class MockCamera:
