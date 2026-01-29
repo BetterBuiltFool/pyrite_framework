@@ -24,17 +24,6 @@ if TYPE_CHECKING:
 
 EMPTY_LAYER_SET: set[Renderable] = set()
 
-_active_render_manager: RenderManager
-
-
-def get_render_manager() -> RenderManager:
-    return _active_render_manager
-
-
-def set_render_manager(manager: RenderManager):
-    global _active_render_manager
-    _active_render_manager = manager
-
 
 _active_renderer: RenderSystem
 
@@ -51,46 +40,91 @@ def set_renderer(renderer: RenderSystem):
 _deferred_enables: set[Renderable] = set()
 
 
-def enable(renderable: Renderable):
-    """
-    Enables the renderable with the active render manager.
-    If no active render manager exists, the renderable is stored until one is created.
+class RenderManager:
+    _active_render_manager: AbstractRenderManager
 
-    :param renderable: A renderable to be enabled.
-    """
-    if _active_render_manager:
+    @classmethod
+    def enable(cls, item: Renderable) -> bool:
+        """
+        Adds a Renderable to the collection of renderables.
 
-        return _active_render_manager.enable(renderable)
-    _deferred_enables.add(renderable)
+        Does nothing if the item is not a renderable.
 
+        :param item: Object being enabled. Objects that are not renderable will be
+        skipped.
+        :return: True if enable is successful, False if not, such as object already
+        enabled.
+        """
+        # Only runs when a proper render manager doesn't exist yet
+        flag = item not in _deferred_enables
+        _deferred_enables.add(item)
+        return flag
 
-def disable(renderable: Renderable):
-    """
-    Disables the renderable in the active render manager.
-    If not active render manager exists and the renderable is queued for enabling,
-    it is removed from the queue.
+    @classmethod
+    def _enable_wrapper(cls, item: Renderable) -> bool:
+        return cls._active_render_manager.enable(item)
 
-    :param renderable: A renderable to be disabled.
-    """
-    if _active_render_manager:
-        _active_render_manager.disable(renderable)
-        return
-    _deferred_enables.discard(renderable)
+    @classmethod
+    def disable(cls, item: Renderable) -> bool:
+        """
+        Removes the item from the collection of renderables.
 
+        :param item: Renderable being removed.
+        :return: True if disable is successful, False if not, such as object already
+        disabled.
+        """
+        # Only runs when a proper render manager doesn't exist yet
+        flag = item in _deferred_enables
+        _deferred_enables.discard(item)
+        return flag
 
-def is_enabled(renderable: Renderable) -> bool:
-    """
-    Determines if the passed renderable is currently considered enabled by the manager.
+    @classmethod
+    def _disable_wrapper(cls, item: Renderable) -> bool:
+        return cls._active_render_manager.disable(item)
 
-    :param item: Any renderable
-    :return: True if currently enabled, False if disabled
-    """
-    if not _active_render_manager:
+    @classmethod
+    def is_enabled(cls, item: Renderable) -> bool:
+        """
+        Determines if the passed renderable is currently considered enabled by the
+        manager.
+
+        :param item: Any renderable
+        :return: True if currently enabled, False if disabled
+        """
         return False
-    return _active_render_manager.is_enabled(renderable)
+
+    @classmethod
+    def _is_enabled_wrapper(cls, item: Renderable) -> bool:
+        return cls._active_render_manager.is_enabled(item)
+
+    @classmethod
+    def _activate(cls) -> None:
+        """
+        Changes the methods to run their wrapper versions instead of the deferred
+        versions.
+        """
+        cls.enable = cls._enable_wrapper
+        cls.disable = cls._disable_wrapper
+        cls.is_enabled = cls._is_enabled_wrapper
+
+    @classmethod
+    def set_render_manager(cls, manager: AbstractRenderManager) -> None:
+        cls._active_render_manager = manager
+        cls._activate()
+
+    @staticmethod
+    def get_render_manager(**kwds) -> AbstractRenderManager:
+        """
+        Extracts a render manager from keyword arguments.
+        Used for creating a render manager for a new Game instance
+        """
+        if (render_manager := kwds.get("render_manager", None)) is None:
+            manager_type = get_default_render_manager_type()
+            render_manager = manager_type()
+        return render_manager
 
 
-class RenderManager(ABC):
+class AbstractRenderManager(ABC):
     """
     An object for managing renderables. Can enable and disable them, and generates a
     render queue for the renderer.
@@ -98,7 +132,7 @@ class RenderManager(ABC):
 
     def __new__(cls, *args, **kwds) -> Self:
         new_manager = super().__new__(cls)
-        set_render_manager(new_manager)
+        RenderManager.set_render_manager(new_manager)
         return new_manager
 
     def __init__(self) -> None:
@@ -159,17 +193,6 @@ class RenderManager(ABC):
         """
         pass
 
-    @staticmethod
-    def get_render_manager(**kwds) -> RenderManager:
-        """
-        Extracts a render manager from keyword arguments.
-        Used for creating a render manager for a new Game instance
-        """
-        if (render_manager := kwds.get("render_manager", None)) is None:
-            manager_type = get_default_render_manager_type()
-            render_manager = manager_type()
-        return render_manager
-
 
 class RenderSystem(ABC):
     """
@@ -228,7 +251,7 @@ def _get_draw_index(renderable: Renderable) -> int:
     return renderable.draw_index
 
 
-class DefaultRenderManager(RenderManager):
+class DefaultRenderManager(AbstractRenderManager):
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
@@ -423,11 +446,11 @@ class DefaultRenderSystem(RenderSystem):
 _default_render_manager_type = DefaultRenderManager
 
 
-def get_default_render_manager_type() -> type[RenderManager]:
+def get_default_render_manager_type() -> type[AbstractRenderManager]:
     return _default_render_manager_type
 
 
-def set_default_render_manager_type(render_manager_type: type[RenderManager]):
+def set_default_render_manager_type(render_manager_type: type[AbstractRenderManager]):
     global _default_render_manager_type
     _default_render_manager_type = render_manager_type
 

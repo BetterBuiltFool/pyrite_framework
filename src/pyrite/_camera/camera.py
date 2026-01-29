@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pygame
 
+from pyrite.core.enableable import Enableable
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import EntityChaser
@@ -31,7 +32,7 @@ if TYPE_CHECKING:
     from pyrite.types import CubeLike
 
 
-class BaseCamera(Camera):
+class BaseCamera(Camera, Enableable[CameraService], manager=CameraService):
     """
     Object for rendering a view to the display.
 
@@ -49,6 +50,7 @@ class BaseCamera(Camera):
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
     ) -> None:
+        super().__init__(enabled)
         if transform is not None:
             if isinstance(transform, TransformComponent):
                 # If we're being passed something else's transform,
@@ -73,28 +75,13 @@ class BaseCamera(Camera):
         self.layer_mask: Sequence[Layer] = layer_mask
         self.OnEnable = OnEnable(self)
         self.OnDisable = OnDisable(self)
-        self._enabled = False
-        self.enabled = enabled
         self._zoom_level: float = 1
         CameraService.add_camera(self)
 
         self.chaser: EntityChaser | None = None
 
-    @property
-    def enabled(self) -> bool:
-        return CameraService.is_enabled(self)
-
-    @enabled.setter
-    def enabled(self, enabled: bool) -> None:
-        if enabled:
-            CameraService.enable(self)
-            if not self._enabled:
-                self.OnEnable(self)
-        else:
-            CameraService.disable(self)
-            if self._enabled:
-                self.OnDisable(self)
-        self._enabled = enabled
+    def __init_subclass__(cls, **kwds) -> None:
+        return super().__init_subclass__(manager=CameraService, **kwds)
 
     @property
     def projection(self) -> Projection:

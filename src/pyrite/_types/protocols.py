@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable, TYPE_CHECKING
+from typing import Generic, Protocol, runtime_checkable, TYPE_CHECKING, TypeVar
 
 
 if TYPE_CHECKING:
@@ -12,6 +12,8 @@ if TYPE_CHECKING:
 
     # from pyrite._component.transform_component import TransformComponent
     from pyrite.types import CubeLike, TransformLike
+
+T_contra = TypeVar("T_contra", contravariant=True)
 
 
 class HasPosition(Protocol):
@@ -123,3 +125,15 @@ class HasTransformAttributes(Protocol):
 
     @property
     def matrix(self) -> glm.mat4x4: ...
+
+
+class Manager(Generic[T_contra], Protocol):
+
+    @classmethod
+    def enable(cls, item: T_contra) -> bool: ...
+
+    @classmethod
+    def disable(cls, item: T_contra) -> bool: ...
+
+    @classmethod
+    def is_enabled(cls, item: T_contra) -> bool: ...

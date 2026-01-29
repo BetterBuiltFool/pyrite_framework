@@ -3,15 +3,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from pyrite.enum import RenderLayers
-from pyrite.events import OnEnable, OnDisable
-from pyrite.core import render_system
+from pyrite.core.enableable import Enableable
+from pyrite.core.render_system import RenderManager
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from pyrite.enum import Layer
 
 
-class BaseRenderable(Renderable):
+class BaseRenderable(Renderable, Enableable[RenderManager], manager=RenderManager):
     """
     Base class for any object that renders to the screen.
 
@@ -37,27 +37,10 @@ class BaseRenderable(Renderable):
         Negative indexes are relative to the end.
         Renderables in the same layer with the same index may be drawn in any order.
         """
-        self.OnEnable = OnEnable(self)
-        self.OnDisable = OnDisable(self)
-        self.enabled = enabled
+        super().__init__(enabled)
 
-    @property
-    def enabled(self) -> bool:
-        return render_system.is_enabled(self)
-
-    @enabled.setter
-    def enabled(self, enabled: bool) -> None:
-        self._enabled = enabled
-        if enabled:
-            self.on_preenable()
-            if render_system.enable(self):
-                self.OnEnable(self)
-                self.on_enable()
-        else:
-            self.on_predisable()
-            if render_system.disable(self):
-                self.OnDisable(self)
-                self.on_disable()
+    def __init_subclass__(cls, **kwds) -> None:
+        return super().__init_subclass__(manager=RenderManager, **kwds)
 
     @property
     def layer(self) -> Layer:
@@ -69,7 +52,7 @@ class BaseRenderable(Renderable):
             enabled = self.enabled
             # This allows us to update within the renderer without firing
             # on enable/disable events.
-            render_system.disable(self)
+            RenderManager.disable(self)
             self._layer = layer
             if enabled:
-                render_system.enable(self)
+                RenderManager.enable(self)

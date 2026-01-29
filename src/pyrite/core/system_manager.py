@@ -12,65 +12,96 @@ if TYPE_CHECKING:
     from pygame import Event
 
 
-_active_system_manager: SystemManager
-
-
-def get_system_manager() -> SystemManager:
-    return _active_system_manager
-
-
-def set_system_manager(manager: SystemManager):
-    global _active_system_manager
-    _active_system_manager = manager
-
-
 _deferred_enables: set[System] = set()
 
 
-def enable(system: System):
-    """
-    Enables a system with the active system manager.
-    If no active system manager exists, the system is stored until one is created.
+class SystemManager:
+    _active_system_manager: AbstractSystemManager
 
-    :param system: A system to be enabled.
-    """
-    if _active_system_manager:
-        _active_system_manager.enable(system)
-        return
-    _deferred_enables.add(system)
+    @classmethod
+    def enable(cls, item: System) -> bool:
+        """
+        Adds a system to the collection of active systems.
 
+        :param item: System being enabled.
+        :return: True if enable is successful, False if not, such as system already
+        enabled.
+        """
+        # Only runs when a proper system manager doesn't exist yet
+        flag = item not in _deferred_enables
+        _deferred_enables.add(item)
+        return flag
 
-def disable(system: System):
-    """
-    Disables a system in the active system maanger,
-    If no active system manager exists and the system is queued for enabling,
-    it is removed from the queue.
+    @classmethod
+    def _enable_wrapper(cls, item: System) -> bool:
+        return cls._active_system_manager.enable(item)
 
-    :param system: A system to be disabled.
-    """
-    if _active_system_manager:
-        _active_system_manager.disable(system)
-        return
-    _deferred_enables.discard(system)
+    @classmethod
+    def disable(cls, item: System) -> bool:
+        """
+        Removes a system from the collection of active systems.
 
+        :param item: System being enabled.
+        :return: True if disable is successful, False if not, such as system already
+        disabled.
+        """
+        # Only runs when a proper system manager doesn't exist yet
+        flag = item in _deferred_enables
+        _deferred_enables.discard(item)
+        return flag
 
-def is_enabled(system: System) -> bool:
-    """
-    Determines if the passed system is currently considered enabled by the manager.
+    @classmethod
+    def _disable_wrapper(cls, item: System) -> bool:
+        """
+        Determines if the passed system is currently considered enabled by the manager.
 
-    :param system: Any system
-    :return: True if currently enabled, False if disabled
-    """
-    if not _active_system_manager:
+        :param item: Any system
+        :return: True if currently enabled, False if disabled
+        """
+        return cls._active_system_manager.disable(item)
+
+    @classmethod
+    def is_enabled(cls, item: System) -> bool:
+        """
+        Determines if the passed system is currently considered enabled by the manager.
+
+        :param system: Any system
+        :return: True if currently enabled, False if disabled
+        """
         return False
-    return _active_system_manager.is_enabled(system)
+
+    @classmethod
+    def _is_enabled_wrapper(cls, item: System) -> bool:
+        return cls._active_system_manager.is_enabled(item)
+
+    @classmethod
+    def _activate(cls) -> None:
+        """
+        Changes the methods to run their wrapper versions instead of the deferred
+        versions.
+        """
+        cls.enable = cls._enable_wrapper
+        cls.disable = cls._disable_wrapper
+        cls.is_enabled = cls._is_enabled_wrapper
+
+    @classmethod
+    def set_system_manager(cls, manager: AbstractSystemManager) -> None:
+        cls._active_system_manager = manager
+        cls._activate()
+
+    @staticmethod
+    def get_system_manager(**kwds) -> AbstractSystemManager:
+        if (system_manager := kwds.get("system_manager", None)) is None:
+            manager_type = get_default_system_manager_type()
+            system_manager = manager_type()
+        return system_manager
 
 
-class SystemManager(ABC):
+class AbstractSystemManager(ABC):
 
     def __new__(cls) -> Self:
         new_manager = super().__new__(cls)
-        set_system_manager(new_manager)
+        SystemManager.set_system_manager(new_manager)
         return new_manager
 
     def __init__(self) -> None:
@@ -185,15 +216,8 @@ class SystemManager(ABC):
         """
         pass
 
-    @staticmethod
-    def get_system_manager(**kwds) -> SystemManager:
-        if (system_manager := kwds.get("system_manager", None)) is None:
-            manager_type = get_default_system_manager_type()
-            system_manager = manager_type()
-        return system_manager
 
-
-class DefaultSystemManager(SystemManager):
+class DefaultSystemManager(AbstractSystemManager):
 
     def __init__(self) -> None:
         self.systems: dict[type[System], System] = {}
@@ -292,10 +316,10 @@ def _get_system_index(system: System) -> int:
 _default_system_manager_type = DefaultSystemManager
 
 
-def get_default_system_manager_type() -> type[SystemManager]:
+def get_default_system_manager_type() -> type[AbstractSystemManager]:
     return _default_system_manager_type
 
 
-def set_default_system_manager_type(manager_type: type[SystemManager]):
+def set_default_system_manager_type(manager_type: type[AbstractSystemManager]):
     global _default_system_manager_type
     _default_system_manager_type = manager_type
