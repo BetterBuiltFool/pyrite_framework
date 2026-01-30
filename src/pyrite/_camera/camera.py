@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 
 import pygame
 
@@ -197,15 +197,16 @@ class BaseCamera(Camera, Enableable[CameraService], manager=CameraService):
         self._active_projection = self._projection.zoom(zoom_level)
         CameraService.zoom(self, zoom_level)
 
-    @staticmethod
+    @classmethod
     def ortho(
+        cls,
         cuboid: CubeLike | None = None,
         position: Point = (0, 0),
         transform: HasTransformAttributes | None = None,
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
-    ) -> BaseCamera:
+    ) -> Self:
         """
         Create a new orthographic camera.
 
@@ -226,12 +227,11 @@ class BaseCamera(Camera, Enableable[CameraService], manager=CameraService):
         :return: A Camera object with an orthographic projection.
         """
         projection = OrthoProjection(cuboid)
-        return BaseCamera(
-            projection, position, transform, render_targets, layer_mask, enabled
-        )
+        return cls(projection, position, transform, render_targets, layer_mask, enabled)
 
-    @staticmethod
+    @classmethod
     def perspective(
+        cls,
         fov_y: float,
         aspect_ratio: float,
         z_near: float,
@@ -241,7 +241,7 @@ class BaseCamera(Camera, Enableable[CameraService], manager=CameraService):
         render_targets: RenderTarget | Sequence[RenderTarget] | None = None,
         layer_mask: Sequence[Layer] | None = None,
         enabled=True,
-    ) -> BaseCamera:
+    ) -> Self:
         """
         Create a new perspective camera.
 
