@@ -1,18 +1,27 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pygame import Event
 
+    from pyrite.events import OnDisable as OnDisableEvent, OnEnable as OnEnableEvent
 
-class Entity(ABC):
+
+class Entity(Protocol):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
     """
 
-    @abstractmethod
+    OnEnable: OnEnableEvent
+    OnDisable: OnDisableEvent
+
+    @property
+    def enabled(self) -> bool: ...
+
+    @enabled.setter
+    def enabled(self, enabled: bool) -> None: ...
+
     def pre_update(self) -> None:
         """
         A method that is called during the pre_update phase.
@@ -20,7 +29,6 @@ class Entity(ABC):
         """
         ...
 
-    @abstractmethod
     def update(self) -> None:
         """
         A method that is called during the main update phase.
@@ -28,7 +36,6 @@ class Entity(ABC):
         """
         ...
 
-    @abstractmethod
     def post_update(self) -> None:
         """
         A method that is called during the post_update phase.
@@ -36,7 +43,6 @@ class Entity(ABC):
         """
         ...
 
-    @abstractmethod
     def const_update(self) -> None:
         """
         A method that is called during the const_update phase.
@@ -50,7 +56,6 @@ class Entity(ABC):
         """
         ...
 
-    @abstractmethod
     def on_event(self, event: Event):
         """
         An event hook. Events will be passed to the entity when it's enabled, and can
