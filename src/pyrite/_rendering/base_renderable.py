@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from pyrite.enum import RenderLayers
 from pyrite.core.enableable import Enableable
 from pyrite.core.render_system import RenderManager
-from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
     from pyrite.enum import Layer
+    from pyrite._types.camera import Camera
+    from pyrite._types.bounds import CullingBounds
 
 
-class BaseRenderable(Renderable, Enableable[RenderManager], manager=RenderManager):
+class BaseRenderable(ABC, Enableable[RenderManager], manager=RenderManager):
     """
     Base class for any object that renders to the screen.
 
@@ -56,3 +58,21 @@ class BaseRenderable(Renderable, Enableable[RenderManager], manager=RenderManage
             self._layer = layer
             if enabled:
                 RenderManager.enable(self)
+
+    @abstractmethod
+    def get_bounds(self) -> CullingBounds:
+        """
+        Returns a Bounds object that describes the occupied space of the renderable for
+        the sake of camera culling.
+        """
+        pass
+
+    @abstractmethod
+    def render(self, camera: Camera):
+        """
+        Causes the Renderable to be rendered to the given camera. Typically calls upon
+        some renderer class that knows how to handle its data.
+
+        :param camera: A camera-type object to be drawn to.
+        """
+        pass

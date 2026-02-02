@@ -8,7 +8,6 @@ from pyrite._rendering.base_renderable import BaseRenderable as Renderable
 from pyrite._rendering.sprite_renderer import SpriteRendererProvider as SpriteRenderer
 from pyrite._services.bounds_service import BoundsServiceProvider as BoundsService
 from pyrite._component.transform_component import TransformComponent
-from pyrite._types.sprite import Sprite
 
 
 if typing.TYPE_CHECKING:
@@ -20,7 +19,7 @@ if typing.TYPE_CHECKING:
     from pyrite.enum import Layer, Anchor
 
 
-class BaseSprite(Sprite, Renderable):
+class BaseSprite(Renderable):
     """
     A basic renderable with a world position and a surface to display.
     """

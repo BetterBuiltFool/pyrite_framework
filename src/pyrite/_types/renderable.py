@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pyrite._types.camera import Camera
     from pyrite._types.bounds import CullingBounds
     from pyrite.enum import Layer
+    from pyrite.events import OnEnable as OnEnableEvent, OnDisable as OnDisableEvent
 
 
-class Renderable(ABC):
+class Renderable(Protocol):
     """
     Base class for any renderable object in pyrite.
     """
@@ -17,25 +17,22 @@ class Renderable(ABC):
     draw_index: int
     _layer: Layer
 
+    OnEnable: OnEnableEvent
+    OnDisable: OnDisableEvent
+
     @property
-    @abstractmethod
-    def layer(self) -> Layer:
-        pass
+    def layer(self) -> Layer: ...
 
     @layer.setter
-    @abstractmethod
-    def layer(self, layer: Layer):
-        pass
+    def layer(self, layer: Layer): ...
 
-    @abstractmethod
     def get_bounds(self) -> CullingBounds:
         """
         Returns a Bounds object that describes the occupied space of the renderable for
         the sake of camera culling.
         """
-        pass
+        ...
 
-    @abstractmethod
     def render(self, camera: Camera):
         """
         Causes the Renderable to be rendered to the given camera. Typically calls upon
@@ -43,4 +40,12 @@ class Renderable(ABC):
 
         :param camera: A camera-type object to be drawn to.
         """
-        pass
+        ...
+
+    def on_preenable(self): ...
+
+    def on_enable(self): ...
+
+    def on_predisable(self): ...
+
+    def on_disable(self): ...
