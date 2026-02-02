@@ -128,6 +128,16 @@ class HasTransformAttributes(Protocol):
 
 
 class Manager(Generic[T_contra], Protocol):
+    """
+    Protocol for a class that handles Enableables.
+
+    Managers should be static, but may wrap an instance that does the actual work.
+
+    Managers are responsible for calling OnEnable and OnDisable events, as well as
+    on_enable and on_disable hooks.
+
+    The enableables themselves call on_preenable and on_predisable.
+    """
 
     @classmethod
     def enable(cls, item: T_contra) -> bool: ...
