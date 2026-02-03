@@ -1,17 +1,20 @@
 from __future__ import annotations
-from abc import ABC
 
-import typing
+from typing import Protocol, TYPE_CHECKING
 
-if typing.TYPE_CHECKING:
+if TYPE_CHECKING:
     from pygame import Event
 
+    from pyrite.events import OnEnable as OnEnableEvent, OnDisable as OnDisableEvent
 
-class System(ABC):
+
+class System(Protocol):
     """
     Base class for all systems.
     """
 
+    OnEnable: OnEnableEvent
+    OnDisable: OnDisableEvent
     order_index: int
 
     def pre_update(self) -> None:
@@ -19,21 +22,21 @@ class System(ABC):
         A method that is called during the pre_update phase.
         Will always be called before update.
         """
-        pass
+        ...
 
     def update(self) -> None:
         """
         A method that is called during the main update phase.
         Most behaviour should happen here.
         """
-        pass
+        ...
 
     def post_update(self) -> None:
         """
         A method that is called during the post_update phase.
         Will always be called after update.
         """
-        pass
+        ...
 
     def const_update(self) -> None:
         """
@@ -46,7 +49,7 @@ class System(ABC):
         const_update may be called any number of times per frame,
         depending on timestep length.
         """
-        pass
+        ...
 
     def pre_render(self) -> None:
         """
@@ -54,6 +57,7 @@ class System(ABC):
         Used by TransformServices to ensure transforms are properly updated just prior
         to being used to display them.
         """
+        ...
 
     def on_event(self, event: Event):
         """
@@ -62,4 +66,18 @@ class System(ABC):
 
         :param event: A pygame event.
         """
-        pass
+        ...
+
+    @property
+    def enabled(self) -> bool: ...
+
+    @enabled.setter
+    def enabled(self, enabled: bool) -> None: ...
+
+    def on_preenable(self): ...
+
+    def on_enable(self): ...
+
+    def on_predisable(self): ...
+
+    def on_disable(self): ...
