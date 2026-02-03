@@ -15,7 +15,6 @@ from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRe
 from pyrite._rendering.viewport import Viewport
 from pyrite._component.transform_component import TransformComponent
 from pyrite._transform.transform import Transform
-from pyrite._types.camera import Camera
 from pyrite._types.renderable import Renderable
 
 if TYPE_CHECKING:
@@ -32,7 +31,7 @@ if TYPE_CHECKING:
     from pyrite.types import CubeLike
 
 
-class BaseCamera(Camera, Enableable[CameraService], manager=CameraService):
+class BaseCamera(Enableable[CameraService], manager=CameraService):
     """
     Object for rendering a view to the display.
 
