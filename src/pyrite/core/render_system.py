@@ -44,7 +44,7 @@ class RenderManager:
     _active_render_manager: AbstractRenderManager
 
     @classmethod
-    def enable(cls, item: Renderable) -> bool:
+    def enable(cls, item: Renderable) -> None:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -52,35 +52,27 @@ class RenderManager:
 
         :param item: Object being enabled. Objects that are not renderable will be
         skipped.
-        :return: True if enable is successful, False if not, such as object already
-        enabled.
         """
         # Only runs when a proper render manager doesn't exist yet
-        flag = item not in _deferred_enables
         _deferred_enables.add(item)
-        return flag
 
     @classmethod
-    def _enable_wrapper(cls, item: Renderable) -> bool:
-        return cls._active_render_manager.enable(item)
+    def _enable_wrapper(cls, item: Renderable) -> None:
+        cls._active_render_manager.enable(item)
 
     @classmethod
-    def disable(cls, item: Renderable) -> bool:
+    def disable(cls, item: Renderable) -> None:
         """
         Removes the item from the collection of renderables.
 
         :param item: Renderable being removed.
-        :return: True if disable is successful, False if not, such as object already
-        disabled.
         """
         # Only runs when a proper render manager doesn't exist yet
-        flag = item in _deferred_enables
         _deferred_enables.discard(item)
-        return flag
 
     @classmethod
-    def _disable_wrapper(cls, item: Renderable) -> bool:
-        return cls._active_render_manager.disable(item)
+    def _disable_wrapper(cls, item: Renderable) -> None:
+        cls._active_render_manager.disable(item)
 
     @classmethod
     def is_enabled(cls, item: Renderable) -> bool:
@@ -151,7 +143,7 @@ class AbstractRenderManager(ABC):
         pass
 
     @abstractmethod
-    def enable(self, item: Renderable) -> bool:
+    def enable(self, item: Renderable) -> None:
         """
         Adds a Renderable to the collection of renderables.
 
@@ -159,19 +151,15 @@ class AbstractRenderManager(ABC):
 
         :param item: Object being enabled. Objects that are not renderable will be
         skipped.
-        :return: True if enable is successful, False if not, such as object already
-        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, item: Renderable) -> bool:
+    def disable(self, item: Renderable) -> None:
         """
         Removes the item from the collection of renderables.
 
         :param item: Renderable being removed.
-        :return: True if disable is successful, False if not, such as object already
-        disabled.
         """
         pass
 
@@ -271,7 +259,7 @@ class DefaultRenderManager(AbstractRenderManager):
 
         super().__init__()
 
-    def enable(self, item: Renderable) -> bool:
+    def enable(self, item: Renderable) -> None:
         layer = item.layer
         if layer is None:
             # No layer set, force it to midground
@@ -283,18 +271,12 @@ class DefaultRenderManager(AbstractRenderManager):
         else:
             self._enabled_buffer.add((item, layer))
 
-        # TODO Remove these bool returns, they are redundant.
-        return item in self.renderables.setdefault(layer, WeakSet())
-
-    def disable(self, item: Renderable):
+    def disable(self, item: Renderable) -> None:
         layer = item.layer
         if (item, layer) in self._enabled_buffer:
             self._enabled_buffer.remove((item, layer))
         else:
             self._disabled_buffer.add((item, layer))
-
-        # TODO Remove these bool returns, they are redundant.
-        return item not in self.renderables.setdefault(layer, WeakSet())
 
     def is_enabled(self, item: Renderable) -> bool:
         return any((item in render_layer) for render_layer in self.renderables.values())

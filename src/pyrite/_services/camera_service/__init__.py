@@ -36,7 +36,7 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
     # -----------------------CameraService Specific-----------------------
 
     @classmethod
-    def enable(cls, item: Camera) -> bool:
+    def enable(cls, item: Camera) -> None:
         """
         Marks a camera as being active and thus rendering.
 
@@ -47,10 +47,8 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         else:
             cls._enabled_buffer.add(item)
 
-        return item not in cls._active_cameras
-
     @classmethod
-    def disable(cls, item: Camera) -> bool:
+    def disable(cls, item: Camera) -> None:
         """
         Marks a Camera object as being inactive, and not rendering.
 
@@ -61,7 +59,6 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
             cls._enabled_buffer.remove(item)
         else:
             cls._disabled_buffer.add(item)
-        return item in cls._active_cameras
 
     @classmethod
     def is_enabled(cls, item: Camera) -> bool:
