@@ -115,9 +115,6 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
     def zoom_level(self, zoom_level: float):
         self._zoom_level = zoom_level
 
-    def refresh(self):
-        CameraService.refresh(self)
-
     def chase(
         self,
         target: HasTransform | HasTransformProperty,

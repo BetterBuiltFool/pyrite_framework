@@ -43,12 +43,6 @@ class Camera(Protocol):
     @zoom_level.setter
     def zoom_level(self, zoom_level: float): ...
 
-    def refresh(self):
-        """
-        Returns the camera to a state that is ready for rendering.
-        """
-        ...
-
     def cull(self, renderable: Renderable) -> bool:
         """
         Compares the bounds of the renderable to the camera's view bounds to determine
