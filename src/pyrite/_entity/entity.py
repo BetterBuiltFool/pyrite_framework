@@ -4,13 +4,12 @@ from typing import TYPE_CHECKING
 
 from pyrite.core.entity_manager import EntityManager
 from pyrite.core.enableable import Enableable
-from pyrite._types.entity import Entity
 
 if TYPE_CHECKING:
     from pygame import Event
 
 
-class BaseEntity(Entity, Enableable[EntityManager], manager=EntityManager):
+class BaseEntity(Enableable[EntityManager], manager=EntityManager):
     """
     Base class for any class that exhibits behaviour during any of the update phases.
 

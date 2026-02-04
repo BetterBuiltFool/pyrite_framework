@@ -19,46 +19,37 @@ class SystemManager:
     _active_system_manager: AbstractSystemManager
 
     @classmethod
-    def enable(cls, item: System) -> bool:
+    def enable(cls, item: System) -> None:
         """
         Adds a system to the collection of active systems.
 
         :param item: System being enabled.
-        :return: True if enable is successful, False if not, such as system already
-        enabled.
         """
         # Only runs when a proper system manager doesn't exist yet
-        flag = item not in _deferred_enables
         _deferred_enables.add(item)
-        return flag
 
     @classmethod
-    def _enable_wrapper(cls, item: System) -> bool:
-        return cls._active_system_manager.enable(item)
+    def _enable_wrapper(cls, item: System) -> None:
+        cls._active_system_manager.enable(item)
 
     @classmethod
-    def disable(cls, item: System) -> bool:
+    def disable(cls, item: System) -> None:
         """
         Removes a system from the collection of active systems.
 
         :param item: System being enabled.
-        :return: True if disable is successful, False if not, such as system already
-        disabled.
         """
         # Only runs when a proper system manager doesn't exist yet
-        flag = item in _deferred_enables
         _deferred_enables.discard(item)
-        return flag
 
     @classmethod
-    def _disable_wrapper(cls, item: System) -> bool:
+    def _disable_wrapper(cls, item: System) -> None:
         """
         Determines if the passed system is currently considered enabled by the manager.
 
         :param item: Any system
-        :return: True if currently enabled, False if disabled
         """
-        return cls._active_system_manager.disable(item)
+        cls._active_system_manager.disable(item)
 
     @classmethod
     def is_enabled(cls, item: System) -> bool:
@@ -110,24 +101,20 @@ class AbstractSystemManager(ABC):
             self.enable(system)
 
     @abstractmethod
-    def enable(self, system: System) -> bool:
+    def enable(self, system: System) -> None:
         """
         Adds a system to the collection of active systems.
 
         :param item: System being enabled.
-        :return: True if enable is successful, False if not, such as system already
-        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, system: System) -> bool:
+    def disable(self, system: System) -> None:
         """
         Removes a system from the collection of active systems.
 
         :param item: System being enabled.
-        :return: True if disable is successful, False if not, such as system already
-        disabled.
         """
         pass
 
@@ -223,20 +210,23 @@ class DefaultSystemManager(AbstractSystemManager):
         self.systems: dict[type[System], System] = {}
         self.active_systems: WeakSet[System] = WeakSet()
         self.current_systems: list[System] = []
+        self._enabled_buffer: set[System] = set()
+        self._disabled_buffer: set[System] = set()
         super().__init__()
 
-    def enable(self, system: System) -> bool:
+    def enable(self, system: System) -> None:
         self._capture_system(system)
-        if system not in self.active_systems:
-            self.active_systems.add(system)
-            return True
-        return False
 
-    def disable(self, system: System) -> bool:
-        if system in self.active_systems:
-            self.active_systems.remove(system)
-            return True
-        return False
+        if system in self._disabled_buffer:
+            self._disabled_buffer.remove(system)
+        else:
+            self._enabled_buffer.add(system)
+
+    def disable(self, system: System) -> None:
+        if system in self._enabled_buffer:
+            self._enabled_buffer.remove(system)
+        else:
+            self._disabled_buffer.add(system)
 
     def is_enabled(self, system: System) -> bool:
         return system in self.active_systems
@@ -263,6 +253,18 @@ class DefaultSystemManager(AbstractSystemManager):
         return system
 
     def prepare_systems(self):
+        for system in self._enabled_buffer:
+            self.active_systems.add(system)
+            system.OnEnable(system)
+            system.on_enable()
+        for system in self._disabled_buffer:
+            self.active_systems.discard(system)
+            system.OnDisable(system)
+            system.on_disable()
+
+        self._enabled_buffer.clear()
+        self._disabled_buffer.clear()
+
         self.current_systems = self.sort_systems(self.active_systems)
 
     def pre_update(self):

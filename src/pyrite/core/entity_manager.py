@@ -19,7 +19,7 @@ class EntityManager:
     _active_entity_manager: AbstractEntityManager
 
     @classmethod
-    def enable(cls, item: Entity) -> bool:
+    def enable(cls, item: Entity) -> None:
         """
         Adds an entity to the collection of active entities.
 
@@ -27,20 +27,16 @@ class EntityManager:
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
-        :return: True if enable is successful, False if not, such as object already
-        enabled.
         """
         # Only runs when a proper entity manager doesn't exist yet
-        flag = item not in _deferred_enables
         _deferred_enables.add(item)
-        return flag
 
     @classmethod
-    def _enable_wrapper(cls, item: Entity) -> bool:
-        return cls._active_entity_manager.enable(item)
+    def _enable_wrapper(cls, item: Entity) -> None:
+        cls._active_entity_manager.enable(item)
 
     @classmethod
-    def disable(cls, item: Entity) -> bool:
+    def disable(cls, item: Entity) -> None:
         """
         Removes an entity from the collection of active entities.
 
@@ -48,23 +44,18 @@ class EntityManager:
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
-        :return: True if disable is successful, False if not, such as object already
-        disabled.
         """
         # Only runs when a proper entity manager doesn't exist yet
-        flag = item in _deferred_enables
         _deferred_enables.discard(item)
-        return flag
 
     @classmethod
-    def _disable_wrapper(cls, item: Entity) -> bool:
+    def _disable_wrapper(cls, item: Entity) -> None:
         """
         Determines if the passed entity is currently considered enabled by the manager.
 
         :param item: Any entity
-        :return: True if currently enabled, False if disabled
         """
-        return cls._active_entity_manager.disable(item)
+        cls._active_entity_manager.disable(item)
 
     @classmethod
     def is_enabled(cls, item: Entity) -> bool:
@@ -116,7 +107,7 @@ class AbstractEntityManager(ABC):
             self.enable(entity)
 
     @abstractmethod
-    def enable(self, item: Entity) -> bool:
+    def enable(self, item: Entity) -> None:
         """
         Adds an entity to the collection of active entities.
 
@@ -124,13 +115,11 @@ class AbstractEntityManager(ABC):
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
-        :return: True if enable is successful, False if not, such as object already
-        enabled.
         """
         pass
 
     @abstractmethod
-    def disable(self, item: Entity) -> bool:
+    def disable(self, item: Entity) -> None:
         """
         Removes an entity from the collection of active entities.
 
@@ -138,8 +127,6 @@ class AbstractEntityManager(ABC):
 
         :param item: Object being enabled. Objects that are not entities will be
         skipped.
-        :return: True if disable is successful, False if not, such as object already
-        disabled.
         """
         pass
 
@@ -216,37 +203,42 @@ class DefaultEntityManager(AbstractEntityManager):
 
     def __init__(self) -> None:
         self.entities: WeakSet[Entity] = WeakSet()
-        self._added_buffer: set[Entity] = set()
+        self._enabled_buffer: set[Entity] = set()
         self._disabled_buffer: set[Entity] = set()
 
         super().__init__()
 
-    def enable(self, item: Entity) -> bool:
+    def enable(self, item: Entity) -> None:
         if item in self._disabled_buffer:
             self._disabled_buffer.remove(item)
         else:
-            self._added_buffer.add(item)
-        return item not in self.entities
+            self._enabled_buffer.add(item)
 
-    def disable(self, item: Entity) -> bool:
-        if item in self._added_buffer:
-            self._added_buffer.remove(item)
+    def disable(self, item: Entity) -> None:
+        if item in self._enabled_buffer:
+            self._enabled_buffer.remove(item)
         else:
             self._disabled_buffer.add(item)
-        return item in self.entities
 
     def is_enabled(self, item: Entity) -> bool:
-        return item in self._added_buffer or (
+        return item in self._enabled_buffer or (
             item in self.entities and item not in self._disabled_buffer
         )
 
     def flush_buffer(self):
-        self.entities |= self._added_buffer
+        self.entities |= self._enabled_buffer
+        for entity in self._enabled_buffer:
+            entity.OnEnable(entity)
+            entity.on_enable()
 
         self.entities -= self._disabled_buffer
 
-        self._added_buffer = set()
-        self._disabled_buffer = set()
+        for entity in self._disabled_buffer:
+            entity.OnDisable(entity)
+            entity.on_disable()
+
+        self._enabled_buffer.clear()
+        self._disabled_buffer.clear()
 
     def pre_update(self):
         for entity in self.entities:

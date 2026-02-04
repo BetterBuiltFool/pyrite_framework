@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from typing import Protocol, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
     from pyrite._component.transform_component import TransformComponent
 
 
-class Camera(ABC):
+class Camera(Protocol):
     """
     Defines the important attributes of a camera for the sake of drawing onto its
     surface.
@@ -33,33 +32,17 @@ class Camera(ABC):
     OnDisable: EventOnDisable
 
     @property
-    @abstractmethod
-    def projection(self) -> Projection:
-        pass
+    def projection(self) -> Projection: ...
 
     @projection.setter
-    @abstractmethod
-    def projection(self, projection: Projection) -> None:
-        pass
+    def projection(self, projection: Projection) -> None: ...
 
     @property
-    @abstractmethod
-    def zoom_level(self) -> float:
-        pass
+    def zoom_level(self) -> float: ...
 
     @zoom_level.setter
-    @abstractmethod
-    def zoom_level(self, zoom_level: float):
-        pass
+    def zoom_level(self, zoom_level: float): ...
 
-    @abstractmethod
-    def refresh(self):
-        """
-        Returns the camera to a state that is ready for rendering.
-        """
-        pass
-
-    @abstractmethod
     def cull(self, renderable: Renderable) -> bool:
         """
         Compares the bounds of the renderable to the camera's view bounds to determine
@@ -68,30 +51,42 @@ class Camera(ABC):
         :param renderable: Any renderable item to be drawn.
         :return: True if the renderable is visible and should be drawn, otherwise False.
         """
-        pass
+        ...
 
-    @abstractmethod
     def get_view_bounds(self) -> CameraViewBounds:
         """
         Gets the bounds object that represents the visible space of the camera.
 
         :return: A CameraViewBounds object describing the viewed space.
         """
+        ...
 
-    @abstractmethod
     def get_viewports(self) -> Sequence[Viewport]:
         """
         Gets a sequence of viewports targeted by the camera.
 
         :return: A sequence of viewports, empty if there are none.
         """
-        pass
+        ...
 
-    @abstractmethod
     def render(self, render_target: RenderTarget):
         """
         Renders the camera view to the render target
 
         :param render_target: _description_
         """
-        pass
+        ...
+
+    @property
+    def enabled(self) -> bool: ...
+
+    @enabled.setter
+    def enabled(self, enabled: bool) -> None: ...
+
+    def on_preenable(self): ...
+
+    def on_enable(self): ...
+
+    def on_predisable(self): ...
+
+    def on_disable(self): ...

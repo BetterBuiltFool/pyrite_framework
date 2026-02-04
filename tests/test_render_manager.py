@@ -30,9 +30,7 @@ class MockRenderable(BaseRenderable):
         layer: Layer = RenderLayers.MIDGROUND,
         draw_index=-1,
     ) -> None:
-        self._enabled = enabled
-        self._layer = layer
-        self.draw_index = draw_index
+        super().__init__(enabled, layer, draw_index)
 
     def render(self, camera: Camera):
         return super().render(camera)
@@ -88,12 +86,12 @@ class TestDefaultRenderManager(unittest.TestCase):
 
     def test_enable(self):
         # Ideal case
-        with make_renderable(layer=RenderLayers.MIDGROUND) as renderable:
-            self.assertNotIn(
-                RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
-            )
+        with make_renderable(enabled=False, layer=RenderLayers.MIDGROUND) as renderable:
+            self.render_manager.flush_buffer()
 
             self.render_manager.enable(renderable)
+
+            self.render_manager.flush_buffer()
             self.assertIn(
                 RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
             )
@@ -105,9 +103,12 @@ class TestDefaultRenderManager(unittest.TestCase):
             self.render_manager.renderables = {}
 
         # Renderable, no layer
-        with make_renderable() as renderable:
+        with make_renderable(enabled=False) as renderable:
+            self.render_manager.flush_buffer()
 
             self.render_manager.enable(renderable)
+
+            self.render_manager.flush_buffer()
             self.assertIn(
                 RenderLayers.MIDGROUND, self.render_manager.renderables.keys()
             )
@@ -125,6 +126,8 @@ class TestDefaultRenderManager(unittest.TestCase):
         for renderable in renderables:
             self.render_manager.enable(renderable)
 
+        self.render_manager.flush_buffer()
+
         for renderable in renderables:
             self.assertIn(
                 renderable,
@@ -134,6 +137,8 @@ class TestDefaultRenderManager(unittest.TestCase):
         disabled_renderable = renderables[2]  # Arbitrary index
 
         self.render_manager.disable(disabled_renderable)
+
+        self.render_manager.flush_buffer()
 
         for renderable in renderables:
             if renderable is disabled_renderable:
@@ -171,8 +176,13 @@ class TestDefaultRenderManager(unittest.TestCase):
         all_elements = [
             element for elements in element_dict.values() for element in elements
         ]
+
+        self.render_manager.flush_buffer()
+
         for renderable in all_elements:
             self.render_manager.enable(renderable)
+
+        self.render_manager.flush_buffer()
 
         default_camera = BaseCamera(OrthoProjection(((0, 0, 100, 100), -1, 2)))
         CameraService._default_camera = default_camera

@@ -39,14 +39,10 @@ class Enableable(Generic[M]):
         self._enabled = enabled
         if enabled:
             self.on_preenable()
-            if self._manager.enable(self):
-                self.OnEnable(self)
-                self.on_enable()
+            self._manager.enable(self)
         else:
             self.on_predisable()
-            if self._manager.disable(self):
-                self.OnDisable(self)
-                self.on_disable()
+            self._manager.disable(self)
 
     def on_preenable(self):
         """
