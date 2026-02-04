@@ -33,10 +33,6 @@ class BaseSystem(Enableable[SystemManager], manager=SystemManager):
             approximately distance from last, defaults to 0 (Tie for first)
         """
         super().__init__(enabled)
-        # self.OnEnable = OnEnable(self)
-        # self.OnDisable = OnDisable(self)
-        # self._enabled = None
-        # self.enabled = enabled
         self.order_index = order_index
 
     def __init_subclass__(cls, **kwds) -> None:
