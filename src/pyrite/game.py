@@ -203,6 +203,7 @@ class Game:
 
         # This will ensure new entities are processed properly for the new frame.
         self.entity_manager.flush_buffer()
+        self.render_manager.flush_buffer()
         self.system_manager.prepare_systems()
 
         self.process_events(pygame.event.get())
