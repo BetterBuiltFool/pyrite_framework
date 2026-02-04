@@ -14,7 +14,7 @@ class MockEntity(BaseEntity):
         return cast(BaseEntity, super().__new__(cls))
 
     def __init__(self, game_instance=None, enabled=True) -> None:
-        pass
+        super().__init__(enabled)
 
 
 @contextmanager
