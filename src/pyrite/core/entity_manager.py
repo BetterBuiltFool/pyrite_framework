@@ -216,7 +216,7 @@ class DefaultEntityManager(AbstractEntityManager):
 
     def __init__(self) -> None:
         self.entities: WeakSet[Entity] = WeakSet()
-        self._added_buffer: set[Entity] = set()
+        self._enabled_buffer: set[Entity] = set()
         self._disabled_buffer: set[Entity] = set()
 
         super().__init__()
@@ -225,28 +225,35 @@ class DefaultEntityManager(AbstractEntityManager):
         if item in self._disabled_buffer:
             self._disabled_buffer.remove(item)
         else:
-            self._added_buffer.add(item)
+            self._enabled_buffer.add(item)
         return item not in self.entities
 
     def disable(self, item: Entity) -> bool:
-        if item in self._added_buffer:
-            self._added_buffer.remove(item)
+        if item in self._enabled_buffer:
+            self._enabled_buffer.remove(item)
         else:
             self._disabled_buffer.add(item)
         return item in self.entities
 
     def is_enabled(self, item: Entity) -> bool:
-        return item in self._added_buffer or (
+        return item in self._enabled_buffer or (
             item in self.entities and item not in self._disabled_buffer
         )
 
     def flush_buffer(self):
-        self.entities |= self._added_buffer
+        self.entities |= self._enabled_buffer
+        for entity in self._enabled_buffer:
+            entity.OnEnable(entity)
+            entity.on_enable()
 
         self.entities -= self._disabled_buffer
 
-        self._added_buffer = set()
-        self._disabled_buffer = set()
+        for entity in self._disabled_buffer:
+            entity.OnDisable(entity)
+            entity.on_disable()
+
+        self._enabled_buffer.clear()
+        self._disabled_buffer.clear()
 
     def pre_update(self):
         for entity in self.entities:

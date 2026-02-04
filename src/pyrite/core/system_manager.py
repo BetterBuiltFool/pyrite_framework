@@ -223,20 +223,27 @@ class DefaultSystemManager(AbstractSystemManager):
         self.systems: dict[type[System], System] = {}
         self.active_systems: WeakSet[System] = WeakSet()
         self.current_systems: list[System] = []
+        self._enabled_buffer: set[System] = set()
+        self._disabled_buffer: set[System] = set()
         super().__init__()
 
     def enable(self, system: System) -> bool:
         self._capture_system(system)
-        if system not in self.active_systems:
-            self.active_systems.add(system)
-            return True
-        return False
+
+        if system in self._disabled_buffer:
+            self._disabled_buffer.remove(system)
+        else:
+            self._enabled_buffer.add(system)
+
+        return system not in self.active_systems
 
     def disable(self, system: System) -> bool:
-        if system in self.active_systems:
-            self.active_systems.remove(system)
-            return True
-        return False
+        if system in self._enabled_buffer:
+            self._enabled_buffer.remove(system)
+        else:
+            self._disabled_buffer.add(system)
+
+        return system in self.active_systems
 
     def is_enabled(self, system: System) -> bool:
         return system in self.active_systems
@@ -263,6 +270,18 @@ class DefaultSystemManager(AbstractSystemManager):
         return system
 
     def prepare_systems(self):
+        for system in self._enabled_buffer:
+            self.active_systems.add(system)
+            system.OnEnable(system)
+            system.on_enable()
+        for system in self._disabled_buffer:
+            self.active_systems.discard(system)
+            system.OnDisable(system)
+            system.on_disable()
+
+        self._enabled_buffer.clear()
+        self._disabled_buffer.clear()
+
         self.current_systems = self.sort_systems(self.active_systems)
 
     def pre_update(self):

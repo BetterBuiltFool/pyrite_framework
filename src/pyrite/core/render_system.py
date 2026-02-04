@@ -187,6 +187,16 @@ class AbstractRenderManager(ABC):
         pass
 
     @abstractmethod
+    def flush_buffer(self):
+        """
+        Used to allow the render manager to update its render collection safely,
+        without modifying it while iterating over it.
+
+        Called at the beginning of the loop, before event handling.
+        """
+        pass
+
+    @abstractmethod
     def get_number_renderables(self) -> int:
         """
         Returns the total number of renderables being tracked by the renderer.
@@ -255,12 +265,11 @@ class DefaultRenderManager(AbstractRenderManager):
 
     def __init__(self) -> None:
         self.renderables: dict[Layer, WeakSet[Renderable]] = {}
+        self._enabled_buffer: set[tuple[Renderable, Layer]] = set()
+        self._disabled_buffer: set[tuple[Renderable, Layer]] = set()
         self._rendered_last_frame: int = 0
 
         super().__init__()
-
-    # Does not need a buffer for renderables, they should *NOT* be generated during the
-    # render phase.
 
     def enable(self, item: Renderable) -> bool:
         layer = item.layer
@@ -268,32 +277,49 @@ class DefaultRenderManager(AbstractRenderManager):
             # No layer set, force it to midground
             layer = RenderLayers.MIDGROUND
             item._layer = layer
-        render_layer = self.renderables.setdefault(layer, WeakSet())
 
-        # Check if this is a fresh enable
-        newly_added = item not in render_layer
+        if (item, layer) in self._disabled_buffer:
+            self._disabled_buffer.remove((item, layer))
+        else:
+            self._enabled_buffer.add((item, layer))
 
-        render_layer.add(item)
-
-        return newly_added
+        # TODO Remove these bool returns, they are redundant.
+        return item in self.renderables.setdefault(layer, WeakSet())
 
     def disable(self, item: Renderable):
         layer = item.layer
+        if (item, layer) in self._enabled_buffer:
+            self._enabled_buffer.remove((item, layer))
+        else:
+            self._disabled_buffer.add((item, layer))
 
-        render_layer = self.renderables.get(layer, WeakSet())
-
-        # Check if this is a fresh disable
-        newly_disabled = item in render_layer
-
-        if newly_disabled:
-            # Changing this to check newly_disabled to avoid redundant check from
-            # discard
-            render_layer.remove(item)
-
-        return newly_disabled
+        # TODO Remove these bool returns, they are redundant.
+        return item not in self.renderables.setdefault(layer, WeakSet())
 
     def is_enabled(self, item: Renderable) -> bool:
         return any((item in render_layer) for render_layer in self.renderables.values())
+
+    def _add_to_layer(self, item: Renderable, layer: Layer) -> None:
+        render_layer = self.renderables.setdefault(layer, WeakSet())
+        render_layer.add(item)
+
+    def _remove_from_layer(self, item: Renderable, layer: Layer) -> None:
+        render_layer = self.renderables.get(layer, WeakSet())
+        render_layer.discard(item)
+
+    def flush_buffer(self):
+        for renderable, layer in self._enabled_buffer:
+            self._add_to_layer(renderable, layer)
+            renderable.OnEnable(renderable)
+            renderable.on_enable()
+
+        for renderable, layer in self._disabled_buffer:
+            self._remove_from_layer(renderable, layer)
+            renderable.OnDisable(renderable)
+            renderable.on_disable()
+
+        self._enabled_buffer.clear()
+        self._disabled_buffer.clear()
 
     def generate_render_queue(
         self,
@@ -412,8 +438,9 @@ class DefaultRenderSystem(RenderSystem):
         self._rendered_last_frame = 0
         cameras = CameraService.get_render_cameras()
 
-        for camera in cameras:
-            camera.refresh()
+        CameraService.refresh()
+        # for camera in cameras:
+        #     camera.refresh()
 
         for render_texture_component in RenderTextureComponent.get_instances().values():
             render_texture_component.update_texture()

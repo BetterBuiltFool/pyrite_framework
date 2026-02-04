@@ -25,6 +25,8 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
     _service: CameraService = DefaultCameraService()
     _active_cameras: set[Camera] = set()
     _default_camera: Camera
+    _enabled_buffer: set[Camera] = set()
+    _disabled_buffer: set[Camera] = set()
 
     @classmethod
     def hotswap(cls, service: CameraService):
@@ -40,9 +42,12 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
 
         :param item: The Camera object to be enabled.
         """
-        is_new = item not in cls._active_cameras
-        cls._active_cameras.add(item)
-        return is_new
+        if item in cls._disabled_buffer:
+            cls._disabled_buffer.remove(item)
+        else:
+            cls._enabled_buffer.add(item)
+
+        return item not in cls._active_cameras
 
     @classmethod
     def disable(cls, item: Camera) -> bool:
@@ -52,9 +57,11 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         :param item: The Camera object to be disabled. Does nothing if the camera is
             already disabled.
         """
-        is_new = item in cls._active_cameras
-        cls._active_cameras.discard(item)
-        return is_new
+        if item in cls._enabled_buffer:
+            cls._enabled_buffer.remove(item)
+        else:
+            cls._disabled_buffer.add(item)
+        return item in cls._active_cameras
 
     @classmethod
     def is_enabled(cls, item: Camera) -> bool:
@@ -100,13 +107,26 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         cls._service.add_camera(camera)
 
     @classmethod
-    def refresh(cls, camera: Camera):
+    def refresh(cls):
         """
         Updates the camera's cached data at the beginning of a new frame.
 
         :param camera: The Camera object being refreshed.
         """
-        cls._service.refresh(camera)
+        for camera in cls._enabled_buffer:
+            cls._active_cameras.add(camera)
+            camera.OnEnable(camera)
+            camera.on_enable()
+        for camera in cls._disabled_buffer:
+            cls._active_cameras.discard(camera)
+            camera.OnDisable(camera)
+            camera.on_disable()
+
+        cls._enabled_buffer.clear()
+        cls._disabled_buffer.clear()
+
+        for camera in cls.get_render_cameras():
+            cls._service.refresh(camera)
 
     @classmethod
     def get_view_bounds(cls, camera: Camera) -> CameraViewBounds:
