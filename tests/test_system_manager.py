@@ -40,6 +40,19 @@ class TestSystemManager(unittest.TestCase):
 
         self.assertIn(test_system, self.system_manager.active_systems)
 
+    def test_disable(self) -> None:
+        test_system = MockSystem()
+
+        self.flush()
+
+        self.assertIn(test_system, self.system_manager.active_systems)
+
+        self.system_manager.disable(test_system)
+
+        self.flush()
+
+        self.assertNotIn(test_system, self.system_manager.active_systems)
+
 
 if __name__ == "__main__":
 
