@@ -76,6 +76,12 @@ class SystemManager:
         cls.is_enabled = cls._is_enabled_wrapper
 
     @classmethod
+    def get_system[SystemType: System](
+        cls, system_type: type[SystemType]
+    ) -> SystemType | None:
+        return cls._active_system_manager.get_system(system_type)
+
+    @classmethod
     def set_system_manager(cls, manager: AbstractSystemManager) -> None:
         cls._active_system_manager = manager
         cls._activate()
