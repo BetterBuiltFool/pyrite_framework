@@ -40,6 +40,19 @@ class TestSystemManager(unittest.TestCase):
 
         self.assertIn(test_system, self.system_manager.active_systems)
 
+        # No duplicates systems of the same type allowed, this should silently fail.
+        second_system = MockSystem(enabled=False)
+
+        self.flush()
+
+        self.assertNotIn(second_system, self.system_manager.active_systems)
+
+        self.system_manager.enable(second_system)
+
+        self.flush()
+
+        self.assertNotIn(second_system, self.system_manager.active_systems)
+
     def test_disable(self) -> None:
         test_system = MockSystem()
 
