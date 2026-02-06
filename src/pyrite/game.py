@@ -104,7 +104,7 @@ class Game:
             transform_system.get_default_transform_system_type()
         ]
 
-        self.window, self.display_settings = self.create_window()
+        self.window, self.display_settings = self.create_window(self.display_settings)
 
     def __enter__(self) -> Self:
         """
@@ -130,7 +130,9 @@ class Game:
     def init_threader(self):
         threading._set_regular_mode()
 
-    def create_window(self) -> tuple[pygame.Surface, DisplaySettings]:
+    def create_window(
+        self, display_settings: DisplaySettings
+    ) -> tuple[pygame.Surface, DisplaySettings]:
         """
         Generates a window from current display settings.
         Updates the icon, if possible.
@@ -138,7 +140,7 @@ class Game:
         """
         if self.game_data.icon is not None:
             pygame.display.set_icon(self.game_data.icon)
-        window, display_settings = DisplaySettings.create_window(self.display_settings)
+        window, display_settings = DisplaySettings.create_window(display_settings)
         # Ensure we have a default camera in case there are no others.
         default_camera = BaseCamera(
             OrthoProjection((Rect(0, 0, *window.size), -1, 2)), enabled=False
@@ -170,7 +172,7 @@ class Game:
         For example, a function could be called to create a special early loop for
         loading in resources before calling the main game loop.
         """
-        self.window, self.display_settings = self.create_window()
+        self.window, self.display_settings = self.create_window(self.display_settings)
         self.start_game()
 
     def start_game(self) -> None:
@@ -399,5 +401,5 @@ class AsyncGame(Game):
         """
         Main entry point for the game. By default, starts a thread from start_game().
         """
-        self.window, self.display_settings = self.create_window()
+        self.window, self.display_settings = self.create_window(self.display_settings)
         asyncio.run(self.start_game_async())
