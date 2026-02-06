@@ -97,6 +97,21 @@ class TestSystemManager(unittest.TestCase):
 
         self.assertIs(result, test_system)
 
+    def test_remove_system(self) -> None:
+        test_system = MockSystem(enabled=False)
+
+        self.flush()
+
+        self.system_manager._capture_system(test_system)
+
+        self.assertIn(MockSystem, self.system_manager.systems.keys())
+
+        removed = self.system_manager.remove_system(MockSystem)
+
+        self.assertNotIn(MockSystem, self.system_manager.systems.keys())
+
+        self.assertIs(removed, test_system)
+
     def test_sort_systems(self) -> None:
 
         expected_priorities = [-2, -1, 0, 1, 2]
