@@ -76,6 +76,18 @@ class SystemManager:
         cls.is_enabled = cls._is_enabled_wrapper
 
     @classmethod
+    def get_system[SystemType: System](
+        cls, system_type: type[SystemType]
+    ) -> SystemType | None:
+        return cls._active_system_manager.get_system(system_type)
+
+    @classmethod
+    def remove_system[SystemType: System](
+        cls, system_type: type[SystemType]
+    ) -> SystemType:
+        return cls._active_system_manager.remove_system(system_type)
+
+    @classmethod
     def set_system_manager(cls, manager: AbstractSystemManager) -> None:
         cls._active_system_manager = manager
         cls._activate()
@@ -217,6 +229,9 @@ class DefaultSystemManager(AbstractSystemManager):
     def enable(self, system: System) -> None:
         self._capture_system(system)
 
+        if self.systems[system.__class__] is not system:
+            return
+
         if system in self._disabled_buffer:
             self._disabled_buffer.remove(system)
         else:
@@ -254,6 +269,7 @@ class DefaultSystemManager(AbstractSystemManager):
 
     def prepare_systems(self):
         for system in self._enabled_buffer:
+
             self.active_systems.add(system)
             system.OnEnable(system)
             system.on_enable()
