@@ -223,6 +223,9 @@ class DefaultSystemManager(AbstractSystemManager):
     def enable(self, system: System) -> None:
         self._capture_system(system)
 
+        if self.systems[system.__class__] is not system:
+            return
+
         if system in self._disabled_buffer:
             self._disabled_buffer.remove(system)
         else:
@@ -260,6 +263,7 @@ class DefaultSystemManager(AbstractSystemManager):
 
     def prepare_systems(self):
         for system in self._enabled_buffer:
+
             self.active_systems.add(system)
             system.OnEnable(system)
             system.on_enable()
