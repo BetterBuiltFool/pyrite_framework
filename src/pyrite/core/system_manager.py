@@ -82,6 +82,12 @@ class SystemManager:
         return cls._active_system_manager.get_system(system_type)
 
     @classmethod
+    def remove_system[SystemType: System](
+        cls, system_type: type[SystemType]
+    ) -> SystemType:
+        return cls._active_system_manager.remove_system(system_type)
+
+    @classmethod
     def set_system_manager(cls, manager: AbstractSystemManager) -> None:
         cls._active_system_manager = manager
         cls._activate()
