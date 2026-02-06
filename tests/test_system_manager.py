@@ -66,6 +66,25 @@ class TestSystemManager(unittest.TestCase):
 
         self.assertNotIn(test_system, self.system_manager.active_systems)
 
+    def test_capture_system(self) -> None:
+        test_system = MockSystem()
+
+        self.flush()
+
+        captured = self.system_manager.systems[MockSystem]
+
+        self.assertIs(captured, test_system)
+
+        # Second copy should not be captured
+
+        test_system_2 = MockSystem()
+
+        self.flush()
+
+        captured = self.system_manager.systems[MockSystem]
+
+        self.assertIsNot(captured, test_system_2)
+
     def test_get_system(self) -> None:
         test_system = MockSystem()
 
