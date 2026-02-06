@@ -104,8 +104,7 @@ class Game:
             transform_system.get_default_transform_system_type()
         ]
 
-        self.window, self.display_settings = self.create_window(self.display_settings)
-        self._update_window_dependents(self.window)
+        self.refresh_window()
 
     def __enter__(self) -> Self:
         """
@@ -158,6 +157,13 @@ class Game:
         # Update the viewports so they are sized correctly
         Viewport.update_viewports(window.size)
 
+    def refresh_window(self) -> None:
+        """
+        Refreshes the window based on the stored display settings.
+        """
+        self.window, self.display_settings = self.create_window(self.display_settings)
+        self._update_window_dependents(self.window)
+
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)
 
@@ -176,8 +182,7 @@ class Game:
         For example, a function could be called to create a special early loop for
         loading in resources before calling the main game loop.
         """
-        self.window, self.display_settings = self.create_window(self.display_settings)
-        self._update_window_dependents(self.window)
+        self.refresh_window()
         self.start_game()
 
     def start_game(self) -> None:
@@ -406,6 +411,5 @@ class AsyncGame(Game):
         """
         Main entry point for the game. By default, starts a thread from start_game().
         """
-        self.window, self.display_settings = self.create_window(self.display_settings)
-        self._update_window_dependents(self.window)
+        self.refresh_window()
         asyncio.run(self.start_game_async())
