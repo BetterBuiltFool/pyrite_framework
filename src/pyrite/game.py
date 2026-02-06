@@ -130,21 +130,9 @@ class Game:
     def init_threader(self):
         threading._set_regular_mode()
 
-    def create_window(
-        self, display_settings: DisplaySettings
-    ) -> tuple[pygame.Surface, DisplaySettings]:
-        """
-        Generates a window from current display settings.
-        Updates the icon, if possible.
-        The game's window and display settings are updated to reflect the new window.
-        """
+    def _update_window_dependents(self, window: pygame.Surface) -> None:
         if self.game_data.icon is not None:
             pygame.display.set_icon(self.game_data.icon)
-        window, display_settings = DisplaySettings.create_window(display_settings)
-
-        return window, display_settings
-
-    def _update_window_dependents(self, window: pygame.Surface) -> None:
         # Ensure we have a default camera in case there are no others.
         if not hasattr(CameraService, "_default_camera"):
             default_camera = BaseCamera(
@@ -161,7 +149,9 @@ class Game:
         """
         Refreshes the window based on the stored display settings.
         """
-        self.window, self.display_settings = self.create_window(self.display_settings)
+        self.window, self.display_settings = DisplaySettings.create_window(
+            self.display_settings
+        )
         self._update_window_dependents(self.window)
 
     def add_system(self, system_type: type[System]):
