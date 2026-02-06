@@ -66,6 +66,15 @@ class TestSystemManager(unittest.TestCase):
 
         self.assertNotIn(test_system, self.system_manager.active_systems)
 
+    def test_get_system(self) -> None:
+        test_system = MockSystem()
+
+        self.flush()
+
+        result = self.system_manager.get_system(MockSystem)
+
+        self.assertIs(result, test_system)
+
     def test_sort_systems(self) -> None:
 
         expected_priorities = [-2, -1, 0, 1, 2]
