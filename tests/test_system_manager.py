@@ -15,8 +15,8 @@ class MockSystem(BaseSystem):
     def __new__(cls, *args, **kwds) -> BaseSystem:
         return cast(BaseSystem, super().__new__(cls))
 
-    def __init__(self, enabled=True) -> None:
-        super().__init__(enabled)
+    def __init__(self, enabled=True, order_index: int = 0) -> None:
+        super().__init__(enabled, order_index)
 
 
 class TestSystemManager(unittest.TestCase):
@@ -65,6 +65,33 @@ class TestSystemManager(unittest.TestCase):
         self.flush()
 
         self.assertNotIn(test_system, self.system_manager.active_systems)
+
+    def test_sort_systems(self) -> None:
+
+        expected_priorities = [-2, -1, 0, 1, 2]
+
+        test_systems: list[BaseSystem] = []
+
+        for priority in expected_priorities:
+
+            class TestSystem(MockSystem):
+                def __init__(self, enabled=True, order_index: int = priority) -> None:
+                    super().__init__(enabled, order_index)
+
+            test_systems.append(TestSystem())
+
+        expected_order = (
+            test_systems[2],
+            test_systems[3],
+            test_systems[4],
+            test_systems[1],
+            test_systems[0],
+        )
+
+        ordered_systems = self.system_manager.sort_systems(test_systems)
+
+        for system, expected in zip(ordered_systems, expected_order):
+            self.assertIs(system, expected)
 
 
 if __name__ == "__main__":
