@@ -104,9 +104,7 @@ class Game:
             transform_system.get_default_transform_system_type()
         ]
 
-        # Create a placeholder for the window, and the create the actual window
-        self.window: pygame.Surface
-        self.create_window()
+        self.refresh_window()
 
     def __enter__(self) -> Self:
         """
@@ -132,27 +130,29 @@ class Game:
     def init_threader(self):
         threading._set_regular_mode()
 
-    def create_window(self):
-        """
-        Generates a window from current display settings.
-        Updates the icon, if possible.
-        The game's window and display settings are updated to reflect the new window.
-        """
+    def _update_window_dependents(self, window: pygame.Surface) -> None:
         if self.game_data.icon is not None:
             pygame.display.set_icon(self.game_data.icon)
+        # Ensure we have a default camera in case there are no others.
+        if not hasattr(CameraService, "_default_camera"):
+            default_camera = BaseCamera(
+                OrthoProjection((Rect(0, 0, *window.size), -1, 2)), enabled=False
+            )
+            CameraService._default_camera = default_camera
+        # Update the default camera so that it captures the new display.
+        CameraService.update_default_camera(window.size)
+
+        # Update the viewports so they are sized correctly
+        Viewport.update_viewports(window.size)
+
+    def refresh_window(self) -> None:
+        """
+        Refreshes the window based on the stored display settings.
+        """
         self.window, self.display_settings = DisplaySettings.create_window(
             self.display_settings
         )
-        # Ensure we have a default camera in case there are no others.
-        default_camera = BaseCamera(
-            OrthoProjection((Rect(0, 0, *self.window.size), -1, 2)), enabled=False
-        )
-        CameraService._default_camera = default_camera
-        # Update the default camera so that it captures the new display.
-        CameraService.update_default_camera(self.window.size)
-
-        # Update the viewports so they are sized correctly
-        Viewport.update_viewports(self.window.size)
+        self._update_window_dependents(self.window)
 
     def add_system(self, system_type: type[System]):
         self.starting_systems.append(system_type)
@@ -172,7 +172,7 @@ class Game:
         For example, a function could be called to create a special early loop for
         loading in resources before calling the main game loop.
         """
-        self.create_window()
+        self.refresh_window()
         self.start_game()
 
     def start_game(self) -> None:
@@ -401,5 +401,5 @@ class AsyncGame(Game):
         """
         Main entry point for the game. By default, starts a thread from start_game().
         """
-        self.create_window()
+        self.refresh_window()
         asyncio.run(self.start_game_async())
