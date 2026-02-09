@@ -58,7 +58,7 @@ class HasTransformComponentProperty(Protocol):
     """
 
     @property
-    def transform(self) -> TransformComponent | Callable[[], TransformComponent]: ...
+    def transform(self) -> TransformComponent: ...
 
 
 class HasTexture(Protocol):
