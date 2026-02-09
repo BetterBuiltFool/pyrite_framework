@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     import glm
 
-    # from pyrite._component.transform_component import TransformComponent
+    from pyrite._component.transform_component import TransformComponent
     from pyrite.types import CubeLike, TransformLike
 
 T_contra = TypeVar("T_contra", contravariant=True)
@@ -29,7 +29,7 @@ class HasPosition(Protocol):
 
 class HasTransform(Protocol):
     """
-    An object with a TransformComponent attribute called _transform_.
+    An object with a Transform attribute called _transform_.
     """
 
     transform: TransformLike
@@ -37,11 +37,28 @@ class HasTransform(Protocol):
 
 class HasTransformProperty(Protocol):
     """
-    An object with a TransformComponent property called _transform_.
+    An object with a Transform property called _transform_.
     """
 
     @property
     def transform(self) -> TransformLike | Callable[[], TransformLike]: ...
+
+
+class HasTransformComponent(Protocol):
+    """
+    An object with a TransformComponent attribute called _transform_.
+    """
+
+    transform: TransformComponent
+
+
+class HasTransformComponentProperty(Protocol):
+    """
+    An object with a TransformComponent property called _transform_.
+    """
+
+    @property
+    def transform(self) -> TransformComponent | Callable[[], TransformComponent]: ...
 
 
 class HasTexture(Protocol):
