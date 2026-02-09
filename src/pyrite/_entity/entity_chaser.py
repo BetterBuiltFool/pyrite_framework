@@ -11,8 +11,8 @@ import pyrite.time
 
 if TYPE_CHECKING:
     from pyrite._types.protocols import (
-        HasTransform,
-        HasTransformProperty,
+        HasTransformComponent,
+        HasTransformComponentProperty,
         HasTransformAttributes,
     )
 
@@ -33,7 +33,7 @@ class EntityChaser(BaseEntity):
         enabled=True,
         transform: HasTransformAttributes | None = None,
         position: Point = (0, 0),
-        target: HasTransform | HasTransformProperty | None = None,
+        target: HasTransformComponent | HasTransformComponentProperty | None = None,
         ease_factor: float = 8.0,
         max_distance: float = -1,
         dist_function: Callable[[float], float] | None = None,
