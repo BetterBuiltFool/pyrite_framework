@@ -117,7 +117,7 @@ class Chaser[TargetType](BaseEntity):
         self.enabled = False
 
 
-class EntityChaser(Chaser[HasTransformComponent | HasTransformComponentProperty]):
+class ComponentChaser(Chaser[HasTransformComponent | HasTransformComponentProperty]):
 
     def _get_delta(self) -> Vector2:
         assert self.target

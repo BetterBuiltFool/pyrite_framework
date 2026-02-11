@@ -9,7 +9,7 @@ from pyrite.core.enableable import Enableable
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._entity.entity_chaser import (
-    EntityChaser,
+    ComponentChaser,
     TransformChaser,
     HasTransformChaser,
 )
@@ -179,7 +179,7 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
                 dist_function=self._clamp_distance,
             )
         elif has_transform_component(target):
-            chaser = EntityChaser(
+            chaser = ComponentChaser(
                 transform=self.transform,
                 position=self.transform.world_position,
                 target=target,
