@@ -10,12 +10,14 @@ from pyrite._component.transform_component import TransformComponent
 from pyrite._entity.entity import BaseEntity
 import pyrite.time
 from pyrite._types.protocols import (
+    HasTransform,
+    HasTransformProperty,
+    HasTransformAttributes,
     HasTransformComponent,
     HasTransformComponentProperty,
 )
 
 if TYPE_CHECKING:
-    from pyrite._types.protocols import HasTransformAttributes
 
     from pygame.typing import Point
 
@@ -124,3 +126,25 @@ class EntityChaser(Chaser[HasTransformComponent | HasTransformComponentProperty]
     def _update_position(self, delta: Vector2) -> None:
         assert self.target
         self.transform.world_position = self.target.transform.world_position + delta
+
+
+class HasTransformChaser(Chaser[HasTransform | HasTransformProperty]):
+
+    def _get_delta(self) -> Vector2:
+        assert self.target
+        return self.transform.world_position - self.target.transform.position
+
+    def _update_position(self, delta: Vector2) -> None:
+        assert self.target
+        self.transform.world_position = self.target.transform.position + delta
+
+
+class TransformChaser(Chaser[HasTransformAttributes]):
+
+    def _get_delta(self) -> Vector2:
+        assert self.target
+        return self.transform.world_position - self.target.position
+
+    def _update_position(self, delta: Vector2) -> None:
+        assert self.target
+        self.transform.world_position = self.target.position + delta
