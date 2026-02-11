@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TypeGuard, TYPE_CHECKING
 
 from pygame import Vector2
 
 from pyrite._component.transform_component import TransformComponent
 from pyrite._entity.entity import BaseEntity
 import pyrite.time
+from pyrite.transform import Transform
 from pyrite._types.protocols import (
     HasTransform,
     HasTransformProperty,
@@ -20,6 +21,34 @@ from pyrite._types.protocols import (
 if TYPE_CHECKING:
 
     from pygame.typing import Point
+
+    type ChaserTarget = (
+        HasTransform
+        | HasTransformComponent
+        | HasTransformProperty
+        | HasTransformComponentProperty
+        | HasTransformAttributes
+    )
+
+
+def has_transform(
+    object: ChaserTarget,
+) -> TypeGuard[HasTransform | HasTransformProperty]:
+    try:
+        transform = getattr(object, "transform")
+        return isinstance(transform, Transform)
+    except AttributeError:
+        return False
+
+
+def has_transform_component(
+    object: ChaserTarget,
+) -> TypeGuard[HasTransformComponent | HasTransformComponentProperty]:
+    try:
+        transform = getattr(object, "transform")
+        return isinstance(transform, TransformComponent)
+    except AttributeError:
+        return False
 
 
 def invariant_dist(distance: float) -> float:
@@ -74,6 +103,51 @@ class Chaser[TargetType](BaseEntity):
             dist_function = invariant_dist
 
         self.dist_function = dist_function
+
+    @staticmethod
+    def new(
+        enabled=True,
+        transform: HasTransformAttributes | None = None,
+        position: Point = (0, 0),
+        target: ChaserTarget | None = None,
+        ease_factor: float = 8.0,
+        max_distance: float = -1,
+        dist_function: Callable[[float], float] | None = None,
+    ) -> Chaser:
+        if target is None:
+            raise TypeError(f"{target} is not valid camera target.")
+        if isinstance(target, HasTransformAttributes):
+            return TransformChaser(
+                enabled,
+                transform,
+                position,
+                target,
+                ease_factor,
+                max_distance,
+                dist_function,
+            )
+        elif has_transform_component(target):
+            return ComponentChaser(
+                enabled,
+                transform,
+                position,
+                target,
+                ease_factor,
+                max_distance,
+                dist_function,
+            )
+        elif has_transform(target):
+            return HasTransformChaser(
+                enabled,
+                transform,
+                position,
+                target,
+                ease_factor,
+                max_distance,
+                dist_function,
+            )
+        else:
+            raise TypeError(f"{target} is not valid camera target.")
 
     @abstractmethod
     def _get_delta(self) -> Vector2:

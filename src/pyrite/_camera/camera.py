@@ -1,18 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Self, TypeGuard, TYPE_CHECKING
+from typing import Self, TYPE_CHECKING
 
 import pygame
 
 from pyrite.core.enableable import Enableable
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from pyrite._entity.entity_chaser import (
-    ComponentChaser,
-    TransformChaser,
-    HasTransformChaser,
-)
+from pyrite._entity.entity_chaser import Chaser
 from pyrite.enum import Layer
 from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
@@ -24,7 +20,6 @@ from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-    from pyrite._entity.entity_chaser import Chaser
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.protocols import (
         HasTransform,
@@ -43,26 +38,6 @@ if TYPE_CHECKING:
         | HasTransformComponentProperty
         | HasTransformAttributes
     )
-
-
-def has_transform(
-    object: ChaserTarget,
-) -> TypeGuard[HasTransform | HasTransformProperty]:
-    try:
-        transform = getattr(object, "transform")
-        return isinstance(transform, Transform)
-    except AttributeError:
-        return False
-
-
-def has_transform_component(
-    object: ChaserTarget,
-) -> TypeGuard[HasTransformComponent | HasTransformComponentProperty]:
-    try:
-        transform = getattr(object, "transform")
-        return isinstance(transform, TransformComponent)
-    except AttributeError:
-        return False
 
 
 class BaseCamera(Enableable[CameraService], manager=CameraService):
@@ -169,37 +144,14 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
         """
         if self.chaser:
             self.chaser.stop()
-        if isinstance(target, HasTransformAttributes):
-            chaser = TransformChaser(
-                transform=self.transform,
-                position=self.transform.world_position,
-                target=target,
-                ease_factor=ease_factor,
-                max_distance=max_distance,
-                dist_function=self._clamp_distance,
-            )
-        elif has_transform_component(target):
-            chaser = ComponentChaser(
-                transform=self.transform,
-                position=self.transform.world_position,
-                target=target,
-                ease_factor=ease_factor,
-                max_distance=max_distance,
-                dist_function=self._clamp_distance,
-            )
-        elif has_transform(target):
-            chaser = HasTransformChaser(
-                transform=self.transform,
-                position=self.transform.world_position,
-                target=target,
-                ease_factor=ease_factor,
-                max_distance=max_distance,
-                dist_function=self._clamp_distance,
-            )
-        else:
-            raise TypeError(f"{target} is not valid camera target.")
-
-        self.chaser = chaser
+        self.chaser = Chaser.new(
+            transform=self.transform,
+            position=self.transform.world_position,
+            target=target,
+            ease_factor=ease_factor,
+            max_distance=max_distance,
+            dist_function=self._clamp_distance,
+        )
 
     def stop_chase(self) -> None:
         """
