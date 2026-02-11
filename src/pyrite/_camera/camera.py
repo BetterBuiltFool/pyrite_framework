@@ -8,7 +8,7 @@ import pygame
 from pyrite.core.enableable import Enableable
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from pyrite._entity.entity_chaser import EntityChaser
+from pyrite._entity.chaser import Chaser
 from pyrite.enum import Layer
 from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
@@ -16,19 +16,28 @@ from pyrite._rendering.viewport import Viewport
 from pyrite._component.transform_component import TransformComponent
 from pyrite._transform.transform import Transform
 from pyrite._types.renderable import Renderable
+from pyrite._types.protocols import HasTransformAttributes
 
 if TYPE_CHECKING:
     from pygame.typing import Point
-
     from pyrite._types.view_bounds import CameraViewBounds
     from pyrite._types.protocols import (
         HasTransform,
         HasTransformProperty,
+        HasTransformComponent,
+        HasTransformComponentProperty,
         RenderTarget,
-        HasTransformAttributes,
     )
     from pyrite._types.projection import Projection
     from pyrite.types import CubeLike
+
+    type ChaserTarget = (
+        HasTransform
+        | HasTransformComponent
+        | HasTransformProperty
+        | HasTransformComponentProperty
+        | HasTransformAttributes
+    )
 
 
 class BaseCamera(Enableable[CameraService], manager=CameraService):
@@ -77,7 +86,7 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
         self._zoom_level: float = 1
         CameraService.add_camera(self)
 
-        self.chaser: EntityChaser | None = None
+        self.chaser: Chaser | None = None
 
     def __init_subclass__(cls, **kwds) -> None:
         return super().__init_subclass__(manager=CameraService, **kwds)
@@ -117,7 +126,7 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
 
     def chase(
         self,
-        target: HasTransform | HasTransformProperty,
+        target: ChaserTarget,
         ease_factor: float = 8.0,
         max_distance: float = -1.0,
     ) -> None:
@@ -135,7 +144,7 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
         """
         if self.chaser:
             self.chaser.stop()
-        self.chaser = EntityChaser(
+        self.chaser = Chaser.new(
             transform=self.transform,
             position=self.transform.world_position,
             target=target,
