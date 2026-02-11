@@ -33,11 +33,11 @@ class DeltaTime:
         """
         Returns the length of the fixed step used by const_update, in seconds.
         """
-        return DeltaTime._fxt / 1000
+        return DeltaTime._fxt
 
     @staticmethod
     def fixed_step_milliseconds() -> float:
         """
         Returns the length of the fixed step used by const_update, in milliseconds.
         """
-        return DeltaTime._fxt
+        return DeltaTime._fxt * 1000
