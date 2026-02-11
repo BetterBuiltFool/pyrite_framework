@@ -199,7 +199,7 @@ class Game:
             self.rate_settings.fps_cap, accumulated_time
         )
 
-        pyrite.time._dt = delta_time
+        pyrite.time.DeltaTime._update_dt(delta_time)
 
         # This will ensure new entities are processed properly for the new frame.
         self.entity_manager.flush_buffer()
@@ -233,8 +233,8 @@ class Game:
         :param accumulated_time: Time since last const_update, passed from the main loop
         :return: Tuple containing delta_time and the modified accumulated time.
         """
-        delta_time = self.clock.tick(fps_cap) / 1000
-        accumulated_time += delta_time
+        delta_time = self.clock.tick(fps_cap)
+        accumulated_time += delta_time / 1000
         return (delta_time, accumulated_time)
 
     def pre_update(self) -> None:

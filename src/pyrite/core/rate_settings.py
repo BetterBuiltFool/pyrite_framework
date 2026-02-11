@@ -122,7 +122,7 @@ class RateSettings:
 
     @staticmethod
     def _set_fixed_time_step(timestep: float) -> None:
-        pyrite.time._fxt = timestep
+        pyrite.time.DeltaTime._update_fixed(timestep)
 
     @staticmethod
     def get_rate_settings(**kwds) -> RateSettings:
