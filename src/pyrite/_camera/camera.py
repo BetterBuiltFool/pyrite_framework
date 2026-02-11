@@ -8,7 +8,7 @@ import pygame
 from pyrite.core.enableable import Enableable
 from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
-from pyrite._entity.entity_chaser import Chaser
+from pyrite._entity.chaser import Chaser
 from pyrite.enum import Layer
 from pyrite.events import OnEnable, OnDisable
 from pyrite._rendering.camera_renderer import CameraRendererProvider as CameraRenderer
