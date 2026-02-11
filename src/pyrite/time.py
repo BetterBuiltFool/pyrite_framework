@@ -3,8 +3,20 @@ _fxt: float = 0
 
 
 class DeltaTime:
+    """
+    Static class that provides methods for interacting with per-frame time variations.
+    """
+
     _dt: float = 0
     _fxt: float = 0
+
+    @staticmethod
+    def _update_dt(delta_time: float) -> None:
+        DeltaTime._dt = delta_time
+
+    @staticmethod
+    def _update_fixed(step: float) -> None:
+        DeltaTime._fxt = step
 
     @staticmethod
     def seconds() -> float:
