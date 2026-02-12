@@ -62,10 +62,10 @@ class Game:
         active_instance = get_game_instance()
         if active_instance is not None:
             active_instance.is_running = False
-            logger.info(
+            logger.debug(
                 f"Stopping {active_instance}, only one game may be running at a time."
             )
-        logger.info("Starting new game instance.")
+        logger.debug("Starting new game instance.")
         active_instance = super().__new__(cls)
         set_game_instance(active_instance)
         return active_instance
@@ -132,7 +132,9 @@ class Game:
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
+            logger.debug("Starting initial systems.")
             self.start_systems()
+            logger.debug(f"Initiating {type(self).__name__} main entry point.")
             self.main()
         return self.suppress_context_errors
 
