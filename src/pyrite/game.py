@@ -56,6 +56,8 @@ class Game:
     will stop the previous instance.
     """
 
+    starting_systems: list[type[System]] = []
+
     def __new__(cls, *args, **kwds) -> Self:
         active_instance = get_game_instance()
         if active_instance is not None:
@@ -100,9 +102,15 @@ class Game:
         self.renderer = RenderSystem.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
-        self.starting_systems: list[type[System]] = [
-            transform_system.get_default_transform_system_type()
-        ]
+        # Ensure we have some kind of TransformSystem enabled
+        for system_type in self.starting_systems:
+            if issubclass(system_type, transform_system.TransformSystem):
+                break
+        else:
+            logger.info("No TransformSystem detected, adding on default.")
+            self.starting_systems.append(
+                transform_system.get_default_transform_system_type()
+            )
 
         self.refresh_window()
 
@@ -124,6 +132,7 @@ class Game:
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
+            self.start_systems()
             self.main()
         return self.suppress_context_errors
 
@@ -154,8 +163,9 @@ class Game:
         )
         self._update_window_dependents(self.window)
 
-    def add_system(self, system_type: type[System]):
-        self.starting_systems.append(system_type)
+    @classmethod
+    def add_system(cls, system_type: type[System]):
+        cls.starting_systems.append(system_type)
 
     def start_systems(self):
         """
