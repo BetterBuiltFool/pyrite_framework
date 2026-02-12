@@ -33,7 +33,9 @@ class PhysicsSystem(BaseSystem):
         # TODO: Move this elsewhere so that it only happens once per frame?
         PhysicsService.sync_bodies_to_transforms()
 
-        PhysicsService.step(pyrite.time.fixed_time_step() * self.physics_mult)
+        PhysicsService.step(
+            pyrite.time.DeltaTime.fixed_step_seconds() * self.physics_mult
+        )
 
     def update(self) -> None:
         self.sync_transforms_to_bodies()

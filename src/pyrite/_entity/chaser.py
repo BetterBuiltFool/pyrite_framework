@@ -171,7 +171,7 @@ class Chaser[TargetType](BaseEntity):
             return delta
         delta_normalized = delta.normalize()
         distance_adjustment = distance / self.ease_factor
-        distance_adjustment *= 60 * pyrite.time.delta_time()
+        distance_adjustment *= 60 * pyrite.time.DeltaTime.seconds()
         distance -= distance_adjustment
 
         return delta_normalized * distance
