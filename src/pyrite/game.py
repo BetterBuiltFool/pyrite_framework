@@ -132,8 +132,6 @@ class Game:
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
-            logger.debug("Starting initial systems.")
-            self.start_systems()
             logger.debug(f"Initiating {type(self).__name__} main entry point.")
             self.main()
         return self.suppress_context_errors
@@ -400,6 +398,8 @@ class AsyncGame(Game):
         """
 
         accumulated_time: float = 0.0
+
+        self.start_systems()
 
         # Minimum duplication to get desired results.
         while self.is_running:
