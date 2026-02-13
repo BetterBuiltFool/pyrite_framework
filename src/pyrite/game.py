@@ -56,14 +56,16 @@ class Game:
     will stop the previous instance.
     """
 
+    starting_systems: list[type[System]] = []
+
     def __new__(cls, *args, **kwds) -> Self:
         active_instance = get_game_instance()
         if active_instance is not None:
             active_instance.is_running = False
-            logger.info(
+            logger.debug(
                 f"Stopping {active_instance}, only one game may be running at a time."
             )
-        logger.info("Starting new game instance.")
+        logger.debug("Starting new game instance.")
         active_instance = super().__new__(cls)
         set_game_instance(active_instance)
         return active_instance
@@ -100,9 +102,15 @@ class Game:
         self.renderer = RenderSystem.get_renderer(**kwds)
         self.system_manager = SystemManager.get_system_manager(**kwds)
 
-        self.starting_systems: list[type[System]] = [
-            transform_system.get_default_transform_system_type()
-        ]
+        # Ensure we have some kind of TransformSystem enabled
+        for system_type in self.starting_systems:
+            if issubclass(system_type, transform_system.TransformSystem):
+                break
+        else:
+            logger.info("No TransformSystem detected, adding on default.")
+            self.starting_systems.append(
+                transform_system.get_default_transform_system_type()
+            )
 
         self.refresh_window()
 
@@ -124,6 +132,7 @@ class Game:
         if exception_value is None or self.suppress_context_errors:
             # suppress_context_errors allows us to start regardless of any errors,
             # and hides them from the output.
+            logger.debug(f"Initiating {type(self).__name__} main entry point.")
             self.main()
         return self.suppress_context_errors
 
@@ -154,8 +163,16 @@ class Game:
         )
         self._update_window_dependents(self.window)
 
-    def add_system(self, system_type: type[System]):
-        self.starting_systems.append(system_type)
+    @classmethod
+    def add_system(cls, *system_types: type[System]) -> None:
+        """
+        Adds to the systems that are created at the start of the game.
+
+        Accepts multiple systems in one call.
+
+        Takes the _class_ of the systems, do not pass instances.
+        """
+        cls.starting_systems.extend(system_types)
 
     def start_systems(self):
         """
@@ -388,6 +405,8 @@ class AsyncGame(Game):
         """
 
         accumulated_time: float = 0.0
+
+        self.start_systems()
 
         # Minimum duplication to get desired results.
         while self.is_running:
