@@ -1,5 +1,5 @@
 import pyrite.core.display_settings
-import pyrite.core.game_data
+import pyrite.core.game_info
 import pyrite.core.rate_settings
 import pyrite.game
 import pyrite._camera.camera
@@ -16,7 +16,7 @@ import pyrite._transform.transform
 import pyrite._component.transform_component
 
 DisplaySettings = pyrite.core.display_settings.DisplaySettings
-GameData = pyrite.core.game_data.GameData
+GameInfo = pyrite.core.game_info.GameInfo
 RateSettings = pyrite.core.rate_settings.RateSettings
 
 Game = pyrite.game.Game

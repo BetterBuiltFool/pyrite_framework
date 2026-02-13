@@ -8,7 +8,7 @@ from pygame import Rect
 
 from pyrite.core.display_settings import DisplaySettings
 from pyrite.core.entity_manager import EntityManager
-from pyrite.core.game_data import GameData
+from pyrite.core.game_info import GameInfo
 from pyrite.core.render_system import RenderSystem, RenderManager
 from pyrite.core.rate_settings import RateSettings
 from pyrite.core.system_manager import SystemManager
@@ -91,7 +91,7 @@ class Game:
         # Extract various settings and game data from keyword arguments.
         # Creates defaults if none are provided.
         self.display_settings = DisplaySettings.get_display_settings(**kwds)
-        self.game_data = GameData.get_game_data(**kwds)
+        self.game_info = GameInfo.get_game_info(**kwds)
         self.rate_settings = RateSettings.get_rate_settings(**kwds)
 
         # Entity manager is responsible for holding and updating all entities.
@@ -140,8 +140,8 @@ class Game:
         threading._set_regular_mode()
 
     def _update_window_dependents(self, window: pygame.Surface) -> None:
-        if self.game_data.icon is not None:
-            pygame.display.set_icon(self.game_data.icon)
+        if self.game_info.icon is not None:
+            pygame.display.set_icon(self.game_info.icon)
         # Ensure we have a default camera in case there are no others.
         if not hasattr(CameraService, "_default_camera"):
             default_camera = BaseCamera(
@@ -232,8 +232,8 @@ class Game:
 
         self._update_block()
 
-        if not (caption := self.game_data.caption):
-            caption = self.game_data.title
+        if not (caption := self.game_info.caption):
+            caption = self.game_info.title
         pygame.display.set_caption(caption)
         self._render_block(self.window)
 

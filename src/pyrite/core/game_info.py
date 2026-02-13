@@ -6,7 +6,7 @@ import pygame
 
 
 @dataclass
-class GameData:
+class GameInfo:
     """
     A collection of data about a game.
     """
@@ -26,15 +26,15 @@ class GameData:
     """
 
     @staticmethod
-    def get_game_data(**kwds) -> GameData:
+    def get_game_info(**kwds) -> GameInfo:
         """
-        Creates a GameData object from external arguments.
+        Creates a GameInfo object from external arguments.
         Used for generating game data from arguments passed into Game init.
         """
-        metadata: GameData | None = kwds.get("game_data", None)
+        metadata: GameInfo | None = kwds.get("game_info", None)
         if metadata is None:
             # If no metadata object is supplied, create one.
             keys: set = {"title", "caption", "icon"}
             params: dict = {key: kwds[key] for key in keys if key in kwds}
-            metadata = GameData(**params)
+            metadata = GameInfo(**params)
         return metadata

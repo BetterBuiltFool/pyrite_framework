@@ -1,24 +1,24 @@
 import unittest
 
-from pyrite.core.game_data import GameData
+from pyrite.core.game_info import GameInfo
 
 
-class Test_GameData(unittest.TestCase):
+class Test_GameInfo(unittest.TestCase):
 
-    def test_get_game_data(self):
+    def test_get_game_info(self):
         test_title = "Test"
         test_caption = "Test caption"
         test_icon = None
         # Default case (Metadata object supplied)
-        test_data = GameData(
+        test_data = GameInfo(
             title=test_title,
             caption=test_caption,
             icon=test_icon,
         )
 
-        kwds = {"game_data": test_data}
+        kwds = {"game_info": test_data}
 
-        self.assertIs(test_data, GameData.get_game_data(**kwds))
+        self.assertIs(test_data, GameInfo.get_game_info(**kwds))
 
         # ideal case (All settings, no extras)
         kwds = {
@@ -27,7 +27,7 @@ class Test_GameData(unittest.TestCase):
             "icon": test_icon,
         }
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
@@ -41,7 +41,7 @@ class Test_GameData(unittest.TestCase):
             "foo": "bar",
         }
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, test_caption)
@@ -53,7 +53,7 @@ class Test_GameData(unittest.TestCase):
             "icon": test_icon,
         }
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, None)
@@ -66,7 +66,7 @@ class Test_GameData(unittest.TestCase):
             "foo": "bar",
         }
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, test_title)
         self.assertEqual(test_data.caption, None)
@@ -75,7 +75,7 @@ class Test_GameData(unittest.TestCase):
         # no settings, no extras
         kwds = {}
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, "Game")
         self.assertEqual(test_data.caption, None)
@@ -84,7 +84,7 @@ class Test_GameData(unittest.TestCase):
         # no settings, extras
         kwds = {"foo": "bar"}
 
-        test_data = GameData.get_game_data(**kwds)
+        test_data = GameInfo.get_game_info(**kwds)
 
         self.assertEqual(test_data.title, "Game")
         self.assertEqual(test_data.caption, None)
