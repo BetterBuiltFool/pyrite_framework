@@ -166,6 +166,13 @@ class Game:
 
     @classmethod
     def add_system(cls, system_type: type[System] | Sequence[type[System]]):
+        """
+        Adds to the systems that are created at the start of the game.
+
+        Accepts multiple systems in one call.
+
+        Takes the _class_ of the systems, do not pass instances.
+        """
         if not isinstance(system_type, Sequence):
             system_type = [system_type]
         cls.starting_systems.extend(system_type)
