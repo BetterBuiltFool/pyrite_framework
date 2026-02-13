@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Sequence
 import logging
 from typing import Self, TYPE_CHECKING
 
@@ -165,7 +164,7 @@ class Game:
         self._update_window_dependents(self.window)
 
     @classmethod
-    def add_system(cls, system_type: type[System] | Sequence[type[System]]):
+    def add_system(cls, *system_types: type[System]) -> None:
         """
         Adds to the systems that are created at the start of the game.
 
@@ -173,9 +172,7 @@ class Game:
 
         Takes the _class_ of the systems, do not pass instances.
         """
-        if not isinstance(system_type, Sequence):
-            system_type = [system_type]
-        cls.starting_systems.extend(system_type)
+        cls.starting_systems.extend(system_types)
 
     def start_systems(self):
         """
