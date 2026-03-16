@@ -4,6 +4,8 @@ import asyncio
 import logging
 from typing import Self, TYPE_CHECKING
 
+import hair_trigger
+import hair_trigger.runner
 from pygame import Rect
 
 from pyrite.core.display_settings import DisplaySettings
@@ -137,6 +139,9 @@ class Game:
         return self.suppress_context_errors
 
     def init_threader(self):
+        hair_trigger.config(
+            hair_trigger.scheduler.QueueScheduler(), hair_trigger.runner.ThreadRunner()
+        )
         threading._set_regular_mode()
 
     def _update_window_dependents(self, window: pygame.Surface) -> None:
@@ -224,6 +229,8 @@ class Game:
         self.system_manager.prepare_systems()
 
         self.process_events(pygame.event.get())
+
+        hair_trigger.pump_events()
 
         if self.rate_settings.tick_rate > 0:
             accumulated_time = self._fixed_update_block(
@@ -414,6 +421,9 @@ class AsyncGame(Game):
             await asyncio.sleep(0)
 
     def init_threader(self):
+        hair_trigger.config(
+            hair_trigger.scheduler.QueueScheduler(), hair_trigger.runner.AsyncioRunner()
+        )
         threading._set_asyncio_mode()
 
     def main(self):
