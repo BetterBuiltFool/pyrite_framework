@@ -65,7 +65,7 @@ class ColliderComponent(BaseComponent):
 
         PhysicsService.add_collider(self)
 
-        self.OnTouch = OnTouch(self)
+        self.OnTouch = OnTouch()
         """
         Called whenever a collider begins contact with another.
 
@@ -78,7 +78,7 @@ class ColliderComponent(BaseComponent):
         touching: The collider component in contact with _this_collider_
         """
 
-        self.WhileTouching = WhileTouching(self)
+        self.WhileTouching = WhileTouching()
         """
         Called every frame that two collider components overlap.
 
@@ -91,7 +91,7 @@ class ColliderComponent(BaseComponent):
         touching: The collider component in contact with _this_collider_
         """
 
-        self.OnSeparate = OnSeparate(self)
+        self.OnSeparate = OnSeparate()
         """
         Called whenever a previously touching collider stops touching.
 

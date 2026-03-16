@@ -81,8 +81,8 @@ class BaseCamera(Enableable[CameraService], manager=CameraService):
         if layer_mask is None:
             layer_mask = ()
         self.layer_mask: Sequence[Layer] = layer_mask
-        self.OnEnable = OnEnable(self)
-        self.OnDisable = OnDisable(self)
+        self.OnEnable = OnEnable()
+        self.OnDisable = OnDisable()
         self._zoom_level: float = 1
         CameraService.add_camera(self)
 
