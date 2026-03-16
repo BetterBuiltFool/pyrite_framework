@@ -292,12 +292,12 @@ class DefaultRenderManager(AbstractRenderManager):
     def flush_buffer(self):
         for renderable, layer in self._enabled_buffer:
             self._add_to_layer(renderable, layer)
-            renderable.OnEnable(renderable)
+            renderable.OnEnable.trigger(renderable)
             renderable.on_enable()
 
         for renderable, layer in self._disabled_buffer:
             self._remove_from_layer(renderable, layer)
-            renderable.OnDisable(renderable)
+            renderable.OnDisable.trigger(renderable)
             renderable.on_disable()
 
         self._enabled_buffer.clear()
