@@ -16,8 +16,8 @@ class Enableable(Generic[M]):
     _manager: type[M]
 
     def __init__(self, enabled=True) -> None:
-        self.OnEnable = OnEnable(self)
-        self.OnDisable = OnDisable(self)
+        self.OnEnable = OnEnable()
+        self.OnDisable = OnDisable()
         self.enabled = enabled
 
     def __init_subclass__(cls, manager: type[M], **kwds) -> None:

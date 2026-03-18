@@ -131,20 +131,20 @@ class PymunkPhysicsService(PhysicsService):
             collider1, collider2 = self.get_collider_components(arbiter)
             if arbiter.is_first_contact:
                 if collider1.compare_mask(collider2):
-                    collider1.OnTouch(collider1, collider2)
+                    collider1.OnTouch.trigger(collider1, collider2)
                 if collider2.compare_mask(collider1):
-                    collider2.OnTouch(collider2, collider1)
+                    collider2.OnTouch.trigger(collider2, collider1)
             if collider1.compare_mask(collider2):
-                collider1.WhileTouching(collider1, collider2)
+                collider1.WhileTouching.trigger(collider1, collider2)
             if collider2.compare_mask(collider1):
-                collider2.WhileTouching(collider2, collider1)
+                collider2.WhileTouching.trigger(collider2, collider1)
 
         def separate(arbiter: Arbiter, space: Space, data: Any):
             collider1, collider2 = self.get_collider_components(arbiter)
             if collider1.compare_mask(collider2):
-                collider1.OnSeparate(collider1, collider2)
+                collider1.OnSeparate.trigger(collider1, collider2)
             if collider2.compare_mask(collider1):
-                collider2.OnSeparate(collider2, collider1)
+                collider2.OnSeparate.trigger(collider2, collider1)
 
         self.comp_handler.post_solve = post_solve
         self.comp_handler.separate = separate

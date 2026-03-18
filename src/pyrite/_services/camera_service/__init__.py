@@ -112,11 +112,11 @@ class CameraServiceProvider(ServiceProvider[CameraService]):
         """
         for camera in cls._enabled_buffer:
             cls._active_cameras.add(camera)
-            camera.OnEnable(camera)
+            camera.OnEnable.trigger(camera)
             camera.on_enable()
         for camera in cls._disabled_buffer:
             cls._active_cameras.discard(camera)
-            camera.OnDisable(camera)
+            camera.OnDisable.trigger(camera)
             camera.on_disable()
 
         cls._enabled_buffer.clear()

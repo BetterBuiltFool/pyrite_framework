@@ -271,11 +271,11 @@ class DefaultSystemManager(AbstractSystemManager):
         for system in self._enabled_buffer:
 
             self.active_systems.add(system)
-            system.OnEnable(system)
+            system.OnEnable.trigger(system)
             system.on_enable()
         for system in self._disabled_buffer:
             self.active_systems.discard(system)
-            system.OnDisable(system)
+            system.OnDisable.trigger(system)
             system.on_disable()
 
         self._enabled_buffer.clear()

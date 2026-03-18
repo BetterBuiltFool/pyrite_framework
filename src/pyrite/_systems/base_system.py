@@ -6,9 +6,6 @@ from typing import TYPE_CHECKING
 from pyrite.core.system_manager import SystemManager
 from pyrite.core.enableable import Enableable
 
-# from pyrite.events import OnEnable, OnDisable
-# from pyrite._types.system import System
-
 if TYPE_CHECKING:
     from pygame import Event
 

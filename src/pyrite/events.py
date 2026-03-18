@@ -1,17 +1,16 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
-import pyrite._events.instance_event
+from hair_trigger import Event
+
 
 if TYPE_CHECKING:
     from pyrite._component.collider_component import ColliderComponent
 
 # Define common events here.
 
-InstanceEvent = pyrite._events.instance_event.BaseInstanceEvent
 
-
-class OnTouch(InstanceEvent):
+class OnTouch(Event):
     """
     Called whenever a collider begins contact with another.
 
@@ -20,13 +19,13 @@ class OnTouch(InstanceEvent):
     :param touching: The collider component in contact with _this_collider_
     """
 
-    def __call__(
+    def trigger(
         self, this_collider: ColliderComponent, touching: ColliderComponent
     ) -> None:
-        return super().__call__(this_collider, touching)
+        return super().trigger(this_collider, touching)
 
 
-class WhileTouching(InstanceEvent):
+class WhileTouching(Event):
     """
     Called every frame that two collider components overlap.
 
@@ -35,13 +34,13 @@ class WhileTouching(InstanceEvent):
     :param touching: The collider component in contact with _this_collider_
     """
 
-    def __call__(
+    def trigger(
         self, this_collider: ColliderComponent, touching: ColliderComponent
     ) -> None:
-        return super().__call__(this_collider, touching)
+        return super().trigger(this_collider, touching)
 
 
-class OnSeparate(InstanceEvent):
+class OnSeparate(Event):
     """
     Called when a previously touching collider separates.
 
@@ -50,13 +49,13 @@ class OnSeparate(InstanceEvent):
     :param touching: The collider component formerly in contact with _this_collider_
     """
 
-    def __call__(
+    def trigger(
         self, this_collider: ColliderComponent, touching: ColliderComponent
     ) -> None:
-        return super().__call__(this_collider, touching)
+        return super().trigger(this_collider, touching)
 
 
-class OnEnable(InstanceEvent):
+class OnEnable(Event):
     """
     Called when an object move from the disabled state to the enabled state. Does not
     fire if the object is already enabled.
@@ -64,16 +63,16 @@ class OnEnable(InstanceEvent):
     :param this: The object being enabled.
     """
 
-    def __call__(self, this: Any) -> None:
-        return super().__call__(this)
+    def trigger(self, this: Any) -> None:
+        return super().trigger(this)
 
 
-class OnDisable(InstanceEvent):
+class OnDisable(Event):
     """
     Called when an object moves from the enabled state to the disabled state.
 
     :param this: The object being disnabled.
     """
 
-    def __call__(self, this: Any) -> None:
-        return super().__call__(this)
+    def trigger(self, this: Any) -> None:
+        return super().trigger(this)

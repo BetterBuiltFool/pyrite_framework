@@ -228,13 +228,13 @@ class DefaultEntityManager(AbstractEntityManager):
     def flush_buffer(self):
         self.entities |= self._enabled_buffer
         for entity in self._enabled_buffer:
-            entity.OnEnable(entity)
+            entity.OnEnable.trigger(entity)
             entity.on_enable()
 
         self.entities -= self._disabled_buffer
 
         for entity in self._disabled_buffer:
-            entity.OnDisable(entity)
+            entity.OnDisable.trigger(entity)
             entity.on_disable()
 
         self._enabled_buffer.clear()
