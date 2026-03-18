@@ -20,7 +20,6 @@ from pyrite._camera.ortho_projection import OrthoProjection
 from pyrite._rendering.viewport import Viewport
 from pyrite._services.camera_service import CameraServiceProvider as CameraService
 from pyrite._systems import transform_system
-from pyrite.utils import threading
 import pyrite.time
 
 if TYPE_CHECKING:
@@ -142,7 +141,6 @@ class Game:
         hair_trigger.config(
             hair_trigger.scheduler.QueueScheduler(), hair_trigger.runner.ThreadRunner()
         )
-        threading._set_regular_mode()
 
     def _update_window_dependents(self, window: pygame.Surface) -> None:
         if self.game_info.icon is not None:
@@ -424,7 +422,6 @@ class AsyncGame(Game):
         hair_trigger.config(
             hair_trigger.scheduler.QueueScheduler(), hair_trigger.runner.AsyncioRunner()
         )
-        threading._set_asyncio_mode()
 
     def main(self):
         """
